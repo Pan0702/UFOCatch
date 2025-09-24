@@ -538,6 +538,8 @@
     <ClInclude Include="Src\MyMath.h" />
     <ClInclude Include="Src\Object3D.h" />
     <ClInclude Include="Src\ObjectManager.h" />
+    <ClInclude Include="Src\PCamera.h" />
+    <ClInclude Include="Src\Player.h" />
     <ClInclude Include="Src\PlayScene.h" />
     <ClInclude Include="Src\resource.h" />
     <ClInclude Include="Src\ResourceManager.h" />
@@ -572,6 +574,8 @@
     <ClCompile Include="Src\MyMath.cpp" />
     <ClCompile Include="SRC\Object3D.CPP" />
     <ClCompile Include="Src\ObjectManager.cpp" />
+    <ClCompile Include="Src\PCamera.cpp" />
+    <ClCompile Include="Src\Player.cpp" />
     <ClCompile Include="Src\PlayScene.cpp" />
     <ClCompile Include="Src\ResourceManager.cpp" />
     <ClCompile Include="Src\SceneBase.cpp" />

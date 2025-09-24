@@ -1,10 +1,10 @@
 //=============================================================================
-//		ƒƒbƒVƒ…‚Ì“Ç‚Ýž‚Ý‚Æ•`‰æ‚ÌƒvƒƒOƒ‰ƒ€
-//@                                                  ver 4.0        2024.10.7
+//		ãƒ¡ãƒƒã‚·ãƒ¥ã®èª­ã¿è¾¼ã¿ã¨æç”»ã®ãƒ—ãƒ­ã‚°ãƒ©ãƒ 
+//ã€€                                                  ver 4.0        2024.10.7
 //
-//		ƒƒbƒVƒ…ˆ—
+//		ãƒ¡ãƒƒã‚·ãƒ¥å‡¦ç†
 //
-//      (ƒƒbƒVƒ…ƒRƒ“ƒgƒ[ƒ‹ƒNƒ‰ƒX‚ÅƒeƒNƒXƒ`ƒƒ‚Ì‘‡ŠÇ—‚ðs‚¤)
+//      (ãƒ¡ãƒƒã‚·ãƒ¥ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã‚¯ãƒ©ã‚¹ã§ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ç·åˆç®¡ç†ã‚’è¡Œã†)
 //
 //
 //																	FbxMesh.h
@@ -15,22 +15,22 @@
 #include "Direct3D.h"
 #include "Shader.h"
 
-////Œx”ñ•\Ž¦
+////è­¦å‘Šéžè¡¨ç¤º
 //#pragma warning(disable : 4005)
 //#pragma warning(disable : 4244)
 //#pragma warning(disable : 4018)
 //
 //
-#define MAX_BONES 255			// Å‘åƒ{[ƒ“”
-#define ANIMATION_MAX 50		// Å‘åƒAƒjƒ[ƒVƒ‡ƒ“”
+#define MAX_BONES 255			// æœ€å¤§ãƒœãƒ¼ãƒ³æ•°
+#define ANIMATION_MAX 50		// æœ€å¤§ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³æ•°
 
-// ƒeƒNƒXƒ`ƒƒƒŠƒXƒg                                  // -- 2021.2.4
-// EFbxMeshCtrl‚ÅƒeƒNƒXƒ`ƒƒ‚ÌŠÇ—‚ÉŽg‚í‚ê‚éƒŠƒXƒg
+// ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒªã‚¹ãƒˆ                                  // -- 2021.2.4
+// ãƒ»FbxMeshCtrlã§ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ç®¡ç†ã«ä½¿ã‚ã‚Œã‚‹ãƒªã‚¹ãƒˆ
 struct TextureList
 {
-	TCHAR m_FName[MAX_PATH];                 // ƒeƒNƒXƒ`ƒƒ–¼
-	ID3D11ShaderResourceView* m_pTexture;    // ƒeƒNƒXƒ`ƒƒ
-	int   m_nCnt;                            // ‚±‚ÌƒeƒNƒXƒ`ƒƒ‚ðŽg—p‚µ‚Ä‚¢‚éƒƒbƒVƒ…‚Ì”
+	TCHAR m_FName[MAX_PATH];                 // ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+	ID3D11ShaderResourceView* m_pTexture;    // ãƒ†ã‚¯ã‚¹ãƒãƒ£
+	int   m_nCnt;                            // ã“ã®ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’ä½¿ç”¨ã—ã¦ã„ã‚‹ãƒ¡ãƒƒã‚·ãƒ¥ã®æ•°
 
 	TextureList()
 	{
@@ -40,47 +40,47 @@ struct TextureList
 	}
 };
 
-// ƒXƒ^ƒeƒBƒbƒNƒƒbƒVƒ…’¸“_‚Ì\‘¢‘Ì
+// ã‚¹ã‚¿ãƒ†ã‚£ãƒƒã‚¯ãƒ¡ãƒƒã‚·ãƒ¥é ‚ç‚¹ã®æ§‹é€ ä½“
 struct StaticVertex
 {
-	VECTOR3 Pos;     // ˆÊ’u
-	VECTOR3 Normal;  // –@ü@ƒVƒF[ƒfƒBƒ“ƒOi‰A‰eŒvŽZj‚É‚Í–@ü‚Í•K{
-	VECTOR2 vTex;    // ƒeƒNƒXƒ`ƒƒ[À•W
+	VECTOR3 Pos;     // ä½ç½®
+	VECTOR3 Normal;  // æ³•ç·šã€€ã‚·ã‚§ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ï¼ˆé™°å½±è¨ˆç®—ï¼‰ã«ã¯æ³•ç·šã¯å¿…é ˆ
+	VECTOR2 vTex;    // ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ¼åº§æ¨™
 };
 struct StaticVertexNormal
 {
-	VECTOR3 Pos;      // ˆÊ’u
-	VECTOR3 Normal;   // –@ü@ƒVƒF[ƒfƒBƒ“ƒOi‰A‰eŒvŽZj‚É‚Í–@ü‚Í•K{
-	VECTOR2 vTex;     // ƒeƒNƒXƒ`ƒƒ[À•W
-	VECTOR3 Tangent;  // ÚƒxƒNƒgƒ‹  ƒm[ƒ}ƒ‹ƒ}ƒbƒsƒ“ƒO‚É‚ÍÚƒxƒNƒgƒ‹‚ª•K—v
-	VECTOR3 Binormal; // ]–@ü      ƒm[ƒ}ƒ‹ƒ}ƒbƒsƒ“ƒO‚É‚Í]–@ü‚ª•K—v
+	VECTOR3 Pos;      // ä½ç½®
+	VECTOR3 Normal;   // æ³•ç·šã€€ã‚·ã‚§ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ï¼ˆé™°å½±è¨ˆç®—ï¼‰ã«ã¯æ³•ç·šã¯å¿…é ˆ
+	VECTOR2 vTex;     // ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ¼åº§æ¨™
+	VECTOR3 Tangent;  // æŽ¥ãƒ™ã‚¯ãƒˆãƒ«  ãƒŽãƒ¼ãƒžãƒ«ãƒžãƒƒãƒ”ãƒ³ã‚°ã«ã¯æŽ¥ãƒ™ã‚¯ãƒˆãƒ«ãŒå¿…è¦
+	VECTOR3 Binormal; // å¾“æ³•ç·š      ãƒŽãƒ¼ãƒžãƒ«ãƒžãƒƒãƒ”ãƒ³ã‚°ã«ã¯å¾“æ³•ç·šãŒå¿…è¦
 };
 
-// ƒXƒLƒ“ƒƒbƒVƒ…’¸“_‚Ì\‘¢‘Ì
+// ã‚¹ã‚­ãƒ³ãƒ¡ãƒƒã‚·ãƒ¥é ‚ç‚¹ã®æ§‹é€ ä½“
 struct SkinVertex
 {
-	VECTOR3 Pos;             //ˆÊ’u
-	VECTOR3 Normal;          //–@ü@ƒVƒF[ƒfƒBƒ“ƒOi‰A‰eŒvŽZj‚É‚Í–@ü‚Í•K{
-	VECTOR2 vTex;            //ƒeƒNƒXƒ`ƒƒ[À•W
-	UINT    ClusterNum[4];   // ‰e‹¿‚ð—^‚¦‚éƒNƒ‰ƒXƒ^[(ƒ{[ƒ“)ƒCƒ“ƒfƒbƒNƒX
-	VECTOR4 Weits;           // ƒEƒFƒCƒg
+	VECTOR3 Pos;             //ä½ç½®
+	VECTOR3 Normal;          //æ³•ç·šã€€ã‚·ã‚§ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ï¼ˆé™°å½±è¨ˆç®—ï¼‰ã«ã¯æ³•ç·šã¯å¿…é ˆ
+	VECTOR2 vTex;            //ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ¼åº§æ¨™
+	UINT    ClusterNum[4];   // å½±éŸ¿ã‚’ä¸Žãˆã‚‹ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼(ãƒœãƒ¼ãƒ³)ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
+	VECTOR4 Weits;           // ã‚¦ã‚§ã‚¤ãƒˆ
 };
 struct SkinVertexNormal
 {
-	VECTOR3 Pos;             //ˆÊ’u
-	VECTOR3 Normal;          //–@ü@ƒVƒF[ƒfƒBƒ“ƒOi‰A‰eŒvŽZj‚É‚Í–@ü‚Í•K{
-	VECTOR2 vTex;            //ƒeƒNƒXƒ`ƒƒ[À•W
-	UINT    ClusterNum[4];   // ‰e‹¿‚ð—^‚¦‚éƒNƒ‰ƒXƒ^[(ƒ{[ƒ“)ƒCƒ“ƒfƒbƒNƒX
-	VECTOR4 Weits;           // ƒEƒFƒCƒg
-	VECTOR3 Tangent;         //ÚƒxƒNƒgƒ‹
-	VECTOR3 Binormal;        //]–@ü
+	VECTOR3 Pos;             //ä½ç½®
+	VECTOR3 Normal;          //æ³•ç·šã€€ã‚·ã‚§ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ï¼ˆé™°å½±è¨ˆç®—ï¼‰ã«ã¯æ³•ç·šã¯å¿…é ˆ
+	VECTOR2 vTex;            //ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ¼åº§æ¨™
+	UINT    ClusterNum[4];   // å½±éŸ¿ã‚’ä¸Žãˆã‚‹ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼(ãƒœãƒ¼ãƒ³)ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
+	VECTOR4 Weits;           // ã‚¦ã‚§ã‚¤ãƒˆ
+	VECTOR3 Tangent;         //æŽ¥ãƒ™ã‚¯ãƒˆãƒ«
+	VECTOR3 Binormal;        //å¾“æ³•ç·š
 };
 
-// ƒ{[ƒ“\‘¢‘Ì
+// ãƒœãƒ¼ãƒ³æ§‹é€ ä½“
 struct BONE {
-	MATRIX4X4  bindPose;		// ‰Šúƒ|[ƒY(‹ts—ñó‘Ô)
-	int        framePoseNum;    // ƒtƒŒ[ƒ€ƒ|[ƒY”
-	MATRIX4X4* framePose;	    // ƒtƒŒ[ƒ€ƒ|[ƒY
+	MATRIX4X4  bindPose;		// åˆæœŸãƒãƒ¼ã‚º(é€†è¡Œåˆ—çŠ¶æ…‹)
+	int        framePoseNum;    // ãƒ•ãƒ¬ãƒ¼ãƒ ãƒãƒ¼ã‚ºæ•°
+	MATRIX4X4* framePose;	    // ãƒ•ãƒ¬ãƒ¼ãƒ ãƒãƒ¼ã‚º
 
 	BONE()
 	{
@@ -94,14 +94,14 @@ struct BONE {
 	}
 };
 
-// ƒAƒjƒ[ƒVƒ‡ƒ“\‘¢‘Ì
+// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³æ§‹é€ ä½“
 struct ANIMATION {
 	bool   used;
 	int    startFrame;
 	int    endFrame;
 	int    RootBoneMesh;       // -- 2020.12.15 -- 3
 	int    RootBone;           // -- 2020.12.15 -- 3
-	bool   loop; // ƒ‹[ƒvƒtƒ‰ƒO‚ð‚±‚±‚ÉŽ‚½‚¹‚é
+	bool   loop; // ãƒ«ãƒ¼ãƒ—ãƒ•ãƒ©ã‚°ã‚’ã“ã“ã«æŒãŸã›ã‚‹
 	ANIMATION() {
 		used = false;
 		startFrame = 0;
@@ -112,37 +112,37 @@ struct ANIMATION {
 	}
 };
 
-// ƒVƒF[ƒ_‚É‚»‚Ì‚Ü‚Ü“n‚¹‚é‚æ‚¤‚Éƒ{[ƒ“Šî€‚É®—ñ‚µ‚½‡¬Ï‚Ýs—ñ‚Ì”z—ñ
+// ã‚·ã‚§ãƒ¼ãƒ€ã«ãã®ã¾ã¾æ¸¡ã›ã‚‹ã‚ˆã†ã«ãƒœãƒ¼ãƒ³åŸºæº–ã«æ•´åˆ—ã—ãŸåˆæˆæ¸ˆã¿è¡Œåˆ—ã®é…åˆ—
 struct BONESHADER
 {
 	MATRIX4X4  shaderFramePose[MAX_BONES];
 };
 
-// ƒ‹[ƒgƒ{[ƒ“ƒAƒjƒ[ƒVƒ‡ƒ“ƒ^ƒCƒv
+// ãƒ«ãƒ¼ãƒˆãƒœãƒ¼ãƒ³ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚¿ã‚¤ãƒ—
 enum ROOTANIMTYPE { eRootAnimNone = 0, eRootAnimXZ = 1, eRootAnim = 2 };          // -- 2020.12.15 -- 3
 
 
-// ƒƒbƒVƒ…”z—ñ
+// ãƒ¡ãƒƒã‚·ãƒ¥é…åˆ—
 struct CFbxMeshArray
 {
-	StaticVertexNormal*   m_vStaticVerticesNormal; // ’¸“_ƒf[ƒ^ ƒoƒ“ƒvƒ}ƒbƒv—p
-	SkinVertexNormal*     m_vSkinVerticesNormal; // ’¸“_ƒf[ƒ^ ƒoƒ“ƒvƒ}ƒbƒv—p
-	DWORD*                m_nIndices;        // ƒCƒ“ƒfƒbƒNƒXƒf[ƒ^
-	ID3D11Buffer*         m_pVertexBuffer;   // ƒo[ƒeƒbƒNƒXƒoƒbƒtƒ@
-	ID3D11Buffer*         m_pIndexBuffer;    // ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@
-	DWORD                 m_dwVerticesNum;   // ƒo[ƒeƒbƒNƒXƒoƒbƒtƒ@—v‘f”
-	DWORD                 m_dwIndicesNum;    // ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@—v‘f”
-	VECTOR4               m_pMaterialDiffuse;      // ƒ}ƒeƒŠƒAƒ‹ƒfƒBƒtƒ…[ƒYƒJƒ‰[     // -- 2020.12.15
-	VECTOR4               m_pMaterialSpecular;     // ƒ}ƒeƒŠƒAƒ‹ƒXƒyƒLƒ…ƒ‰ƒJƒ‰[       // -- 2020.12.15
-	ID3D11ShaderResourceView* m_pTexture;          // ƒeƒNƒXƒ`ƒƒ[ƒAƒhƒŒƒX
-	ID3D11ShaderResourceView* m_pTextureNormal;    // ƒeƒNƒXƒ`ƒƒ[NormalƒAƒhƒŒƒX
-	ID3D11ShaderResourceView* m_pTextureHeight;    // ƒeƒNƒXƒ`ƒƒ[HeightƒAƒhƒŒƒX
-	ID3D11ShaderResourceView* m_pTextureSpecular;  // ƒeƒNƒXƒ`ƒƒ[SpecularƒAƒhƒŒƒX
-	DWORD                 m_NumBones;        // ƒ{[ƒ“”
-	BONE                  m_BoneArray[ANIMATION_MAX][MAX_BONES];  // ƒAƒjƒ[ƒVƒ‡ƒ“ƒf[ƒ^‚ª[ƒtƒŒ[ƒ€”][ƒ{[ƒ“”] 
-	BONESHADER*           m_pBoneShader[ANIMATION_MAX];       // ƒVƒF[ƒ_[‚É“n‚·ƒ{[ƒ“s—ñ[ƒtƒŒ[ƒ€”]
+	StaticVertexNormal*   m_vStaticVerticesNormal; // é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿ ãƒãƒ³ãƒ—ãƒžãƒƒãƒ—ç”¨
+	SkinVertexNormal*     m_vSkinVerticesNormal; // é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿ ãƒãƒ³ãƒ—ãƒžãƒƒãƒ—ç”¨
+	DWORD*                m_nIndices;        // ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒ‡ãƒ¼ã‚¿
+	ID3D11Buffer*         m_pVertexBuffer;   // ãƒãƒ¼ãƒ†ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡
+	ID3D11Buffer*         m_pIndexBuffer;    // ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡
+	DWORD                 m_dwVerticesNum;   // ãƒãƒ¼ãƒ†ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡è¦ç´ æ•°
+	DWORD                 m_dwIndicesNum;    // ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡è¦ç´ æ•°
+	VECTOR4               m_pMaterialDiffuse;      // ãƒžãƒ†ãƒªã‚¢ãƒ«ãƒ‡ã‚£ãƒ•ãƒ¥ãƒ¼ã‚ºã‚«ãƒ©ãƒ¼     // -- 2020.12.15
+	VECTOR4               m_pMaterialSpecular;     // ãƒžãƒ†ãƒªã‚¢ãƒ«ã‚¹ãƒšã‚­ãƒ¥ãƒ©ã‚«ãƒ©ãƒ¼       // -- 2020.12.15
+	ID3D11ShaderResourceView* m_pTexture;          // ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ¼ã‚¢ãƒ‰ãƒ¬ã‚¹
+	ID3D11ShaderResourceView* m_pTextureNormal;    // ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ¼Normalã‚¢ãƒ‰ãƒ¬ã‚¹
+	ID3D11ShaderResourceView* m_pTextureHeight;    // ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ¼Heightã‚¢ãƒ‰ãƒ¬ã‚¹
+	ID3D11ShaderResourceView* m_pTextureSpecular;  // ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ¼Specularã‚¢ãƒ‰ãƒ¬ã‚¹
+	DWORD                 m_NumBones;        // ãƒœãƒ¼ãƒ³æ•°
+	BONE                  m_BoneArray[ANIMATION_MAX][MAX_BONES];  // ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ‡ãƒ¼ã‚¿ãŒ[ãƒ•ãƒ¬ãƒ¼ãƒ æ•°][ãƒœãƒ¼ãƒ³æ•°] 
+	BONESHADER*           m_pBoneShader[ANIMATION_MAX];       // ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã«æ¸¡ã™ãƒœãƒ¼ãƒ³è¡Œåˆ—[ãƒ•ãƒ¬ãƒ¼ãƒ æ•°]
 
-	VECTOR3               m_vCenterPos;            // ƒƒbƒVƒ…’†S“_À•W
+	VECTOR3               m_vCenterPos;            // ãƒ¡ãƒƒã‚·ãƒ¥ä¸­å¿ƒç‚¹åº§æ¨™
 
 	CFbxMeshArray()
 	{
@@ -157,7 +157,7 @@ struct CFbxMeshArray
 		m_pTextureNormal = nullptr;
 		m_pTextureHeight = nullptr;
 		m_pTextureSpecular = nullptr;
-		m_NumBones = 0;        // ƒ{[ƒ“”
+		m_NumBones = 0;        // ãƒœãƒ¼ãƒ³æ•°
 		ZeroMemory(m_BoneArray, sizeof(m_BoneArray));
 		ZeroMemory(m_pBoneShader, sizeof(m_pBoneShader));
 		m_vCenterPos = VECTOR3(0, 0, 0);
@@ -165,7 +165,7 @@ struct CFbxMeshArray
 };
 
 //
-// FbxƒƒbƒVƒ…ƒNƒ‰ƒX
+// Fbxãƒ¡ãƒƒã‚·ãƒ¥ã‚¯ãƒ©ã‚¹
 //
 class CShader;
 class Animator;
@@ -175,39 +175,39 @@ class CFbxMesh
 public:
 	CDirect3D* m_pD3D;  // Direct3D11
 	CShader* m_pShader;
-	CFbxMeshCtrl* m_pFbxMeshCtrl;                  // ƒeƒNƒXƒ`ƒƒƒRƒ“ƒgƒ[ƒ‹ƒNƒ‰ƒX		// -- 2021.2.4
+	CFbxMeshCtrl* m_pFbxMeshCtrl;                  // ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã‚¯ãƒ©ã‚¹		// -- 2021.2.4
 
-	int                   m_nMeshType;     // 0:–¢’è  1:ƒXƒ^ƒeƒBƒbƒNƒƒbƒVƒ…  2:ƒXƒLƒ“ƒƒbƒVƒ…
-	VECTOR4*              m_pMaterialDiffuseArray;    // ƒ}ƒeƒŠƒAƒ‹ƒfƒBƒtƒ…[ƒYƒJƒ‰[     // -- 2020.12.15
-	VECTOR4*              m_pMaterialSpecularArray;   // ƒ}ƒeƒŠƒAƒ‹ƒXƒyƒLƒ…ƒ‰ƒJƒ‰[       // -- 2020.12.15
-	ID3D11ShaderResourceView** m_pTextureArray;       //ƒeƒNƒXƒ`ƒƒ[”z—ñ
-	ID3D11ShaderResourceView** m_pTextureNormalArray; //ƒeƒNƒXƒ`ƒƒ[Normal”z—ñ
-	ID3D11ShaderResourceView** m_pTextureHeightArray; //ƒeƒNƒXƒ`ƒƒ[Height”z—ñ
-	ID3D11ShaderResourceView** m_pTextureSpecularArray; // ƒeƒNƒXƒ`ƒƒ[Specular”z—ñ
-	DWORD                 m_dwTextureNum;       //ƒeƒNƒXƒ`ƒƒ[”z—ñ—v‘f”
+	int                   m_nMeshType;     // 0:æœªå®š  1:ã‚¹ã‚¿ãƒ†ã‚£ãƒƒã‚¯ãƒ¡ãƒƒã‚·ãƒ¥  2:ã‚¹ã‚­ãƒ³ãƒ¡ãƒƒã‚·ãƒ¥
+	VECTOR4*              m_pMaterialDiffuseArray;    // ãƒžãƒ†ãƒªã‚¢ãƒ«ãƒ‡ã‚£ãƒ•ãƒ¥ãƒ¼ã‚ºã‚«ãƒ©ãƒ¼     // -- 2020.12.15
+	VECTOR4*              m_pMaterialSpecularArray;   // ãƒžãƒ†ãƒªã‚¢ãƒ«ã‚¹ãƒšã‚­ãƒ¥ãƒ©ã‚«ãƒ©ãƒ¼       // -- 2020.12.15
+	ID3D11ShaderResourceView** m_pTextureArray;       //ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ¼é…åˆ—
+	ID3D11ShaderResourceView** m_pTextureNormalArray; //ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ¼Normalé…åˆ—
+	ID3D11ShaderResourceView** m_pTextureHeightArray; //ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ¼Heighté…åˆ—
+	ID3D11ShaderResourceView** m_pTextureSpecularArray; // ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ¼Specularé…åˆ—
+	DWORD                 m_dwTextureNum;       //ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ¼é…åˆ—è¦ç´ æ•°
 
-	CFbxMeshArray* m_pMeshArray;         // ƒƒbƒVƒ…ƒIƒuƒWƒFƒNƒg”z—ñ
-	DWORD                 m_dwMeshNum;          // ƒƒbƒVƒ…ƒIƒuƒWƒFƒNƒg‚Ì—v‘f”
-	//	int                   m_allAnimationCount;  // ‘S‚Ä‚ÌƒAƒjƒ[ƒVƒ‡ƒ“”
+	CFbxMeshArray* m_pMeshArray;         // ãƒ¡ãƒƒã‚·ãƒ¥ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆé…åˆ—
+	DWORD                 m_dwMeshNum;          // ãƒ¡ãƒƒã‚·ãƒ¥ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®è¦ç´ æ•°
+	//	int                   m_allAnimationCount;  // å…¨ã¦ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³æ•°
 
-	ANIMATION				m_Animation[ANIMATION_MAX];       // ƒAƒjƒ[ƒVƒ‡ƒ“
-	BONE                  m_RootBoneArray[ANIMATION_MAX];   // ƒ‹[ƒgƒ{[ƒ“ƒAƒjƒ[ƒVƒ‡ƒ“ƒf[ƒ^‚ª[ƒtƒŒ[ƒ€”]•ª   // -- 2020.12.15 -- 3
-	ROOTANIMTYPE          m_RootAnimType[ANIMATION_MAX];    // ƒ‹[ƒgƒ{[ƒ“ƒAƒjƒƒ^ƒCƒv   eRootAnimNone:ƒ‹[ƒgƒAƒjƒ‚È‚µ  eRootAnimXZ:ƒ‹[ƒgƒAƒjƒXZ  eRootAnim:ƒ‹[ƒgƒAƒjƒ  // -- 2020.12.15 -- 3
+	ANIMATION				m_Animation[ANIMATION_MAX];       // ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³
+	BONE                  m_RootBoneArray[ANIMATION_MAX];   // ãƒ«ãƒ¼ãƒˆãƒœãƒ¼ãƒ³ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ‡ãƒ¼ã‚¿ãŒ[ãƒ•ãƒ¬ãƒ¼ãƒ æ•°]åˆ†   // -- 2020.12.15 -- 3
+	ROOTANIMTYPE          m_RootAnimType[ANIMATION_MAX];    // ãƒ«ãƒ¼ãƒˆãƒœãƒ¼ãƒ³ã‚¢ãƒ‹ãƒ¡ã‚¿ã‚¤ãƒ—   eRootAnimNone:ãƒ«ãƒ¼ãƒˆã‚¢ãƒ‹ãƒ¡ãªã—  eRootAnimXZ:ãƒ«ãƒ¼ãƒˆã‚¢ãƒ‹ãƒ¡XZ  eRootAnim:ãƒ«ãƒ¼ãƒˆã‚¢ãƒ‹ãƒ¡  // -- 2020.12.15 -- 3
 
-	float                 m_fHeightMax;         // ƒfƒBƒXƒvƒŒƒCƒXƒƒ“ƒgƒ}ƒbƒsƒ“ƒO‚Ì‚‚³
-	int                   m_iMaxDevide;         // ƒfƒBƒXƒvƒŒƒCƒXƒƒ“ƒgƒ}ƒbƒsƒ“ƒO‚Ì•ªŠ„”
-	VECTOR4               m_vDiffuse;           // ƒfƒBƒtƒ…[ƒYƒJƒ‰[
+	float                 m_fHeightMax;         // ãƒ‡ã‚£ã‚¹ãƒ—ãƒ¬ã‚¤ã‚¹ãƒ¡ãƒ³ãƒˆãƒžãƒƒãƒ”ãƒ³ã‚°ã®é«˜ã•
+	int                   m_iMaxDevide;         // ãƒ‡ã‚£ã‚¹ãƒ—ãƒ¬ã‚¤ã‚¹ãƒ¡ãƒ³ãƒˆãƒžãƒƒãƒ”ãƒ³ã‚°ã®åˆ†å‰²æ•°
+	VECTOR4               m_vDiffuse;           // ãƒ‡ã‚£ãƒ•ãƒ¥ãƒ¼ã‚ºã‚«ãƒ©ãƒ¼
 
-	DWORD                 m_dwLoadTime;         // ƒ[ƒhŽžŠÔ
+	DWORD                 m_dwLoadTime;         // ãƒ­ãƒ¼ãƒ‰æ™‚é–“
 
-	DWORD*                m_dwRenderIdxArray;       // ƒŒƒ“ƒ_ƒŠƒ“ƒO‡‚Ì“YŽš”z—ñ
-	float*                m_fRenderDistanceArray;   // ƒŒƒ“ƒ_ƒŠƒ“ƒO‡‚ðŒˆ‚ß‚é‚½‚ß‚Ì‹——£
+	DWORD*                m_dwRenderIdxArray;       // ãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°é †ã®æ·»å­—é…åˆ—
+	float*                m_fRenderDistanceArray;   // ãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°é †ã‚’æ±ºã‚ã‚‹ãŸã‚ã®è·é›¢
 
-	VECTOR3               m_vMin;                   // ƒ‚ƒfƒ‹‚Ì‘å‚«‚³‚ð‘ª‚é‚½‚ß‚ÌÅ¬’l  // -- 2021.2.4
-	VECTOR3               m_vMax;                   // ƒ‚ƒfƒ‹‚Ì‘å‚«‚³‚ð‘ª‚é‚½‚ß‚ÌÅ‘å’l  // -- 2021.2.4
+	VECTOR3               m_vMin;                   // ãƒ¢ãƒ‡ãƒ«ã®å¤§ãã•ã‚’æ¸¬ã‚‹ãŸã‚ã®æœ€å°å€¤  // -- 2021.2.4
+	VECTOR3               m_vMax;                   // ãƒ¢ãƒ‡ãƒ«ã®å¤§ãã•ã‚’æ¸¬ã‚‹ãŸã‚ã®æœ€å¤§å€¤  // -- 2021.2.4
 
 public:
-	// ƒƒ\ƒbƒh
+	// ãƒ¡ã‚½ãƒƒãƒ‰
 	CFbxMesh();
 	CFbxMesh(CFbxMeshCtrl* pFbxMeshCtrl);                              // -- 2021.2.4
 	CFbxMesh(CFbxMeshCtrl* pFbxMeshCtrl, const TCHAR* FName);
@@ -216,20 +216,20 @@ public:
 	void    DestroyD3D();
 
 	/// <summary>
-	/// ƒƒbƒVƒ…ƒtƒ@ƒCƒ‹‚ð“Ç‚Ýž‚ñ‚ÅƒƒbƒVƒ…‚ðì¬‚·‚é
+	/// ãƒ¡ãƒƒã‚·ãƒ¥ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚“ã§ãƒ¡ãƒƒã‚·ãƒ¥ã‚’ä½œæˆã™ã‚‹
 	/// </summary>
-	/// <param name="FName">ƒƒbƒVƒ…ƒtƒ@ƒCƒ‹‚ÌƒpƒX</param>
-	/// <returns>³í‚É“Ç‚Ýž‚ß‚ê‚Îtrue</returns>
+	/// <param name="FName">ãƒ¡ãƒƒã‚·ãƒ¥ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹</param>
+	/// <returns>æ­£å¸¸ã«èª­ã¿è¾¼ã‚ã‚Œã°true</returns>
 	bool    Load(const TCHAR* FName);
 
 	/// <summary>
-	/// ƒAƒjƒ[ƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹‚ð“Ç‚Ýž‚ñ‚ÅƒƒbƒVƒ…‚ÉƒAƒjƒ[ƒVƒ‡ƒ“î•ñ‚ð’Ç‰Á‚·‚é
+	/// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚“ã§ãƒ¡ãƒƒã‚·ãƒ¥ã«ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³æƒ…å ±ã‚’è¿½åŠ ã™ã‚‹
 	/// </summary>
-	/// <param name="id">ƒAƒjƒ[ƒVƒ‡ƒ“‚h‚c(”Ô†)</param>
-	/// <param name="FName">ƒAƒjƒ[ƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹‚ÌƒpƒX</param>
-	/// <param name="loopFlag">ƒ‹[ƒvÄ¶‚·‚é‚©</param>
-	/// <param name="RAType">ƒ‹[ƒgƒ{[ƒ“ƒAƒjƒ[ƒVƒ‡ƒ“ƒ^ƒCƒv</param>
-	/// <returns>³í‚É“Ç‚Ýž‚ß‚ê‚Îtrue</returns>
+	/// <param name="id">ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ï¼©ï¼¤(ç•ªå·)</param>
+	/// <param name="FName">ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹</param>
+	/// <param name="loopFlag">ãƒ«ãƒ¼ãƒ—å†ç”Ÿã™ã‚‹ã‹</param>
+	/// <param name="RAType">ãƒ«ãƒ¼ãƒˆãƒœãƒ¼ãƒ³ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚¿ã‚¤ãƒ—</param>
+	/// <returns>æ­£å¸¸ã«èª­ã¿è¾¼ã‚ã‚Œã°true</returns>
 	bool    LoadAnimation(int id, const TCHAR* FName, bool loopFlag, const ROOTANIMTYPE& RAType = eRootAnimNone);
 
 	VECTOR3 GetStaticCenterPos(const StaticVertex* vertex, const DWORD& Num);
@@ -250,62 +250,62 @@ public:
 
 
 	/// <summary>
-	/// ƒ‹[ƒgƒ{[ƒ“ƒAƒjƒ[ƒVƒ‡ƒ“ƒ^ƒCƒv‚ðŽæ“¾
+	/// ãƒ«ãƒ¼ãƒˆãƒœãƒ¼ãƒ³ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚¿ã‚¤ãƒ—ã‚’å–å¾—
 	/// </summary>
-	/// <param name="animID">ƒAƒjƒ[ƒVƒ‡ƒ“‚h‚c(”Ô†)</param>
-	/// <returns>ƒ‹[ƒgƒ{[ƒ“ƒAƒjƒ[ƒVƒ‡ƒ“ƒ^ƒCƒv</returns>
+	/// <param name="animID">ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ï¼©ï¼¤(ç•ªå·)</param>
+	/// <returns>ãƒ«ãƒ¼ãƒˆãƒœãƒ¼ãƒ³ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚¿ã‚¤ãƒ—</returns>
 	int GetRootAnimType(int animID) { return m_RootAnimType[animID]; }      // -- 2024.9.5
 
 	/// <summary>
-	/// ƒ‹[ƒgƒ{[ƒ“ƒAƒjƒ[ƒVƒ‡ƒ“‚Ìƒ}ƒgƒŠƒbƒNƒX‚ðŽæ“¾
+	/// ãƒ«ãƒ¼ãƒˆãƒœãƒ¼ãƒ³ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ãƒžãƒˆãƒªãƒƒã‚¯ã‚¹ã‚’å–å¾—
 	/// </summary>
-	/// <param name="animStatus">ƒAƒjƒ[ƒ^[</param>
-	/// <param name="UpFrame">ƒAƒjƒ[ƒVƒ‡ƒ“ƒtƒŒ[ƒ€‚ÌŒ»Ý’l‚©‚ç‚Ì‘•ªiÈ—ª’lF‚Oj</param>
-	/// <returns>ƒ‹[ƒgƒ{[ƒ“‚Ìƒ}ƒgƒŠƒbƒNƒX</returns>
+	/// <param name="animStatus">ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚¿ãƒ¼</param>
+	/// <param name="UpFrame">ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ•ãƒ¬ãƒ¼ãƒ ã®ç¾åœ¨å€¤ã‹ã‚‰ã®å¢—åˆ†ï¼ˆçœç•¥å€¤ï¼šï¼ï¼‰</param>
+	/// <returns>ãƒ«ãƒ¼ãƒˆãƒœãƒ¼ãƒ³ã®ãƒžãƒˆãƒªãƒƒã‚¯ã‚¹</returns>
 	MATRIX4X4 GetRootAnimMatrices(Animator* animStatus, const int& UpFrame = 0);      // -- 2024.3.14
 
 	/// <summary>
-	/// ƒ‹[ƒgƒ{[ƒ“ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌŒ»Ý’lƒtƒŒ[ƒ€‚Ìˆê‚Â‘O‚ÌƒtƒŒ[ƒ€ˆÊ’u‚©‚ç‚Ì‘•ªƒ}ƒgƒŠƒbƒNƒX‚ðŽæ“¾‚·‚é
+	/// ãƒ«ãƒ¼ãƒˆãƒœãƒ¼ãƒ³ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ç¾åœ¨å€¤ãƒ•ãƒ¬ãƒ¼ãƒ ã®ä¸€ã¤å‰ã®ãƒ•ãƒ¬ãƒ¼ãƒ ä½ç½®ã‹ã‚‰ã®å¢—åˆ†ãƒžãƒˆãƒªãƒƒã‚¯ã‚¹ã‚’å–å¾—ã™ã‚‹
 	/// </summary>
-	/// <param name="animStatus">ƒAƒjƒ[ƒ^[</param>
-	/// <param name="UpFrame">ƒAƒjƒ[ƒVƒ‡ƒ“ƒtƒŒ[ƒ€‚ÌŒ»Ý’l‚©‚ç‚Ì‘•ªiÈ—ª’lF‚Oj</param>
-	/// <param name="StartFrameUp">ƒAƒjƒƒtƒŒ[ƒ€‚ªŠJŽnƒtƒŒ[ƒ€iƒtƒŒ[ƒ€‚Oj‚Ì‚Æ‚«‚Ì‘•ª’l‚Ìˆ—•û–@iÈ—ª’lF‚Pj</param>
-	/// <returns>ƒ‹[ƒgƒ{[ƒ“‚Ìˆê‚Â‘O‚ÌˆÊ’u‚©‚ç‚Ì‘•ªƒ}ƒgƒŠƒbƒNƒX</returns>
+	/// <param name="animStatus">ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚¿ãƒ¼</param>
+	/// <param name="UpFrame">ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ•ãƒ¬ãƒ¼ãƒ ã®ç¾åœ¨å€¤ã‹ã‚‰ã®å¢—åˆ†ï¼ˆçœç•¥å€¤ï¼šï¼ï¼‰</param>
+	/// <param name="StartFrameUp">ã‚¢ãƒ‹ãƒ¡ãƒ•ãƒ¬ãƒ¼ãƒ ãŒé–‹å§‹ãƒ•ãƒ¬ãƒ¼ãƒ ï¼ˆãƒ•ãƒ¬ãƒ¼ãƒ ï¼ï¼‰ã®ã¨ãã®å¢—åˆ†å€¤ã®å‡¦ç†æ–¹æ³•ï¼ˆçœç•¥å€¤ï¼šï¼‘ï¼‰</param>
+	/// <returns>ãƒ«ãƒ¼ãƒˆãƒœãƒ¼ãƒ³ã®ä¸€ã¤å‰ã®ä½ç½®ã‹ã‚‰ã®å¢—åˆ†ãƒžãƒˆãƒªãƒƒã‚¯ã‚¹</returns>
 	MATRIX4X4 GetRootAnimUpMatrices(Animator* animStatus, const int& UpFrame = 0, const int& StartFrameUp = 1);      // -- 2024.3.14
 
-	void MakeRootAnimAndShaderMatrix(const int& animNum, ROOTANIMTYPE RAType);        // ƒ‹[ƒgƒ{[ƒ“ƒAƒjƒ[ƒVƒ‡ƒ“‚ÆƒVƒF[ƒ_[ƒ}ƒgƒŠƒbƒNƒX‚Ìì¬       // -- 2020.12.15 -- 3
+	void MakeRootAnimAndShaderMatrix(const int& animNum, ROOTANIMTYPE RAType);        // ãƒ«ãƒ¼ãƒˆãƒœãƒ¼ãƒ³ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã¨ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ãƒžãƒˆãƒªãƒƒã‚¯ã‚¹ã®ä½œæˆ       // -- 2020.12.15 -- 3
 
-	// ƒtƒŒ[ƒ€î•ñ‚ÌŽæ“¾
-	int GetEndFrame(const int& animID);  // endFrame-startFrame‚ðŽæ“¾ 
+	// ãƒ•ãƒ¬ãƒ¼ãƒ æƒ…å ±ã®å–å¾—
+	int GetEndFrame(const int& animID);  // endFrame-startFrameã‚’å–å¾— 
 	
 	/// <summary>
-	/// Žw’èƒƒbƒVƒ…”Ô†Eƒ{[ƒ“”Ô†‚Ìƒ{[ƒ“ƒ}ƒgƒŠƒbƒNƒX‚ðŽæ“¾
-	/// iƒƒbƒVƒ…Œ´“_‚ð‚O‚Æ‚µ‚½‚Æ‚«‚Ì‘Š‘Îƒ}ƒgƒŠƒbƒNƒX‚Æ‚È‚éj
+	/// æŒ‡å®šãƒ¡ãƒƒã‚·ãƒ¥ç•ªå·ãƒ»ãƒœãƒ¼ãƒ³ç•ªå·ã®ãƒœãƒ¼ãƒ³ãƒžãƒˆãƒªãƒƒã‚¯ã‚¹ã‚’å–å¾—
+	/// ï¼ˆãƒ¡ãƒƒã‚·ãƒ¥åŽŸç‚¹ã‚’ï¼ã¨ã—ãŸã¨ãã®ç›¸å¯¾ãƒžãƒˆãƒªãƒƒã‚¯ã‚¹ã¨ãªã‚‹ï¼‰
 	/// </summary>
-	/// <param name="animStatus">ƒAƒjƒ[ƒ^[</param>
-	/// <param name="nBone">ƒ{[ƒ“”Ô†</param>
-	/// <param name="nMesh">ƒƒbƒVƒ…”Ô†(È—ª’l:0)</param>
-	/// <returns>ƒ{[ƒ“ƒ}ƒgƒŠƒbƒNƒX</returns>
+	/// <param name="animStatus">ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚¿ãƒ¼</param>
+	/// <param name="nBone">ãƒœãƒ¼ãƒ³ç•ªå·</param>
+	/// <param name="nMesh">ãƒ¡ãƒƒã‚·ãƒ¥ç•ªå·(çœç•¥å€¤:0)</param>
+	/// <returns>ãƒœãƒ¼ãƒ³ãƒžãƒˆãƒªãƒƒã‚¯ã‚¹</returns>
 	MATRIX4X4 GetFrameMatrices(Animator* animStatus, const DWORD& nBone, const DWORD& nMesh = 0);		       // -- 2024.9.5
 	MATRIX4X4 GetFrameMatrices(Animator* animStatus, const MATRIX4X4& mWorld, const DWORD& nBone, const DWORD& nMesh = 0);      // -- 2024.9.5
 	MATRIX4X4 GetMixBoneMatrix(Animator* animStatus, const DWORD& nBone, const DWORD& nMesh);
 
 	/// <summary>
-	/// ƒƒbƒVƒ…‚ðƒŒƒ“ƒ_ƒŠƒ“ƒO‚·‚é
+	/// ãƒ¡ãƒƒã‚·ãƒ¥ã‚’ãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°ã™ã‚‹
 	/// </summary>
-	/// <param name="mWorld">ƒ[ƒ‹ƒhƒ}ƒgƒŠƒbƒNƒX</param>
+	/// <param name="mWorld">ãƒ¯ãƒ¼ãƒ«ãƒ‰ãƒžãƒˆãƒªãƒƒã‚¯ã‚¹</param>
 	void    Render(const MATRIX4X4& mWorld);
 	void    RenderDisplace(const MATRIX4X4& mWorld);
 
  	/// <summary>
- 	///  ƒƒbƒVƒ…‚ðƒŒƒ“ƒ_ƒŠƒ“ƒO‚·‚é
+ 	///  ãƒ¡ãƒƒã‚·ãƒ¥ã‚’ãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°ã™ã‚‹
  	/// </summary>
- 	/// <param name="animStatus">ƒAƒjƒ[ƒ^[</param>
- 	/// <param name="mWorld">ƒ[ƒ‹ƒhƒ}ƒgƒŠƒbƒNƒX</param>
+ 	/// <param name="animStatus">ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚¿ãƒ¼</param>
+ 	/// <param name="mWorld">ãƒ¯ãƒ¼ãƒ«ãƒ‰ãƒžãƒˆãƒªãƒƒã‚¯ã‚¹</param>
  	void    Render(Animator* animStatus, const MATRIX4X4& mWorld);
 	void    RenderDisplace(Animator* animStatus, const MATRIX4X4& mWorld);
 
-	// ƒXƒ^ƒeƒBƒbƒNƒƒbƒVƒ…	ƒŒƒ“ƒ_ƒŠƒ“ƒO
+	// ã‚¹ã‚¿ãƒ†ã‚£ãƒƒã‚¯ãƒ¡ãƒƒã‚·ãƒ¥	ãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°
 	void    Render(const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye);
 	void    RenderDisplace(const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye);
 
@@ -314,7 +314,7 @@ private:
 	void    RenderDisplaceStatic(const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye);
 
 public:
-	// ƒXƒLƒ“ƒƒbƒVƒ…   ƒŒƒ“ƒ_ƒŠƒ“ƒO
+	// ã‚¹ã‚­ãƒ³ãƒ¡ãƒƒã‚·ãƒ¥   ãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°
 	void    Render(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye);
 	void    RenderSkin(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye);
 
@@ -328,17 +328,17 @@ private:
 	void    DrawDisplace(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye);
 
 public:
-	// ƒVƒF[ƒ_[ŠÖ˜A
+	// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼é–¢é€£
 	void    SetShaderTexture(const TCHAR ProfileName[], int SlotNo, ID3D11ShaderResourceView** ppTexture);
 	void    SetShaderMatColor(const TCHAR ProfileName[], int SlotNo, int i);      // -- 2020.12.15
 };
 
 //
-// FbxƒƒbƒVƒ…ƒRƒ“ƒgƒ[ƒ‹ƒNƒ‰ƒX            // -- 2021.2.4
+// Fbxãƒ¡ãƒƒã‚·ãƒ¥ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã‚¯ãƒ©ã‚¹            // -- 2021.2.4
 // 
-// ƒƒbƒVƒ…‚Ì‘‡“I‚ÈŠÇ—‚ðs‚¤ƒNƒ‰ƒX
-// Žå‚ÉƒeƒNƒXƒ`ƒƒ‚ÌŠÇ—‚ðs‚¤B
-// •¡”‚ÌƒƒbƒVƒ…ŠÔ‚Å“¯ˆê‚ÌƒeƒNƒXƒ`ƒƒ‚ªŽg‚í‚ê‚Ä‚¢‚éê‡Ad•¡‚·‚é“Ç‚Ýž‚Ý‚ð”rœ‚·‚é
+// ãƒ¡ãƒƒã‚·ãƒ¥ã®ç·åˆçš„ãªç®¡ç†ã‚’è¡Œã†ã‚¯ãƒ©ã‚¹
+// ä¸»ã«ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ç®¡ç†ã‚’è¡Œã†ã€‚
+// è¤‡æ•°ã®ãƒ¡ãƒƒã‚·ãƒ¥é–“ã§åŒä¸€ã®ãƒ†ã‚¯ã‚¹ãƒãƒ£ãŒä½¿ã‚ã‚Œã¦ã„ã‚‹å ´åˆã€é‡è¤‡ã™ã‚‹èª­ã¿è¾¼ã¿ã‚’æŽ’é™¤ã™ã‚‹
 //
 class CFbxMeshCtrl
 {
@@ -346,7 +346,7 @@ public:
 	CDirect3D*     m_pD3D;  // Direct3D11
 	CShader*       m_pShader;
 
-	std::list<TextureList> m_TexList;		// ƒeƒNƒXƒ`ƒƒ[‚ÌƒŠƒXƒg
+	std::list<TextureList> m_TexList;		// ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ¼ã®ãƒªã‚¹ãƒˆ
 
 public:
 	ID3D11ShaderResourceView* SetTextureList(const TCHAR FName[]);
