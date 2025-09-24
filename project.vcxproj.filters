@@ -1,0 +1,385 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="HLSL">
+      <UniqueIdentifier>{ed911f62-ff4d-4d58-9c99-d126849ac4fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HLSL\Displace">
+      <UniqueIdentifier>{3d0a3951-1844-4ccf-9ff5-d3a664f9f590}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HLSL\Effect">
+      <UniqueIdentifier>{bac4fe59-4a90-488e-b30f-57915ccddaa6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HLSL\FbxMesh">
+      <UniqueIdentifier>{a692306f-f65d-4488-b866-a83ff50e06dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HLSL\Simple">
+      <UniqueIdentifier>{3bbc01af-c937-4f90-813e-02d3d2fa85f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HLSL\Sprite">
+      <UniqueIdentifier>{285c0275-a156-401b-a6dd-37f81cd4510e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\00_Windowsメイン">
+      <UniqueIdentifier>{4bec077d-f207-450d-9af5-b4c5c367c2a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\01_ゲームメイン">
+      <UniqueIdentifier>{d4461820-9e14-4d94-8b8b-b8f7ae575739}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\02_ゲームライブラリ">
+      <UniqueIdentifier>{a1c9b705-5889-4267-bc09-734bc6922a30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\03_DirectX">
+      <UniqueIdentifier>{51a6f6fe-62b4-4a6d-ac9c-940a26a47e47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\04_ImGUI">
+      <UniqueIdentifier>{7c62f635-58ea-4305-be25-e23f3444c559}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\05_フレームワーク">
+      <UniqueIdentifier>{2f52e50e-6224-4dbf-a930-01f696385c5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\06_共通">
+      <UniqueIdentifier>{ef79b2b1-d77c-4e0f-ba34-50e4c05a169f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\07_TitleScene">
+      <UniqueIdentifier>{23c29058-2579-4bf4-a411-46e295d6a90a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\08_PlayScene">
+      <UniqueIdentifier>{54c21df3-e977-4cb1-b703-924c7617f825}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Hlsl\DisplaceSkinMesh.hlsli">
+      <Filter>HLSL\Displace</Filter>
+    </None>
+    <None Include="Hlsl\DisplaceStaticMesh.hlsli">
+      <Filter>HLSL\Displace</Filter>
+    </None>
+    <None Include="Hlsl\DisplaceWave.hlsli">
+      <Filter>HLSL\Displace</Filter>
+    </None>
+    <None Include="Hlsl\Effect3D.hlsli">
+      <Filter>HLSL\Effect</Filter>
+    </None>
+    <None Include="Hlsl\FbxSkinMesh.hlsli">
+      <Filter>HLSL\FbxMesh</Filter>
+    </None>
+    <None Include="Hlsl\FbxStaticMesh.hlsli">
+      <Filter>HLSL\FbxMesh</Filter>
+    </None>
+    <None Include="Hlsl\Simple.hlsli">
+      <Filter>HLSL\Simple</Filter>
+    </None>
+    <None Include="Hlsl\Sprite3D.hlsli">
+      <Filter>HLSL\Sprite</Filter>
+    </None>
+    <None Include="Src\Main.aps">
+      <Filter>リソース ファイル</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Hlsl\DisplaceSkinMesh_DS.hlsl">
+      <Filter>HLSL\Displace</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\DisplaceSkinMesh_HS.hlsl">
+      <Filter>HLSL\Displace</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\DisplaceSkinMesh_PS.hlsl">
+      <Filter>HLSL\Displace</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\DisplaceSkinMesh_VS.hlsl">
+      <Filter>HLSL\Displace</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\DisplaceStaticMesh_DS.hlsl">
+      <Filter>HLSL\Displace</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\DisplaceStaticMesh_HS.hlsl">
+      <Filter>HLSL\Displace</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\DisplaceStaticMesh_PS.hlsl">
+      <Filter>HLSL\Displace</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\DisplaceStaticMesh_VS.hlsl">
+      <Filter>HLSL\Displace</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\DisplaceWave_DS.hlsl">
+      <Filter>HLSL\Displace</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\DisplaceWave_HS.hlsl">
+      <Filter>HLSL\Displace</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\DisplaceWave_PS.hlsl">
+      <Filter>HLSL\Displace</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\DisplaceWave_VS.hlsl">
+      <Filter>HLSL\Displace</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\Effect3D_GS_POINT.hlsl">
+      <Filter>HLSL\Effect</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\Effect3D_PS.hlsl">
+      <Filter>HLSL\Effect</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\Effect3D_VS_BILL.hlsl">
+      <Filter>HLSL\Effect</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\Effect3D_VS_BILLMESH.hlsl">
+      <Filter>HLSL\Effect</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\Effect3D_VS_POINT.hlsl">
+      <Filter>HLSL\Effect</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\FbxSkinMesh_PS.hlsl">
+      <Filter>HLSL\FbxMesh</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\FbxSkinMesh_VS.hlsl">
+      <Filter>HLSL\FbxMesh</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\FbxStaticMesh_PS.hlsl">
+      <Filter>HLSL\FbxMesh</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\FbxStaticMesh_VS.hlsl">
+      <Filter>HLSL\FbxMesh</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\Simple_PS.hlsl">
+      <Filter>HLSL\Simple</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\Simple_VS.hlsl">
+      <Filter>HLSL\Simple</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\Sprite3D_PS.hlsl">
+      <Filter>HLSL\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\Sprite3D_VS.hlsl">
+      <Filter>HLSL\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Hlsl\Sprite3D_VS_BILL.hlsl">
+      <Filter>HLSL\Sprite</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Src\Main.h">
+      <Filter>ソース ファイル\00_Windowsメイン</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GameMain.h">
+      <Filter>ソース ファイル\01_ゲームメイン</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BBox.h">
+      <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Collision.h">
+      <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Displace.h">
+      <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\FbxMesh.h">
+      <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\MyImgui.h">
+      <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\MyMath.h">
+      <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Shader.h">
+      <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Sprite3D.h">
+      <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DInput.h">
+      <Filter>ソース ファイル\03_DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Direct3D.h">
+      <Filter>ソース ファイル\03_DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\XAudio.h">
+      <Filter>ソース ファイル\03_DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="Libs\Imgui\imconfig.h">
+      <Filter>ソース ファイル\04_ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Libs\Imgui\imgui.h">
+      <Filter>ソース ファイル\04_ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Libs\Imgui\imgui_impl_dx11.h">
+      <Filter>ソース ファイル\04_ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Libs\Imgui\imgui_impl_win32.h">
+      <Filter>ソース ファイル\04_ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Libs\Imgui\imgui_internal.h">
+      <Filter>ソース ファイル\04_ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Libs\Imgui\imstb_rectpack.h">
+      <Filter>ソース ファイル\04_ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Libs\Imgui\imstb_textedit.h">
+      <Filter>ソース ファイル\04_ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Libs\Imgui\imstb_truetype.h">
+      <Filter>ソース ファイル\04_ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\SceneManager.h">
+      <Filter>ソース ファイル\05_フレームワーク</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\SceneFactory.h">
+      <Filter>ソース ファイル\05_フレームワーク</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\SceneBase.h">
+      <Filter>ソース ファイル\05_フレームワーク</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ObjectManager.h">
+      <Filter>ソース ファイル\05_フレームワーク</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GameObject.h">
+      <Filter>ソース ファイル\05_フレームワーク</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\resource.h">
+      <Filter>リソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Macro.h">
+      <Filter>ソース ファイル\01_ゲームメイン</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\TitleScene.h">
+      <Filter>ソース ファイル\07_TitleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ResourceManager.h">
+      <Filter>ソース ファイル\05_フレームワーク</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\CapsuleCollider.h">
+      <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\MainControl.h">
+      <Filter>ソース ファイル\00_Windowsメイン</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\PlayScene.h">
+      <Filter>ソース ファイル\08_PlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\CsvReader.h">
+      <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\MeshCollider.h">
+      <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Object3D.h">
+      <Filter>ソース ファイル\06_共通</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Animator.h">
+      <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\Main.cpp">
+      <Filter>ソース ファイル\00_Windowsメイン</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GameMain.cpp">
+      <Filter>ソース ファイル\01_ゲームメイン</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BBox.cpp">
+      <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Collision.cpp">
+      <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Displace.cpp">
+      <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\FbxMesh.cpp">
+      <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\MyImgui.cpp">
+      <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\MyMath.cpp">
+      <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Shader.cpp">
+      <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Sprite3D.cpp">
+      <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\DInput.cpp">
+      <Filter>ソース ファイル\03_DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Direct3D.cpp">
+      <Filter>ソース ファイル\03_DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\XAudio.cpp">
+      <Filter>ソース ファイル\03_DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="Libs\Imgui\imgui.cpp">
+      <Filter>ソース ファイル\04_ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Libs\Imgui\imgui_demo.cpp">
+      <Filter>ソース ファイル\04_ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Libs\Imgui\imgui_draw.cpp">
+      <Filter>ソース ファイル\04_ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Libs\Imgui\imgui_impl_dx11.cpp">
+      <Filter>ソース ファイル\04_ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Libs\Imgui\imgui_impl_win32.cpp">
+      <Filter>ソース ファイル\04_ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Libs\Imgui\imgui_widgets.cpp">
+      <Filter>ソース ファイル\04_ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\SceneManager.cpp">
+      <Filter>ソース ファイル\05_フレームワーク</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\SceneFactory.cpp">
+      <Filter>ソース ファイル\05_フレームワーク</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\SceneBase.cpp">
+      <Filter>ソース ファイル\05_フレームワーク</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ObjectManager.cpp">
+      <Filter>ソース ファイル\05_フレームワーク</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\TitleScene.cpp">
+      <Filter>ソース ファイル\07_TitleScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ResourceManager.cpp">
+      <Filter>ソース ファイル\05_フレームワーク</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\MainControl.cpp">
+      <Filter>ソース ファイル\00_Windowsメイン</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PlayScene.cpp">
+      <Filter>ソース ファイル\08_PlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\CsvReader.cpp">
+      <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\MeshCollider.cpp">
+      <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
+    </ClCompile>
+    <ClCompile Include="SRC\Object3D.CPP">
+      <Filter>ソース ファイル\06_共通</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Animator.cpp">
+      <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Src\Main.rc">
+      <Filter>リソース ファイル</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Src\Icon1.ico">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
