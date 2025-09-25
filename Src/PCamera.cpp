@@ -3,7 +3,7 @@
 namespace
 {
     const VECTOR3 initUpDir = VECTOR3(0, 1, 0);
-    const VECTOR3 initCamPos =  VECTOR3(2, 4, -10) ;
+    const VECTOR3 initCamPos =  VECTOR3(0, 15, 1) ;
     const VECTOR3 initCamLook =  VECTOR3(0, 2, 0) ; 
 }
 
