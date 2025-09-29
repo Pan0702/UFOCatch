@@ -519,6 +519,8 @@
     <ClInclude Include="Libs\Imgui\imstb_rectpack.h" />
     <ClInclude Include="Libs\Imgui\imstb_textedit.h" />
     <ClInclude Include="Libs\Imgui\imstb_truetype.h" />
+    <ClInclude Include="Src\ACube.h" />
+    <ClInclude Include="Src\AnimalManager.h" />
     <ClInclude Include="Src\Animator.h" />
     <ClInclude Include="Src\BBox.h" />
     <ClInclude Include="Src\CapsuleCollider.h" />
@@ -558,6 +560,8 @@
     <ClCompile Include="Libs\Imgui\imgui_impl_dx11.cpp" />
     <ClCompile Include="Libs\Imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="Libs\Imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Src\ACube.cpp" />
+    <ClCompile Include="Src\AnimalManager.cpp" />
     <ClCompile Include="Src\Animator.cpp" />
     <ClCompile Include="Src\BBox.cpp" />
     <ClCompile Include="Src\Collision.cpp" />

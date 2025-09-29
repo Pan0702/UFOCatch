@@ -15,6 +15,7 @@ private:
     void Update() override;
     void Draw();
     void PlayerMove();
+    void SuckUpAnimal();
 
     
     CFbxMesh* m_pMesh;

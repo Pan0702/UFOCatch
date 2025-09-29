@@ -6,12 +6,11 @@ class CapsuleCollider
 {
 public:
 	struct CollInfo {
-		VECTOR3 hitPosition; // “–‚½‚Á‚½ˆÊ’u
-		VECTOR3 normal; // –@ü
-		VECTOR3 triangle[3]; // ’¸“_
+		VECTOR3 hitPosition; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê’u
+		VECTOR3 normal; // ï¿½@ï¿½ï¿½
+		VECTOR3 triangle[3]; // ï¿½ï¿½ï¿½_
 	};
 
-	CapsuleCollider();
 	CapsuleCollider();
 
 	void SetCapsule(VECTOR3 pos1, VECTOR3 pos2, float rad);

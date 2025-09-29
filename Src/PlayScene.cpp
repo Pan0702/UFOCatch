@@ -6,11 +6,14 @@
 #include "PCamera.h"
 #include "Player.h"
 
+#include "PCamera.h"
+#include "Player.h"
+
 PlayScene::PlayScene()
 {
-	new CPlayer();
-	new CPlayerCamera();
-	new CAnimalManager();
+	Instantiate<CPlayer>();
+	Instantiate<CPlayerCamera>();
+	Instantiate<CAnimalManager>();
 }
 
 PlayScene::~PlayScene()
@@ -28,7 +31,4 @@ void PlayScene::Draw()
 {
 	GameDevice()->m_pFont->Draw(
 		20, 20, "PlayScene", 16, RGB(255, 255, 0));
-	CSprite spr;
-	spr.DrawLine3D(VECTOR3(-10, 0, 0), VECTOR3(10, 0, 0), RGB(255, 0, 0));
-	// 円を線で描画
 }

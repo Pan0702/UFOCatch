@@ -10,9 +10,9 @@ class Object3D;
 class CFbxMesh;
 
 /// <summary>
-/// ƒ‚ƒfƒ‹ƒf[ƒ^‚Æ‚Ì“–‚½‚è”»’è‚ðs‚¢‚Ü‚·
-/// “–‚½‚Á‚Ä‚¢‚éƒ|ƒŠƒSƒ“‚Ì’¸“_À•WA–@üA“–‚½‚Á‚½“_‚ð•Ô‚µ‚Ü‚·
-/// ü•ªA‚Ü‚½‚ÍA‹…‚ÅA”»’è‚ðs‚¢‚Ü‚·
+/// ï¿½ï¿½ï¿½fï¿½ï¿½ï¿½fï¿½[ï¿½^ï¿½Æ‚Ì“ï¿½ï¿½ï¿½ï¿½è”»ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½Ü‚ï¿½
+/// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½|ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½Ì’ï¿½ï¿½_ï¿½ï¿½ï¿½Wï¿½Aï¿½@ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½Ô‚ï¿½ï¿½Ü‚ï¿½
+/// ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½Ü‚ï¿½ï¿½ÍAï¿½ï¿½ï¿½ÅAï¿½ï¿½ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½Ü‚ï¿½
 /// </summary>
 class MeshCollider
 {
@@ -24,10 +24,10 @@ public:
 	};
 
 	struct CollInfo {
-		VECTOR3 hitPosition; // “–‚½‚Á‚½ˆÊ’u
-		VECTOR3 normal;		 // –@ü
-		Vertex  triangle[3]; // ’¸“_
-		int     meshNo;      // ƒƒbƒVƒ…”Ô†
+		VECTOR3 hitPosition; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê’u
+		VECTOR3 normal;		 // ï¿½@ï¿½ï¿½
+		Vertex  triangle[3]; // ï¿½ï¿½ï¿½_
+		int     meshNo;      // ï¿½ï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½Ôï¿½
 	};
 
 	MeshCollider();
@@ -35,122 +35,122 @@ public:
 	~MeshCollider();
 
 	/// <summary>
-	/// FbxMeshƒf[ƒ^‚©‚çA”»’èƒf[ƒ^‚ðì¬‚·‚é
-	/// ƒXƒLƒ“ƒƒbƒVƒ…‚Ìê‡‚É‚Í•K‚¸Animator‚ðŽw’è‚µ‚Ä‚­‚¾‚³‚¢
-	/// ƒXƒ^ƒeƒBƒbƒNƒƒbƒVƒ…‚Ìê‡‚ÍŽw’è•s—v‚Å‚·
+	/// FbxMeshï¿½fï¿½[ï¿½^ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½fï¿½[ï¿½^ï¿½ï¿½ï¿½ì¬ï¿½ï¿½ï¿½ï¿½
+	/// ï¿½Xï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½Ìê‡ï¿½É‚Í•Kï¿½ï¿½Animatorï¿½ï¿½ï¿½wï¿½è‚µï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	/// ï¿½Xï¿½^ï¿½eï¿½Bï¿½bï¿½Nï¿½ï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½Ìê‡ï¿½ÍŽwï¿½ï¿½sï¿½vï¿½Å‚ï¿½
 	/// </summary>
-	/// <param name="mesh">ƒƒbƒVƒ…ƒf[ƒ^</param>
-	/// <param name="animator">ƒAƒjƒ[ƒ^[</param>
+	/// <param name="mesh">ï¿½ï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½fï¿½[ï¿½^</param>
+	/// <param name="animator">ï¿½Aï¿½jï¿½ï¿½ï¿½[ï¿½^ï¿½[</param>
 	void MakeFromMesh(CFbxMesh* meshIn, Animator* animatorIn = nullptr);
 
 	/// <summary>
-	/// meshƒtƒ@ƒCƒ‹‚©‚çA”»’èƒf[ƒ^‚ðì¬‚·‚é
-	/// “–‚½‚è”»’è—p‚ÉŒy—Ê‰»ƒ‚ƒfƒ‹‚ðŽg‚¤ê‡‚Í‚±‚¿‚ç‚ðŽg‚Á‚Ä‚­‚¾‚³‚¢
-	/// ‚È‚¨AƒXƒLƒ“ƒƒbƒVƒ…‚É‚Í“K—p‚Å‚«‚Ü‚¹‚ñ
+	/// meshï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½fï¿½[ï¿½^ï¿½ï¿½ï¿½ì¬ï¿½ï¿½ï¿½ï¿½
+	/// ï¿½ï¿½ï¿½ï¿½ï¿½è”»ï¿½ï¿½pï¿½ÉŒyï¿½Ê‰ï¿½ï¿½ï¿½ï¿½fï¿½ï¿½ï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ê‡ï¿½Í‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½gï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	/// ï¿½È‚ï¿½ï¿½Aï¿½Xï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½É‚Í“Kï¿½pï¿½Å‚ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½
 	/// </summary>
-	/// <param name="fileName">ƒ‚ƒfƒ‹ƒf[ƒ^‚ÌƒpƒX</param>
+	/// <param name="fileName">ï¿½ï¿½ï¿½fï¿½ï¿½ï¿½fï¿½[ï¿½^ï¿½Ìƒpï¿½X</param>
 	void MakeFromFile(std::string fileName);
 
 	/// <summary>
-	/// ƒ|ƒŠƒSƒ“‚Ì’†‚Å’¸“_‚ª‰e‹¿‚ð—^‚¦‚éƒ{[ƒ“”Ô†‚ð‘I‘ð‚·‚é
+	/// ï¿½|ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½Ì’ï¿½ï¿½Å’ï¿½ï¿½_ï¿½ï¿½ï¿½eï¿½ï¿½ï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½{ï¿½[ï¿½ï¿½ï¿½Ôï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	/// </summary>
-	/// <param name="vt">’¸“_[3]</param>
-	/// <returns>ƒ{[ƒ“”Ô†</returns>
+	/// <param name="vt">ï¿½ï¿½ï¿½_[3]</param>
+	/// <returns>ï¿½{ï¿½[ï¿½ï¿½ï¿½Ôï¿½</returns>
 	int SelectBoneNo(Vertex  vt[3]);
 
 	/// <summary>
-	/// ƒXƒLƒ“ƒƒbƒVƒ…‚Ì’¸“_‚ðƒ{[ƒ“”z—ñ‚Å•ÏŒ`‚·‚é
+	/// ï¿½Xï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½Ì’ï¿½ï¿½_ï¿½ï¿½ï¿½{ï¿½[ï¿½ï¿½ï¿½zï¿½ï¿½Å•ÏŒ`ï¿½ï¿½ï¿½ï¿½
 	/// </summary>
 	void transformSkinVertices();
 
 	/// <summary>
-	/// ü•ª‚Æ‚Ì“–‚½‚è”»’è‚ðs‚¤
-	/// Žn“_‚©‚çˆê”Ô‹ß‚¢ƒ|ƒŠƒSƒ“‚Ì“–‚½‚è”»’èî•ñ‚ð•Ô‚µ‚Ü‚·
-	/// ƒ|ƒŠƒSƒ“‚Ì•\–Ê‚Ì‚Ý”»’è‚µA— –Ê‚Í”»’è‚µ‚Ü‚¹‚ñ
+	/// ï¿½ï¿½ï¿½ï¿½ï¿½Æ‚Ì“ï¿½ï¿½ï¿½ï¿½è”»ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½
+	/// ï¿½nï¿½_ï¿½ï¿½ï¿½ï¿½ï¿½Ô‹ß‚ï¿½ï¿½|ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½Ì“ï¿½ï¿½ï¿½ï¿½è”»ï¿½ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½ï¿½Ü‚ï¿½
+	/// ï¿½|ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½Ì•\ï¿½Ê‚Ì‚Ý”ï¿½ï¿½è‚µï¿½Aï¿½ï¿½ï¿½Ê‚Í”ï¿½ï¿½è‚µï¿½Ü‚ï¿½ï¿½ï¿½
 	/// </summary>
-	/// <param name="trans">‚±‚ÌƒRƒ‰ƒCƒ_[‚ÌˆÊ’uî•ñ</param>
-	/// <param name="from">ü•ª‚ÌŽn“_</param>
-	/// <param name="to">ü•ª‚ÌI“_</param>
-	/// <param name="info">“–‚½‚Á‚½ƒ|ƒŠƒSƒ“‚Ìî•ñ‚ð“ü‚ê‚éêŠ</param>
-	/// <returns>“–‚½‚Á‚Ä‚¢‚ê‚Îtrue</returns>
+	/// <param name="trans">ï¿½ï¿½ï¿½ÌƒRï¿½ï¿½ï¿½Cï¿½_ï¿½[ï¿½ÌˆÊ’uï¿½ï¿½ï¿½</param>
+	/// <param name="from">ï¿½ï¿½ï¿½ï¿½ï¿½ÌŽnï¿½_</param>
+	/// <param name="to">ï¿½ï¿½ï¿½ï¿½ï¿½ÌIï¿½_</param>
+	/// <param name="info">ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½|ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½êŠ</param>
+	/// <returns>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½true</returns>
 	bool CheckCollisionLine(const MATRIX4X4& trans, const VECTOR3& from, const VECTOR3& to, CollInfo* hitOut = nullptr);
 
 	/// <summary>
-	/// ‹…‘Ì‚Æ‚Ì“–‚½‚è”»’è‚ðs‚¤
+	/// ï¿½ï¿½ï¿½Ì‚Æ‚Ì“ï¿½ï¿½ï¿½ï¿½è”»ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½
 	/// 
-	/// ‹…‚Ì’†S‚©‚çˆê”Ô‹ß‚¢ƒ|ƒŠƒSƒ“‚Ì“–‚½‚è”»’èî•ñ‚ð•Ô‚µ‚Ü‚·
-	/// info‚ªnullptr‚Ìê‡‚ÍA“–‚½‚èî•ñ‚ð•Ô‚³‚¸A“–‚½‚Á‚½‚©‚Ì‚Ý•Ô‚µ‚Ü‚·
+	/// ï¿½ï¿½ï¿½Ì’ï¿½ï¿½Sï¿½ï¿½ï¿½ï¿½ï¿½Ô‹ß‚ï¿½ï¿½|ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½Ì“ï¿½ï¿½ï¿½ï¿½è”»ï¿½ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½ï¿½Ü‚ï¿½
+	/// infoï¿½ï¿½nullptrï¿½Ìê‡ï¿½ÍAï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì‚Ý•Ô‚ï¿½ï¿½Ü‚ï¿½
 	/// 
-	/// •¡”‚Ìƒ|ƒŠƒSƒ“‚ª“–‚½‚é‰Â”\«‚ª‚ ‚é‚Ì‚ÅACheckCollisionSphereListŠÖ”‚ðŽg—p‚·‚é‚±‚Æ‚ð„§‚µ‚Ü‚·
+	/// ï¿½ï¿½ï¿½ï¿½ï¿½Ìƒ|ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â”\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì‚ÅACheckCollisionSphereListï¿½Öï¿½ï¿½ï¿½ï¿½gï¿½pï¿½ï¿½ï¿½é‚±ï¿½Æ‚ð„ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½
 	/// </summary>
-	/// <param name="trans">‚±‚ÌƒRƒ‰ƒCƒ_[‚ÌˆÊ’uî•ñ</param>
-	/// <param name="center">‹…‚Ì’†SÀ•W</param>
-	/// <param name="radius">‹…‚Ì”¼Œa</param>
-	/// <param name="info">“–‚½‚Á‚½ƒ|ƒŠƒSƒ“‚Ìî•ñ‚ð“ü‚ê‚éêŠ</param>
-	/// <returns>“–‚½‚Á‚Ä‚¢‚ê‚Îtrue</returns>
+	/// <param name="trans">ï¿½ï¿½ï¿½ÌƒRï¿½ï¿½ï¿½Cï¿½_ï¿½[ï¿½ÌˆÊ’uï¿½ï¿½ï¿½</param>
+	/// <param name="center">ï¿½ï¿½ï¿½Ì’ï¿½ï¿½Sï¿½ï¿½ï¿½W</param>
+	/// <param name="radius">ï¿½ï¿½ï¿½Ì”ï¿½ï¿½a</param>
+	/// <param name="info">ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½|ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½êŠ</param>
+	/// <returns>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½true</returns>
 	bool CheckCollisionSphere(const MATRIX4X4& trans, const VECTOR3& center, float radius, CollInfo* hitOut = nullptr);
 
 	/// <summary>
-	/// ‹…‘Ì‚Æ‚Ì“–‚½‚è”»’è‚ðs‚¤
+	/// ï¿½ï¿½ï¿½Ì‚Æ‚Ì“ï¿½ï¿½ï¿½ï¿½è”»ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½
 	/// 
-	/// “–‚½‚Á‚Ä‚¢‚éƒ|ƒŠƒSƒ“‚·‚×‚Ä‚Ìî•ñ‚ð•Ô‚µ‚Ü‚·
-	/// “–‚½‚Á‚Ä‚¢‚é‚à‚Ì‚ª‚È‚¯‚ê‚ÎAreturn‚Ìsize‚ª0‚É‚È‚è‚Ü‚·
+	/// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½|ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½ï¿½ï¿½×‚Ä‚Ìï¿½ï¿½ï¿½Ô‚ï¿½ï¿½Ü‚ï¿½
+	/// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½Ì‚ï¿½ï¿½È‚ï¿½ï¿½ï¿½ÎAreturnï¿½ï¿½sizeï¿½ï¿½0ï¿½É‚È‚ï¿½Ü‚ï¿½
 	/// </summary>
-	/// <param name="trans">‚±‚ÌƒRƒ‰ƒCƒ_[‚ÌˆÊ’uî•ñ</param>
-	/// <param name="center">‹…‚Ì’†SÀ•W</param>
-	/// <param name="radius">‹…‚Ì”¼Œa</param>
-	/// <returns>“–‚½‚Á‚½ƒ|ƒŠƒSƒ“‘S‚Ä‚ÌˆÊ’uî•ñ</returns>
+	/// <param name="trans">ï¿½ï¿½ï¿½ÌƒRï¿½ï¿½ï¿½Cï¿½_ï¿½[ï¿½ÌˆÊ’uï¿½ï¿½ï¿½</param>
+	/// <param name="center">ï¿½ï¿½ï¿½Ì’ï¿½ï¿½Sï¿½ï¿½ï¿½W</param>
+	/// <param name="radius">ï¿½ï¿½ï¿½Ì”ï¿½ï¿½a</param>
+	/// <returns>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½|ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½Sï¿½Ä‚ÌˆÊ’uï¿½ï¿½ï¿½</returns>
 	std::list<MeshCollider::CollInfo> CheckCollisionSphereList(const MATRIX4X4& trans, const VECTOR3& center, float radius);
 
 	/// <summary>
-	/// ƒJƒvƒZƒ‹‚Æ‚Ì“–‚½‚è”»’è‚ðs‚¤
-	/// ƒ|ƒŠƒSƒ“‚Ì•\–Ê‚Ì‚Ý”»’è‚µA— –Ê‚Í”»’è‚µ‚Ü‚¹‚ñ
+	/// ï¿½Jï¿½vï¿½Zï¿½ï¿½ï¿½Æ‚Ì“ï¿½ï¿½ï¿½ï¿½è”»ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½
+	/// ï¿½|ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½Ì•\ï¿½Ê‚Ì‚Ý”ï¿½ï¿½è‚µï¿½Aï¿½ï¿½ï¿½Ê‚Í”ï¿½ï¿½è‚µï¿½Ü‚ï¿½ï¿½ï¿½
 	/// 
-	/// ƒJƒvƒZƒ‹‚Ìp1‚Ì“_‚©‚çˆê”Ô‹ß‚¢ƒ|ƒŠƒSƒ“‚Ì“–‚½‚è”»’èî•ñ‚ð•Ô‚µ‚Ü‚·
-	/// info‚ªnullptr‚Ìê‡‚ÍA“–‚½‚èî•ñ‚ð•Ô‚³‚¸A“–‚½‚Á‚½‚©‚Ì‚Ý•Ô‚µ‚Ü‚·
+	/// ï¿½Jï¿½vï¿½Zï¿½ï¿½ï¿½ï¿½p1ï¿½Ì“_ï¿½ï¿½ï¿½ï¿½ï¿½Ô‹ß‚ï¿½ï¿½|ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½Ì“ï¿½ï¿½ï¿½ï¿½è”»ï¿½ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½ï¿½Ü‚ï¿½
+	/// infoï¿½ï¿½nullptrï¿½Ìê‡ï¿½ÍAï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì‚Ý•Ô‚ï¿½ï¿½Ü‚ï¿½
 	/// 
-	/// •¡”‚Ìƒ|ƒŠƒSƒ“‚ª“–‚½‚é‰Â”\«‚ª‚ ‚é‚Ì‚ÅACheckCollisionCapsuleListŠÖ”‚ðŽg—p‚·‚é‚±‚Æ‚ð„§‚µ‚Ü‚·
+	/// ï¿½ï¿½ï¿½ï¿½ï¿½Ìƒ|ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â”\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì‚ÅACheckCollisionCapsuleListï¿½Öï¿½ï¿½ï¿½ï¿½gï¿½pï¿½ï¿½ï¿½é‚±ï¿½Æ‚ð„ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½
 	/// </summary>
-	/// <param name="trans">‚±‚ÌƒRƒ‰ƒCƒ_[‚ÌˆÊ’uî•ñ</param>
-	/// <param name="p1">ƒJƒvƒZƒ‹‚Ì“_‚P</param>
-	/// <param name="p2">ƒJƒvƒZƒ‹‚Ì“_‚Q</param>
-	/// <param name="radius">‹…‚Ì”¼Œa</param>
-	/// <param name="info">“–‚½‚Á‚½ƒ|ƒŠƒSƒ“‚Ìî•ñ‚ð“ü‚ê‚éêŠ</param>
-	/// <returns>“–‚½‚Á‚Ä‚¢‚ê‚Îtrue</returns>
+	/// <param name="trans">ï¿½ï¿½ï¿½ÌƒRï¿½ï¿½ï¿½Cï¿½_ï¿½[ï¿½ÌˆÊ’uï¿½ï¿½ï¿½</param>
+	/// <param name="p1">ï¿½Jï¿½vï¿½Zï¿½ï¿½ï¿½Ì“_ï¿½P</param>
+	/// <param name="p2">ï¿½Jï¿½vï¿½Zï¿½ï¿½ï¿½Ì“_ï¿½Q</param>
+	/// <param name="radius">ï¿½ï¿½ï¿½Ì”ï¿½ï¿½a</param>
+	/// <param name="info">ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½|ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½êŠ</param>
+	/// <returns>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½true</returns>
 	//bool CheckCollisionCapsule(const MATRIX4X4& trans, const VECTOR3& p1, const VECTOR3& p2, float radius, CollInfo* hitOut = nullptr);
 
 	/// <summary>
-	/// ƒJƒvƒZƒ‹‚Æ‚Ì“–‚½‚è”»’è‚ðs‚¤
-	/// “–‚½‚Á‚Ä‚¢‚éƒ|ƒŠƒSƒ“‚·‚×‚Ä‚Ìî•ñ‚ð•Ô‚µ‚Ü‚·
+	/// ï¿½Jï¿½vï¿½Zï¿½ï¿½ï¿½Æ‚Ì“ï¿½ï¿½ï¿½ï¿½è”»ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½
+	/// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½|ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½ï¿½ï¿½×‚Ä‚Ìï¿½ï¿½ï¿½Ô‚ï¿½ï¿½Ü‚ï¿½
 	/// 
-	/// ƒ|ƒŠƒSƒ“‚Ì•\–Ê‚Ì‚Ý”»’è‚µA— –Ê‚Í”»’è‚µ‚Ü‚¹‚ñ
+	/// ï¿½|ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½Ì•\ï¿½Ê‚Ì‚Ý”ï¿½ï¿½è‚µï¿½Aï¿½ï¿½ï¿½Ê‚Í”ï¿½ï¿½è‚µï¿½Ü‚ï¿½ï¿½ï¿½
 	/// </summary>
-	/// <param name="trans">‚±‚ÌƒRƒ‰ƒCƒ_[‚ÌˆÊ’uî•ñ</param>
-	/// <param name="p1">ƒJƒvƒZƒ‹‚Ì“_‚P</param>
-	/// <param name="p2">ƒJƒvƒZƒ‹‚Ì“_‚Q</param>
-	/// <param name="radius">‹…‚Ì”¼Œa</param>
-	/// <returns>“–‚½‚Á‚½ƒ|ƒŠƒSƒ“‘S‚Ä‚ÌˆÊ’uî•ñ</returns>
+	/// <param name="trans">ï¿½ï¿½ï¿½ÌƒRï¿½ï¿½ï¿½Cï¿½_ï¿½[ï¿½ÌˆÊ’uï¿½ï¿½ï¿½</param>
+	/// <param name="p1">ï¿½Jï¿½vï¿½Zï¿½ï¿½ï¿½Ì“_ï¿½P</param>
+	/// <param name="p2">ï¿½Jï¿½vï¿½Zï¿½ï¿½ï¿½Ì“_ï¿½Q</param>
+	/// <param name="radius">ï¿½ï¿½ï¿½Ì”ï¿½ï¿½a</param>
+	/// <returns>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½|ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½Sï¿½Ä‚ÌˆÊ’uï¿½ï¿½ï¿½</returns>
 	//std::list<MeshCollider::CollInfo> CheckCollisionCapsuleList(const MATRIX4X4& trans, const VECTOR3& p1, const VECTOR3& p2, float radius);
 
 	//bool CheckCollisionTriangle(const MATRIX4X4& trans, const VECTOR3* vertexes, CollInfo* info = nullptr);
 
 	/// <summary>
-	/// ü•ª‚Æ‚Ì“–‚½‚è”»’è‚ðs‚¤
-	/// Žn“_‚©‚çˆê”Ô‹ß‚¢ƒ|ƒŠƒSƒ“‚Ì“–‚½‚è”»’èî•ñ‚ð•Ô‚µ‚Ü‚·
-	/// ƒ|ƒŠƒSƒ“‚Ì•\–Ê‚Ì‚Ý”»’è‚µA— –Ê‚Í”»’è‚µ‚Ü‚¹‚ñ
+	/// ï¿½ï¿½ï¿½ï¿½ï¿½Æ‚Ì“ï¿½ï¿½ï¿½ï¿½è”»ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½
+	/// ï¿½nï¿½_ï¿½ï¿½ï¿½ï¿½ï¿½Ô‹ß‚ï¿½ï¿½|ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½Ì“ï¿½ï¿½ï¿½ï¿½è”»ï¿½ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½ï¿½Ü‚ï¿½
+	/// ï¿½|ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½Ì•\ï¿½Ê‚Ì‚Ý”ï¿½ï¿½è‚µï¿½Aï¿½ï¿½ï¿½Ê‚Í”ï¿½ï¿½è‚µï¿½Ü‚ï¿½ï¿½ï¿½
 	/// </summary>
-	/// <param name="trans">‚±‚ÌƒRƒ‰ƒCƒ_[‚ÌˆÊ’uî•ñ</param>
-	/// <param name="from">ü•ª‚ÌŽn“_</param>
-	/// <param name="to">ü•ª‚ÌI“_</param>
-	/// <param name="info">“–‚½‚Á‚½ƒ|ƒŠƒSƒ“‚Ìî•ñ‚ð“ü‚ê‚éêŠ</param>
-	/// <returns>“–‚½‚Á‚Ä‚¢‚ê‚Îtrue</returns>
+	/// <param name="trans">ï¿½ï¿½ï¿½ÌƒRï¿½ï¿½ï¿½Cï¿½_ï¿½[ï¿½ÌˆÊ’uï¿½ï¿½ï¿½</param>
+	/// <param name="from">ï¿½ï¿½ï¿½ï¿½ï¿½ÌŽnï¿½_</param>
+	/// <param name="to">ï¿½ï¿½ï¿½ï¿½ï¿½ÌIï¿½_</param>
+	/// <param name="info">ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½|ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½êŠ</param>
+	/// <returns>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½true</returns>
 	bool CheckBoundingLine(const MATRIX4X4& trans, const VECTOR3& from, const VECTOR3& to);
 
 	/// <summary>
-	/// Ball‚Ìî•ñ‚ð•Ô‚·
+	/// Ballï¿½Ìï¿½ï¿½ï¿½Ô‚ï¿½
 	/// </summary>
-	/// <param name="center">’†SˆÊ’u(Out)</param>
-	/// <param name="radius">”¼Œa(Out)</param>
+	/// <param name="center">ï¿½ï¿½ï¿½Sï¿½Ê’u(Out)</param>
+	/// <param name="radius">ï¿½ï¿½ï¿½a(Out)</param>
 	void GetBall(VECTOR3* center, float* radius){  *center = bBall.center; *radius = bBall.radius; }
 
 private:
@@ -171,8 +171,8 @@ private:
 		}
 	};
 	struct PolygonInfo {
-		int indices[3]; // ’¸“_”Ô†
-		VECTOR3 normal; // –Ê‚Ì–@ü
+		int indices[3]; // ï¿½ï¿½ï¿½_ï¿½Ôï¿½
+		VECTOR3 normal; // ï¿½Ê‚Ì–@ï¿½ï¿½
 	};
 	CFbxMesh* mesh;
 	Animator* animator;
@@ -181,9 +181,10 @@ private:
 
 	std::vector<std::vector<PolygonInfo>> polygons;
 	std::vector<std::vector<Vertex>> vertices;
+public:
 	BoundingBox bBox;
 	BoundingBall bBall;
-
+private:
 	bool checkPolygonToLine(const int m, const PolygonInfo& info, const VECTOR3& from, const VECTOR3& to, CollInfo* hit = nullptr);
 	bool checkPolygonToSphere(const int m, const PolygonInfo& info, const VECTOR3& center, float radius, CollInfo* hit = nullptr);
 };
