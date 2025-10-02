@@ -549,6 +549,7 @@
     <ClInclude Include="Src\SceneFactory.h" />
     <ClInclude Include="Src\SceneManager.h" />
     <ClInclude Include="Src\Shader.h" />
+    <ClInclude Include="Src\SphereCollider.h" />
     <ClInclude Include="Src\Sprite3D.h" />
     <ClInclude Include="Src\TitleScene.h" />
     <ClInclude Include="Src\XAudio.h" />

@@ -422,3 +422,19 @@ float Randomf(float min1, float max1);
 
 static const float DegToRad = XM_PI /180.0f;
 static const float RadToDeg = 180.0f / XM_PI;
+
+// -----------------------------------------------------------------------------
+// é©çÏä÷êî
+// -----------------------------------------------------------------------------
+inline float Pow2(const float& n)
+{
+	return n * n;
+}
+inline VECTOR3 Vabs(const VECTOR3& n)
+{
+	VECTOR3 tmp;
+	tmp.x = std::fabs(n.x);
+	tmp.y = std::fabs(n.y);
+	tmp.z = std::fabs(n.z);
+	return tmp;
+}

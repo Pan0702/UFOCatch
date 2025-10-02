@@ -16,6 +16,7 @@ CACube::CACube()
 
     transform.position = VECTOR3(0, 0, 0);
     m_maxSize = CAnimalManager::GetObjectSize(m_pRedColl);
+    m_pushButton = true;
 }
 
 CACube::~CACube()
@@ -24,11 +25,19 @@ CACube::~CACube()
 
 void CACube::Update()
 {
+    m_isInConeArea = ObjectManager::FindGameObject<CPlayer>()->IsInConeArea(transform.position + VECTOR3(0,m_maxSize.y,0));
+
+    if (m_isInConeArea && m_pushButton)
+    {
+        m_distanceFromObjectToUFO = ObjectManager::FindGameObject<CPlayer>()->SuckUpAnimal(transform.position + VECTOR3(0,m_maxSize.y,0));
+        MoveForUFO();
+    }
 }
+
 
 void CACube::Draw()
 {
-    if (ObjectManager::FindGameObject<CPlayer>()->IsInConeArea(transform.position + VECTOR3(0,m_maxSize.y,0)))
+    if (m_isInConeArea)
     {
         RedDraw();
     }else
@@ -45,4 +54,9 @@ void CACube::WhiteDraw()
 void CACube::RedDraw()
 {
     m_pRedMesh->Render(transform.matrix());
+}
+
+void CACube::MoveForUFO()
+{
+    transform.posm_distanceFromObjectToUFO
 }

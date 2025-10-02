@@ -1,6 +1,7 @@
 #include "Player.h"
-
 #include "PCamera.h"
+#include <chrono>
+#include <thread>
 
 
 CPlayer::CPlayer()
@@ -65,17 +66,25 @@ void CPlayer::PlayerMove()
     ObjectManager::FindGameObject<CPlayerCamera>()->PosSet(transform.position);
 }
 
-void CPlayer::SuckUpAnimal()
+VECTOR3 CPlayer::DistnceMillliseconds(const VECTOR3)
 {
     
+}
+
+float CPlayer::SuckUpAnimal(const VECTOR3& pos)
+{
+    VECTOR3 distnceAnimalFromPlayer = Vabs(transform.position - pos);
+    distnceAnimalFromPlayer = 
+    
+    return  distnceAnimalFromPlayer/ 300;
 }
 
 bool CPlayer::IsInConeArea(const VECTOR3& pos)
 {
     const float distnceAnimalFromPlayer = transform.position.y - pos.y;
     const float animalPositionRadius = distnceAnimalFromPlayer * std::tan(DegToRad * m_coneDegree);
-    if (std::pow((pos.x - transform.position.x), 2) + std::pow((pos.z - transform.position.z), 2)
-        <= std::pow(animalPositionRadius, 2))
+    if (Pow2(pos.x - transform.position.x) + Pow2(pos.z - transform.position.z)
+        <= Pow2(animalPositionRadius))
     {
         return true;
     }
@@ -85,7 +94,7 @@ bool CPlayer::IsInConeArea(const VECTOR3& pos)
 void CPlayer::DrawCircle(const VECTOR3& center, float radius, DWORD color)
 {
     CSprite spr;
-    const int segments = 32; // 円を構成する線分の数（多いほど滑らかな円になる）
+    constexpr int segments = 32; // 円を構成する線分の数（多いほど滑らかな円になる）
     const float angleStep = 2.0f * 3.14159f / segments; // 各線分の角度
 
     for (int i = 0; i < segments; ++i)
@@ -97,7 +106,7 @@ void CPlayer::DrawCircle(const VECTOR3& center, float radius, DWORD color)
         point1.z += radius * sin(angle1);
 
         // 次の点
-        float angle2 = ((i + 1) % segments) * angleStep;
+        float angle2 = (i + 1) % segments * angleStep;
         VECTOR3 point2 = center;
         point2.x += radius * cos(angle2);
         point2.z += radius * sin(angle2);
