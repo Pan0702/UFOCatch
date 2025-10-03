@@ -1,37 +1,37 @@
 //-----------------------------------------------------------------------------
 //
-//  Direct3D‚ğ—˜—p‚·‚é‚½‚ß‚Ì”Ä—p‚R‚cƒ‰ƒCƒuƒ‰ƒŠ         ver 4.0        2024.12.3
+//  Direct3Dï¿½ğ—˜—pï¿½ï¿½ï¿½é‚½ï¿½ß‚Ì”Ä—pï¿½Rï¿½cï¿½ï¿½ï¿½Cï¿½uï¿½ï¿½ï¿½ï¿½         ver 4.0        2024.12.3
 // 
-//	Šeí@”ŠwŒn‚Ìƒ‰ƒCƒuƒ‰ƒŠ
-//	(Šp“x‚Íƒ‰ƒWƒAƒ“Šp)
+//	ï¿½eï¿½ï¿½@ï¿½ï¿½ï¿½wï¿½nï¿½Ìƒï¿½ï¿½Cï¿½uï¿½ï¿½ï¿½ï¿½
+//	(ï¿½pï¿½xï¿½Íƒï¿½ï¿½Wï¿½Aï¿½ï¿½ï¿½p)
 //
 //																MyMath.h
 //
 //-----------------------------------------------------------------------------
 #pragma once
 
-//ƒwƒbƒ_[ƒtƒ@ƒCƒ‹‚ÌƒCƒ“ƒNƒ‹[ƒh
+//ï¿½wï¿½bï¿½_ï¿½[ï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½ÌƒCï¿½ï¿½ï¿½Nï¿½ï¿½ï¿½[ï¿½h
 #include <stdio.h>
 #include <windows.h>
 
 #include <random>
 #include <tchar.h>
 #include <DirectXMath.h>
-using namespace DirectX;	// DirectXMath‚ÌŠÖ”‚ğg‚¤‚½‚ß‚Ìƒl[ƒ€ƒXƒy[ƒX
+using namespace DirectX;	// DirectXMathï¿½ÌŠÖï¿½ï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ß‚Ìƒlï¿½[ï¿½ï¿½ï¿½Xï¿½yï¿½[ï¿½X
 
 //------------------------------------------------------------------------------
 //
-//  VECTOR2, VECTOR3, VECTOR4, MATRIX4X4 Œ^‚Ì’è‹`
+//  VECTOR2, VECTOR3, VECTOR4, MATRIX4X4 ï¿½^ï¿½Ì’ï¿½`
 //
 //
 //------------------------------------------------------------------------------
 
 //
-//  VECTOR4 Œ^‚Ì’è‹`
+//  VECTOR4 ï¿½^ï¿½Ì’ï¿½`
 //
 struct VECTOR4 : public XMFLOAT4
 {
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	//ï¿½Rï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½Nï¿½^
 	VECTOR4() = default;
 	VECTOR4(float x, float y, float z, float w)
 	{
@@ -43,7 +43,7 @@ struct VECTOR4 : public XMFLOAT4
 		XMStoreFloat4(this, temp);
 	}
 
-	// ‰‰Z
+	// ï¿½ï¿½ï¿½Z
 	inline bool operator == (const VECTOR4& r) const { return x == r.x && y == r.y && z == r.z && w == r.w; }
 	inline bool operator != (const VECTOR4& r) const { return x != r.x || y != r.y || z != r.z || w != r.w; }
 	inline VECTOR4 operator +(const VECTOR4& r) const { return VECTOR4(x + r.x, y + r.y, z + r.z, w + r.w); }
@@ -71,7 +71,7 @@ struct VECTOR4 : public XMFLOAT4
 	inline VECTOR4 operator - () const { return VECTOR4(-x, -y, -z, -w); }
 
 
-	// ‘ã“ü
+	// ï¿½ï¿½ï¿½
 	VECTOR4& operator=(const XMVECTOR& other)
 	{
 		XMVECTOR temp = other;
@@ -87,7 +87,7 @@ struct VECTOR4 : public XMFLOAT4
 		return *this;
 	}
 
-	// ƒLƒƒƒXƒg
+	// ï¿½Lï¿½ï¿½ï¿½Xï¿½g
 	operator XMVECTOR() const {
 		return XMLoadFloat4(this);
 	}
@@ -97,11 +97,11 @@ struct VECTOR4 : public XMFLOAT4
 };
 
 //
-//  VECTOR3 Œ^‚Ì’è‹`
+//  VECTOR3 ï¿½^ï¿½Ì’ï¿½`
 //
 struct VECTOR3 : public XMFLOAT3
 {
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	//ï¿½Rï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½Nï¿½^
 	VECTOR3() = default;
 	VECTOR3(float x, float y, float z)
 	{
@@ -113,7 +113,7 @@ struct VECTOR3 : public XMFLOAT3
 		XMStoreFloat3(this, temp);
 	}
 
-	// ‰‰Z
+	// ï¿½ï¿½ï¿½Z
 	inline bool operator == (const VECTOR3& r) const { return x == r.x && y == r.y && z == r.z; }
 	inline bool operator != (const VECTOR3& r) const { return x != r.x || y != r.y || z != r.z; }
 	inline VECTOR3 operator +(const VECTOR3& r) const { return VECTOR3(x + r.x, y + r.y, z + r.z); }
@@ -141,7 +141,7 @@ struct VECTOR3 : public XMFLOAT3
 	inline VECTOR3 operator - () const { return VECTOR3(-x, -y, -z); }
 
 
-	// ‘ã“ü
+	// ï¿½ï¿½ï¿½
 	VECTOR3& operator=(const XMVECTOR& other)
 	{
 		XMVECTOR temp = other;
@@ -156,7 +156,7 @@ struct VECTOR3 : public XMFLOAT3
 		return *this;
 	}
 
-	// ƒLƒƒƒXƒg
+	// ï¿½Lï¿½ï¿½ï¿½Xï¿½g
 	operator XMVECTOR() const {
 		return XMLoadFloat3(this);
 	}
@@ -169,11 +169,11 @@ struct VECTOR3 : public XMFLOAT3
 };
 
 //
-//  VECTOR2 Œ^‚Ì’è‹`
+//  VECTOR2 ï¿½^ï¿½Ì’ï¿½`
 //
 struct VECTOR2 : public XMFLOAT2
 {
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	//ï¿½Rï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½Nï¿½^
 	VECTOR2() = default;
 	VECTOR2(float x, float y)
 	{
@@ -185,7 +185,7 @@ struct VECTOR2 : public XMFLOAT2
 		XMStoreFloat2(this, temp);
 	}
 
-	// ‰‰Z
+	// ï¿½ï¿½ï¿½Z
 	inline bool operator == (const VECTOR2& r) const { return x == r.x && y == r.y; }
 	inline bool operator != (const VECTOR2& r) const { return x != r.x || y != r.y; }
 	inline VECTOR2 operator +(const VECTOR2& r) const { return VECTOR2(x + r.x, y + r.y); }
@@ -213,7 +213,7 @@ struct VECTOR2 : public XMFLOAT2
 	inline VECTOR2 operator + () const { return *this; }
 	inline VECTOR2 operator - () const { return VECTOR2(-x, -y); }
 
-	// ‘ã“ü
+	// ï¿½ï¿½ï¿½
 	VECTOR2& operator=(const XMVECTOR& other)
 	{
 		XMVECTOR temp = other;
@@ -227,7 +227,7 @@ struct VECTOR2 : public XMFLOAT2
 		return *this;
 	}
 
-	// ƒLƒƒƒXƒg
+	// ï¿½Lï¿½ï¿½ï¿½Xï¿½g
 	operator XMVECTOR() const {
 		return XMLoadFloat2(this);
 	}
@@ -237,11 +237,11 @@ struct VECTOR2 : public XMFLOAT2
 };
 
 //
-//  MATRIX4X4 Œ^‚Ì’è‹`
+//  MATRIX4X4 ï¿½^ï¿½Ì’ï¿½`
 //
 struct MATRIX4X4 : public XMFLOAT4X4
 {
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	//ï¿½Rï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½Nï¿½^
 	MATRIX4X4() = default;
 	MATRIX4X4(const XMMATRIX& other) :XMFLOAT4X4()
 	{
@@ -283,7 +283,7 @@ struct MATRIX4X4 : public XMFLOAT4X4
 		this->_44 = in_44;
 	}
 
-	// ‘ã“ü
+	// ï¿½ï¿½ï¿½
 	inline MATRIX4X4& operator=(const XMMATRIX& other)
 	{
 		XMMATRIX temp = other;
@@ -333,7 +333,7 @@ struct MATRIX4X4 : public XMFLOAT4X4
 		return *this;
 	}
 
-	// ‰‰Z
+	// ï¿½ï¿½ï¿½Z
 	inline MATRIX4X4 operator *(const MATRIX4X4& r) const
 	{
 		XMMATRIX left = *this;
@@ -343,7 +343,7 @@ struct MATRIX4X4 : public XMFLOAT4X4
 		return ans;
 	}
 
-	// ƒLƒƒƒXƒg
+	// ï¿½Lï¿½ï¿½ï¿½Xï¿½g
 	inline operator XMMATRIX() const {
 		return XMLoadFloat4x4(this);
 	}
@@ -385,7 +385,7 @@ inline float Dot(const VECTOR3& v1, const VECTOR3& v2) {
 }
 
 // -----------------------------------------------------------------------------
-// ”Ä—p‚Ì‚R‚cZpƒ‰ƒCƒuƒ‰ƒŠ
+// ï¿½Ä—pï¿½Ì‚Rï¿½cï¿½Zï¿½pï¿½ï¿½ï¿½Cï¿½uï¿½ï¿½ï¿½ï¿½
 // -----------------------------------------------------------------------------
 
 MATRIX4X4 GetLookatMatrix(const VECTOR3& vHear, const VECTOR3& vLookat);
@@ -424,13 +424,13 @@ static const float DegToRad = XM_PI /180.0f;
 static const float RadToDeg = 180.0f / XM_PI;
 
 // -----------------------------------------------------------------------------
-// ©ìŠÖ”
+// ï¿½ï¿½ï¿½ï¿½Öï¿½
 // -----------------------------------------------------------------------------
 inline float Pow2(const float& n)
 {
 	return n * n;
 }
-inline VECTOR3 Vabs(const VECTOR3& n)
+inline VECTOR3 V3abs(const VECTOR3& n)
 {
 	VECTOR3 tmp;
 	tmp.x = std::fabs(n.x);

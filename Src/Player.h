@@ -10,7 +10,7 @@ public:
     VECTOR3 GetPos(){return transform.position;}
     bool IsInConeArea(const VECTOR3& pos);
     void DrawCircle(const VECTOR3& center, float radius, DWORD color);
-    float SuckUpAnimal(const VECTOR3& pos);
+    VECTOR3 SuckUpAnimal(const int& dividend, const VECTOR3& pos);
 
 private:
     void Update() override;

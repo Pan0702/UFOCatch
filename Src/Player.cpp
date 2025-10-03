@@ -66,17 +66,11 @@ void CPlayer::PlayerMove()
     ObjectManager::FindGameObject<CPlayerCamera>()->PosSet(transform.position);
 }
 
-VECTOR3 CPlayer::DistnceMillliseconds(const VECTOR3)
-{
-    
-}
 
-float CPlayer::SuckUpAnimal(const VECTOR3& pos)
+VECTOR3 CPlayer::SuckUpAnimal(const int& dividend ,const VECTOR3& pos)
 {
-    VECTOR3 distnceAnimalFromPlayer = Vabs(transform.position - pos);
-    distnceAnimalFromPlayer = 
-    
-    return  distnceAnimalFromPlayer/ 300;
+    VECTOR3 distnceAnimalFromPlayer = transform.position - pos;
+    return  distnceAnimalFromPlayer/ dividend;
 }
 
 bool CPlayer::IsInConeArea(const VECTOR3& pos)
