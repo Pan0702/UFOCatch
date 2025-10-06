@@ -67,10 +67,14 @@ void CPlayer::PlayerMove()
 }
 
 
-VECTOR3 CPlayer::SuckUpAnimal(const int& dividend ,const VECTOR3& pos)
+VECTOR3 CPlayer::SuckUpAnimal(const int& dividend, const VECTOR3& animalPos)
 {
-    VECTOR3 distnceAnimalFromPlayer = transform.position - pos;
-    return  distnceAnimalFromPlayer/ dividend;
+    float k = (0 - animalPos.y) / (animalPos.y - transform.position.y);
+    VECTOR3 distnceAnimalFromPlayer =
+        VECTOR3(animalPos.x + k * (animalPos.x - transform.position.x), 0,
+                animalPos.z + k * (animalPos.z - transform.position.z));
+    distnceAnimalFromPlayer = transform.position - distnceAnimalFromPlayer;
+    return distnceAnimalFromPlayer / dividend;
 }
 
 bool CPlayer::IsInConeArea(const VECTOR3& pos)
