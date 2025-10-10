@@ -1,8 +1,8 @@
 #pragma once
-#include "GameObject.h"
-#include "FbxMesh.h"
-#include "MeshCollider.h"
-#include "Animator.h"
+#include "./FrameWork/GameObject.h"
+#include "./GameLib/FbxMesh.h"
+#include "./GameLib/MeshCollider.h"
+#include "./GameLib/Animator.h"
 
 class Transform {
 public:
@@ -11,7 +11,7 @@ public:
 	VECTOR3 scale;
 	Transform() {
 		position = VECTOR3(0, 0, 0);
-		rotation = VECTOR3(0, 0, 0);   // ƒ‰ƒWƒAƒ“Šp
+		rotation = VECTOR3(0, 0, 0);   // ï¿½ï¿½ï¿½Wï¿½Aï¿½ï¿½ï¿½p
 		scale = VECTOR3(1, 1, 1);
 	}
 	const MATRIX4X4 matrix() {
@@ -63,78 +63,78 @@ public:
 	virtual SphereCollider Collider();
 
 	/// <summary>
-	/// ‹…‚ÆƒƒbƒVƒ…‚Ì“–‚½‚è”»’è‚ğ‚·‚é
-	/// “–‚½‚Á‚½ê‡‚É‚Ì‚İApush‚É‰Ÿ‚µ•Ô‚·êŠ‚ğ•Ô‚·
+	/// ï¿½ï¿½ï¿½Æƒï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½Ì“ï¿½ï¿½ï¿½ï¿½è”»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	/// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‡ï¿½É‚Ì‚İApushï¿½É‰ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½ï¿½êŠï¿½ï¿½Ô‚ï¿½
 	/// </summary>
-	/// <param name="sphere">‹…‘Ì</param>
-	/// <param name="push">‰Ÿ‚µ•Ô‚·À•W‚ğŠi”[‚·‚éêŠ</param>
-	/// <returns>“–‚½‚Á‚½ê‡‚Étrue</returns>
+	/// <param name="sphere">ï¿½ï¿½ï¿½ï¿½</param>
+	/// <param name="push">ï¿½ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½ï¿½ï¿½ï¿½Wï¿½ï¿½ï¿½iï¿½[ï¿½ï¿½ï¿½ï¿½êŠ</param>
+	/// <returns>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‡ï¿½ï¿½true</returns>
 	virtual bool HitSphereToMeshPush(const SphereCollider& sphere, VECTOR3* push = nullptr);
 
 	/// <summary>
-	/// ‹…‚ÆƒƒbƒVƒ…‚Ì“–‚½‚è”»’è‚ğ‚·‚é
-	/// “–‚½‚Á‚½ê‡‚ÍAÕ“Ëî•ñ‚ğ•Ô‚·
+	/// ï¿½ï¿½ï¿½Æƒï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½Ì“ï¿½ï¿½ï¿½ï¿½è”»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	/// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‡ï¿½ÍAï¿½Õ“Ëï¿½ï¿½ï¿½Ô‚ï¿½
 	/// </summary>
-	/// <param name="sphere">‹…‘Ì</param>
-	/// <param name="collOut">Õ“Ëî•ñ‚ğŠi”[‚·‚éêŠ</param>
-	/// <returns>“–‚½‚Á‚½ê‡‚Étrue</returns>
+	/// <param name="sphere">ï¿½ï¿½ï¿½ï¿½</param>
+	/// <param name="collOut">ï¿½Õ“Ëï¿½ï¿½ï¿½ï¿½iï¿½[ï¿½ï¿½ï¿½ï¿½êŠ</param>
+	/// <returns>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‡ï¿½ï¿½true</returns>
 	virtual bool HitSphereToMesh(const SphereCollider& sphere, MeshCollider::CollInfo* collOut = nullptr);
 
 	/// <summary>
-	/// ’¼ü‚ÆƒƒbƒVƒ…‚Ì“–‚½‚è”»’è‚ğ‚·‚é
-	/// “–‚½‚Á‚½ê‡‚ÍAÕ“Ëî•ñ‚ğ•Ô‚·
+	/// ï¿½ï¿½ï¿½ï¿½ï¿½Æƒï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½Ì“ï¿½ï¿½ï¿½ï¿½è”»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	/// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‡ï¿½ÍAï¿½Õ“Ëï¿½ï¿½ï¿½Ô‚ï¿½
 	/// </summary>
-	/// <param name="from">’¼ü‚Ìn“_</param>
-	/// <param name="to">’¼ü‚ÌI“_</param>
-	/// <param name="collOut">Õ“Ëî•ñ‚ğŠi”[‚·‚éêŠ</param>
-	/// <returns>“–‚½‚Á‚½ê‡‚Étrue</returns>
+	/// <param name="from">ï¿½ï¿½ï¿½ï¿½ï¿½Ìnï¿½_</param>
+	/// <param name="to">ï¿½ï¿½ï¿½ï¿½ï¿½ÌIï¿½_</param>
+	/// <param name="collOut">ï¿½Õ“Ëï¿½ï¿½ï¿½ï¿½iï¿½[ï¿½ï¿½ï¿½ï¿½êŠ</param>
+	/// <returns>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‡ï¿½ï¿½true</returns>
 	virtual bool HitLineToMesh(const VECTOR3& from, const VECTOR3& to, MeshCollider::CollInfo* collOut = nullptr);
 
 	/// <summary>
-	/// ‹…‚Æ‹…‚Ì“–‚½‚è”»’è‚ğ‚·‚é
-	/// ©•ª‚Ì‹…‚ÍACollider()‚Åæ“¾‚·‚é
+	/// ï¿½ï¿½ï¿½Æ‹ï¿½ï¿½Ì“ï¿½ï¿½ï¿½ï¿½è”»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	/// ï¿½ï¿½ï¿½ï¿½ï¿½Ì‹ï¿½ï¿½ÍACollider()ï¿½Åæ“¾ï¿½ï¿½ï¿½ï¿½
 	/// </summary>
-	/// <param name="target">‘Šè‚Ì‹…</param>
-	/// <param name="withY">false‚É‚·‚é‚ÆY‚ÌÀ•W·‚ğ–³‹‚·‚é</param>
-	/// <returns>d‚È‚è—Ê</returns>
+	/// <param name="target">ï¿½ï¿½ï¿½ï¿½Ì‹ï¿½</param>
+	/// <param name="withY">falseï¿½É‚ï¿½ï¿½ï¿½ï¿½Yï¿½Ìï¿½ï¿½Wï¿½ï¿½ï¿½ğ–³ï¿½ï¿½ï¿½ï¿½ï¿½</param>
+	/// <returns>ï¿½dï¿½È‚ï¿½ï¿½</returns>
 	virtual float HitSphereToSphere(const SphereCollider& target, bool withY=true);
 
 	/// <summary>
-	/// ‹…‚Æ‹…‚Ì“–‚½‚è”»’è‚ğ‚·‚é
-	/// “–‚½‚Á‚½ê‡‚ÍApush‚É‰Ÿ‚µ•Ô‚·êŠ‚ğ•Ô‚·
+	/// ï¿½ï¿½ï¿½Æ‹ï¿½ï¿½Ì“ï¿½ï¿½ï¿½ï¿½è”»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	/// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‡ï¿½ÍApushï¿½É‰ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½ï¿½êŠï¿½ï¿½Ô‚ï¿½
 	/// </summary>
-	/// <param name="target">‘Šè‚Ì‹…</param>
-	/// <param name="withY">false‚É‚·‚é‚ÆY‚ÌÀ•W·‚ğ–³‹‚·‚é</param>
-	/// <returns>“–‚½‚Á‚½ê‡‚Étrue</returns>
+	/// <param name="target">ï¿½ï¿½ï¿½ï¿½Ì‹ï¿½</param>
+	/// <param name="withY">falseï¿½É‚ï¿½ï¿½ï¿½ï¿½Yï¿½Ìï¿½ï¿½Wï¿½ï¿½ï¿½ğ–³ï¿½ï¿½ï¿½ï¿½ï¿½</param>
+	/// <returns>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‡ï¿½ï¿½true</returns>
 	virtual bool HitSphereToSpherePush(const SphereCollider& target, bool withY=true, VECTOR3* push = nullptr);
 
 	/// <summary>
-	/// ƒƒbƒVƒ…‚ÌƒAƒhƒŒƒX‚ğ•Ô‚·
+	/// ï¿½ï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½ÌƒAï¿½hï¿½ï¿½ï¿½Xï¿½ï¿½Ô‚ï¿½
 	/// </summary>
-	/// <returns>ƒƒbƒVƒ…‚ÌƒAƒhƒŒƒX</returns>
-	CFbxMesh* Mesh() { return mesh; }
+	/// <returns>ï¿½ï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½ÌƒAï¿½hï¿½ï¿½ï¿½X</returns>
+	CFbxMesh* Mesh() { return m_pMesh; }
 
 	/// <summary>
-	/// ƒRƒŠƒWƒ‡ƒ“ƒƒbƒVƒ…‚ÌƒAƒhƒŒƒX‚ğ•Ô‚·
+	/// ï¿½Rï¿½ï¿½ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½ÌƒAï¿½hï¿½ï¿½ï¿½Xï¿½ï¿½Ô‚ï¿½
 	/// </summary>
-	/// <returns>ƒRƒŠƒWƒ‡ƒ“ƒƒbƒVƒ…‚ÌƒAƒhƒŒƒX</returns>
-	MeshCollider* MeshCol() { return meshCol; }
+	/// <returns>ï¿½Rï¿½ï¿½ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½ÌƒAï¿½hï¿½ï¿½ï¿½X</returns>
+	MeshCollider* MeshCol() { return m_pMeshCol; }
 
 	/// <summary>
-	/// ƒAƒjƒ[ƒ^[‚ÌƒAƒhƒŒƒX‚ğ•Ô‚·
+	/// ï¿½Aï¿½jï¿½ï¿½ï¿½[ï¿½^ï¿½[ï¿½ÌƒAï¿½hï¿½ï¿½ï¿½Xï¿½ï¿½Ô‚ï¿½
 	/// </summary>
-	/// <returns>ƒAƒjƒ[ƒ^[‚ÌƒAƒhƒŒƒX</returns>
-	Animator* GetAnimator() { return animator; }
+	/// <returns>ï¿½Aï¿½jï¿½ï¿½ï¿½[ï¿½^ï¿½[ï¿½ÌƒAï¿½hï¿½ï¿½ï¿½X</returns>
+	Animator* GetAnimator() { return m_pAnimator; }
 
 	/// <summary>
-	/// ƒRƒŠƒWƒ‡ƒ“ƒƒbƒVƒ…‚ÌBallî•ñ‚ğ•Ô‚·
+	/// ï¿½Rï¿½ï¿½ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½ï¿½Ballï¿½ï¿½ï¿½ï¿½Ô‚ï¿½
 	/// </summary>
 	/// <returns>SphereCollider</returns>
 	SphereCollider  GetSphereCollider();
 
 protected:
-	CFbxMesh* mesh;
-	Animator* animator;
-	MeshCollider* meshCol;
+	CFbxMesh* m_pMesh;
+	Animator* m_pAnimator;
+	MeshCollider* m_pMeshCol;
 	Transform transform;
 };
