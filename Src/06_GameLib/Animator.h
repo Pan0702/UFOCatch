@@ -9,10 +9,10 @@ public:
 	void Update();
 
 	/// <summary>
-	/// ƒAƒjƒ[ƒVƒ‡ƒ“‚ğ‚Â‚¯‚éƒ‚ƒfƒ‹‚ğw’è‚·‚é
+	/// ï¿½Aï¿½jï¿½ï¿½ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â‚ï¿½ï¿½éƒ‚ï¿½fï¿½ï¿½ï¿½ï¿½ï¿½wï¿½è‚·ï¿½ï¿½
 	/// </summary>
-	/// <param name="mesh">ƒ‚ƒfƒ‹ƒf[ƒ^</param>
-	void SetModel(CFbxMesh* mesh);
+	/// <param name="mesh">ï¿½ï¿½ï¿½fï¿½ï¿½ï¿½fï¿½[ï¿½^</param>
+	void SetModel(std::shared_ptr<CFbxMesh> mesh);
 
 	void Play(int id, bool force = false);
 	void MergePlay(int id, float time = 0.2f);
@@ -24,7 +24,7 @@ public:
 	float SubFrame();
 	bool Finished();
 private:
-	CFbxMesh* base;
+	std::shared_ptr<CFbxMesh> base;
 	struct Info {
 		int id;
 		float frame;

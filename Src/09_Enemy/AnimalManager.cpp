@@ -29,7 +29,7 @@ void CAnimalManager::Draw()
 }
 
 
-VECTOR3 CAnimalManager::GetObjectSize(MeshCollider* meshColl) const
+VECTOR3 CAnimalManager::GetObjectSize(std::shared_ptr<MeshCollider>& meshColl) const
 {
     return meshColl->bBox.max;
 }

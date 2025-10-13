@@ -1185,13 +1185,13 @@ int CFbxMesh::GetEndFrame(const int& animID)
 // �i���̂܂܂̑��΃}�g���b�N�X���擾�j
 // 
 // �����F
-// 	  Animator* animStatus          �A�j���[�^�[
+// 	  std::shared_ptr<Animator> animStatus          �A�j���[�^�[
 //    const DWORD& nBone            �{�[���ԍ�
 //    const DWORD& nMesh            ���b�V���ԍ�(�ȗ��l�O)
 // �߂�l�F
 //    MATRIX4X4                     �w��{�[���̃}�g���b�N�X�i���̂܂܂̑��΃}�g���b�N�X�j
 //==========================================================================================================================================================
-MATRIX4X4 CFbxMesh::GetFrameMatrices(Animator* animStatus, const DWORD& nBone, const DWORD& nMesh)
+MATRIX4X4 CFbxMesh::GetFrameMatrices(std::shared_ptr<Animator> animStatus, const DWORD& nBone, const DWORD& nMesh)
 {
 	MATRIX4X4 mBoneWorld;
 
@@ -1241,14 +1241,14 @@ MATRIX4X4 CFbxMesh::GetFrameMatrices(Animator* animStatus, const DWORD& nBone, c
 // �i���[���h�}�g���b�N�X�Ɗ|�����킹�����ʂ��擾�j
 // 
 // �����F
-// 	  Animator* animStatus          �A�j���[�^�[
+// 	  std::shared_ptr<Animator> animStatus          �A�j���[�^�[
 //    const MATRIX4X4& mWorld       ���[���h�}�g���b�N�X
 //    const DWORD& nBone            �{�[���ԍ�
 //    const DWORD& nMesh            ���b�V���ԍ�(�ȗ��l�O)
 // �߂�l�F
 //    MATRIX4X4                    �w��{�[���̃}�g���b�N�X�i���[���h�}�g���b�N�X�Ɗ|�����킹���}�g���b�N�X�j
 //==========================================================================================================================================================
-MATRIX4X4 CFbxMesh::GetFrameMatrices(Animator* animStatus, const MATRIX4X4& mWorld, const DWORD& nBone, const DWORD& nMesh)
+MATRIX4X4 CFbxMesh::GetFrameMatrices(std::shared_ptr<Animator> animStatus, const MATRIX4X4& mWorld, const DWORD& nBone, const DWORD& nMesh)
 {
 	MATRIX4X4 mBoneWorld;
 
@@ -1294,7 +1294,7 @@ MATRIX4X4 CFbxMesh::GetFrameMatrices(Animator* animStatus, const MATRIX4X4& mWor
 }
 
 // �{�[���z�񂩂�~�b�N�X�����{�[���}�g���b�N�X�𓾂�
-MATRIX4X4  CFbxMesh::GetMixBoneMatrix(Animator* animStatus, const DWORD& nBone, const DWORD& nMesh)
+MATRIX4X4  CFbxMesh::GetMixBoneMatrix(std::shared_ptr<Animator> animStatus, const DWORD& nBone, const DWORD& nMesh)
 {
 	MATRIX4X4 mat = XMMatrixIdentity();
 
@@ -1356,7 +1356,7 @@ MATRIX4X4  CFbxMesh::GetMixBoneMatrix(Animator* animStatus, const DWORD& nBone, 
 // �߂�l�F
 //    MATRIX4X4                    ���[�g�{�[���̃}�g���b�N�X
 //==========================================================================================================================================================
-MATRIX4X4 CFbxMesh::GetRootAnimMatrices(Animator* animStatus, const int& UpFrame)
+MATRIX4X4 CFbxMesh::GetRootAnimMatrices(std::shared_ptr<Animator> animStatus, const int& UpFrame)
 {
 	MATRIX4X4 mBoneWorld;
 
@@ -1405,7 +1405,7 @@ MATRIX4X4 CFbxMesh::GetRootAnimMatrices(Animator* animStatus, const int& UpFrame
 // �߂�l�F
 //    MATRIX4X4                     ���[�g�{�[���̈�O�̈ʒu����̑����}�g���b�N�X
 //==========================================================================================================================================================
-MATRIX4X4 CFbxMesh::GetRootAnimUpMatrices(Animator* animStatus, const int& UpFrame, const int& StartFrameUp)
+MATRIX4X4 CFbxMesh::GetRootAnimUpMatrices(std::shared_ptr<Animator> animStatus, const int& UpFrame, const int& StartFrameUp)
 {
 	MATRIX4X4 mBoneWorld, mBoneWorldOld;
 
@@ -1472,11 +1472,11 @@ void CFbxMesh::RenderDisplace(const MATRIX4X4& mWorld)
 	RenderDisplace(mWorld, GameDevice()->m_mView, GameDevice()->m_mProj, GameDevice()->m_vLightDir, GameDevice()->m_vEyePt);
 }
 
-void CFbxMesh::Render(Animator* animStatus, const MATRIX4X4& mWorld)
+void CFbxMesh::Render(std::shared_ptr<Animator> animStatus, const MATRIX4X4& mWorld)
 {
 	Render(animStatus, mWorld, GameDevice()->m_mView, GameDevice()->m_mProj, GameDevice()->m_vLightDir, GameDevice()->m_vEyePt);
 }
-void CFbxMesh::RenderDisplace(Animator* animStatus, const MATRIX4X4& mWorld)
+void CFbxMesh::RenderDisplace(std::shared_ptr<Animator> animStatus, const MATRIX4X4& mWorld)
 {
 	RenderDisplace(animStatus, mWorld, GameDevice()->m_mView, GameDevice()->m_mProj, GameDevice()->m_vLightDir, GameDevice()->m_vEyePt);
 }
@@ -1773,7 +1773,7 @@ void CFbxMesh::RenderDisplaceStatic(const MATRIX4X4& mWorld, const MATRIX4X4& mV
 //	���b�V������ʂɃ����_�����O���鏈��
 //
 // ����
-//      Animator* animStatus    �A�j���[�V�����X�e�[�^�X
+//      std::shared_ptr<Animator> animStatus    �A�j���[�V�����X�e�[�^�X
 //      const MATRIX4X4& mWorld         ���[���h�}�g���b�N�X
 //      const MATRIX4X4& mView          �r���[�}�g���b�N�X
 //      const MATRIX4X4& mProj          �v���W�F�N�V�����}�g���b�N�X
@@ -1784,7 +1784,7 @@ void CFbxMesh::RenderDisplaceStatic(const MATRIX4X4& mWorld, const MATRIX4X4& mV
 //		�Ȃ�
 //
 //------------------------------------------------------------------------
-void CFbxMesh::Render(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye)
+void CFbxMesh::Render(std::shared_ptr<Animator> animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye)
 {
 	if (m_nMeshType == 1)
 	{
@@ -1794,7 +1794,7 @@ void CFbxMesh::Render(Animator* animStatus, const MATRIX4X4& mWorld, const MATRI
 		RenderSkin(animStatus, mWorld, mView, mProj, vLight, vEye);
 	}
 }
-void CFbxMesh::RenderDisplace(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye)
+void CFbxMesh::RenderDisplace(std::shared_ptr<Animator> animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye)
 {
 	if (m_nMeshType == 1)
 	{
@@ -1806,7 +1806,7 @@ void CFbxMesh::RenderDisplace(Animator* animStatus, const MATRIX4X4& mWorld, con
 }
 // �V�F�[�_�[�{�[���z��̃{�[���}�g���b�N�X���~�b�N�X����
 // �Ȃ��A�V�F�[�_�[�{�[���}�g���b�N�X�͓]�u�s��ɂȂ��Ă���
-void CFbxMesh::MakeBoneMatrix(Animator* animStatus, MATRIX4X4* mat, const CFbxMeshArray& _mesh)
+void CFbxMesh::MakeBoneMatrix(std::shared_ptr<Animator> animStatus, MATRIX4X4* mat, const CFbxMeshArray& _mesh)
 {
 	if (animStatus == nullptr) return;
 
@@ -1870,7 +1870,7 @@ void CFbxMesh::MakeBoneMatrix(Animator* animStatus, MATRIX4X4* mat, const CFbxMe
 //		�Ȃ�
 //
 //------------------------------------------------------------------------
-void CFbxMesh::RenderSkin(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye)
+void CFbxMesh::RenderSkin(std::shared_ptr<Animator> animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye)
 {
 	// ���b�V���̕`��
 	Draw(animStatus, mWorld, mView, mProj, vLight, vEye);				   // -- 2024.9.5
@@ -1893,7 +1893,7 @@ void CFbxMesh::RenderSkin(Animator* animStatus, const MATRIX4X4& mWorld, const M
 //		�Ȃ�
 //
 //------------------------------------------------------------------------
-void CFbxMesh::Draw(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye)
+void CFbxMesh::Draw(std::shared_ptr<Animator> animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye)
 {
 	if (animStatus == nullptr) return;    // -- 2024.9.5
 
@@ -2010,7 +2010,7 @@ void CFbxMesh::Draw(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4
 //		�Ȃ�
 //
 //------------------------------------------------------------------------
-void CFbxMesh::RenderDisplaceSkin(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye)
+void CFbxMesh::RenderDisplaceSkin(std::shared_ptr<Animator> animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye)
 {
 	// ���b�V���̕`��
 	DrawDisplace(animStatus, mWorld, mView, mProj, vLight, vEye);		  // -- 2024.9.5
@@ -2033,7 +2033,7 @@ void CFbxMesh::RenderDisplaceSkin(Animator* animStatus, const MATRIX4X4& mWorld,
 //		�Ȃ�
 //
 //------------------------------------------------------------------------
-void CFbxMesh::DrawDisplace(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye)
+void CFbxMesh::DrawDisplace(std::shared_ptr<Animator> animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye)
 {
 	if (animStatus == nullptr) return;    // -- 2024.9.5
 

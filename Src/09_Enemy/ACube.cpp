@@ -6,21 +6,14 @@
 
 CACube::CACube()
 {
-    m_pWhiteMesh = new CFbxMesh();
-    m_pWhiteColl = new MeshCollider();
-    m_pWhiteMesh->Load("data/LowPoly/white.mesh");
-    m_pWhiteColl->MakeFromMesh(m_pWhiteMesh);
-    
-    m_pRedMesh = new CFbxMesh();
-    m_pRedColl = new MeshCollider();
-    m_pRedMesh->Load("data/LowPoly/Red1.mesh");
-    m_pRedColl->MakeFromMesh(m_pRedMesh);
+    InitCubes();
 
     transform.position = VECTOR3(0, 0, 0);
     m_maxSize = CAnimalManager::GetObjectSize(m_pRedColl);
     m_isMovingToUFO = false;
     m_isDestroyMe = false;
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
+    
 }
 
 CACube::~CACube()
@@ -72,4 +65,21 @@ void CACube::MoveForUFO(const VECTOR3& animalPos,const VECTOR3& distanceFromObje
     {
         transform.position += distanceFromObjectToUFO;
     }
+}
+
+void CACube::InitCubes()
+{
+    //std::function<void(std::shared_ptr<CFbxMesh>&, std::shared_ptr<MeshCollider>&, const char*)> initCubes を省略しautoに
+    auto initCubes = [](std::shared_ptr<CFbxMesh>& mesh,std::shared_ptr<MeshCollider>& coll,const char* path)
+    {
+        mesh = ObjectManager::GetMakeShare<CFbxMesh>();
+        assert(mesh);
+        coll = ObjectManager::GetMakeShare<MeshCollider>();       
+        assert(coll);
+        mesh->Load(path);       
+        coll->MakeFromMesh(mesh);
+    };
+
+    initCubes(m_pRedMesh,m_pRedColl,"data/LowPoly/Red1.mesh");
+    initCubes(m_pWhiteMesh,m_pWhiteColl,"data/LowPoly/white.mesh");
 }

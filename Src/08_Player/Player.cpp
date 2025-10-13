@@ -10,9 +10,9 @@
 CPlayer::CPlayer()
 {
     transform.position = VECTOR3(0, 10, 0);
-    m_pMesh = new CFbxMesh();
+    m_pMesh = std::make_shared<CFbxMesh>();
     m_pMesh->Load("data/Mousey/Mousey.mesh");
-    m_pAnimator = new Animator();
+    m_pAnimator = ObjectManager::GetMakeShare<Animator>();
     m_pAnimator->SetModel(m_pMesh);
     m_pMesh->LoadAnimation(0, "data/Mousey/Anim_Run.anmx", true);
     m_pAnimator->Play(0);
