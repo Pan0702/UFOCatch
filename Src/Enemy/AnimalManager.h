@@ -1,7 +1,7 @@
 #pragma once
 #include <chrono>
 
-#include "../Object3D.h"
+#include "../CommonFile/Object3D.h"
 #include "../Player/Player.h"
 
 class CAnimalManager:public Object3D

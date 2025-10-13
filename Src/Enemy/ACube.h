@@ -1,6 +1,6 @@
 #pragma once
 #include <chrono>
-#include "../Object3D.h"
+#include "../CommonFile/Object3D.h"
 #include "AnimalManager.h"
 
 class CACube: public CAnimalManager
