@@ -6,13 +6,20 @@
 #include <chrono>
 #include <thread>
 
+#include "EnemyHuman.h"
+
 CAnimalManager::CAnimalManager()
 {
-    
+   // Instantiate<CEnemyHuman>();
 }
 
 CAnimalManager::~CAnimalManager()
 {
+    if (!m_pPlayer)
+    {
+        m_pPlayer = nullptr;
+        delete m_pPlayer;
+    }
 }
 
 void CAnimalManager::Update()
@@ -21,6 +28,8 @@ void CAnimalManager::Update()
     {
         Instantiate<CACube>();
     }
+    if (GameDevice()->m_pDI->CheckJoy(KD_TRG,DIK_K)) Instantiate<CEnemyHuman>();
+
 }
 
 void CAnimalManager::Draw()

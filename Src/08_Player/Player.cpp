@@ -49,13 +49,13 @@ void CPlayer::Update()
 
 void CPlayer::Draw()
 {
-    DrawCircle(VECTOR3(transform.position.x, 0, transform.position.z), m_coneRadius, RGB(0, 255, 0));
+    //DrawCircle(VECTOR3(transform.position.x, 0, transform.position.z), m_coneRadius, RGB(0, 255, 0));
     Object3D::Draw();
 }
 
 void CPlayer::PlayerMove()
 {
-    constexpr float moveSpeed = 0.01f;
+    constexpr float moveSpeed = 0.1f;
     auto* input = GameDevice()->m_pDI;
     if (input->CheckKey(KD_DAT, DIK_W)) transform.position.z += moveSpeed;
     if (input->CheckKey(KD_DAT, DIK_S)) transform.position.z -= moveSpeed;
