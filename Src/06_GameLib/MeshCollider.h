@@ -41,7 +41,7 @@ public:
 	/// </summary>
 	/// <param name="mesh">���b�V���f�[�^</param>
 	/// <param name="animator">�A�j���[�^�[</param>
-	void MakeFromMesh(CFbxMesh* meshIn, Animator* animatorIn = nullptr);
+	void MakeFromMesh(std::shared_ptr<CFbxMesh> meshIn, Animator* animatorIn = nullptr);
 
 	/// <summary>
 	/// mesh�t�@�C������A����f�[�^���쐬����
@@ -153,6 +153,7 @@ public:
 	/// <param name="radius">���a(Out)</param>
 	void GetBall(VECTOR3* center, float* radius){  *center = bBall.center; *radius = bBall.radius; }
 
+
 private:
 	Object3D* parent;
 
@@ -174,7 +175,7 @@ private:
 		int indices[3]; // ���_�ԍ�
 		VECTOR3 normal; // �ʂ̖@��
 	};
-	CFbxMesh* mesh;
+	std::shared_ptr<CFbxMesh> mesh;
 	Animator* animator;
 	int       id;
 	int       frame;
