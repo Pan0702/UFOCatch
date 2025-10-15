@@ -1,7 +1,5 @@
 #include "MeshCollider.h"
 #include "../04_FrameWork/ResourceManager.h"
-#include "../03_GameMain/Macro.h"
-#include "../04_FrameWork/ObjectManager.h"
 
 namespace {
     // �X�L�����b�V����ό`������Ƃ��̃t���[���|�[�Y�ϊ����~�b�g
@@ -24,7 +22,7 @@ MeshCollider::~MeshCollider()
 {
 }
 
-void MeshCollider::MakeFromMesh(std::shared_ptr<CFbxMesh> meshIn, Animator* animatorIn)
+void MeshCollider::MakeFromMesh(CFbxMesh* meshIn, Animator* animatorIn)
 {
     mesh = meshIn;
     animator = animatorIn;
@@ -90,9 +88,10 @@ void MeshCollider::MakeFromMesh(std::shared_ptr<CFbxMesh> meshIn, Animator* anim
 
 void MeshCollider::MakeFromFile(std::string fileName)
 {
-    std::shared_ptr<CFbxMesh> meshIn = ObjectManager::GetMakeShare<CFbxMesh>();
+    CFbxMesh* meshIn = new CFbxMesh();
     meshIn->Load(fileName.c_str());
     MakeFromMesh(meshIn);
+    SAFE_DELETE(meshIn);
 }
 
 int MeshCollider::SelectBoneNo(Vertex vt[3])

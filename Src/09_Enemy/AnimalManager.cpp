@@ -10,7 +10,6 @@
 
 CAnimalManager::CAnimalManager()
 {
-   // Instantiate<CEnemyHuman>();
 }
 
 CAnimalManager::~CAnimalManager()
@@ -28,13 +27,14 @@ void CAnimalManager::Update()
     {
         Instantiate<CACube>();
     }
-    if (GameDevice()->m_pDI->CheckJoy(KD_TRG,DIK_K)) Instantiate<CEnemyHuman>();
-
+    if (GameDevice()->m_pDI->CheckJoy(KD_TRG,DIK_K))
+    {
+        new CEnemyHuman();
+    }
 }
 
 void CAnimalManager::Draw()
 {
-
 }
 
 
@@ -42,9 +42,3 @@ VECTOR3 CAnimalManager::GetObjectSize(MeshCollider* meshColl) const
 {
     return meshColl->bBox.max;
 }
-
-
-
-
-
-

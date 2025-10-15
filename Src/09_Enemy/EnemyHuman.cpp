@@ -8,11 +8,9 @@ CEnemyHuman::CEnemyHuman()
 {
     transform.position = VECTOR3(0, 0, 0);
     m_pMesh = new CFbxMesh();
-    m_pMesh->Load("data/Mousey/Mousey.mesh");
+    m_pMesh->Load("data/Ghost/Ghost.mesh");
     m_pAnimator = new Animator();
     m_pAnimator->SetModel(m_pMesh);
-    m_pMesh->LoadAnimation(0, "data/Mousey/Anim_Run.anmx", true);
-    m_pAnimator->Play(0);
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     
 }
@@ -32,7 +30,7 @@ void CEnemyHuman::Update()
 
 void CEnemyHuman::Draw()
 {
-    Object3D::Draw();
+    m_pMesh->Render(transform.matrix());
     DrawDirectionLine();
     FanShape();
 }
@@ -44,31 +42,28 @@ void CEnemyHuman::DrawDirectionLine()
 
     VECTOR3 startPos = transform.position;
     
-    VECTOR3 endPos = startPos + VECTOR3(LINE_LENGTH,0,LINE_LENGTH) * mat;
+    // 緑が正しかったので、Z方向を使用
+    VECTOR3 endPos = startPos + VECTOR3(0, 0, LINE_LENGTH) * mat;
 
-    spr.DrawLine3D(startPos,endPos,RGB(0,200,0));
-    
+    spr.DrawLine3D(startPos, endPos, RGB(0, 200, 0));
 }
 
 void CEnemyHuman::FanShape()
 {
     CSprite spr;
     
-    float angle = -( XM_PI / 6);
+    float angle = -(XM_PI / 6);
     
-    for (int i = 0;i < 3;i++)
+    for (int i = 0; i < 3; i++)
     {
-        if (i == 2)angle = std::abs(angle);
-        float dirX = sin(transform.rotation.y + angle);
-        float dirZ = cos(transform.rotation.y + angle);
-
+        if (i == 2) angle = std::abs(angle);
+        
+        // 行列を使って統一
+        MATRIX4X4 mat = XMMatrixRotationY(transform.rotation.y + angle);
+        
         VECTOR3 startPos = transform.position;
-    
-        VECTOR3 endPos = VECTOR3(
-            startPos.x + dirX * LINE_LENGTH,
-            startPos.y,
-            startPos.z + dirZ * LINE_LENGTH);
+        VECTOR3 endPos = startPos + VECTOR3(0, 0, LINE_LENGTH) * mat;
 
-        spr.DrawLine3D(startPos,endPos,RGB(255,0,0));
+        spr.DrawLine3D(startPos, endPos, RGB(255, 0, 0));
     }
 }
