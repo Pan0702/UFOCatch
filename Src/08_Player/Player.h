@@ -11,7 +11,9 @@ public:
     bool IsInConeArea(const VECTOR3& pos) const;
     void DrawCircle(const VECTOR3& center, float radius, DWORD color);
     VECTOR3 SuckUpAnimal(const int& dividend, const VECTOR3& animalPos) const;
-    
+    bool IsHumanFieldOfVision(const VECTOR3& humanRotate, const float& angle, const VECTOR3& humanPos);
+    bool IsShorterThanLine(const VECTOR3& humanPos);
+
     void AddExp(int exp){ m_exp += exp; }
     bool GetIsSuckUp() const { return m_isSuckUp; }
 

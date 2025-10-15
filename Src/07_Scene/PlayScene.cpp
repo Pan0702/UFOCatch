@@ -5,6 +5,7 @@
 #include "../09_Enemy/AnimalManager.h"
 #include "../08_Player/PCamera.h"
 #include "../08_Player/Player.h"
+#include "../09_Enemy/EnemyHuman.h"
 
 
 PlayScene::PlayScene()
@@ -12,6 +13,7 @@ PlayScene::PlayScene()
 	Instantiate<CPlayer>();
 	Instantiate<CPlayerCamera>();
 	Instantiate<CAnimalManager>();
+	Instantiate<CEnemyHuman>();
 }
 
 PlayScene::~PlayScene()

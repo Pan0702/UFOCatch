@@ -1,7 +1,8 @@
-
 #include "Player.h"
 #include "PCamera.h"
 #include <chrono>
+#include <iostream>
+#include <algorithm>
 
 
 #include "../06_GameLib/Lerp.h"
@@ -27,20 +28,19 @@ CPlayer::~CPlayer() = default;
 
 void CPlayer::Update()
 {
-    
     m_pAnimator->Update();
     PlayerMove();
-    
+
     // コーンの半径を計算
     m_coneRadius = transform.position.y * tan(DegToRad * m_coneDegree);
-    
+
     ImGui::Begin("Player");
     ImGui::Text("Cone Radius: %lf", m_coneRadius);
     ImGui::Text("Cone Height: %lf", transform.position.y);
     ImGui::End();
-    
+
     CheckLevel();
-    
+
     // カメラ位置を更新
     CameraPos();
 
@@ -81,7 +81,7 @@ void CPlayer::IncreaseConeVertexHeight()
     {
         transform.position.y += 1.0f;
     }
-    
+
     // 半径を更新
     m_coneRadius = transform.position.y * tan(DegToRad * m_coneDegree);
 }
@@ -92,7 +92,6 @@ void CPlayer::CameraPos()
     ObjectManager::FindGameObject<CPlayerCamera>()->PosSet(
         transform.position, transform.position.y);
 }
-
 
 
 //吸い込むスピードを計算
@@ -106,7 +105,23 @@ VECTOR3 CPlayer::SuckUpAnimal(const int& dividend, const VECTOR3& animalPos) con
     return distnceAnimalFromPlayer / dividend;
 }
 
+bool CPlayer::IsHumanFieldOfVision(const VECTOR3& humanRotate, const float& angle, const VECTOR3& humanPos)
+{
+    
+    if (!IsShorterThanLine(humanPos))return false;
+}
 
+bool CPlayer::IsShorterThanLine(const VECTOR3& humanPos)
+{
+    float LINE_LENGTH = 10;
+    VECTOR2 distance = VECTOR2(transform.position.x - humanPos.x,transform.position.z - humanPos.z);
+    float dis = sqrt(Pow2(distance.x) + Pow2(distance.y));
+    if (LINE_LENGTH >= dis)
+    {
+        return true;
+    }
+    return false;
+}
 //エリア内にいるかチェック
 bool CPlayer::IsInConeArea(const VECTOR3& pos) const
 {

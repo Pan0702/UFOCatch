@@ -4,7 +4,7 @@ namespace
 {
     const VECTOR3 INIT_UP_DIR = VECTOR3(0, 1, 0);
     const VECTOR3 BASE_CAM_OFFSET = VECTOR3(0, 15, 1);
-    const VECTOR3 INIT_CAM_LOOK = VECTOR3(0, 2, 0); 
+    const VECTOR3 INIT_CAM_LOOK = VECTOR3(0, 1, 0); 
     const float REFERENCE_HEIGHT = 10.0f; // 基準高さ（半径3の時）
 }
 
