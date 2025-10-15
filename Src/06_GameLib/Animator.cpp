@@ -61,7 +61,7 @@ void Animator::Update()
 	}
 }
 
-void Animator::SetModel(std::shared_ptr<CFbxMesh> mesh)
+void Animator::SetModel(CFbxMesh* mesh)
 {
 	base = mesh;
 }

@@ -1,8 +1,5 @@
 #pragma once
-//ï¿½}ï¿½Nï¿½ï¿½ï¿½ï¿½`
-
-#include <iostream>
-#include <memory>
+//ƒ}ƒNƒ’è‹`
 #define SAFE_RELEASE(x) if(x){x->Release(); x=0;}
 #define SAFE_DELETE(x) if(x){delete x; x=0;}
 #define SAFE_DELETE_ARRAY(p){ if(p){ delete[] (p);   (p)=nullptr;}}
@@ -20,4 +17,3 @@ inline void safe_delete_array(void*& ptr) {
 		ptr = nullptr;
 	}
 }
-

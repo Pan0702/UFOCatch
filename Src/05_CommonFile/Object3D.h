@@ -112,19 +112,19 @@ public:
 	/// ���b�V���̃A�h���X��Ԃ�
 	/// </summary>
 	/// <returns>���b�V���̃A�h���X</returns>
-	std::shared_ptr<CFbxMesh> Mesh() { return m_pMesh; }
+	CFbxMesh* Mesh() { return m_pMesh; }
 
 	/// <summary>
 	/// �R���W�������b�V���̃A�h���X��Ԃ�
 	/// </summary>
 	/// <returns>�R���W�������b�V���̃A�h���X</returns>
-	std::shared_ptr<MeshCollider> MeshCol() { return m_pMeshCol; }
+	MeshCollider* MeshCol() { return m_pMeshCol; }
 
 	/// <summary>
 	/// �A�j���[�^�[�̃A�h���X��Ԃ�
 	/// </summary>
 	/// <returns>�A�j���[�^�[�̃A�h���X</returns>
-	std::shared_ptr<Animator> GetAnimator() { return m_pAnimator; }
+	Animator* GetAnimator() { return m_pAnimator; }
 
 	/// <summary>
 	/// �R���W�������b�V����Ball����Ԃ�
@@ -135,8 +135,8 @@ public:
 
 
 protected:
-	std::shared_ptr<CFbxMesh> m_pMesh;
-	std::shared_ptr<Animator> m_pAnimator;
-	std::shared_ptr<MeshCollider> m_pMeshCol;
+	CFbxMesh* m_pMesh;
+	Animator* m_pAnimator;
+	MeshCollider* m_pMeshCol;
 	Transform transform;
 };

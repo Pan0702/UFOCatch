@@ -15,14 +15,10 @@ private:
     void RedDraw();
     void MoveForUFO(const VECTOR3& animalPos, const VECTOR3& distanceFromObjectToUFO, const int& exp);
 
-    void InitCubes();
-
-
-    
-    std::shared_ptr<CFbxMesh> m_pRedMesh;
-    std::shared_ptr<CFbxMesh> m_pWhiteMesh;
-    std::shared_ptr<MeshCollider> m_pRedColl;
-    std::shared_ptr<MeshCollider> m_pWhiteColl;
+    CFbxMesh* m_pRedMesh;
+    CFbxMesh* m_pWhiteMesh;
+    MeshCollider* m_pRedColl;
+    MeshCollider* m_pWhiteColl;
 
     VECTOR3 m_maxSize;
     bool m_isInConeArea;
@@ -30,5 +26,6 @@ private:
     VECTOR3 m_distanceFromObjectToUFO;
     bool m_isMovingToUFO = false;
     bool m_isDestroyMe;
+    std::chrono::steady_clock::time_point m_moveStartTime;
 
 };

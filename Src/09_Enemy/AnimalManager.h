@@ -11,7 +11,7 @@ public:
     ~CAnimalManager();
 protected:
     //各座標の最大値を返却
-     VECTOR3 GetObjectSize(std::shared_ptr<MeshCollider>& meshColl) const;
+     VECTOR3 GetObjectSize(MeshCollider* meshColl) const;
     CPlayer* m_pPlayer;
 private:
     void Update() override;

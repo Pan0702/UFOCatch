@@ -262,7 +262,7 @@ public:
 	/// <param name="animStatus">アニメーター</param>
 	/// <param name="UpFrame">アニメーションフレームの現在値からの増分（省略値：０）</param>
 	/// <returns>ルートボーンのマトリックス</returns>
-	MATRIX4X4 GetRootAnimMatrices(std::shared_ptr<Animator> animStatus, const int& UpFrame = 0);      // -- 2024.3.14
+	MATRIX4X4 GetRootAnimMatrices(Animator* animStatus, const int& UpFrame = 0);      // -- 2024.3.14
 
 	/// <summary>
 	/// ルートボーンアニメーションの現在値フレームの一つ前のフレーム位置からの増分マトリックスを取得する
@@ -271,7 +271,7 @@ public:
 	/// <param name="UpFrame">アニメーションフレームの現在値からの増分（省略値：０）</param>
 	/// <param name="StartFrameUp">アニメフレームが開始フレーム（フレーム０）のときの増分値の処理方法（省略値：１）</param>
 	/// <returns>ルートボーンの一つ前の位置からの増分マトリックス</returns>
-	MATRIX4X4 GetRootAnimUpMatrices(std::shared_ptr<Animator> animStatus, const int& UpFrame = 0, const int& StartFrameUp = 1);      // -- 2024.3.14
+	MATRIX4X4 GetRootAnimUpMatrices(Animator* animStatus, const int& UpFrame = 0, const int& StartFrameUp = 1);      // -- 2024.3.14
 
 	void MakeRootAnimAndShaderMatrix(const int& animNum, ROOTANIMTYPE RAType);        // ルートボーンアニメーションとシェーダーマトリックスの作成       // -- 2020.12.15 -- 3
 
@@ -286,9 +286,9 @@ public:
 	/// <param name="nBone">ボーン番号</param>
 	/// <param name="nMesh">メッシュ番号(省略値:0)</param>
 	/// <returns>ボーンマトリックス</returns>
-	MATRIX4X4 GetFrameMatrices(std::shared_ptr<Animator> animStatus, const DWORD& nBone, const DWORD& nMesh = 0);		       // -- 2024.9.5
-	MATRIX4X4 GetFrameMatrices(std::shared_ptr<Animator> animStatus, const MATRIX4X4& mWorld, const DWORD& nBone, const DWORD& nMesh = 0);      // -- 2024.9.5
-	MATRIX4X4 GetMixBoneMatrix(std::shared_ptr<Animator> animStatus, const DWORD& nBone, const DWORD& nMesh);
+	MATRIX4X4 GetFrameMatrices(Animator* animStatus, const DWORD& nBone, const DWORD& nMesh = 0);		       // -- 2024.9.5
+	MATRIX4X4 GetFrameMatrices(Animator* animStatus, const MATRIX4X4& mWorld, const DWORD& nBone, const DWORD& nMesh = 0);      // -- 2024.9.5
+	MATRIX4X4 GetMixBoneMatrix(Animator* animStatus, const DWORD& nBone, const DWORD& nMesh);
 
 	/// <summary>
 	/// メッシュをレンダリングする
@@ -302,8 +302,8 @@ public:
  	/// </summary>
  	/// <param name="animStatus">アニメーター</param>
  	/// <param name="mWorld">ワールドマトリックス</param>
- 	void    Render(std::shared_ptr<Animator> animStatus, const MATRIX4X4& mWorld);
-	void    RenderDisplace(std::shared_ptr<Animator> animStatus, const MATRIX4X4& mWorld);
+ 	void    Render(Animator* animStatus, const MATRIX4X4& mWorld);
+	void    RenderDisplace(Animator* animStatus, const MATRIX4X4& mWorld);
 
 	// スタティックメッシュ	レンダリング
 	void    Render(const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye);
@@ -315,20 +315,17 @@ private:
 
 public:
 	// スキンメッシュ   レンダリング
-	void    Render(std::shared_ptr<Animator> animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const
-	               VECTOR3& vLight, const VECTOR3& vEye);
-	void    RenderSkin(std::shared_ptr<Animator> animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const
-	                   VECTOR3& vLight, const VECTOR3& vEye);
+	void    Render(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye);
+	void    RenderSkin(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye);
 
-	void    MakeBoneMatrix(std::shared_ptr<Animator> animStatus, MATRIX4X4* mat, const CFbxMeshArray& _mesh);
+	void    MakeBoneMatrix(Animator* animStatus, MATRIX4X4* mat, const CFbxMeshArray& _mesh);
 
 private:
-	void    RenderDisplaceSkin(std::shared_ptr<Animator> animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye);
-	void    RenderDisplace(std::shared_ptr<Animator> animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const
-	                       VECTOR3& vLight, const VECTOR3& vEye);
+	void    RenderDisplaceSkin(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye);
+	void    RenderDisplace(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye);
 
-	void    Draw(std::shared_ptr<Animator> animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye);
-	void    DrawDisplace(std::shared_ptr<Animator> animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye);
+	void    Draw(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye);
+	void    DrawDisplace(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye);
 
 public:
 	// シェーダー関連

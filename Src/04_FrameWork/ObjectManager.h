@@ -7,7 +7,6 @@
 /// <author>N.Hanai</author>
 
 #include <list>
-#include <memory>
 #include <string>
 class GameObject;
 
@@ -113,12 +112,6 @@ namespace ObjectManager {
 			}
 		}
 		return out;
-	}
-
-	template<class C>
-std::shared_ptr<C> GetMakeShare()
-	{
-		return std::make_shared<C>();
 	}
 
 	/// <summary>
