@@ -4,9 +4,7 @@ GameInstance::GameInstance()
 {
 }
 
-GameInstance::~GameInstance()
-{
-}
+GameInstance::~GameInstance() = default;
 
 void GameInstance::Update()
 {

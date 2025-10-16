@@ -3,7 +3,6 @@
 #include <chrono>
 #include <iostream>
 #include <algorithm>
-#include "PCamera.cpp"
 
 
 #include "../06_GameLib/Lerp.h"
@@ -17,7 +16,7 @@ namespace
 
 CPlayer::CPlayer() 
 {
-    transform.position = VECTOR3(0, 0, 0);
+    transform.position = VECTOR3(0, 5, 0);
     m_pMesh = new CFbxMesh();
     m_pMesh->Load("data/Mousey/Mousey.mesh");
     m_pAnimator = new Animator();
@@ -113,8 +112,8 @@ bool CPlayer::IsTargetInVidionFan(const float& humanRotateY, const VECTOR3& targ
 {
     const float distanceHumanFromPlayer = CalcDistance3D(transform.position, targetPosition);
     VECTOR3 rayEndPosition = targetPosition + RAY_LNEGTH * XMMatrixRotationY(humanRotateY); 
-    const VECTOR3 vectorFromTargetToRayEnd = rayEndPosition -targetPosition;
-    const VECTOR3 vectorFromTargetToPlayer = transform.position - targetPosition;
+    const VECTOR2 vectorFromTargetToRayEnd = VECTOR2(rayEndPosition.x - targetPosition.x,rayEndPosition.z -targetPosition.z);
+    const VECTOR2 vectorFromTargetToPlayer = VECTOR2(transform.position.x - targetPosition.x,transform.position.z - targetPosition.z);
 
     if (IsBeyondMaxDistance(distanceHumanFromPlayer) || IsBeyondInsideFanShapeAngle(vectorFromTargetToRayEnd, vectorFromTargetToPlayer))
     {
@@ -132,11 +131,11 @@ bool CPlayer::IsBeyondMaxDistance(const float& dis)
     return false;
 }
 
-bool CPlayer::IsBeyondInsideFanShapeAngle(const VECTOR3& vectorA,const VECTOR3& vectorB)
+bool CPlayer::IsBeyondInsideFanShapeAngle(const VECTOR2& vectorA,const VECTOR2& vectorB)
 {
-    const VECTOR3 HumanFromPlayerNorm = normalize(vectorA);
-    const VECTOR3 HumanFromEndPosNorm = normalize(vectorB);
-    const float anglePlayerFromEndPos = CalcVectorAngle(HumanFromPlayerNorm, HumanFromEndPosNorm);
+    const VECTOR2 HumanFromPlayerNorm = normalize(vectorA);
+    const VECTOR2 HumanFromEndPosNorm = normalize(vectorB);
+    const float anglePlayerFromEndPos = CalcVector2Angle(HumanFromPlayerNorm, HumanFromEndPosNorm);
     if (ANGLE < anglePlayerFromEndPos)
     {
         return true;

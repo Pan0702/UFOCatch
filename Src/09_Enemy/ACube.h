@@ -13,6 +13,7 @@ private:
     void Draw();
     void WhiteDraw();
     void RedDraw();
+    void EmemyMove();
     void MoveForUFO(const VECTOR3& animalPos, const VECTOR3& distanceFromObjectToUFO, const int& exp);
 
     CFbxMesh* m_pRedMesh;
@@ -26,6 +27,15 @@ private:
     VECTOR3 m_distanceFromObjectToUFO;
     bool m_isMovingToUFO = false;
     bool m_isDestroyMe;
-    std::chrono::steady_clock::time_point m_moveStartTime;
-
+    
+float time;
+    int num;
+    bool timereset;
+    enum ACubeState
+    {
+        Move,
+        Stop,
+        Suction,
+        destory
+    };
 };

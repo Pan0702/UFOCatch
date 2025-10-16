@@ -13,7 +13,7 @@ public:
     VECTOR3 CalcSuctionVelocity(const int& dividend, const VECTOR3& animalPos) const;
     bool IsTargetInVidionFan(const float& humanRotateY, const VECTOR3& targetPosition);
     bool IsBeyondMaxDistance(const float& dis);
-    bool IsBeyondInsideFanShapeAngle(const VECTOR3& vectorA, const VECTOR3& vectorB);
+    bool IsBeyondInsideFanShapeAngle(const VECTOR2& vectorA, const VECTOR2& vectorB);
 
     void AddExp(int exp){ m_exp += exp; }
     bool GetIsSuckUp() const { return m_isSuctionActive; }

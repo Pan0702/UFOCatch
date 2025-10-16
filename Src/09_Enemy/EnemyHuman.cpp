@@ -26,7 +26,7 @@ void CEnemyHuman::Update()
     {
         transform.rotation.y += XM_PI / 12;
     }
-    if (m_pPlayer->IsHumanFieldOfVision(transform.rotation,20.0f,transform.position))
+    if (m_pPlayer->IsTargetInVidionFan(transform.rotation.y,transform.position))
     {
         m_dwColor = 255;
     }
@@ -53,7 +53,7 @@ void CEnemyHuman::DrawDirectionLine()
 
     VECTOR3 startPos = transform.position;
     
-    // —Î‚ª³‚µ‚©‚Á‚½‚Ì‚ÅAZ•ûŒü‚ğg—p
+    // ï¿½Î‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì‚ÅAZï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½gï¿½p
     VECTOR3 endPos = startPos + VECTOR3(0, 0, LINE_LENGTH) * mat;
 
     
@@ -70,7 +70,7 @@ void CEnemyHuman::FanShape()
     {
         if (i == 2) angle = std::abs(angle);
         
-        // s—ñ‚ğg‚Á‚Ä“ˆê
+        // ï¿½sï¿½ï¿½ï¿½ï¿½gï¿½ï¿½ï¿½Ä“ï¿½ï¿½ï¿½
         MATRIX4X4 mat = XMMatrixRotationY(transform.rotation.y + angle);
         
         VECTOR3 startPos = transform.position;

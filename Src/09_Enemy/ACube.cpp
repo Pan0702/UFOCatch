@@ -21,10 +21,22 @@ CACube::CACube()
     m_isMovingToUFO = false;
     m_isDestroyMe = false;
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
+    num = 0;
+    timereset = false;
 }
 
 CACube::~CACube()
 {
+    if (m_pWhiteMesh != nullptr)
+    {
+        delete m_pWhiteMesh;
+        m_pWhiteMesh = nullptr;
+    }
+    if (m_pWhiteColl != nullptr)
+    {
+        delete m_pWhiteColl;
+        m_pWhiteColl = nullptr;
+    }
 }
 
 void CACube::Update()
@@ -33,10 +45,15 @@ void CACube::Update()
     
     if (m_isInConeArea && m_pPlayer->GetIsSuckUp())
     {
-        m_distanceFromObjectToUFO = m_pPlayer->SuckUpAnimal(100, transform.position + VECTOR3(0,m_maxSize.y,0));
+        m_distanceFromObjectToUFO = m_pPlayer->CalcSuctionVelocity(100, transform.position + VECTOR3(0,m_maxSize.y,0));
         MoveForUFO(transform.position,m_distanceFromObjectToUFO, 1);
     }
-    
+    ImGui::Begin("ACube");
+    ImGui::Text("transform.position.z:%lf", transform.position.z);
+    ImGui::Text("transform.Rotate.y:%lf", transform.rotation.y * RadToDeg);
+    ImGui::Text("timer:%lf", time);
+    ImGui::End();
+    EmemyMove();
 }
 
 
@@ -60,6 +77,50 @@ void CACube::RedDraw()
 {
     m_pRedMesh->Render(transform.matrix());
 }
+
+void CACube::EmemyMove()
+{
+    
+    switch (num)
+    {
+    case 0:
+        {
+            if (!timereset)
+            {
+                 time = 0.0f;
+                timereset = true;
+            }
+            MATRIX4X4 mat = XMMatrixRotationY(transform.rotation.y);
+            transform.position = transform.position + VECTOR3(0, 0, 0.01f) * mat;
+            time += 0.01f;
+            if (time >= 5.0f)
+            {
+                num = 1;
+                timereset = false;
+            }
+            break;
+        }
+    case 1:
+        {
+            if (!timereset)
+            {
+                 time = 0.0f;
+                timereset = true;
+            }
+            transform.rotation.y += 1.0f * DegToRad;
+            time += 1.0f;
+            if (time >= 90)
+            {
+                num = 0;
+                timereset = false;
+            }  
+            break;
+        }
+    }
+    
+}
+
+
 void CACube::MoveForUFO(const VECTOR3& animalPos,const VECTOR3& distanceFromObjectToUFO, const int& exp)
 {
     if (m_pPlayer->GetPos().y <= animalPos.y)  
