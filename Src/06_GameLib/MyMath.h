@@ -430,6 +430,20 @@ inline float Pow2(const float& n)
 {
 	return n * n;
 }
+
+/**
+ * 与えられた2つの3D点のx座標とy座標によって形成される直角三角形の斜辺を計算します。
+ *
+ * @param v1 最初の3Dベクトル
+ * @param v2 2番目の3Dベクトル
+ * @return 2つの点のx座標とy座標の差によって形成される直角三角形の斜辺の長さ
+ */
+inline float CalcDistance3D(const VECTOR3& v1,const VECTOR3& v2)
+{
+	VECTOR2 distance = VECTOR2(v1.x - v2.x, v1.z - v2.z);
+	return sqrtf(Pow2(distance.x) + Pow2(distance.y));
+}
+
 inline VECTOR3 V3abs(const VECTOR3& n)
 {
 	VECTOR3 tmp;
@@ -437,4 +451,28 @@ inline VECTOR3 V3abs(const VECTOR3& n)
 	tmp.y = std::fabs(n.y);
 	tmp.z = std::fabs(n.z);
 	return tmp;
+}
+
+///
+///三角形の3つの辺の長さから角度を求めます
+/// @param A はさむ辺１
+/// @param B はさむ辺２
+/// @param C 求めたい角度の対辺
+/// @return　求めたい角度
+/// 
+inline float CalcCosineFormula(const float& A,const float& B, const float& C)
+{
+	if (A == 0 || B == 0)
+	{
+		return 0;
+	}
+	float formula = (Pow2(A) + Pow2(B) - Pow2(C)) / (2 * A * B);
+	return formula * RadToDeg;
+	
+}
+
+inline float CalcVectorAngle(const VECTOR3& vNorm1,const VECTOR3& vNorm2)
+{
+	float angle = acosf(vNorm1.x * vNorm2.x + vNorm1.y * vNorm2.y + vNorm1.z * vNorm2.z);
+	return angle * RadToDeg;
 }

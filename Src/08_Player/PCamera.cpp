@@ -3,9 +3,9 @@
 namespace
 {
     const VECTOR3 INIT_UP_DIR = VECTOR3(0, 1, 0);
-    const VECTOR3 BASE_CAM_OFFSET = VECTOR3(0, 15, 1);
+    const VECTOR3 BASE_CAM_OFFSET = VECTOR3(0, 30, -1);
     const VECTOR3 INIT_CAM_LOOK = VECTOR3(0, 1, 0); 
-    const float REFERENCE_HEIGHT = 10.0f; // 基準高さ（半径3の時）
+    const float REFERENCE_HEIGHT = 1.0f; // 基準高さ（半径3の時）
 }
 
 CPlayerCamera::CPlayerCamera()
@@ -35,6 +35,7 @@ void CPlayerCamera::PosSet(const VECTOR3& pos, const float& coneHeight)
     scaledCamOffset.y = BASE_CAM_OFFSET.y * scale;
     scaledCamOffset.z = BASE_CAM_OFFSET.z * scale;
     
-    m_camPos = pos + scaledCamOffset;
+    m_camPos = pos + BASE_CAM_OFFSET;
+    //m_camPos = pos + scaledCamOffset;
     m_camLook = pos + INIT_CAM_LOOK;
 }

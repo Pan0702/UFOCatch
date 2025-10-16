@@ -13,4 +13,6 @@ private:
     void Draw() override;
     void DrawDirectionLine();
     void FanShape();
+
+    DWORD m_dwColor;
 };

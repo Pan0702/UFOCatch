@@ -3,14 +3,21 @@
 #include <chrono>
 #include <iostream>
 #include <algorithm>
+#include "PCamera.cpp"
 
 
 #include "../06_GameLib/Lerp.h"
 
-
-CPlayer::CPlayer()
+namespace 
 {
-    transform.position = VECTOR3(0, 10, 0);
+    constexpr float LINE_LENGTH = 7;
+    constexpr float ANGLE = 20;
+    const VECTOR3 RAY_LNEGTH = VECTOR3(0,0,7);
+}
+
+CPlayer::CPlayer() 
+{
+    transform.position = VECTOR3(0, 0, 0);
     m_pMesh = new CFbxMesh();
     m_pMesh->Load("data/Mousey/Mousey.mesh");
     m_pAnimator = new Animator();
@@ -20,8 +27,6 @@ CPlayer::CPlayer()
     m_coneDegree = 20;
     m_allExp = 1;
     m_exp = 0;
-    baseRadius = transform.position.y * tan(DegToRad * m_coneDegree);
-    baseHeight = transform.position.y;
 }
 
 CPlayer::~CPlayer() = default;
@@ -29,22 +34,21 @@ CPlayer::~CPlayer() = default;
 void CPlayer::Update()
 {
     m_pAnimator->Update();
-    PlayerMove();
+    HandleMovementInput();
 
     // コーンの半径を計算
     m_coneRadius = transform.position.y * tan(DegToRad * m_coneDegree);
 
     ImGui::Begin("Player");
-    ImGui::Text("Cone Radius: %lf", m_coneRadius);
-    ImGui::Text("Cone Height: %lf", transform.position.y);
+    ImGui::Text("x: %lf y: %lf z: %lf" ,transform.position.x, transform.position.y, transform.position.z);
     ImGui::End();
 
     CheckLevel();
 
     // カメラ位置を更新
-    CameraPos();
+    UpdateCameraPos();
 
-    m_isSuckUp = GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_J);
+    m_isSuctionActive = GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_J);
 }
 
 void CPlayer::Draw()
@@ -53,7 +57,7 @@ void CPlayer::Draw()
     Object3D::Draw();
 }
 
-void CPlayer::PlayerMove()
+void CPlayer::HandleMovementInput()
 {
     constexpr float moveSpeed = 0.1f;
     auto* input = GameDevice()->m_pDI;
@@ -70,11 +74,11 @@ void CPlayer::CheckLevel()
         int tmp = m_exp - m_allExp;
         m_allExp *= 1.3;
         m_exp = tmp;
-        IncreaseConeVertexHeight();
+       IncreaseSuctionConeHeight();
     }
 }
 
-void CPlayer::IncreaseConeVertexHeight()
+void CPlayer::IncreaseSuctionConeHeight()
 {
     // 高さを徐々に増加させる
     for (float i = 0.1f; i <= 1.0f; i += 0.1f)
@@ -86,7 +90,7 @@ void CPlayer::IncreaseConeVertexHeight()
     m_coneRadius = transform.position.y * tan(DegToRad * m_coneDegree);
 }
 
-void CPlayer::CameraPos()
+void CPlayer::UpdateCameraPos()
 {
     // カメラ位置をコーンの高さに基づいて設定
     ObjectManager::FindGameObject<CPlayerCamera>()->PosSet(
@@ -95,40 +99,59 @@ void CPlayer::CameraPos()
 
 
 //吸い込むスピードを計算
-VECTOR3 CPlayer::SuckUpAnimal(const int& dividend, const VECTOR3& animalPos) const
+VECTOR3 CPlayer::CalcSuctionVelocity(const int& moveDivisor , const VECTOR3& animalPos) const
 {
     float k = (0 - animalPos.y) / (animalPos.y - transform.position.y);
-    VECTOR3 distnceAnimalFromPlayer =
+    VECTOR3 suctionDirection =
         VECTOR3(animalPos.x + k * (animalPos.x - transform.position.x), 0,
                 animalPos.z + k * (animalPos.z - transform.position.z));
-    distnceAnimalFromPlayer = transform.position - distnceAnimalFromPlayer;
-    return distnceAnimalFromPlayer / dividend;
+    suctionDirection = transform.position - suctionDirection;
+    return suctionDirection / moveDivisor ;
 }
 
-bool CPlayer::IsHumanFieldOfVision(const VECTOR3& humanRotate, const float& angle, const VECTOR3& humanPos)
+bool CPlayer::IsTargetInVidionFan(const float& humanRotateY, const VECTOR3& targetPosition)
 {
-    
-    if (!IsShorterThanLine(humanPos))return false;
+    const float distanceHumanFromPlayer = CalcDistance3D(transform.position, targetPosition);
+    VECTOR3 rayEndPosition = targetPosition + RAY_LNEGTH * XMMatrixRotationY(humanRotateY); 
+    const VECTOR3 vectorFromTargetToRayEnd = rayEndPosition -targetPosition;
+    const VECTOR3 vectorFromTargetToPlayer = transform.position - targetPosition;
+
+    if (IsBeyondMaxDistance(distanceHumanFromPlayer) || IsBeyondInsideFanShapeAngle(vectorFromTargetToRayEnd, vectorFromTargetToPlayer))
+    {
+        return false;
+    }
+    return true;
 }
 
-bool CPlayer::IsShorterThanLine(const VECTOR3& humanPos)
+bool CPlayer::IsBeyondMaxDistance(const float& dis)
 {
-    float LINE_LENGTH = 10;
-    VECTOR2 distance = VECTOR2(transform.position.x - humanPos.x,transform.position.z - humanPos.z);
-    float dis = sqrt(Pow2(distance.x) + Pow2(distance.y));
-    if (LINE_LENGTH >= dis)
+    if (LINE_LENGTH < dis)
     {
         return true;
     }
     return false;
 }
-//エリア内にいるかチェック
-bool CPlayer::IsInConeArea(const VECTOR3& pos) const
+
+bool CPlayer::IsBeyondInsideFanShapeAngle(const VECTOR3& vectorA,const VECTOR3& vectorB)
 {
-    const float distnceAnimalFromPlayer = transform.position.y - pos.y;
-    const float animalPositionRadius = distnceAnimalFromPlayer * std::tan(DegToRad * m_coneDegree);
-    if (Pow2(pos.x - transform.position.x) + Pow2(pos.z - transform.position.z)
-        <= Pow2(animalPositionRadius))
+    const VECTOR3 HumanFromPlayerNorm = normalize(vectorA);
+    const VECTOR3 HumanFromEndPosNorm = normalize(vectorB);
+    const float anglePlayerFromEndPos = CalcVectorAngle(HumanFromPlayerNorm, HumanFromEndPosNorm);
+    if (ANGLE < anglePlayerFromEndPos)
+    {
+        return true;
+    }
+    return false;
+}
+
+
+//エリア内にいるかチェック
+bool CPlayer::IsWithSuctionCone(const VECTOR3& targetPos) const
+{
+    const float distnceAnimalFromPlayer = transform.position.y - targetPos.y;
+    const float coneRadiusAtTargetHeight = distnceAnimalFromPlayer * std::tan(DegToRad * m_coneDegree);
+    if (Pow2(targetPos.x - transform.position.x) + Pow2(targetPos.z - transform.position.z)
+        <= Pow2(coneRadiusAtTargetHeight))
     {
         return true;
     }

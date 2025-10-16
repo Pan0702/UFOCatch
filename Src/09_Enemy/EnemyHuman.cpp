@@ -2,7 +2,7 @@
 
 namespace
 {
-    constexpr float LINE_LENGTH = 3.0f;
+    constexpr float LINE_LENGTH = 7.0f;
 }
 CEnemyHuman::CEnemyHuman()
 {
@@ -12,6 +12,7 @@ CEnemyHuman::CEnemyHuman()
     m_pAnimator = new Animator();
     m_pAnimator->SetModel(m_pMesh);
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
+    m_dwColor = 100;
     
 }
 
@@ -25,6 +26,14 @@ void CEnemyHuman::Update()
     {
         transform.rotation.y += XM_PI / 12;
     }
+    if (m_pPlayer->IsHumanFieldOfVision(transform.rotation,20.0f,transform.position))
+    {
+        m_dwColor = 255;
+    }
+    else
+    {
+        m_dwColor = 0;
+    }
     
 }
 
@@ -33,6 +42,8 @@ void CEnemyHuman::Draw()
     m_pMesh->Render(transform.matrix());
     DrawDirectionLine();
     FanShape();
+
+    
 }
 
 void CEnemyHuman::DrawDirectionLine()
@@ -45,14 +56,15 @@ void CEnemyHuman::DrawDirectionLine()
     // óŒÇ™ê≥ÇµÇ©Ç¡ÇΩÇÃÇ≈ÅAZï˚å¸Çégóp
     VECTOR3 endPos = startPos + VECTOR3(0, 0, LINE_LENGTH) * mat;
 
-    spr.DrawLine3D(startPos, endPos, RGB(0, 200, 0));
+    
+    spr.DrawLine3D(startPos, endPos, RGB(0, 255, m_dwColor));
 }
 
 void CEnemyHuman::FanShape()
 {
     CSprite spr;
     
-    float angle = -(XM_PI / 6);
+    float angle = -(20.0f * DegToRad);
     
     for (int i = 0; i < 3; i++)
     {

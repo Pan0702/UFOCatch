@@ -29,7 +29,7 @@ CACube::~CACube()
 
 void CACube::Update()
 {
-    m_isInConeArea = m_pPlayer->IsInConeArea(transform.position + VECTOR3(0,m_maxSize.y,0));
+    m_isInConeArea = m_pPlayer->IsWithSuctionCone(transform.position + VECTOR3(0,m_maxSize.y,0));
     
     if (m_isInConeArea && m_pPlayer->GetIsSuckUp())
     {

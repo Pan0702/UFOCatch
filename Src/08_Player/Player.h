@@ -8,32 +8,31 @@ public:
     ~CPlayer();
 
     VECTOR3 GetPos(){return transform.position;}
-    bool IsInConeArea(const VECTOR3& pos) const;
+    bool IsWithSuctionCone(const VECTOR3& targetPos) const;
     void DrawCircle(const VECTOR3& center, float radius, DWORD color);
-    VECTOR3 SuckUpAnimal(const int& dividend, const VECTOR3& animalPos) const;
-    bool IsHumanFieldOfVision(const VECTOR3& humanRotate, const float& angle, const VECTOR3& humanPos);
-    bool IsShorterThanLine(const VECTOR3& humanPos);
+    VECTOR3 CalcSuctionVelocity(const int& dividend, const VECTOR3& animalPos) const;
+    bool IsTargetInVidionFan(const float& humanRotateY, const VECTOR3& targetPosition);
+    bool IsBeyondMaxDistance(const float& dis);
+    bool IsBeyondInsideFanShapeAngle(const VECTOR3& vectorA, const VECTOR3& vectorB);
 
     void AddExp(int exp){ m_exp += exp; }
-    bool GetIsSuckUp() const { return m_isSuckUp; }
+    bool GetIsSuckUp() const { return m_isSuctionActive; }
 
 private:
     void Update() override;
     void Draw();
-    void PlayerMove();
+    void HandleMovementInput();
     void CheckLevel();
-    void IncreaseConeVertexHeight();
-    void CameraPos();
+    void IncreaseSuctionConeHeight();
+    void UpdateCameraPos();
+
 
 
     float m_coneRadius;
     float m_coneDegree;
-    int m_suckUpAnimalNum;
-    float baseRadius;
-    float baseHeight;
     int m_allExp;
     int m_exp;
-    bool m_isSuckUp;
-    const float ADD_HIGH = 3;
+    bool m_isSuctionActive;
+
 
 };
