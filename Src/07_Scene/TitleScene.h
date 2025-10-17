@@ -5,7 +5,9 @@ class TitleScene : public SceneBase
 {
 public:
 	TitleScene();
+private:
 	~TitleScene();
 	void Update() override;
 	void Draw() override;
+	CSpriteImage* m_pTitleImage;
 };

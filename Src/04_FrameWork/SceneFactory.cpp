@@ -1,6 +1,8 @@
 #include "SceneFactory.h"
 #include <windows.h>
 #include <assert.h>
+
+#include "../07_Scene/LevelSelectionScene.h"
 #include "../07_Scene/TitleScene.h"
 #include "../07_Scene/PlayScene.h"
 
@@ -18,6 +20,11 @@ SceneBase * SceneFactory::Create(const std::string & name)
 	if (name == "PlayScene") {
 		return new PlayScene();
 	}
+	if (name == "SelectScene")
+	{
+		return new CLevelSelectionScene();
+	}
+	
 	assert(false);
 	return nullptr;
 }

@@ -523,6 +523,7 @@
     <ClInclude Include="Src\02_DirectX\DInput.h" />
     <ClInclude Include="Src\02_DirectX\Direct3D.h" />
     <ClInclude Include="Src\02_DirectX\XAudio.h" />
+    <ClInclude Include="Src\07_Scene\LevelSelectionScene.h" />
     <ClInclude Include="Src\09_Enemy\ACube.h" />
     <ClInclude Include="Src\09_Enemy\AnimalManager.h" />
     <ClInclude Include="Src\09_Enemy\EnemyHuman.h" />
@@ -797,6 +798,7 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Src\07_Scene\LevelSelectionScene.cpp" />
     <ClCompile Include="Src\09_Enemy\ACube.cpp">
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
