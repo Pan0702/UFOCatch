@@ -53,7 +53,6 @@ void CEnemyHuman::DrawDirectionLine()
 
     VECTOR3 startPos = transform.position;
     
-    // �΂������������̂ŁAZ�������g�p
     VECTOR3 endPos = startPos + VECTOR3(0, 0, LINE_LENGTH) * mat;
 
     

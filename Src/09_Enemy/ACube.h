@@ -13,8 +13,11 @@ private:
     void Draw();
     void WhiteDraw();
     void RedDraw();
-    void EmemyMove();
+    void EnemyMove();
+    void EnemySuction();
     void MoveForUFO(const VECTOR3& animalPos, const VECTOR3& distanceFromObjectToUFO, const int& exp);
+    void EnemyDestry();
+    void TimerInit(); 
 
     CFbxMesh* m_pRedMesh;
     CFbxMesh* m_pWhiteMesh;
@@ -28,7 +31,7 @@ private:
     bool m_isMovingToUFO = false;
     bool m_isDestroyMe;
     
-float time;
+    float time;
     int num;
     bool timereset;
     enum ACubeState
@@ -38,4 +41,5 @@ float time;
         Suction,
         destory
     };
+    ACubeState m_state;
 };
