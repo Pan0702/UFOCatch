@@ -27,11 +27,11 @@ void CLevelSelectionScene::Update()
     CDirectInput* pDI = GameDevice()->m_pDI;
     if (pDI->CheckKey(KD_TRG, DIK_W) || pDI->CheckKey(KD_TRG,DIK_UP))
     {
-            MoveToTop();
+        MoveToTop();
     }
     if (pDI->CheckKey(KD_TRG, DIK_S) || pDI->CheckKey(KD_TRG, DIK_DOWN))
     {
-            MoveToEnd();
+        MoveToEnd();
     }
     if (pDI->CheckKey(KD_TRG, DIK_RETURN))
     {
@@ -46,12 +46,11 @@ void CLevelSelectionScene::Draw()
     {
         if (m_pLevelImages[i] != nullptr) // nullptrチェック
         {
-            spr.Draw(m_pLevelImages[i], 100, i * 250, 0, 0, 670, 190);
+            spr.Draw(m_pLevelImages[i], 200, i * 250, 0, 0, 670, 190);
         }
     }
     GameDevice()->m_pFont->Draw(
-    20, 20, "LevelSelect", 16, RGB(255, 0, 0));
-    
+        20, 20, "LevelSelect", 16, RGB(255, 0, 0));
 }
 
 void CLevelSelectionScene::MoveToTop()
@@ -59,6 +58,11 @@ void CLevelSelectionScene::MoveToTop()
     CSpriteImage* tmpImage = m_pLevelImages.back();
     m_pLevelImages.pop_back();
     m_pLevelImages.insert(m_pLevelImages.begin(), tmpImage);
+    if (tmpImage != nullptr)
+    {
+        delete tmpImage;
+        tmpImage = nullptr;
+    }
 }
 
 void CLevelSelectionScene::MoveToEnd()
@@ -66,4 +70,9 @@ void CLevelSelectionScene::MoveToEnd()
     CSpriteImage* tmpImage = m_pLevelImages.front();
     m_pLevelImages.erase(m_pLevelImages.begin());
     m_pLevelImages.push_back(tmpImage);
+    if (tmpImage != nullptr)
+    {
+        delete tmpImage;
+        tmpImage = nullptr;
+    }
 }
