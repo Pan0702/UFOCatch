@@ -10,7 +10,7 @@ CACube::CACube()
     m_pWhiteColl = new MeshCollider();
     m_pWhiteMesh->Load("data/LowPoly/white.mesh");
     m_pWhiteColl->MakeFromMesh(m_pWhiteMesh);
-    
+
     m_pRedMesh = new CFbxMesh();
     m_pRedColl = new MeshCollider();
     m_pRedMesh->Load("data/LowPoly/Red1.mesh");
@@ -19,7 +19,6 @@ CACube::CACube()
     transform.position = VECTOR3(0, 0, 0);
     m_maxSize = CAnimalManager::GetObjectSize(m_pRedColl);
     m_isMovingToUFO = false;
-    m_isDestroyMe = false;
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     num = 0;
     timereset = false;
@@ -41,19 +40,36 @@ CACube::~CACube()
 
 void CACube::Update()
 {
-    m_isInConeArea = m_pPlayer->IsWithSuctionCone(transform.position + VECTOR3(0,m_maxSize.y,0));
-    
+    m_isInConeArea = m_pPlayer->IsWithSuctionCone(transform.position + VECTOR3(0, m_maxSize.y, 0));
+
     if (m_isInConeArea && m_pPlayer->GetIsSuckUp())
     {
-        m_distanceFromObjectToUFO = m_pPlayer->CalcSuctionVelocity(100, transform.position + VECTOR3(0,m_maxSize.y,0));
-        MoveForUFO(transform.position,m_distanceFromObjectToUFO, 1);
+        m_state = ACubeState::Suction;
     }
     ImGui::Begin("ACube");
     ImGui::Text("transform.position.z:%lf", transform.position.z);
     ImGui::Text("transform.Rotate.y:%lf", transform.rotation.y * RadToDeg);
     ImGui::Text("timer:%lf", time);
     ImGui::End();
-    EmemyMove();
+    switch (m_state)
+    {
+    case ACubeState::Move:
+        EnemyMove();
+        break;
+    case ACubeState::Stop:
+        
+        break;
+    case ACubeState::Suction:
+        EnemySuction();
+        break;
+    case ACubeState::destory:
+        EnemyDestry();
+        break;
+    default:
+        assert("ACube‚Å•s–¾‚Ès“®“ü—Í");
+        break;
+    }
+    EnemyMove();
 }
 
 
@@ -62,9 +78,10 @@ void CACube::Draw()
     if (m_isInConeArea)
     {
         RedDraw();
-    }else
+    }
+    else
     {
-        WhiteDraw();       
+        WhiteDraw();
     }
 }
 
@@ -78,17 +95,15 @@ void CACube::RedDraw()
     m_pRedMesh->Render(transform.matrix());
 }
 
-void CACube::EmemyMove()
+void CACube::EnemyMove()
 {
-    
     switch (num)
     {
     case 0:
         {
             if (!timereset)
             {
-                 time = 0.0f;
-                timereset = true;
+                TimerInit();
             }
             MATRIX4X4 mat = XMMatrixRotationY(transform.rotation.y);
             transform.position = transform.position + VECTOR3(0, 0, 0.01f) * mat;
@@ -104,8 +119,7 @@ void CACube::EmemyMove()
         {
             if (!timereset)
             {
-                 time = 0.0f;
-                timereset = true;
+                TimerInit();
             }
             transform.rotation.y += 1.0f * DegToRad;
             time += 1.0f;
@@ -113,24 +127,40 @@ void CACube::EmemyMove()
             {
                 num = 0;
                 timereset = false;
-            }  
+            }
             break;
         }
     }
-    
+}
+
+void CACube::EnemySuction()
+{
+    m_distanceFromObjectToUFO = m_pPlayer->
+        CalcSuctionVelocity(100, transform.position + VECTOR3(0, m_maxSize.y, 0));
+    MoveForUFO(transform.position, m_distanceFromObjectToUFO, 10);
 }
 
 
-void CACube::MoveForUFO(const VECTOR3& animalPos,const VECTOR3& distanceFromObjectToUFO, const int& exp)
+void CACube::MoveForUFO(const VECTOR3& animalPos, const VECTOR3& distanceFromObjectToUFO, const int& exp)
 {
-    if (m_pPlayer->GetPos().y <= animalPos.y)  
+    if (m_pPlayer->GetPos().y <= animalPos.y)
     {
-        m_isDestroyMe = true;
-        m_pPlayer->AddExp(exp);
-        DestroyMe();
+        m_state = ACubeState::destory;
     }
     else
     {
         transform.position += distanceFromObjectToUFO;
     }
+}
+
+void CACube::EnemyDestry()
+{
+    m_pPlayer->AddExp(1);
+    DestroyMe();
+}
+
+void CACube::TimerInit()
+{
+    time = 0.0f;
+    timereset = true;
 }
