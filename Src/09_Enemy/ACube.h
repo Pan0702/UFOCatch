@@ -30,6 +30,8 @@ private:
     VECTOR3 m_distanceFromObjectToUFO;
     bool m_isMovingToUFO = false;
     bool m_isDestroyMe;
+    float startRotationY;
+    int moveAmount;
     
     float time;
     int num;

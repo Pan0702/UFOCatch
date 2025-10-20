@@ -33,7 +33,7 @@ namespace {
 		QueryPerformanceCounter(&current);
 		float t = static_cast<float>(current.QuadPart - last.QuadPart) / freq.QuadPart;
 		float t2 = t;
-		// deltaTime�́A���σt���[�����[�g��2�{�𒴂��Ȃ��悤�ɂ���
+		// deltaTimeは、平均フレームレートの2倍を超えないようにする
 		if (recCount >= REC_SIZE) {
 			float sum = 0;
 			for (int i = 0; i < REC_SIZE; i++)
@@ -57,22 +57,23 @@ void SceneManager::Start()
 	currentName = "";
 
 	factory = new SceneFactory();
-	// �ŏ��ɓ����V�[�����ASceneFactory�ɍ���Ă��炤
+	//最初に動くシーンは、SceneFactoryに作ってもらう
 	currentScene = factory->CreateFirst();
 }
 
 void SceneManager::Update()
 {
-	if (nextName != currentName) { // �V�[���؂�ւ��̎w�肪�������̂�
-		if (currentScene != nullptr) { // ���܂ł̃V�[�������
+	if (nextName != currentName) { // シーン切り替えの指示があったので 
+		if (currentScene != nullptr) { //今までのシーンを削除 
 			delete currentScene;
 			currentScene = nullptr;
 		}
 		currentName = nextName;
-		currentScene = factory->Create(nextName); // ���̃V�[�����쐬
+		currentScene = factory->Create(nextName); //新しいシーンを作成 
 	}
 	if (currentScene != nullptr)
 		currentScene->Update();
+	
 }
 
 void SceneManager::Draw()
@@ -111,6 +112,8 @@ float SceneManager::DeltaTime()
 {
 	return deltaTime;
 }
+
+
 
 void SceneManager::Exit()
 {

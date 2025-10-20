@@ -47,6 +47,6 @@ namespace SceneManager {
 	/// </summary>
 	/// <returns></returns>
 	float DeltaTime();
-
+	
 	void Exit();
 };

@@ -17,11 +17,11 @@
 //#include "GameMain.h"
 
 //�萔��`
-#define WINDOW_WIDTH   1920 //�E�B���h�E��
-#define WINDOW_HEIGHT  1080 //�E�B���h�E����
+//#define WINDOW_WIDTH   1920 //�E�B���h�E��
+//#define WINDOW_HEIGHT  1080 //�E�B���h�E����
 
-//#define WINDOW_WIDTH   1366   //�E�B���h�E��
-//#define WINDOW_HEIGHT  768    //�E�B���h�E����
+#define WINDOW_WIDTH   1366   //�E�B���h�E��
+#define WINDOW_HEIGHT  768    //�E�B���h�E����
 
 #define APP_NAME _T("Project")
 

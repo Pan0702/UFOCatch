@@ -106,8 +106,8 @@ void CACube::EnemyMove()
                 TimerInit();
             }
             MATRIX4X4 mat = XMMatrixRotationY(transform.rotation.y);
-            transform.position = transform.position + VECTOR3(0, 0, 0.01f) * mat;
-            time += 0.01f;
+            transform.position = transform.position + VECTOR3(0, 0, moveAmount * SceneManager::DeltaTime()) * mat;
+            time += SceneManager::DeltaTime();
             if (time >= 5.0f)
             {
                 num = 1;
@@ -120,19 +120,32 @@ void CACube::EnemyMove()
             if (!timereset)
             {
                 TimerInit();
+                // ‰ñ“]ŠJŽnŽž‚ÌŠp“x‚ð‹L˜^
+                startRotationY = transform.rotation.y;
             }
-            transform.rotation.y += 1.0f * DegToRad;
-            time += 1.0f;
-            if (time >= 90)
+            
+            // Œo‰ßŽžŠÔ‚É‰ž‚¶‚Ä–Ú•WŠp“x‚Ü‚ÅüŒ`•âŠÔ
+            float progress = time / 1.0f; // 1•b‚ÅŠ®—¹
+            const float ANGLE_90 = 90.0f * DegToRad;
+            if (progress >= 1.0f)
             {
+                progress = 1.0f;
+                // ³Šm‚É90“x‰ñ“]‚µ‚½ó‘Ô‚ÅI—¹
+                transform.rotation.y = startRotationY + ANGLE_90;
                 num = 0;
                 timereset = false;
             }
+            else
+            {
+                // üŒ`•âŠÔ‚Å³Šm‚ÈŠp“x‚ðÝ’è
+                transform.rotation.y = startRotationY + (ANGLE_90 * progress);
+            }
+            
+            time += SceneManager::DeltaTime();
             break;
         }
     }
 }
-
 void CACube::EnemySuction()
 {
     m_distanceFromObjectToUFO = m_pPlayer->

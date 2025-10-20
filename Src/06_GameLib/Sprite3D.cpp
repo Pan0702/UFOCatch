@@ -339,21 +339,20 @@ void  CSprite::Draw(CSpriteImage* pImage, const float& posX, const float& posY, 
 }
 //------------------------------------------------------------------------
 //
-//	�X�v���C�g����ʂɃ����_�����O
+//  スプライト描画
 //
-//  CSpriteImage* pImage      �X�v���C�g�C���[�W�|�C���^
-//  const float&         posX        �\���ʒu�̍���@�w���W
-//  const float&         posY        �\���ʒu�̍���@�x���W
-//  const DWORD&         srcX        �p�^�[���̍���@�w���W
-//  const DWORD&         srcY        �p�^�[���̍���@�x���W
-//  const DWORD&         srcwidth    �p�^�[���̕�
-//  const DWORD&         srcheight   �p�^�[���̍���
-//  const DWORD&         destwidth   �\���̕�
-//  const DWORD&         destheight  �\���̍���
-//  const float&         fAlpha      �����x
+//  CSpriteImage* pImage      スプライト画像ポインタ
+//  const float&         posX        表示位置のX座標
+//  const float&         posY        表示位置のY座標
+//  const DWORD&         srcX        パターンのX座標
+//  const DWORD&         srcY        パターンのY座標
+//  const DWORD&         srcwidth    パターンの幅
+//  const DWORD&         srcheight   パターンの高さ
+//  const DWORD&         destwidth   表示の幅
+//  const DWORD&         destheight  表示の高さ
+//  const float&         fAlpha      透過度
 //
-//	�߂�l  �Ȃ�
-//
+//  戻り値  なし
 //------------------------------------------------------------------------
 void  CSprite::Draw(CSpriteImage* pImage, const float& posX, const float& posY, const DWORD& srcX, const DWORD& srcY, const DWORD& srcwidth, const DWORD& srcheight, const DWORD& destwidth, const DWORD& destheight, const float& fAlpha)
 {
