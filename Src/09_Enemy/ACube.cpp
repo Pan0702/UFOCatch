@@ -17,30 +17,34 @@ CACube::CACube()
     m_pRedColl->MakeFromMesh(m_pRedMesh);
 
     transform.position = VECTOR3(0, 0, 0);
-    m_maxSize = CAnimalManager::GetObjectSize(m_pRedColl);
+   // Init();
     m_isMovingToUFO = false;
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     num = 0;
     timeReset = false;
+    SetState(new CMoveState());
 }
 
 void CACube::Init()
 {
-    auto = [](CFbxMesh* mesh,MeshCollider coll,const char* name)
+    auto Init = [](CFbxMesh* mesh,MeshCollider* coll,const char* name)
     {
-        
+        mesh = new CFbxMesh();
+        coll = new MeshCollider();
+        mesh->Load(name);
+        coll->MakeFromMesh(mesh);
     };
-    
+    Init(m_pWhiteMesh,m_pWhiteColl,"data/LowPoly/white.mesh");
+    Init(m_pRedMesh,m_pRedColl,"data/LowPoly/Red1.mesh");
 }
 
 
 CACube::~CACube()
 {
     DeletePtr(m_pWhiteMesh);
-    DeletePtr(m_pWhiteColl);
     DeletePtr(m_pRedMesh);
+    DeletePtr(m_pWhiteColl);
     DeletePtr(m_pRedColl);
-    DeletePtr(m_pPlayer);
     DeletePtr(m_pCurentState);
 }
 
@@ -68,123 +72,73 @@ void CACube::Draw()
 {
     if (m_isInConeArea)
     {
-        RedDraw();
+        DrawObject(m_pRedMesh);
     }
     else
     {
-        WhiteDraw();
+        DrawObject(m_pWhiteMesh);
     }
 }
 
-void CACube::WhiteDraw()
-{
-    m_pWhiteMesh->Render(transform.matrix());
-}
-
-void CACube::RedDraw()
-{
-    m_pRedMesh->Render(transform.matrix());
-}
-
-void CACube::EnemyMove()
-{
-    switch (num)
-    {
-    case 0:
-        {
-            if (!timeReset)
-            {
-                TimerInit();
-            }
-            MATRIX4X4 mat = XMMatrixRotationY(transform.rotation.y);
-            transform.position = transform.position + VECTOR3(0, 0, moveAmount * SceneManager::DeltaTime()) * mat;
-            time += SceneManager::DeltaTime();
-            if (time >= 5.0f)
-            {
-                num = 1;
-                timeReset = false;
-            }
-            break;
-        }
-    case 1:
-        {
-            if (!timeReset)
-            {
-                TimerInit();
-                // 回転開始時の角度を記録
-                startRotationY = transform.rotation.y;
-            }
-            
-            // 経過時間に応じて目標角度まで線形補間
-            float progress = time / 1.0f; // 1秒で完了
-            const float ANGLE_90 = 90.0f * DegToRad;
-            if (progress >= 1.0f)
-            {
-                progress = 1.0f;
-                // 正確に90度回転した状態で終了
-                transform.rotation.y = startRotationY + ANGLE_90;
-                num = 0;
-                timeReset = false;
-            }
-            else
-            {
-                // 線形補間で正確な角度を設定
-                transform.rotation.y = startRotationY + (ANGLE_90 * progress);
-            }
-            
-            time += SceneManager::DeltaTime();
-            break;
-        }
-    }
-}
-void CACube::EnemySuction()
-{
-    m_distanceFromObjectToUFO = m_pPlayer->
-        CalcSuctionVelocity(100, transform.position + VECTOR3(0, m_maxSize.y, 0));
-    MoveForUFO(transform.position, m_distanceFromObjectToUFO, 10);
-}
 
 
-void CACube::MoveForUFO(const VECTOR3& animalPos, const VECTOR3& distanceFromObjectToUFO, const int& exp)
+template<class C>
+void CACube::DrawObject(C c)
 {
-    if (m_pPlayer->GetPos().y <= animalPos.y)
-    {
-        
-    }
-    else
-    {
-        transform.position += distanceFromObjectToUFO;
-    }
+    c->Render(transform.matrix());
 }
 
-void CACube::EnemyDestry()
-{
-    m_pPlayer->AddExp(1);
-    DestroyMe();
-}
-
-void CACube::TimerInit()
-{
-    time = 0.0f;
-    timeReset = true;
-}
 
 void CACube::SetState(IACubeState* newState)
 {
-    // C#の「currentState?.Exit(this);」に相当
-    // currentState が null でない場合に Exit を呼ぶ
     if (m_pCurentState) {
-        // メソッドに渡すのはポインタ(this)ではなく参照(*this)
         m_pCurentState->Exit(*this);
     }
-
-    // C#の「currentState = newState;」に相当
-    // newState の所有権を currentState に移動
     m_pCurentState = std::move(newState);
-
-    // C#の「currentState.Enter(this);」に相当
-    // (nullチェックを入れるのがより安全)
+    
     if (m_pCurentState) {
         m_pCurentState->Enter(*this);
+    }
+}
+
+void CStopState::Update(CACube& cube)
+{
+    number++;
+    if (number > 10)
+    {
+        cube.SetState(new CMoveState());
+    }
+}
+
+void CMoveState::Enter(CACube& cube)
+{
+    const float MAX_MOVE_SPEED = 3.0f;
+    const float MIN_MOVE_SPEED = 0.5f;
+    const float MAX_MOVE_AMOUNT = 5.0f;
+    const float MIN_MOVE_AMOUNT = 1.0f;
+    const float TURN_ANGLE = 150.0f;
+    m_totalPosZMoveAmount = 0;
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> dist(MIN_MOVE_SPEED, MAX_MOVE_SPEED);
+    m_moveSpeed = dist(gen);
+    std::uniform_real_distribution<float> dist2(-TURN_ANGLE, TURN_ANGLE);
+    m_turnAmount = dist2(gen);
+    std::uniform_real_distribution<float> dist3(MIN_MOVE_AMOUNT,MAX_MOVE_AMOUNT );
+    m_moveAmount = dist3(gen);
+    m_savePos = cube.GetPos();
+    cube.SetRotationY(m_turnAmount * DegToRad);
+}
+
+void CMoveState::Update(CACube& cube)
+{
+    {
+        cube.AddPos(VECTOR3(0, 0, m_moveSpeed * SceneManager::DeltaTime()) * XMMatrixRotationY(m_turnAmount * DegToRad));
+        m_totalPosZMoveAmount += m_moveSpeed * SceneManager::DeltaTime();
+
+        if (m_totalPosZMoveAmount > m_moveAmount)
+        {
+            cube.SetState(new CStopState());
+        }
     }
 }

@@ -31,14 +31,10 @@ CPlayer::~CPlayer() = default;
 void CPlayer::Update()
 {
     m_pAnimator->Update();
-    HandleMovementInput();
+    this->HandleMovementInput();
 
     // コーンの半径を計算
     m_coneRadius = transform.position.y * tan(DegToRad * m_coneDegree);
-
-    ImGui::Begin("Player");
-    ImGui::Text("x: %lf y: %lf z: %lf", transform.position.x, transform.position.y, transform.position.z);
-    ImGui::End();
 
     CheckLevel();
 
@@ -81,18 +77,21 @@ void CPlayer::IncreaseSuctionConeHeight()
     transform.position.y += 3.0f;
 
     // 半径を更新
+    //
     m_coneRadius = transform.position.y * tan(DegToRad * m_coneDegree);
 }
 
 void CPlayer::UpdateCameraPos()
 {
     // カメラ位置をコーンの高さに基づいて設定
+    //
     ObjectManager::FindGameObject<CPlayerCamera>()->PosSet(
         transform.position, transform.position.y);
 }
 
 
 //吸い込むスピードを計算
+//
 VECTOR3 CPlayer::CalcSuctionVelocity(const int& moveDivisor, const VECTOR3& animalPos) const
 {
     float k = (0 - animalPos.y) / (animalPos.y - transform.position.y);
@@ -129,10 +128,10 @@ bool CPlayer::IsBeyondMaxDistance(const float& dis)
     return false;
 }
 
-bool CPlayer::IsBeyondInsideFanShapeAngle(const VECTOR2& vectorA, const VECTOR2& vectorB)
+bool CPlayer::IsBeyondInsideFanShapeAngle(const VECTOR2& vectorTargetToRayEnd, const VECTOR2& vectorTargetToPlayer)
 {
-    const VECTOR2 HumanFromPlayerNorm = normalize(vectorA);
-    const VECTOR2 HumanFromEndPosNorm = normalize(vectorB);
+    const VECTOR2 HumanFromPlayerNorm = normalize(vectorTargetToRayEnd);
+    const VECTOR2 HumanFromEndPosNorm = normalize(vectorTargetToPlayer);
     const float anglePlayerFromEndPos = CalcVector2Angle(HumanFromPlayerNorm, HumanFromEndPosNorm);
     if (ANGLE < anglePlayerFromEndPos)
     {
@@ -143,6 +142,7 @@ bool CPlayer::IsBeyondInsideFanShapeAngle(const VECTOR2& vectorA, const VECTOR2&
 
 
 //エリア内にいるかチェック
+//
 bool CPlayer::IsWithSuctionCone(const VECTOR3& targetPos) const
 {
     const float distnceAnimalFromPlayer = transform.position.y - targetPos.y;

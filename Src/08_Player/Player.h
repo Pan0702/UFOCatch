@@ -6,43 +6,68 @@ class CPlayer:public Object3D
 public:
     CPlayer();
     ~CPlayer();
-
     VECTOR3 GetPos(){return transform.position;}
     ///
-    /// �I�u�W�F�N�g�̃|�W�V������n���A���ꂪ�R�[���͈͓̔��Ȃ�true�A�O�Ȃ�false��Ԃ�
+    /// オブジェクトの場所を渡し、それがコーンの範囲内ならtrue,外ならfalse
     /// @param targetPos 
     /// @return bool
     /// 
     bool IsWithSuctionCone(const VECTOR3& targetPos) const;
 
-    ///����~�̕`��
-    void DrawCircle(const VECTOR3& center, float radius, DWORD color);
 
-    /// �����񂹂邽�߂̈ړ��ʂ��v�Z
+
+    /// g引き寄せるための移動量を計算
     /// @param dividend 
     /// @param animalPos 
-    /// @return 1�񓖂���̈ړ��ʂ�Ԃ�
+    /// @return 1回当たりの移動量を返す
     /// 
     VECTOR3 CalcSuctionVelocity(const int& dividend, const VECTOR3& animalPos) const;
 
     /// 
-    /// @param humanRotateY Rad�ł̓x��
-    /// @param targetPosition �I�u�W�F�N�g�̃|�W�V����
-    /// @return 
+    /// @param humanRotateY Radでの度数
+    /// @param targetPosition オブジェクトの場所
+    /// @return
+    /// 
     bool IsTargetInVidionFan(const float& humanRotateY, const VECTOR3& targetPosition);
-    bool IsBeyondMaxDistance(const float& dis);
-    bool IsBeyondInsideFanShapeAngle(const VECTOR2& vectorA, const VECTOR2& vectorB);
+
 
     void AddExp(int exp){ m_exp += exp; }
     bool GetIsSuckUp() const { return m_isSuctionActive; }
 
 private:
+    
     void Update() override;
     void Draw();
+    
+    //判定円の描画
+    
+    void DrawCircle(const VECTOR3& center, float radius, DWORD color);
+    
     void HandleMovementInput();
+    
+    ///一定数吸い込んだかチェック
+    ///
     void CheckLevel();
+    ///プレイヤーの高さを増加
+    //////
     void IncreaseSuctionConeHeight();
+    
+    ///カメラの場所を更新
+    ///
     void UpdateCameraPos();
+    
+    /// 
+    /// @param dis 
+    /// @return
+    /// 
+    bool IsBeyondMaxDistance(const float& dis);
+
+    /// 2点を与えてヴェクトルからなす角を求めてHumanの視界の角度より大きいか判別
+    /// @param vectorTargetToRayEnd 
+    /// @param vectorTargetToPlayer 
+    /// @return　角度がHumanの視界より小さかったらtrue,大きかったらfalse
+    /// 
+    bool IsBeyondInsideFanShapeAngle(const VECTOR2& vectorTargetToRayEnd, const VECTOR2& vectorTargetToPlayer);
 
 
 

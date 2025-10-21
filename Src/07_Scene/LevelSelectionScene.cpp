@@ -26,13 +26,11 @@ CLevelSelectionScene::CLevelSelectionScene()
 
 CLevelSelectionScene::~CLevelSelectionScene()
 {
-    // オリジナル画像のみ削除
     for (auto& p : m_pLevelImages)
     {
         delete p;
         p = nullptr;
     }
-    // m_pLevelImagesは参照のみなので削除不要
 }
 
 
