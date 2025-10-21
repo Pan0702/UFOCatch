@@ -21,22 +21,29 @@ CACube::CACube()
     m_isMovingToUFO = false;
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     num = 0;
-    timereset = false;
+    timeReset = false;
 }
+
+void CACube::Init()
+{
+    auto = [](CFbxMesh* mesh,MeshCollider coll,const char* name)
+    {
+        
+    };
+    
+}
+
 
 CACube::~CACube()
 {
-    if (m_pWhiteMesh != nullptr)
-    {
-        delete m_pWhiteMesh;
-        m_pWhiteMesh = nullptr;
-    }
-    if (m_pWhiteColl != nullptr)
-    {
-        delete m_pWhiteColl;
-        m_pWhiteColl = nullptr;
-    }
+    DeletePtr(m_pWhiteMesh);
+    DeletePtr(m_pWhiteColl);
+    DeletePtr(m_pRedMesh);
+    DeletePtr(m_pRedColl);
+    DeletePtr(m_pPlayer);
+    DeletePtr(m_pCurentState);
 }
+
 
 void CACube::Update()
 {
@@ -44,32 +51,16 @@ void CACube::Update()
 
     if (m_isInConeArea && m_pPlayer->GetIsSuckUp())
     {
-        m_state = ACubeState::Suction;
+        
     }
     ImGui::Begin("ACube");
     ImGui::Text("transform.position.z:%lf", transform.position.z);
     ImGui::Text("transform.Rotate.y:%lf", transform.rotation.y * RadToDeg);
     ImGui::Text("timer:%lf", time);
     ImGui::End();
-    switch (m_state)
-    {
-    case ACubeState::Move:
-        EnemyMove();
-        break;
-    case ACubeState::Stop:
-        
-        break;
-    case ACubeState::Suction:
-        EnemySuction();
-        break;
-    case ACubeState::destory:
-        EnemyDestry();
-        break;
-    default:
-        assert("ACubeで不明な行動入力");
-        break;
+    if (m_pCurentState) {
+        m_pCurentState->Update(*this);
     }
-    EnemyMove();
 }
 
 
@@ -101,7 +92,7 @@ void CACube::EnemyMove()
     {
     case 0:
         {
-            if (!timereset)
+            if (!timeReset)
             {
                 TimerInit();
             }
@@ -111,13 +102,13 @@ void CACube::EnemyMove()
             if (time >= 5.0f)
             {
                 num = 1;
-                timereset = false;
+                timeReset = false;
             }
             break;
         }
     case 1:
         {
-            if (!timereset)
+            if (!timeReset)
             {
                 TimerInit();
                 // 回転開始時の角度を記録
@@ -133,7 +124,7 @@ void CACube::EnemyMove()
                 // 正確に90度回転した状態で終了
                 transform.rotation.y = startRotationY + ANGLE_90;
                 num = 0;
-                timereset = false;
+                timeReset = false;
             }
             else
             {
@@ -158,7 +149,7 @@ void CACube::MoveForUFO(const VECTOR3& animalPos, const VECTOR3& distanceFromObj
 {
     if (m_pPlayer->GetPos().y <= animalPos.y)
     {
-        m_state = ACubeState::destory;
+        
     }
     else
     {
@@ -175,5 +166,25 @@ void CACube::EnemyDestry()
 void CACube::TimerInit()
 {
     time = 0.0f;
-    timereset = true;
+    timeReset = true;
+}
+
+void CACube::SetState(IACubeState* newState)
+{
+    // C#の「currentState?.Exit(this);」に相当
+    // currentState が null でない場合に Exit を呼ぶ
+    if (m_pCurentState) {
+        // メソッドに渡すのはポインタ(this)ではなく参照(*this)
+        m_pCurentState->Exit(*this);
+    }
+
+    // C#の「currentState = newState;」に相当
+    // newState の所有権を currentState に移動
+    m_pCurentState = std::move(newState);
+
+    // C#の「currentState.Enter(this);」に相当
+    // (nullチェックを入れるのがより安全)
+    if (m_pCurentState) {
+        m_pCurentState->Enter(*this);
+    }
 }

@@ -473,6 +473,6 @@ inline float CalcCosineFormula(const float& A,const float& B, const float& C)
 
 inline float CalcVector2Angle(const VECTOR2& vNorm1,const VECTOR2& vNorm2)
 {
-	float angle = acosf(vNorm1.x * vNorm2.x + vNorm1.y * vNorm2.y);
+	float angle = acosf(dot(vNorm1, vNorm2));
 	return angle * RadToDeg;
 }

@@ -3,6 +3,8 @@
 namespace
 {
     const VECTOR2 IMAGE_SIZE = VECTOR2(680, 190);
+    constexpr float ANIMATION_SPEED = 0.2f;
+    constexpr float ANIMATION_SPACING = 200.0f;
 }
 void CLevelSelectionScene::InitImage()
 {
@@ -41,21 +43,21 @@ void CLevelSelectionScene::Update()
     if (pDI->CheckKey(KD_TRG, DIK_W) || pDI->CheckKey(KD_TRG,DIK_UP))
     {
         m_selectedIndex = (m_selectedIndex - 1 + m_pLevelImages.size()) % m_pLevelImages.size();
-        m_targetOffset = m_selectedIndex * 200.0f; // アニメーション目標値更新
+        m_targetOffset = m_selectedIndex * ANIMATION_SPACING; // アニメーション目標値更新
     }
     if (pDI->CheckKey(KD_TRG, DIK_S) || pDI->CheckKey(KD_TRG, DIK_DOWN))
     {
         m_selectedIndex = (m_selectedIndex + 1) % m_pLevelImages.size();
-        m_targetOffset = m_selectedIndex * 200.0f; // アニメーション目標値更新
+        m_targetOffset = m_selectedIndex * ANIMATION_SPACING; // アニメーション目標値更新
     }
     
     // 滑らかなアニメーション
-    float animationSpeed = 0.2f;
-    m_animationOffset += (m_targetOffset - m_animationOffset) * animationSpeed;
+    
+    m_animationOffset += (m_targetOffset - m_animationOffset) * ANIMATION_SPEED;
     
     if (pDI->CheckKey(KD_TRG, DIK_RETURN))
     {
-        SceneManager::ChangeScene("SelectScene");
+        SceneManager::ChangeScene("PlayScene");
     }
 }
 
@@ -63,26 +65,25 @@ void CLevelSelectionScene::Draw()
 {
     CSprite spr;
     
-    int centerY = 600;
-    int itemSpacing = 200;
+    constexpr int CEENTER_Y = 600;
+    constexpr int ITEM_SPACING = 200;
     
     for (int i = 0; i < m_pLevelImages.size(); i++)
     {
         if (m_pLevelImages[i] != nullptr)
         {
             // アニメーションオフセットを考慮した位置計算
-            float relativePos = i - (m_animationOffset / itemSpacing);
-            int yPos = centerY + (int)(relativePos * itemSpacing);
+            float relativePos = i - (m_animationOffset / ITEM_SPACING);
+            const int yPos = CEENTER_Y + static_cast<int>(relativePos * ITEM_SPACING);
             
-            if (yPos > -100 && yPos < 1400)
+            if (yPos > -100 && yPos < 1'400)
             {
                 // 中央に近いアイテムほど大きく表示
                 float distanceFromCenter = abs(relativePos);
                 float scale = max(0.7f, 1.0f - distanceFromCenter * 0.3f);
                 
-                int width = (int)(680 * scale);
-                int height = (int)(160 * scale);
-                int xPos = 400 - width / 2; // 中央揃え
+                int width = static_cast<int>(IMAGE_SIZE.x * scale);
+                const int xPos = 400 - width / 2; // 中央揃え
                 
                 spr.Draw(m_pLevelImages[i], xPos, yPos, 0, 0, IMAGE_SIZE.x, IMAGE_SIZE.y,IMAGE_SIZE.x,IMAGE_SIZE.y);
             }
