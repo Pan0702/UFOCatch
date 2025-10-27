@@ -6,133 +6,104 @@
 #include "AnimalManager.h"
 
 
-class IACubeState;
+class InterfaceACubeState;
 
 class CACube : public CAnimalManager
 {
 public:
     CACube();
     ~CACube();
-    
-    void SetState(IACubeState* newState);
+
+    void SetState(InterfaceACubeState* newState);
+    void Destroy();
+    void IsSuctionCheck();
+    VECTOR3 SuctionSpeed();
+
     VECTOR3 GetPos() { return transform.position; }
     void AddPos(const VECTOR3& pos) { transform.position = transform.position + pos; }
     void SetRotationY(const float& angle) { transform.rotation.y = angle; }
+    VECTOR3 ObjectMaxSize(){return m_maxSize;}
 
 private:
     void Update() override;
     void Draw();
     template <class C>
     void DrawObject(C c);
+    void SetNextState();
+ 
 
 
     CFbxMesh* m_pRedMesh;
     CFbxMesh* m_pWhiteMesh;
     MeshCollider* m_pRedColl;
     MeshCollider* m_pWhiteColl;
-    IACubeState* m_pCurentState;
+    InterfaceACubeState* m_pCurentState;
 
     VECTOR3 m_maxSize;
     bool m_isInConeArea;
     bool m_pushButton;
     VECTOR3 m_distanceFromObjectToUFO;
-    bool m_isMovingToUFO = false;
-    bool m_isDestroyMe;
-    
-
 };
 
-class CMoveState;
-class IACubeState
+class CRunState;
+
+//迥ｶ諷九ｒ遉ｺ縺吶う繝ｳ繧ｿ繝ｼ繝輔ぉ繧､繧ｹ//
+class InterfaceACubeState
 {
 public:
-    virtual ~IACubeState() = default;
+    virtual ~InterfaceACubeState() = default;
 
-    virtual void Enter(CACube& cube) = 0; // 状態開始時の初期化
-    virtual void Update(CACube& cube) = 0; // 毎フレームの処理
-    virtual void Exit(CACube& cube) = 0; // 状態終了時の後処理
+    virtual void Enter(CACube& cube)
+    {
+    }
+
+    virtual void Update(CACube& cube)
+    {
+    }
+
+    virtual void Exit(CACube& cube)
+    {
+    }
 
     CPlayer* m_pPlayer;
+    
 };
 
-class CStopState : public IACubeState
+class CIdleState : public InterfaceACubeState
 {
 public:
+    void Update(CACube& cube) override;
+private:
     int number;
-    void Enter(CACube& cube) override
-    {
-        number = 0;
-    }
+};
 
+class CRunState : public InterfaceACubeState
+{
+public:
+    void Enter(CACube& cube) override;
     void Update(CACube& cube) override;
 
-    void Exit(CACube& cube) override
-    {
-        printf("a");
-    }
-};
-
-class CMoveState : public IACubeState
-{
-public:
+private:
     VECTOR3 BASE_POS = VECTOR3(0, 0, 0);
-
     float m_moveSpeed;
     float m_turnAmount;
     float m_moveAmount;
     VECTOR3 m_savePos;
     VECTOR3 m_endPos;
     float m_totalPosZMoveAmount;
-
-    void Enter(CACube& cube) override;
-    void Update(CACube& cube) override;
-    void Exit(CACube& cube) override;
 };
 
-
-class CDestoryState : public IACubeState
-{
-public:
-    void Enter(CACube& cube) override
-    {
-        printf(" ");
-    }
-    void Update(CACube& cube) override
-    {
-        printf(" ");
-    }
-    void Exit(CACube& cube) override
-    {
-        printf(" ");
-    }
-};
-
-class CSuctionState : public IACubeState
+class CSuctionState : public InterfaceACubeState
 {
 public:
     VECTOR3 m_distanceFromObjectToUFO;
 
-    void Enter(CACube& cube) override
-    {
-        MeshCollider* meshColl = new MeshCollider();
-        m_pPlayer = new CPlayer();
-        m_distanceFromObjectToUFO = m_pPlayer->
-            CalcSuctionVelocity(100, cube.GetPos() + VECTOR3(0, meshColl->bBox.max.y, 0));
-    };
+    void Enter(CACube& cube) override;
+    void Update(CACube& cube) override;
+};
 
-    void Update(CACube& cube) override
-    {
-        if (m_pPlayer->GetPos().y <= cube.GetPos().y)
-        {
-            cube.SetState(new CDestoryState());
-        }
-        else
-        {
-            cube.AddPos(m_distanceFromObjectToUFO);
-        }
-    };
-    void Exit(CACube& cube) override
-    {
-        printf(" ");
-    };
+class CDestoryState : public InterfaceACubeState
+{
+public:
+    void Enter(CACube& cube) override;
 };

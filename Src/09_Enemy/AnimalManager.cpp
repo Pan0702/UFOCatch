@@ -27,10 +27,6 @@ void CAnimalManager::Update()
     {
         Instantiate<CACube>();
     }
-    if (GameDevice()->m_pDI->CheckJoy(KD_TRG,DIK_K))
-    {
-        new CEnemyHuman();
-    }
 }
 
 void CAnimalManager::Draw()

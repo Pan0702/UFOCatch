@@ -13,7 +13,6 @@ PlayScene::PlayScene()
 	Instantiate<CPlayer>();
 	Instantiate<CPlayerCamera>();
 	Instantiate<CAnimalManager>();
-	Instantiate<CEnemyHuman>();
 }
 
 PlayScene::~PlayScene()

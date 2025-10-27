@@ -44,11 +44,11 @@ void CPlayer::Update()
     m_isSuctionActive = GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_J);
 }
 
-void CPlayer::Draw()
-{
-    //DrawCircle(VECTOR3(transform.position.x, 0, transform.position.z), m_coneRadius, RGB(0, 255, 0));
-    Object3D::Draw();
-}
+// void CPlayer::Draw()
+// {
+//     //DrawCircle(VECTOR3(transform.position.x, 0, transform.position.z), m_coneRadius, RGB(0, 255, 0));
+//     
+// }
 
 void CPlayer::HandleMovementInput()
 {
@@ -83,8 +83,7 @@ void CPlayer::IncreaseSuctionConeHeight()
 
 void CPlayer::UpdateCameraPos()
 {
-    // カメラ位置をコーンの高さに基づいて設定
-    //
+    // カメラ位置をコーンの高さに基づいて設定//
     ObjectManager::FindGameObject<CPlayerCamera>()->PosSet(
         transform.position, transform.position.y);
 }
@@ -155,32 +154,32 @@ bool CPlayer::IsWithSuctionCone(const VECTOR3& targetPos) const
     return false;
 }
 
-
-void CPlayer::DrawCircle(const VECTOR3& center, float radius, DWORD color)
-{
-    CSprite spr;
-    constexpr int segments = 32; // 円を構成する線分の数
-    const float angleStep = 2.0f * 3.14159f / segments; // 各線分の角度
-
-    for (int i = 0; i < segments; ++i)
-    {
-        // 現在の点
-        float angle1 = i * angleStep;
-        VECTOR3 point1 = center;
-        point1.x += radius * cos(angle1);
-        point1.z += radius * sin(angle1);
-
-        // 次の点
-        float angle2 = (i + 1) % segments * angleStep;
-        VECTOR3 point2 = center;
-        point2.x += radius * cos(angle2);
-        point2.z += radius * sin(angle2);
-
-        // 線を描画
-        spr.DrawLine3D(point1, point2, color);
-    }
-    spr.DrawLine3D(transform.position, VECTOR3(center.x + m_coneRadius, center.y, center.z), color);
-    spr.DrawLine3D(transform.position, VECTOR3(center.x - m_coneRadius, center.y, center.z), color);
-    spr.DrawLine3D(transform.position, VECTOR3(center.x, center.y, center.z + m_coneRadius), color);
-    spr.DrawLine3D(transform.position, VECTOR3(center.x, center.y, center.z - m_coneRadius), color);
-}
+//
+// void CPlayer::DrawCircle(const VECTOR3& center, float radius, DWORD color)
+// {
+//     CSprite spr;
+//     constexpr int segments = 32; // 円を構成する線分の数
+//     const float angleStep = 2.0f * 3.14159f / segments; // 各線分の角度
+//
+//     for (int i = 0; i < segments; ++i)
+//     {
+//         // 現在の点
+//         float angle1 = i * angleStep;
+//         VECTOR3 point1 = center;
+//         point1.x += radius * cos(angle1);
+//         point1.z += radius * sin(angle1);
+//
+//         // 次の点
+//         float angle2 = (i + 1) % segments * angleStep;
+//         VECTOR3 point2 = center;
+//         point2.x += radius * cos(angle2);
+//         point2.z += radius * sin(angle2);
+//
+//         // 線を描画
+//         spr.DrawLine3D(point1, point2, color);
+//     }
+//     spr.DrawLine3D(transform.position, VECTOR3(center.x + m_coneRadius, center.y, center.z), color);
+//     spr.DrawLine3D(transform.position, VECTOR3(center.x - m_coneRadius, center.y, center.z), color);
+//     spr.DrawLine3D(transform.position, VECTOR3(center.x, center.y, center.z + m_coneRadius), color);
+//     spr.DrawLine3D(transform.position, VECTOR3(center.x, center.y, center.z - m_coneRadius), color);
+// }
