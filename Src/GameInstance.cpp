@@ -1,7 +1,8 @@
 #include "GameInstance.h"
 
-GameInstance::GameInstance()
+GameInstance::GameInstance() : m_score(0), m_exp(0), m_allExp(0)
 {
+    
 }
 
 GameInstance::~GameInstance() = default;

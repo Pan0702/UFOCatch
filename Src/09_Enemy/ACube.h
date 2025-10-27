@@ -13,23 +13,13 @@ class CACube : public CAnimalManager
 public:
     CACube();
     ~CACube();
-
-
+    
     void SetState(IACubeState* newState);
-
     VECTOR3 GetPos() { return transform.position; }
     void AddPos(const VECTOR3& pos) { transform.position = transform.position + pos; }
     void SetRotationY(const float& angle) { transform.rotation.y = angle; }
 
 private:
-    void Init();
-
-    template <class C>
-    void DeletePtr(C c)
-    {
-        SAFE_DELETE(c);
-    }
-
     void Update() override;
     void Draw();
     template <class C>
@@ -48,12 +38,8 @@ private:
     VECTOR3 m_distanceFromObjectToUFO;
     bool m_isMovingToUFO = false;
     bool m_isDestroyMe;
-    float startRotationY;
-    int moveAmount;
+    
 
-    float time;
-    int num;
-    bool timeReset;
 };
 
 class CMoveState;
@@ -100,19 +86,25 @@ public:
 
     void Enter(CACube& cube) override;
     void Update(CACube& cube) override;
-    void Exit(CACube& cube) override
-    {
-        printf("a");
-    }
+    void Exit(CACube& cube) override;
 };
 
 
 class CDestoryState : public IACubeState
 {
 public:
-    void Enter(CACube& cube) override;
-    void Update(CACube& cube) override;
-    void Exit(CACube& cube) override;
+    void Enter(CACube& cube) override
+    {
+        printf(" ");
+    }
+    void Update(CACube& cube) override
+    {
+        printf(" ");
+    }
+    void Exit(CACube& cube) override
+    {
+        printf(" ");
+    }
 };
 
 class CSuctionState : public IACubeState
@@ -126,7 +118,6 @@ public:
         m_pPlayer = new CPlayer();
         m_distanceFromObjectToUFO = m_pPlayer->
             CalcSuctionVelocity(100, cube.GetPos() + VECTOR3(0, meshColl->bBox.max.y, 0));
-        SAFE_DELETE(meshColl);
     };
 
     void Update(CACube& cube) override
@@ -140,5 +131,8 @@ public:
             cube.AddPos(m_distanceFromObjectToUFO);
         }
     };
-    void Exit(CACube& cube) override;
+    void Exit(CACube& cube) override
+    {
+        printf(" ");
+    };
 };

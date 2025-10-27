@@ -476,3 +476,11 @@ inline float CalcVector2Angle(const VECTOR2& vNorm1,const VECTOR2& vNorm2)
 	float angle = acosf(dot(vNorm1, vNorm2));
 	return angle * RadToDeg;
 }
+
+inline float MyRamdom(const float& min,const float& max,std::mt19937& gen)
+{
+	 std::uniform_real_distribution<float> dist(min, max);
+	float num = dist(gen);
+	return num;
+}
+
