@@ -9,7 +9,8 @@ namespace
     std::queue<InterfaceACubeState*> actionQueue;
 }
 
-CACube::CACube()
+CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
+    : m_basePos(iniPos), m_moveAreaSize(moveAreaSize)
 {
     m_pWhiteMesh = new CFbxMesh();
     m_pWhiteColl = new MeshCollider();
@@ -21,7 +22,7 @@ CACube::CACube()
     m_pRedMesh->Load("data/LowPoly/Red1.mesh");
     m_pRedColl->MakeFromMesh(m_pRedMesh);
 
-    transform.position = VECTOR3(0, 0, 0);
+    transform.position = iniPos;
     m_maxSize = m_pRedColl->bBox.max;
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
 
@@ -43,9 +44,6 @@ void CACube::Update()
 {
     m_isInConeArea = m_pPlayer->IsWithSuctionCone(transform.position + VECTOR3(0, m_maxSize.y, 0));
 
-    if (m_isInConeArea && m_pPlayer->GetIsSuckUp())
-    {
-    }
     ImGui::Begin("ACube");
     ImGui::Text("transform.position.z:%lf", transform.position.z);
     ImGui::Text("transform.Rotate.y:%lf", transform.rotation.y * RadToDeg);
@@ -122,8 +120,8 @@ void CACube::IsSuctionCheck()
 
 VECTOR3 CACube::SuctionSpeed()
 {
-   return m_pPlayer->
-        CalcSuctionVelocity(100, transform.position+ VECTOR3(0, m_maxSize.y, 0));
+    return m_pPlayer->
+        CalcSuctionVelocity(100, transform.position + VECTOR3(0, m_maxSize.y, 0));
 }
 
 void CACube::Destroy()
@@ -131,6 +129,7 @@ void CACube::Destroy()
     SAFE_DELETE(m_pCurentState);
     DestroyMe();
 }
+
 /////////////////////////////////////////////////////////////////
 ///Idle
 /////////////////////////////////////////////////////////////////
@@ -159,18 +158,25 @@ void CRunState::Enter(CACube& cube)
     constexpr float MIN_MOVE_AMOUNT = 1.0f;
     constexpr float TURN_ANGLE = 180.0f;
     m_totalPosZMoveAmount = 0;
-
-    m_moveSpeed = Randomf(MIN_MOVE_SPEED, MAX_MOVE_SPEED);
-    m_turnAmount = Randomf(-TURN_ANGLE, TURN_ANGLE);
-    m_moveAmount = Randomf(MIN_MOVE_AMOUNT, MAX_MOVE_AMOUNT);
-    m_savePos = cube.GetPos();
-    cube.SetRotationY(m_turnAmount * DegToRad);
+    bool boundaryFlag = false;
+    while (!boundaryFlag)
+    {
+        m_moveSpeed = Randomf(MIN_MOVE_SPEED, MAX_MOVE_SPEED);
+        m_turnAmount = Randomf(-TURN_ANGLE, TURN_ANGLE) * DegToRad;
+        m_moveAmount = Randomf(MIN_MOVE_AMOUNT, MAX_MOVE_AMOUNT);
+        m_position = cube.GetPos();
+        if (boundaryCheck(cube.MoveAreaSize()))
+        {
+            boundaryFlag = true;
+        }
+    }
+    cube.SetRotationY(m_turnAmount);
 }
 
 void CRunState::Update(CACube& cube)
 {
     cube.AddPos(
-        VECTOR3(0, 0, m_moveSpeed * SceneManager::DeltaTime()) * XMMatrixRotationY(m_turnAmount * DegToRad));
+        VECTOR3(0, 0, m_moveSpeed * SceneManager::DeltaTime()) * XMMatrixRotationY(m_turnAmount));
     m_totalPosZMoveAmount += m_moveSpeed * SceneManager::DeltaTime();
 
     ImGui::Begin("a");
@@ -188,13 +194,23 @@ void CRunState::Update(CACube& cube)
     cube.IsSuctionCheck();
 }
 
+bool CRunState::boundaryCheck(const VECTOR2& areaSize)
+{
+    VECTOR3 tmpPos = m_position + VECTOR3(0, 0, m_moveAmount) * XMMatrixRotationY(m_turnAmount);
+    if (tmpPos.x <= areaSize.x && tmpPos.x >= -areaSize.x && tmpPos.z <= areaSize.y && tmpPos.z >= -areaSize.y)
+    {
+        return true;
+    }
+    return false;
+}
+
 /////////////////////////////////////////////////////////////////
 ///Suction
 /////////////////////////////////////////////////////////////////
 void CSuctionState::Enter(CACube& cube)
 {
     MeshCollider* meshColl = new MeshCollider();
-    m_pPlayer = new CPlayer();
+    m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     m_distanceFromObjectToUFO = cube.SuctionSpeed();
     SAFE_DELETE(meshColl);
 }

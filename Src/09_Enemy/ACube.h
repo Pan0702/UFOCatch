@@ -11,7 +11,7 @@ class InterfaceACubeState;
 class CACube : public CAnimalManager
 {
 public:
-    CACube();
+    CACube(const VECTOR3& iniPos = VECTOR3(0,0,0),const VECTOR2& moveAreaSize = VECTOR2(10,10));
     ~CACube();
 
     void SetState(InterfaceACubeState* newState);
@@ -23,6 +23,7 @@ public:
     void AddPos(const VECTOR3& pos) { transform.position = transform.position + pos; }
     void SetRotationY(const float& angle) { transform.rotation.y = angle; }
     VECTOR3 ObjectMaxSize(){return m_maxSize;}
+    VECTOR2 MoveAreaSize(){return m_moveAreaSize;}
 
 private:
     void Update() override;
@@ -32,7 +33,7 @@ private:
     void SetNextState();
  
 
-
+private:
     CFbxMesh* m_pRedMesh;
     CFbxMesh* m_pWhiteMesh;
     MeshCollider* m_pRedColl;
@@ -41,8 +42,8 @@ private:
 
     VECTOR3 m_maxSize;
     bool m_isInConeArea;
-    bool m_pushButton;
-    VECTOR3 m_distanceFromObjectToUFO;
+    const VECTOR3 m_basePos;
+    const VECTOR2 m_moveAreaSize;
 };
 
 class CRunState;
@@ -82,15 +83,15 @@ class CRunState : public InterfaceACubeState
 public:
     void Enter(CACube& cube) override;
     void Update(CACube& cube) override;
+    bool boundaryCheck(const VECTOR2& areaSize);
 
 private:
     VECTOR3 BASE_POS = VECTOR3(0, 0, 0);
     float m_moveSpeed;
     float m_turnAmount;
     float m_moveAmount;
-    VECTOR3 m_savePos;
-    VECTOR3 m_endPos;
     float m_totalPosZMoveAmount;
+    VECTOR3 m_position;
 };
 
 class CSuctionState : public InterfaceACubeState

@@ -59,8 +59,6 @@ void ObjectManager::Update()
 		}
 		if (node.destroyMe) {
 			deleteDrawObject(obj);
-			printf("%p", obj);
-			fflush(stdout);
 			delete obj;
 			it = updateObjects.erase(it);
 			continue;
