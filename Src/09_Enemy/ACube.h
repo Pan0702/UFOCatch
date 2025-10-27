@@ -1,14 +1,17 @@
 #pragma once
 #include <chrono>
 #include <iostream>
+#include <queue>
+
+#include <d3d11.h>
 
 #include "../05_CommonFile/Object3D.h"
-#include "AnimalManager.h"
+#include "../08_Player/Player.h"
 
 
 class InterfaceACubeState;
 
-class CACube : public CAnimalManager
+class CACube : public Object3D
 {
 public:
     CACube(const VECTOR3& iniPos = VECTOR3(0,0,0),const VECTOR2& moveAreaSize = VECTOR2(10,10));
@@ -25,6 +28,8 @@ public:
     VECTOR3 ObjectMaxSize(){return m_maxSize;}
     VECTOR2 MoveAreaSize(){return m_moveAreaSize;}
 
+    std::queue<InterfaceACubeState*> m_actionQueue;
+
 private:
     void Update() override;
     void Draw();
@@ -39,11 +44,13 @@ private:
     MeshCollider* m_pRedColl;
     MeshCollider* m_pWhiteColl;
     InterfaceACubeState* m_pCurentState;
+    CPlayer* m_pPlayer;
 
     VECTOR3 m_maxSize;
     bool m_isInConeArea;
     const VECTOR3 m_basePos;
     const VECTOR2 m_moveAreaSize;
+   
 };
 
 class CRunState;
@@ -73,6 +80,7 @@ public:
 class CIdleState : public InterfaceACubeState
 {
 public:
+    CIdleState() : number(0) {}
     void Update(CACube& cube) override;
 private:
     int number;
@@ -81,6 +89,7 @@ private:
 class CRunState : public InterfaceACubeState
 {
 public:
+    CRunState() : m_moveSpeed(0), m_turnAmount(0), m_moveAmount(0), m_totalPosZMoveAmount(0) {}
     void Enter(CACube& cube) override;
     void Update(CACube& cube) override;
     bool boundaryCheck(const VECTOR2& areaSize);

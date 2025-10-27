@@ -1,12 +1,17 @@
 #include "AnimalManager.h"
 
 #include "ACube.h"
-#include "../06_GameLib/BBox.h""
+#include "../06_GameLib/BBox.h"
 #include "../08_Player/Player.h"
-#include <chrono>
 #include <thread>
+#include "ACube.h"
+#include "../04_FrameWork/PoolAllocator.h"
 
-#include "EnemyHuman.h"
+namespace
+{
+    
+
+}
 
 CAnimalManager::CAnimalManager()
 {
@@ -14,18 +19,27 @@ CAnimalManager::CAnimalManager()
 
 CAnimalManager::~CAnimalManager()
 {
-    if (m_pPlayer)
+    for (int i = 0; i < 100; i++)
     {
-        m_pPlayer = nullptr;
-        delete m_pPlayer;
+        if (pCubes[i] != nullptr)
+        {
+            Cube.Free(pCubes[i]);
+        }
     }
 }
 
 void CAnimalManager::Update()
 {
-    if (GameDevice()->m_pDI->CheckKey(KD_TRG,DIK_0))
+    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_0))
     {
-        Instantiate<CACube>();
+        // 空いているスロットを探して1個生成
+        for (int i = 0; i < 100; i++)
+        {
+            if (pCubes[i] != nullptr)continue;
+            pCubes[i] = Cube.Alloc();
+            new(pCubes[i]) CACube(); // placement newの正しい構文
+            break; // 1個生成したら終了
+        }
     }
 }
 

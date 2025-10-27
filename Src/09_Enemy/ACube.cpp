@@ -1,16 +1,14 @@
 #include "ACube.h"
 
 #include "../08_Player/Player.h"
-#include <queue>
 #include <thread>
 
-namespace
-{
-    std::queue<InterfaceACubeState*> actionQueue;
-}
+#include "AnimalManager.h"
 
 CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
-    : m_basePos(iniPos), m_moveAreaSize(moveAreaSize)
+    : m_basePos(iniPos), m_moveAreaSize(moveAreaSize), m_pWhiteMesh(nullptr), m_pWhiteColl(nullptr),
+      m_pRedMesh(nullptr), m_pRedColl(nullptr), m_pCurentState(nullptr), m_pPlayer(nullptr),
+      m_isInConeArea(false)
 {
     m_pWhiteMesh = new CFbxMesh();
     m_pWhiteColl = new MeshCollider();
@@ -37,12 +35,22 @@ CACube::~CACube()
     SAFE_DELETE(m_pWhiteColl);
     SAFE_DELETE(m_pRedColl);
     SAFE_DELETE(m_pCurentState);
+
+    // m_actionQueueに残っているStateを全て削除
+    while (!m_actionQueue.empty())
+    {
+        delete m_actionQueue.front();
+        m_actionQueue.pop();
+    }
 }
 
 
 void CACube::Update()
 {
-    m_isInConeArea = m_pPlayer->IsWithSuctionCone(transform.position + VECTOR3(0, m_maxSize.y, 0));
+    if (m_pPlayer)
+    {
+        m_isInConeArea = m_pPlayer->IsWithSuctionCone(transform.position + VECTOR3(0, m_maxSize.y, 0));
+    }
 
     ImGui::Begin("ACube");
     ImGui::Text("transform.position.z:%lf", transform.position.z);
@@ -85,7 +93,7 @@ void CACube::SetState(InterfaceACubeState* newState)
     SAFE_DELETE(m_pCurentState);
     m_pCurentState = std::move(newState);
 
-    while (actionQueue.size() <= 3)
+    while (m_actionQueue.size() <= 3)
     {
         SetNextState();
     }
@@ -102,17 +110,17 @@ void CACube::SetNextState()
     float randomNum = Randomf(0, 1);
     if (randomNum < 0.5f)
     {
-        actionQueue.push(new CIdleState());
+        m_actionQueue.push(new CIdleState());
     }
     else
     {
-        actionQueue.push(new CRunState());
+        m_actionQueue.push(new CRunState());
     }
 }
 
 void CACube::IsSuctionCheck()
 {
-    if (m_pPlayer->IsWithSuctionCone(transform.position + VECTOR3(0, m_maxSize.y, 0)) && m_pPlayer->GetIsSuckUp())
+    if (m_pPlayer && m_pPlayer->IsWithSuctionCone(transform.position + VECTOR3(0, m_maxSize.y, 0)) && m_pPlayer->GetIsSuckUp())
     {
         SetState(new CSuctionState);
     }
@@ -120,14 +128,20 @@ void CACube::IsSuctionCheck()
 
 VECTOR3 CACube::SuctionSpeed()
 {
-    return m_pPlayer->
-        CalcSuctionVelocity(100, transform.position + VECTOR3(0, m_maxSize.y, 0));
+    if (m_pPlayer)
+    {
+        return m_pPlayer->CalcSuctionVelocity(100, transform.position + VECTOR3(0, m_maxSize.y, 0));
+    }
+    return VECTOR3(0, 0, 0);
 }
 
 void CACube::Destroy()
 {
-    SAFE_DELETE(m_pCurentState);
-    DestroyMe();
+    CAnimalManager* AnimalM = ObjectManager::FindGameObject<CAnimalManager>();
+    if (AnimalM)
+    {
+        AnimalM->Destroy(this);
+    }
 }
 
 /////////////////////////////////////////////////////////////////
@@ -139,10 +153,12 @@ void CIdleState::Update(CACube& cube)
     number++;
     if (number > 50)
     {
-        cube.SetState(new CRunState());
-        InterfaceACubeState* nextAction = actionQueue.front();
-        actionQueue.pop();
-        cube.SetState(nextAction);
+        if (!cube.m_actionQueue.empty())
+        {
+            InterfaceACubeState* nextAction = cube.m_actionQueue.front();
+            cube.m_actionQueue.pop();
+            cube.SetState(nextAction);
+        }
     }
     cube.IsSuctionCheck();
 }
@@ -186,10 +202,12 @@ void CRunState::Update(CACube& cube)
     ImGui::End();
     if (m_totalPosZMoveAmount > m_moveAmount)
     {
-        cube.SetState(new CIdleState());
-        InterfaceACubeState* nextAction = actionQueue.front();
-        actionQueue.pop();
-        cube.SetState(nextAction);
+        if (!cube.m_actionQueue.empty())
+        {
+            InterfaceACubeState* nextAction = cube.m_actionQueue.front();
+            cube.m_actionQueue.pop();
+            cube.SetState(nextAction);
+        }
     }
     cube.IsSuctionCheck();
 }
@@ -217,7 +235,7 @@ void CSuctionState::Enter(CACube& cube)
 
 void CSuctionState::Update(CACube& cube)
 {
-    if (m_pPlayer->GetIsSuckUp())
+    if (m_pPlayer && m_pPlayer->GetIsSuckUp())
     {
         if (m_pPlayer->GetPos().y <= cube.GetPos().y)
         {

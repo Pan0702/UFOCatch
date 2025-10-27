@@ -519,6 +519,7 @@
     <ClInclude Include="Libs\Imgui\imstb_rectpack.h" />
     <ClInclude Include="Libs\Imgui\imstb_textedit.h" />
     <ClInclude Include="Libs\Imgui\imstb_truetype.h" />
+    <ClInclude Include="Src\04_FrameWork\PoolAllocator.h" />
     <ClInclude Include="Src\05_CommonFile\Object3D.h" />
     <ClInclude Include="Src\02_DirectX\DInput.h" />
     <ClInclude Include="Src\02_DirectX\Direct3D.h" />
