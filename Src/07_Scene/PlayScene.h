@@ -9,4 +9,6 @@ public:
 	void Update() override;
 	void Draw() override;
 	void DrawCircle(const VECTOR3& center, float radius, DWORD color);
+private:
+	bool flag ;
 };

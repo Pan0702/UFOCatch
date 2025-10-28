@@ -17,16 +17,16 @@ public:
     {
         for (int i = 0; i < 100; i++)
         {
-            if (pCubes[i] == obj)
+            if (m_pCubes[i] == obj)
             {
-                //pCubes[i]->~CACube(); // デストラクタ呼び出し
-                Cube.Free(pCubes[i]);
+                m_pCubes[i]->~CACube(); // デストラクタ呼び出し
+                Cube.Free(m_pCubes[i]);
+                m_pCubes[i] = nullptr;
                 break; // 見つけたら終了
             }
         }
     }
-
-protected:
+    bool CubesFree();
     //各座標の最大値を返却
     VECTOR3 GetObjectSize(MeshCollider* meshColl) const;
     CPlayer* m_pPlayer;
@@ -34,6 +34,7 @@ protected:
 private:
     void Update() override;
     void Draw() override;
-    CACube* pCubes[100] = {nullptr}; ;
+    
+    std::vector<CACube*> m_pCubes;
     PoolAllocator<CACube, 100> Cube;
 };

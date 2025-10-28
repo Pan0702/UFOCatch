@@ -7,46 +7,54 @@
 #include "ACube.h"
 #include "../04_FrameWork/PoolAllocator.h"
 
-namespace
-{
-    
-
-}
 
 CAnimalManager::CAnimalManager()
 {
+    m_pCubes.resize(100);
+    for (int i = 0; i < 100; i++)
+    {
+        m_pCubes[i] = nullptr;
+    }
 }
 
 CAnimalManager::~CAnimalManager()
 {
-    for (int i = 0; i < 100; i++)
-    {
-        if (pCubes[i] != nullptr)
-        {
-            Cube.Free(pCubes[i]);
-        }
-    }
+
 }
 
 void CAnimalManager::Update()
 {
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_0))
     {
-        // 空いているスロットを探して1個生成
-        for (int i = 0; i < 100; i++)
+        for (CACube*& cube : m_pCubes)
         {
-            if (pCubes[i] != nullptr)continue;
-            pCubes[i] = Cube.Alloc();
-            new(pCubes[i]) CACube(); // placement newの正しい構文
-            break; // 1個生成したら終了
+            if (cube)continue;
+            cube = Cube.Alloc();
+            new (cube) CACube();
+            break; 
         }
     }
+    
 }
 
 void CAnimalManager::Draw()
 {
+    
 }
 
+
+bool CAnimalManager::CubesFree()
+{
+    for (int i = 0; i < 100; i++)
+    {
+        if (m_pCubes[i] != nullptr)
+        {
+            Cube.Free(m_pCubes[i]);
+            m_pCubes[i] = nullptr;
+        }
+    }
+    return true;
+}
 
 VECTOR3 CAnimalManager::GetObjectSize(MeshCollider* meshColl) const
 {

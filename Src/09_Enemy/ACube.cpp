@@ -6,9 +6,7 @@
 #include "AnimalManager.h"
 
 CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
-    : m_basePos(iniPos), m_moveAreaSize(moveAreaSize), m_pWhiteMesh(nullptr), m_pWhiteColl(nullptr),
-      m_pRedMesh(nullptr), m_pRedColl(nullptr), m_pCurentState(nullptr), m_pPlayer(nullptr),
-      m_isInConeArea(false)
+    : m_basePos(iniPos), m_moveAreaSize(moveAreaSize)
 {
     m_pWhiteMesh = new CFbxMesh();
     m_pWhiteColl = new MeshCollider();
@@ -137,11 +135,11 @@ VECTOR3 CACube::SuctionSpeed()
 
 void CACube::Destroy()
 {
-    CAnimalManager* AnimalM = ObjectManager::FindGameObject<CAnimalManager>();
-    if (AnimalM)
-    {
-        AnimalM->Destroy(this);
-    }
+    // CAnimalManager* AnimalM = ObjectManager::FindGameObject<CAnimalManager>();
+    // if (AnimalM)
+    // {
+    //     AnimalM->Destroy(this);
+    // }
 }
 
 /////////////////////////////////////////////////////////////////

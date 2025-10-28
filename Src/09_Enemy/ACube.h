@@ -21,6 +21,7 @@ public:
     void Destroy();
     void IsSuctionCheck();
     VECTOR3 SuctionSpeed();
+    void Draw();
 
     VECTOR3 GetPos() { return transform.position; }
     void AddPos(const VECTOR3& pos) { transform.position = transform.position + pos; }
@@ -32,7 +33,7 @@ public:
 
 private:
     void Update() override;
-    void Draw();
+    
     template <class C>
     void DrawObject(C c);
     void SetNextState();
