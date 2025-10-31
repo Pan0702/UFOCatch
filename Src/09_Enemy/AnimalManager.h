@@ -16,6 +16,7 @@ protected:
 private:
     void Update() override;
     void Draw() override;
+    std::vector<CAnimalManager*> m_animals;
     
     
 };

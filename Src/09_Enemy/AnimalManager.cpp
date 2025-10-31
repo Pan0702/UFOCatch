@@ -10,6 +10,7 @@
 
 CAnimalManager::CAnimalManager()
 {
+    Instantiate<SpatialGrid>();
 }
 
 CAnimalManager::~CAnimalManager()
@@ -25,9 +26,10 @@ void CAnimalManager::Update()
 {
     if (GameDevice()->m_pDI->CheckKey(KD_TRG,DIK_0))
     {
+        //m_animals.emplace_back(new CACube);
         Instantiate<CACube>();
     }
-    ObjectManager::FindGameObject<SpatialGrid>()->ClearGrid();
+    if (GameDevice()->m_pDI->CheckKey(KD_TRG,DIK_9))ObjectManager::FindGameObject<SpatialGrid>()->ClearGrid();
 }
 
 
