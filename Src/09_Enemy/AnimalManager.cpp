@@ -27,7 +27,9 @@ void CAnimalManager::Update()
     {
         Instantiate<CACube>();
     }
+    ObjectManager::FindGameObject<SpatialGrid>()->ClearGrid();
 }
+
 
 void CAnimalManager::Draw()
 {

@@ -4,10 +4,11 @@
 
 #include "../05_CommonFile/Object3D.h"
 #include "AnimalManager.h"
+#include "SpatialGrid.h"
 
 
 class InterfaceACubeState;
-
+class SpatialGrid;
 class CACube : public CAnimalManager
 {
 public:
@@ -31,6 +32,7 @@ private:
     template <class C>
     void DrawObject(C c);
     void SetNextState();
+    void HitCheck();
  
 
 private:
@@ -39,6 +41,7 @@ private:
     MeshCollider* m_pRedColl;
     MeshCollider* m_pWhiteColl;
     InterfaceACubeState* m_pCurentState;
+    SpatialGrid* m_pGrid;
 
     VECTOR3 m_maxSize;
     bool m_isInConeArea;

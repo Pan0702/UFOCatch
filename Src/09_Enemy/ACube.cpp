@@ -4,6 +4,8 @@
 #include <queue>
 #include <thread>
 
+#include "SpatialGrid.h"
+
 namespace
 {
     std::queue<InterfaceACubeState*> actionQueue;
@@ -25,6 +27,8 @@ CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     transform.position = iniPos;
     m_maxSize = m_pRedColl->bBox.max;
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
+    m_pGrid = ObjectManager::FindGameObject<SpatialGrid>();
+    
 
     SetNextState();
     SetState(new CRunState());
@@ -53,6 +57,8 @@ void CACube::Update()
     {
         m_pCurentState->Update(*this);
     }
+    m_pGrid->Insert(this);
+    
 }
 
 
@@ -107,6 +113,18 @@ void CACube::SetNextState()
     else
     {
         actionQueue.push(new CRunState());
+    }
+}
+
+void CACube::HitCheck()
+{
+   
+    
+    std::vector<CACube*> nearby = m_pGrid->CheckNearby(this);
+    for (auto* cube : nearby)
+    {
+        if (cube == this)continue;
+        
     }
 }
 

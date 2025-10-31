@@ -554,6 +554,7 @@
     <ClInclude Include="Src\08_Player\Player.h" />
     <ClInclude Include="Src\07_Scene\PlayScene.h" />
     <ClInclude Include="Src\07_Scene\TitleScene.h" />
+    <ClInclude Include="Src\09_Enemy\SpatialGrid.h" />
     <ClInclude Include="Src\GameInstance.h" />
     <ClInclude Include="Src\Stage.h" />
     <ClInclude Include="Src\01_WinMain\Main.h" />
@@ -2647,6 +2648,7 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Src\09_Enemy\SpatialGrid.cpp" />
     <ClCompile Include="Src\GameInstance.cpp" />
     <ClCompile Include="Src\Stage.cpp" />
     <ClCompile Include="Src\01_WinMain\Main.cpp">
