@@ -32,11 +32,11 @@
 //#define  GRAVITY  -9.8f
 
 // AddAngle関数の戻り値である角度（ラジアン）の限界値
-// 理論値は、2.0であるが誤差を考慮して>=1.99f～1.95f程度とする
+// 理論値は、2.0であるが誤差を考慮して>=1.99f?1.95f程度とする
 #define  ADDANGLELIMIT  1.99f
 
 // HightCheck関数で使用する移動先床を判定する高さの上限値
-// 上り坂を考慮して、初期値は1.0であるが、移動やジャンプスピードと勾配を考慮して1.0～10.0程度とする
+// 上り坂を考慮して、初期値は1.0であるが、移動やジャンプスピードと勾配を考慮して1.0?10.0程度とする
 #define  UPHILLLIMIT  1.0f
 
 // CheckFloorMove関数で使用する移動先床に追従する高さの下限値
@@ -328,7 +328,7 @@ public:
 	/// <param name="vNormal">当たった位置の法線を入れる場所(Out)</param>
 	/// <param name="fRadius">半径</param>
 	/// <returns>コリジョン判定の結果</returns>
-	CollRet IsCollisionMoveGravity(const VECTOR3& positionOld, VECTOR3& pisition, VECTOR3& vHit, VECTOR3& vNormal, float fRadius = 0.2f);
+	CollRet IsCollisionMoveGravity(const VECTOR3& positionOld, VECTOR3& position, VECTOR3& vHit, VECTOR3& vNormal, float fRadius = 0.2f);
 
 	/// <summary>
 	/// 移動マップのマトリックスの初期化と設定、参照等
