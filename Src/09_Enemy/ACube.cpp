@@ -15,18 +15,16 @@ namespace
 CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos), m_moveAreaSize(moveAreaSize)
 {
-    m_pWhiteMesh = new CFbxMesh();
-    m_pWhiteColl = new MeshCollider();
-    m_pWhiteMesh->Load("data/LowPoly/white.mesh");
-    m_pWhiteColl->MakeFromMesh(m_pWhiteMesh);
+    m_pMesh= new CFbxMesh();
+    m_pAnimator = new Animator();
+    m_pMesh->Load("data/NewAnimal/Dog/Dog.mesh");
+    m_pAnimator->SetModel(m_pMesh);
+    m_pMesh->LoadAnimation(0, "data/NewAnimal/Dog/Dog_Idle.anmx", true);
+    m_pAnimator->Play(0);
 
-    m_pRedMesh = new CFbxMesh();
-    m_pRedColl = new MeshCollider();
-    m_pRedMesh->Load("data/LowPoly/Red1.mesh");
-    m_pRedColl->MakeFromMesh(m_pRedMesh);
+    
 
     transform.position = iniPos;
-    m_maxSize = m_pRedColl->bBox.max;
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     m_pGrid = ObjectManager::FindGameObject<SpatialGrid>();
 
@@ -40,10 +38,6 @@ CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
 
 CACube::~CACube()
 {
-    SAFE_DELETE(m_pWhiteMesh);
-    SAFE_DELETE(m_pRedMesh);
-    SAFE_DELETE(m_pWhiteColl);
-    SAFE_DELETE(m_pRedColl);
     for (auto& state : m_cubeStates)
     {
         SAFE_DELETE(state.second);
@@ -53,7 +47,7 @@ CACube::~CACube()
 
 void CACube::Update()
 {
-    m_isInConeArea = m_pPlayer->IsWithSuctionCone(transform.position + VECTOR3(0, m_maxSize.y, 0));
+    m_isInConeArea = m_pPlayer->IsWithSuctionCone(transform.position);
 
     ImGui::Begin("ACube");
     ImGui::Text("transform.position.z:%lf", transform.position.z);
@@ -64,29 +58,11 @@ void CACube::Update()
     {
         m_pCubeState->Update();
     }
+    HitCheck();
    // m_pGrid->Insert(this);
     
 }
 
-
-void CACube::Draw()
-{
-    if (m_isInConeArea)
-    {
-        DrawObject(m_pRedMesh);
-    }
-    else
-    {
-        DrawObject(m_pWhiteMesh);
-    }
-}
-
-
-template <class C>
-void CACube::DrawObject(C c)
-{
-    c->Render(transform.matrix());
-}
 
 //Stateをここでセット
 void CACube::SetState(CACubeState::Type type)
@@ -98,17 +74,25 @@ void CACube::SetState(CACubeState::Type type)
 
 void CACube::HitCheck()
 {
-    std::vector<CACube*> nearby = m_pGrid->CheckNearby(this);
-    for (auto* cube : nearby)
-    {
-        if (cube == this)continue;
-        //当たり判定
-    }
+// #if 0
+//     std::vector<CACube*> nearby = m_pGrid->CheckNearby(this);
+//     for (auto* cube : nearby)
+//     {
+//         if (cube == this)continue;
+//         //当たり判定
+//     }
+// #endif
+    
+}
+
+void CACube::Draw()
+{
+    m_pMesh->Render(m_pAnimator,transform.matrix());
 }
 
 void CACube::IsSuctionCheck()
 {
-    if (m_pPlayer->IsWithSuctionCone(transform.position + VECTOR3(0, m_maxSize.y, 0)) && m_pPlayer->GetIsSuckUp())
+    if (m_pPlayer->IsWithSuctionCone(transform.position  /* + VECTOR3(0, m_maxSize.y, 0)*/) && m_pPlayer->GetIsSuckUp())
     {
         SetState(CACubeState::Type::Suction);
     }
@@ -117,6 +101,6 @@ void CACube::IsSuctionCheck()
 VECTOR3 CACube::SuctionSpeed()
 {
     return m_pPlayer->
-        CalcSuctionVelocity(100, transform.position + VECTOR3(0, m_maxSize.y, 0));
+        CalcSuctionVelocity(100, transform.position);
 }
 
