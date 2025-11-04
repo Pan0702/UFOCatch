@@ -47,7 +47,7 @@ void CIdleState::Enter()
 void CIdleState::Update()
 {
     timerCount += SceneManager::DeltaTime();
-    if (timerCount > 10)
+    if (timerCount > 1)
     {
         Type type = actionQueue.front();
         actionQueue.pop();

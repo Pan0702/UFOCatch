@@ -24,9 +24,8 @@ void PlayScene::Update()
 {
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_T))
     {
-        flag = ObjectManager::FindGameObject<CAnimalManager>()->CubesFree();
-    }
-    if (flag)
+        flag = true;
+    }if (flag)
     {
         SceneManager::ChangeScene("TitleScene");
     }

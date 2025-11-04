@@ -7,11 +7,6 @@
 #include "SpatialGrid.h"
 #include "State/ACubeState.h"
 
-namespace
-{
-    std::queue<InterfaceACubeState*> actionQueue;
-}
-
 CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos), m_moveAreaSize(moveAreaSize)
 {
@@ -26,7 +21,7 @@ CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
 
     transform.position = iniPos;
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
-    m_pGrid = ObjectManager::FindGameObject<SpatialGrid>();
+    
 
     m_cubeStates[CACubeState::Type::Idle] = new CIdleState(this);
     m_cubeStates[CACubeState::Type::Walk] = new CWalkState(this);

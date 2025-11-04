@@ -8,8 +8,6 @@
 #include "State/ACubeState.h"
 
 
-class InterfaceACubeState;
-class SpatialGrid;
 class CACube : public CAnimalManager
 {
 public:
@@ -33,7 +31,6 @@ private:
  
 
 private:
-    SpatialGrid* m_pGrid;
 
     CACubeState* m_pCubeState;
     std::unordered_map<CACubeState::Type, CACubeState*> m_cubeStates;
