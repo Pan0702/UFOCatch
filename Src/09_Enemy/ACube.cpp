@@ -4,6 +4,8 @@
 #include <queue>
 #include <thread>
 
+#include "AnimalManager.h"
+#include "AnimalManager.h"
 #include "SpatialGrid.h"
 #include "State/ACubeState.h"
 
@@ -14,7 +16,10 @@ CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     m_pAnimator = new Animator();
     m_pMesh->Load("data/NewAnimal/Dog/Dog.mesh");
     m_pAnimator->SetModel(m_pMesh);
-    m_pMesh->LoadAnimation(0, "data/NewAnimal/Dog/Dog_Idle.anmx", true);
+    m_pMesh->LoadAnimation(AnimationType::A_IDEL, "data/NewAnimal/Dog/Dog_Idle.anmx", true);
+     m_pMesh->LoadAnimation(AnimationType::A_WALK, "data/NewAnimal/Dog/Dog_Idle.anmx", true);
+     m_pMesh->LoadAnimation(AnimationType::A_RUN, "data/NewAnimal/Dog/Dog_Idle.anmx", true);
+    
     m_pAnimator->Play(0);
 
     
@@ -43,7 +48,7 @@ CACube::~CACube()
 void CACube::Update()
 {
     m_isInConeArea = m_pPlayer->IsWithSuctionCone(transform.position);
-
+    m_pAnimator->Update();
     ImGui::Begin("ACube");
     ImGui::Text("transform.position.z:%lf", transform.position.z);
     ImGui::Text("transform.Rotate.y:%lf", transform.rotation.y * RadToDeg);
