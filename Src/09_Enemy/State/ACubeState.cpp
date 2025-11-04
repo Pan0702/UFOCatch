@@ -39,10 +39,15 @@ CIdleState::CIdleState(CACube* cube)
 {
 }
 
+void CIdleState::Enter()
+{
+   timerCount = 0;
+}
+
 void CIdleState::Update()
 {
-    timerCount++;
-    if (timerCount > 50)
+    timerCount += SceneManager::DeltaTime();
+    if (timerCount > 10)
     {
         Type type = actionQueue.front();
         actionQueue.pop();
@@ -105,7 +110,7 @@ void CWalkState::Update()
 
 CSuction::CSuction(CACube* cube)
     : CACubeState(cube, Type::Suction)
-      , m_pPlayer(new CPlayer())
+      , m_pPlayer(ObjectManager::FindGameObject<CPlayer>())
 {
     m_distanceFromObjectToUFO = m_pCube->SuctionSpeed();
 }

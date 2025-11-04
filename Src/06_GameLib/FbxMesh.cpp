@@ -8,13 +8,25 @@
 //
 //																	FbxMesh.cpp
 //=============================================================================
+
+
+///=============================================================================
+//		メッシュの読み込みと描画のプログラム
+//　                                                  ver 4.1        2025.6.24
+//
+//		メッシュ処理
+//
+//      (メッシュコントロールクラスでテクスチャの総合管理を行う)
+//
+//																	FbxMesh.cpp
+//=============================================================================
+
 #include "FbxMesh.h"
 #include "../03_GameMain/GameMain.h"
 #include "Animator.h"
-
 //------------------------------------------------------------------------
 //
-//	CFbxMesh  �R���X�g���N�^	
+//	CFbxMesh  コンストラクタ	
 //
 //------------------------------------------------------------------------
 CFbxMesh::CFbxMesh() : CFbxMesh(GameDevice()->m_pFbxMeshCtrl)
@@ -27,9 +39,9 @@ CFbxMesh::CFbxMesh(CFbxMeshCtrl* pFbxMeshCtrl)
 	m_pShader = pFbxMeshCtrl->m_pShader;
 	m_pFbxMeshCtrl = pFbxMeshCtrl;                    // -- 2021.2.4
 
-	m_fHeightMax = 0.01f;                // �f�B�X�v���[�X�����g�}�b�s���O�̍���     // -- 2020.1.24
-	m_iMaxDevide = 1;                   // �f�B�X�v���[�X�����g�}�b�s���O�̕�����   // -- 2020.1.24
-	m_vDiffuse = VECTOR4(1, 1, 1, 1);    // �f�B�t���[�Y�F                           // -- 2020.1.24
+	m_fHeightMax = 0.01f;                // ディスプレースメントマッピングの高さ     // -- 2020.1.24
+	m_iMaxDevide = 1;                   // ディスプレースメントマッピングの分割数   // -- 2020.1.24
+	m_vDiffuse = VECTOR4(1, 1, 1, 1);    // ディフューズ色                           // -- 2020.1.24
 }
 CFbxMesh::CFbxMesh(CFbxMeshCtrl* pFbxMeshCtrl, const TCHAR* FName)
 {
@@ -39,13 +51,13 @@ CFbxMesh::CFbxMesh(CFbxMeshCtrl* pFbxMeshCtrl, const TCHAR* FName)
 	m_pFbxMeshCtrl = pFbxMeshCtrl;                    // -- 2021.2.4
 	Load(FName);
 
-	m_fHeightMax = 0.01f;                // �f�B�X�v���[�X�����g�}�b�s���O�̍���     // -- 2020.1.24
-	m_iMaxDevide = 1;                   // �f�B�X�v���[�X�����g�}�b�s���O�̕�����   // -- 2020.1.24
-	m_vDiffuse = VECTOR4(1, 1, 1, 1);  // �f�B�t���[�Y�F                           // -- 2020.1.24
+	m_fHeightMax = 0.01f;                // ディスプレースメントマッピングの高さ     // -- 2020.1.24
+	m_iMaxDevide = 1;                   // ディスプレースメントマッピングの分割数   // -- 2020.1.24
+	m_vDiffuse = VECTOR4(1, 1, 1, 1);  // ディフューズ色                           // -- 2020.1.24
 }
 //------------------------------------------------------------------------
 //
-//	CFbxMesh  �f�X�g���N�^	
+//	CFbxMesh  デストラクタ	
 //
 //------------------------------------------------------------------------
 CFbxMesh::~CFbxMesh()
@@ -54,11 +66,11 @@ CFbxMesh::~CFbxMesh()
 }
 //------------------------------------------------------------------------
 //
-//	���b�V���̏I������
+//	メッシュの終了処理
 //
-// �����@�Ȃ�
+// 引数　なし
 //
-//	�߂�l �Ȃ�
+//	戻り値 なし
 //
 //------------------------------------------------------------------------
 void CFbxMesh::DestroyD3D()
@@ -91,19 +103,19 @@ void CFbxMesh::DestroyD3D()
 	SAFE_DELETE_ARRAY(m_pTextureHeightArray);
 	SAFE_DELETE_ARRAY(m_pTextureSpecularArray);
 
-	SAFE_DELETE_ARRAY(m_dwRenderIdxArray);
-	SAFE_DELETE_ARRAY(m_fRenderDistanceArray);
+	m_RenderOrder.clear();
+	m_RenderOrder.shrink_to_fit();
 }
 
 //------------------------------------------------------------------------
 //
-//	���b�V��(�o�C�i��)�t�@�C���̓ǂݍ��ݏ���
+//	メッシュ(バイナリ)ファイルの読み込み処理
 //
-// ����
-//  const TCHAR*         FName          Fbx�t�@�C����
+// 引数
+//  const TCHAR*         FName          Fbxファイル名
 //
-//	�߂�l bool
-//         true:����   false:�ُ�
+//	戻り値 bool
+//         true:正常   false:異常
 //
 //------------------------------------------------------------------------
 bool CFbxMesh::Load(const TCHAR* FName)
@@ -119,34 +131,34 @@ bool CFbxMesh::Load(const TCHAR* FName)
 	int   mi, ti, tnum, n;
 	int   xi;                              // -- 2021.2.4
 
-	StaticVertex*     staticvertices = nullptr;  // �X�^�e�B�b�N���b�V�����_�f�[�^
-	SkinVertex*       skinvertices = nullptr;    // �X�L�����b�V�����_�f�[�^
+	StaticVertex*     staticvertices = nullptr;  // スタティックメッシュ頂点データ
+	SkinVertex*       skinvertices = nullptr;    // スキンメッシュ頂点データ
 
-	// ���b�V���t�@�C��������p�X���𓾂�PathName�Ɋi�[���Ă���
-	// �i��ŁA�e�N�X�`���t�@�C�����̃p�X�Ƃ��Ďg�����߁j
+	// メッシュファイル名からパス名を得てPathNameに格納しておく
+	// （後で、テクスチャファイル名のパスとして使うため）
 	_tsplitpath_s(FName, PathName, sizeof(PathName) / sizeof(TCHAR), PathName2, sizeof(PathName2) / sizeof(TCHAR),
 		NULL, NULL, NULL, NULL);
 	_tcscat_s(PathName, PathName2);
 
-	// �t�@�C���̃I�[�v������
+	// ファイルのオープン処理
 	hFile = CreateFile(FName, GENERIC_READ,
 		FILE_SHARE_READ, nullptr, OPEN_EXISTING,
 		FILE_ATTRIBUTE_NORMAL, nullptr);
 	if (hFile != INVALID_HANDLE_VALUE)
 	{
-		// �ő�l�A�ŏ��l�̏����ݒ�                      // -- 2021.2.4
+		// 最大値、最小値の初期設定                      // -- 2021.2.4
 		m_vMax = VECTOR3(-999999, -999999, -999999);
 		m_vMin = VECTOR3(999999, 999999, 999999);
 
-		dwBufSize = GetFileSize(hFile, nullptr);     // ���̓t�@�C���̃T�C�Y�𓾂�B
-		pBuf = new BYTE[dwBufSize];				  // ���̓o�b�t�@���m�ۂ��� 
+		dwBufSize = GetFileSize(hFile, nullptr);     // 入力ファイルのサイズを得る。
+		pBuf = new BYTE[dwBufSize];				  // 入力バッファを確保する 
 
-		ReadFile(hFile, pBuf, dwBufSize, &dwLen, nullptr);		// �t�@�C�����o�b�t�@�ɓǂݍ���
+		ReadFile(hFile, pBuf, dwBufSize, &dwLen, nullptr);		// ファイルをバッファに読み込む
 
-		p = pBuf;	// �o�b�t�@�̐擪�|�C���^���Z�b�g
+		p = pBuf;	// バッファの先頭ポインタをセット
 
 		// -----------------------------------------------------------------
-		// �t�@�C���w�b�_(WCHAR��8����)�̃`�F�b�N
+		// ファイルヘッダ(WCHARの8文字)のチェック
 		WCHAR Head[8];
 		memcpy_s(Head, sizeof(Head), p, sizeof(Head));
 		if (Head[0] == L'M' && Head[1] == L'E' && Head[2] == L'S' && Head[3] == L'H')
@@ -154,109 +166,109 @@ bool CFbxMesh::Load(const TCHAR* FName)
 			;
 		}
 		else {
-			MessageBox(nullptr, FName, _T("������ ���b�V���t�@�C��('MESH')�ł͂���܂��� ������"), MB_OK);
+			MessageBox(nullptr, FName, _T("■□■ メッシュファイル('MESH')ではありません ■□■"), MB_OK);
 			return false;
 		}
-		// �o�[�W�����̃`�F�b�N�͍s��Ȃ�	 		// -- 2024.3.23
+		// バージョンのチェックは行わない	 		// -- 2024.3.23
 		if (Head[4] < L'2')
 		{
 			;
 		}
 
-		// ���b�V���^�C�v�̃`�F�b�N
+		// メッシュタイプのチェック
 		if (Head[6] == L'1')
 		{
-			// �X�^�e�B�b�N���b�V��
+			// スタティックメッシュ
 			m_nMeshType = 1;
 		}
 		else if (Head[6] == L'2')
 		{
-			// �X�L�����b�V��
+			// スキンメッシュ
 			m_nMeshType = 2;
 		}
 		else {
 			m_nMeshType = 0;
-			MessageBox(nullptr, FName, _T("������ ���b�V���^�C�v���قȂ�܂��i1,2�ȊO�s�j ������"), MB_OK);
+			MessageBox(nullptr, FName, _T("■□■ メッシュタイプが異なります（1,2以外不可） ■□■"), MB_OK);
 			return false;
 		}
 		p += sizeof(Head);
 
 		// -----------------------------------------------------------------------------------
-		// �e�N�X�`���[�Ɋւ��鏈��
-		memcpy_s(&m_dwTextureNum, sizeof(DWORD), p, sizeof(int));         // �e�N�X�`���[���𓾂�
+		// テクスチャーに関する処理
+		memcpy_s(&m_dwTextureNum, sizeof(DWORD), p, sizeof(int));         // テクスチャー数を得る
 
-		m_pMaterialDiffuseArray = new VECTOR4[m_dwTextureNum];            // �}�e���A���f�B�t���[�Y�J���[�z��     // -- 2020.12.15
-		m_pMaterialSpecularArray = new VECTOR4[m_dwTextureNum];           // �}�e���A���X�y�L�����|�J���[�z��     // -- 2020.12.15
-		m_pTextureArray = new ID3D11ShaderResourceView*[m_dwTextureNum];  // �e�N�X�`���[�z��𐶐�����
-		m_pTextureNormalArray = new ID3D11ShaderResourceView*[m_dwTextureNum];  // �e�N�X�`���[Normal�z��𐶐�����
-		m_pTextureHeightArray = new ID3D11ShaderResourceView*[m_dwTextureNum];  // �e�N�X�`���[Height�z��𐶐�����   // -- 2020.1.15
-		m_pTextureSpecularArray = new ID3D11ShaderResourceView*[m_dwTextureNum];  // �e�N�X�`���[Specular�z��𐶐�����
+		m_pMaterialDiffuseArray = new VECTOR4[m_dwTextureNum];            // マテリアルディフューズカラー配列     // -- 2020.12.15
+		m_pMaterialSpecularArray = new VECTOR4[m_dwTextureNum];           // マテリアルスペキュラ－カラー配列     // -- 2020.12.15
+		m_pTextureArray = new ID3D11ShaderResourceView*[m_dwTextureNum];  // テクスチャー配列を生成する
+		m_pTextureNormalArray = new ID3D11ShaderResourceView*[m_dwTextureNum];  // テクスチャーNormal配列を生成する
+		m_pTextureHeightArray = new ID3D11ShaderResourceView*[m_dwTextureNum];  // テクスチャーHeight配列を生成する   // -- 2020.1.15
+		m_pTextureSpecularArray = new ID3D11ShaderResourceView*[m_dwTextureNum];  // テクスチャーSpecular配列を生成する
 		p += sizeof(int);
 
-		for (ti = 0; ti < m_dwTextureNum; ti++)   // �e�N�X�`���[�������J��Ԃ�
+		for (ti = 0; ti < m_dwTextureNum; ti++)   // テクスチャー数だけ繰り返し
 		{
 			WCHAR WName[128];
-			TCHAR TTName[256] = { 0x00 };   // �}���`�o�C�g�̂Ƃ��́A�ϊ���ɕ�����Ō��\0���쐬����Ȃ��̂ł܂���摤���[���N�����[���Ă���;
+			TCHAR TTName[256] = { 0x00 };   // マルチバイトのときは、変換後に文字列最後の\0が作成されないのでまず受取側をゼロクリヤーしておく;
 
-			memcpy_s(WName, sizeof(WName), p, sizeof(WCHAR) * 128);	// �e�N�X�`���[��(WCHAR�^)�𓾂�
+			memcpy_s(WName, sizeof(WName), p, sizeof(WCHAR) * 128);	// テクスチャー名(WCHAR型)を得る
 
 			if (WName[0] == _T('\0'))     // -- 2020.12.15
 			{
-				// �}�e���A���J���[���g�p����Ƃ�
+				// マテリアルカラーを使用するとき
 #if _UNICODE
 				SetMaterial(ti, WName);   // -- 2020.12.15
 #else
-				WideCharToMultiByte(CP_ACP, 0, WName, -1, TTName, sizeof(TTName), nullptr, nullptr);
-				SetMaterial(ti, TTName); // �}���`�o�C�g�ɑΉ����܂���
+				// マルチバイトに対応しました
+				SetMaterial(ti, ((char*)WName) + 1);		 // -- 2025.6.24
 #endif
 			}
 			else {
-				// �e�N�X�`�����g�p����Ƃ�
+				// テクスチャを使用するとき
 
 #if _UNICODE
-				// unicode�̏ꍇ�AWName(WCHAR)�����̂܂�TTName�ɃR�s�[
+				// unicodeの場合、WName(WCHAR)をそのままTTNameにコピー
 				_tcscpy_s(TTName, WName);
 #else
-				// �}���`�o�C�g�����w��̏ꍇ�AWName(WCHAR)���}���`�o�C�g�ɕϊ����ăR�s�[
-				// Unicode �����R�[�h(WName)��������Ŏw�肵�������R�[�h�ɕϊ�����( CP_ACP �͓��{��Windows�ł̓V�t�gJIS�R�[�h )
+				// マルチバイト文字指定の場合、WName(WCHAR)をマルチバイトに変換してコピー
+				// Unicode 文字コード(WName)を第一引数で指定した文字コードに変換する( CP_ACP は日本語WindowsではシフトJISコード )
 				WideCharToMultiByte(CP_ACP, 0, WName, -1, TTName, sizeof(TTName), nullptr, nullptr);
 #endif
 				_tcscpy_s(FullName, 256, PathName);
-				_tcscat_s(FullName, TTName);		// �p�X���̌��Ƀe�N�X�`���[����A������
-				SetTexture(ti, FullName);			// �e�N�X�`���[���e�N�X�`���[�z��ɃZ�b�g����
+				_tcscat_s(FullName, TTName);		// パス名の後ろにテクスチャー名を連結する
+				SetTexture(ti, FullName);			// テクスチャーをテクスチャー配列にセットする
 			}
 
 			p += sizeof(WCHAR) * 128;
 		}
 
 		// -------------------------------------------------------------------------------------
-		// ���b�V���Ɋւ��鏈��
-		// ���b�V���J�E���g�f�[�^
-		memcpy_s(&m_dwMeshNum, sizeof(DWORD), p, sizeof(int));       // ���b�V�����𓾂�
-		m_pMeshArray = new CFbxMeshArray[m_dwMeshNum];               // ���b�V���z��𐶐�����
+		// メッシュに関する処理
+		// メッシュカウントデータ
+		memcpy_s(&m_dwMeshNum, sizeof(DWORD), p, sizeof(int));       // メッシュ数を得る
+		m_pMeshArray = new CFbxMeshArray[m_dwMeshNum];               // メッシュ配列を生成する
 		p += sizeof(int);
-		for (mi = 0; mi < m_dwMeshNum; mi++)   // ���b�V���������J��Ԃ�
+		for (mi = 0; mi < m_dwMeshNum; mi++)   // メッシュ数だけ繰り返し
 		{
-			// ���b�V�����𓾂�
+			// メッシュ名を得る
 			WCHAR TMeshName[128];
-			memcpy_s(TMeshName, sizeof(TMeshName), p, sizeof(WCHAR) * 128);	// ���b�V����(WCHAR�^)�𓾂�
-																			//  ���݁A���b�V�����͎g�p���Ă��Ȃ�
+			memcpy_s(TMeshName, sizeof(TMeshName), p, sizeof(WCHAR) * 128);	// メッシュ名(WCHAR型)を得る
+																			//  現在、メッシュ名は使用していない
 			p += sizeof(WCHAR) * 128;
 
-			// ���b�V���^�C�v���Ƃ̏���
-			if (m_nMeshType == 1)     // �X�^�e�B�b�N���b�V��
+			// メッシュタイプごとの処理
+			if (m_nMeshType == 1)     // スタティックメッシュ
 			{
-				// ���_���f�[�^
-				memcpy_s(&m_pMeshArray[mi].m_dwVerticesNum, sizeof(DWORD), p, sizeof(int));       // ���_���𓾂�
-				staticvertices = new StaticVertex[m_pMeshArray[mi].m_dwVerticesNum];  // ���_�z��𐶐�����
-				m_pMeshArray[mi].m_vStaticVerticesNormal = new StaticVertexNormal[m_pMeshArray[mi].m_dwVerticesNum];  // ���_�z��o���v�}�b�v�p�𐶐�����
+				// 頂点数データ
+				memcpy_s(&m_pMeshArray[mi].m_dwVerticesNum, sizeof(DWORD), p, sizeof(int));       // 頂点数を得る
+				staticvertices = new StaticVertex[m_pMeshArray[mi].m_dwVerticesNum];  // 頂点配列を生成する
+				m_pMeshArray[mi].m_vStaticVerticesNormal = new StaticVertexNormal[m_pMeshArray[mi].m_dwVerticesNum];  // 頂点配列バンプマップ用を生成する
 				p += sizeof(int);
 
-				// ���_�f�[�^
-				memcpy_s(staticvertices, sizeof(StaticVertex)*m_pMeshArray[mi].m_dwVerticesNum, p, sizeof(StaticVertex)*m_pMeshArray[mi].m_dwVerticesNum);       // ���_�z��ɒ��_�𓾂�
+				// 頂点データ
+				memcpy_s(staticvertices, sizeof(StaticVertex)*m_pMeshArray[mi].m_dwVerticesNum, p, sizeof(StaticVertex)*m_pMeshArray[mi].m_dwVerticesNum);       // 頂点配列に頂点を得る
 				p += sizeof(StaticVertex)*m_pMeshArray[mi].m_dwVerticesNum;
 
-				// ���_�̍ő�l�ƍŏ��l�����߂�                             // -- 2021.2.4
+				// 頂点の最大値と最小値を求める                             // -- 2021.2.4
 				for (xi = 0; xi < m_pMeshArray[mi].m_dwVerticesNum; xi++)
 				{
 					if (m_vMax.x < (staticvertices + xi)->Pos.x) m_vMax.x = (staticvertices + xi)->Pos.x;
@@ -267,58 +279,58 @@ bool CFbxMesh::Load(const TCHAR* FName)
 					if (m_vMin.z > (staticvertices + xi)->Pos.z) m_vMin.z = (staticvertices + xi)->Pos.z;
 				}
 
-				// �C���f�b�N�X���f�[�^
-				memcpy_s(&m_pMeshArray[mi].m_dwIndicesNum, sizeof(DWORD), p, sizeof(int));       // �C���f�b�N�X���𓾂�
-				m_pMeshArray[mi].m_nIndices = new DWORD[m_pMeshArray[mi].m_dwIndicesNum];      // �C���f�b�N�X�z��𐶐�����
+				// インデックス数データ
+				memcpy_s(&m_pMeshArray[mi].m_dwIndicesNum, sizeof(DWORD), p, sizeof(int));       // インデックス数を得る
+				m_pMeshArray[mi].m_nIndices = new DWORD[m_pMeshArray[mi].m_dwIndicesNum];      // インデックス配列を生成する
 				p += sizeof(int);
 
-				memcpy_s(m_pMeshArray[mi].m_nIndices, sizeof(DWORD)*m_pMeshArray[mi].m_dwIndicesNum, p, sizeof(DWORD)*m_pMeshArray[mi].m_dwIndicesNum);  // �C���f�b�N�X�z��ɃC���f�b�N�X�𓾂�
-				if (Head[4] < L'2') ConvIndicesData(mi);	// ���o�[�W�����̂Ƃ��͉E���\�ɕϊ�����   // -- 2024.3.23
+				memcpy_s(m_pMeshArray[mi].m_nIndices, sizeof(DWORD)*m_pMeshArray[mi].m_dwIndicesNum, p, sizeof(DWORD)*m_pMeshArray[mi].m_dwIndicesNum);  // インデックス配列にインデックスを得る
+				if (Head[4] < L'2') ConvIndicesData(mi);	// 旧バージョンのときは右回り表に変換する   // -- 2024.3.23
 				p += sizeof(DWORD)*m_pMeshArray[mi].m_dwIndicesNum;
 
-				// ���_�̃��C�A�E�g��ϊ����A�ڐ��Ə]�@�����v�Z
+				// 頂点のレイアウトを変換し、接線と従法線を計算
 				ChangeStaticVertexLayout(staticvertices, m_pMeshArray[mi].m_nIndices, m_pMeshArray[mi].m_dwIndicesNum, m_pMeshArray[mi].m_vStaticVerticesNormal);
 
-				// �o�[�e�b�N�X�o�b�t�@�ƃC���f�b�N�X�o�b�t�@���Z�b�g
+				// バーテックスバッファとインデックスバッファをセット
 				SetStaticVIBuffer(mi, m_pMeshArray[mi].m_vStaticVerticesNormal, m_pMeshArray[mi].m_nIndices);
 
-				// ��̃��b�V���̃e�N�X�`���[���i���o�[�W�����ł͕K���P�̂͂��j
-				memcpy_s(&tnum, sizeof(DWORD), p, sizeof(int));       // �e�N�X�`���[��
+				// 一つのメッシュのテクスチャー数（現バージョンでは必ず１のはず）
+				memcpy_s(&tnum, sizeof(DWORD), p, sizeof(int));       // テクスチャー数
 				p += sizeof(int);
-				// �e�N�X�`���[�ԍ��̃e�N�X�`����ݒ肷��
+				// テクスチャー番号のテクスチャを設定する
 				for (int i = 0; i < tnum; i++)
 				{
-					memcpy_s(&n, sizeof(DWORD), p, sizeof(int));       // �e�N�X�`���[�ԍ��𓾂�
-					m_pMeshArray[mi].m_pTexture = m_pTextureArray[n];   // �e�N�X�`���[�z��̃A�h���X���Z�b�g
-					m_pMeshArray[mi].m_pTextureNormal = m_pTextureNormalArray[n];   // �e�N�X�`���[Normal�z��̃A�h���X���Z�b�g
-					m_pMeshArray[mi].m_pTextureHeight = m_pTextureHeightArray[n];   // �e�N�X�`���[Height�z��̃A�h���X���Z�b�g
-					m_pMeshArray[mi].m_pTextureSpecular = m_pTextureSpecularArray[n];   // �e�N�X�`���[Specular�z��̃A�h���X���Z�b�g
-					m_pMeshArray[mi].m_pMaterialDiffuse = m_pMaterialDiffuseArray[n];   // �}�e���A���E�f�B�t���[�Y�F   // -- 2020.12.15
-					m_pMeshArray[mi].m_pMaterialSpecular = m_pMaterialSpecularArray[n]; // �}�e���A���E�X�y�L�����[�F   // -- 2020.12.15
+					memcpy_s(&n, sizeof(DWORD), p, sizeof(int));       // テクスチャー番号を得る
+					m_pMeshArray[mi].m_pTexture = m_pTextureArray[n];   // テクスチャー配列のアドレスをセット
+					m_pMeshArray[mi].m_pTextureNormal = m_pTextureNormalArray[n];   // テクスチャーNormal配列のアドレスをセット
+					m_pMeshArray[mi].m_pTextureHeight = m_pTextureHeightArray[n];   // テクスチャーHeight配列のアドレスをセット
+					m_pMeshArray[mi].m_pTextureSpecular = m_pTextureSpecularArray[n];   // テクスチャーSpecular配列のアドレスをセット
+					m_pMeshArray[mi].m_pMaterialDiffuse = m_pMaterialDiffuseArray[n];   // マテリアル・ディフューズ色   // -- 2020.12.15
+					m_pMeshArray[mi].m_pMaterialSpecular = m_pMaterialSpecularArray[n]; // マテリアル・スペキュラー色   // -- 2020.12.15
 					p += sizeof(int);
 				}
 
-				// ���b�V���̒��S�_�̍��W�����߂�                                      // -- 2018.8.1
+				// メッシュの中心点の座標を求める                                      // -- 2018.8.1
 				m_pMeshArray[mi].m_vCenterPos = GetStaticCenterPos(staticvertices, m_pMeshArray[mi].m_dwVerticesNum);
 
-				// �s�v�ɂȂ����ꎞ�@���_�z����폜����
+				// 不要になった一時　頂点配列を削除する
 				SAFE_DELETE_ARRAY(staticvertices);
 
 			}
-			else if (m_nMeshType == 2)    // �X�L�����b�V��
+			else if (m_nMeshType == 2)    // スキンメッシュ
 			{
 
-				// ���_���f�[�^
-				memcpy_s(&m_pMeshArray[mi].m_dwVerticesNum, sizeof(DWORD), p, sizeof(int));       // ���_���𓾂�
-				skinvertices = new SkinVertex[m_pMeshArray[mi].m_dwVerticesNum];  // ���_�z��𐶐�����
-				m_pMeshArray[mi].m_vSkinVerticesNormal = new SkinVertexNormal[m_pMeshArray[mi].m_dwVerticesNum];  // ���_�z��o���v�}�b�v�p�𐶐�����
+				// 頂点数データ
+				memcpy_s(&m_pMeshArray[mi].m_dwVerticesNum, sizeof(DWORD), p, sizeof(int));       // 頂点数を得る
+				skinvertices = new SkinVertex[m_pMeshArray[mi].m_dwVerticesNum];  // 頂点配列を生成する
+				m_pMeshArray[mi].m_vSkinVerticesNormal = new SkinVertexNormal[m_pMeshArray[mi].m_dwVerticesNum];  // 頂点配列バンプマップ用を生成する
 				p += sizeof(int);
 
-				// ���_�f�[�^
-				memcpy_s(skinvertices, sizeof(SkinVertex)*m_pMeshArray[mi].m_dwVerticesNum, p, sizeof(SkinVertex)*m_pMeshArray[mi].m_dwVerticesNum);       // ���_�z��ɒ��_�𓾂�
+				// 頂点データ
+				memcpy_s(skinvertices, sizeof(SkinVertex)*m_pMeshArray[mi].m_dwVerticesNum, p, sizeof(SkinVertex)*m_pMeshArray[mi].m_dwVerticesNum);       // 頂点配列に頂点を得る
 				p += sizeof(SkinVertex)*m_pMeshArray[mi].m_dwVerticesNum;
 
-				// ���_�̍ő�l�ƍŏ��l�����߂�                             // -- 2021.2.4
+				// 頂点の最大値と最小値を求める                             // -- 2021.2.4
 				for (xi = 0; xi < m_pMeshArray[mi].m_dwVerticesNum; xi++)
 				{
 					if (m_vMax.x < (skinvertices + xi)->Pos.x) m_vMax.x = (skinvertices + xi)->Pos.x;
@@ -329,54 +341,52 @@ bool CFbxMesh::Load(const TCHAR* FName)
 					if (m_vMin.z > (skinvertices + xi)->Pos.z) m_vMin.z = (skinvertices + xi)->Pos.z;
 				}
 
-				// �C���f�b�N�X���f�[�^
-				memcpy_s(&m_pMeshArray[mi].m_dwIndicesNum, sizeof(DWORD), p, sizeof(int));       // �C���f�b�N�X���𓾂�
-				m_pMeshArray[mi].m_nIndices = new DWORD[m_pMeshArray[mi].m_dwIndicesNum];      // �C���f�b�N�X�z��𐶐�����
+				// インデックス数データ
+				memcpy_s(&m_pMeshArray[mi].m_dwIndicesNum, sizeof(DWORD), p, sizeof(int));       // インデックス数を得る
+				m_pMeshArray[mi].m_nIndices = new DWORD[m_pMeshArray[mi].m_dwIndicesNum];      // インデックス配列を生成する
 				p += sizeof(int);
 
-				memcpy_s(m_pMeshArray[mi].m_nIndices, sizeof(DWORD)*m_pMeshArray[mi].m_dwIndicesNum, p, sizeof(DWORD)*m_pMeshArray[mi].m_dwIndicesNum);  // �C���f�b�N�X�z��ɃC���f�b�N�X�𓾂�
-				if (Head[4] < L'2') ConvIndicesData(mi);	// ���o�[�W�����̂Ƃ��͉E���\�ɕϊ�����   // -- 2024.3.23
+				memcpy_s(m_pMeshArray[mi].m_nIndices, sizeof(DWORD)*m_pMeshArray[mi].m_dwIndicesNum, p, sizeof(DWORD)*m_pMeshArray[mi].m_dwIndicesNum);  // インデックス配列にインデックスを得る
+				if (Head[4] < L'2') ConvIndicesData(mi);	// 旧バージョンのときは右回り表に変換する   // -- 2024.3.23
 				p += sizeof(DWORD)*m_pMeshArray[mi].m_dwIndicesNum;
 
-				// ���_�̃��C�A�E�g��ϊ����A�ڐ��Ə]�@�����v�Z
+				// 頂点のレイアウトを変換し、接線と従法線を計算
 				ChangeSkinVertexLayout(skinvertices, m_pMeshArray[mi].m_nIndices, m_pMeshArray[mi].m_dwIndicesNum, m_pMeshArray[mi].m_vSkinVerticesNormal);
 
-				// �o�[�e�b�N�X�o�b�t�@�ƃC���f�b�N�X�o�b�t�@���Z�b�g
+				// バーテックスバッファとインデックスバッファをセット
 				SetSkinVIBuffer(mi, m_pMeshArray[mi].m_vSkinVerticesNormal, m_pMeshArray[mi].m_nIndices);
 
-				// ��̃��b�V���̃e�N�X�`���[���i���o�[�W�����ł͕K���P�̂͂��j
-				memcpy_s(&tnum, sizeof(DWORD), p, sizeof(int));       // �e�N�X�`���[��
+				// 一つのメッシュのテクスチャー数（現バージョンでは必ず１のはず）
+				memcpy_s(&tnum, sizeof(DWORD), p, sizeof(int));       // テクスチャー数
 				p += sizeof(int);
-				// �e�N�X�`���[�ԍ��̃e�N�X�`����ݒ肷��
+				// テクスチャー番号のテクスチャを設定する
 				for (int i = 0; i < tnum; i++)
 				{
-					memcpy_s(&n, sizeof(DWORD), p, sizeof(int));       // �e�N�X�`���[�ԍ��𓾂�
-					m_pMeshArray[mi].m_pTexture = m_pTextureArray[n];   // �e�N�X�`���[�z��̃A�h���X���Z�b�g
-					m_pMeshArray[mi].m_pTextureNormal = m_pTextureNormalArray[n];   // �m�[�}���e�N�X�`���[�z��̃A�h���X���Z�b�g
-					m_pMeshArray[mi].m_pTextureHeight = m_pTextureHeightArray[n];   // �n�C�g�e�N�X�`���[�z��̃A�h���X���Z�b�g
-					m_pMeshArray[mi].m_pTextureSpecular = m_pTextureSpecularArray[n];   // Specular�e�N�X�`���[�z��̃A�h���X���Z�b�g
-					m_pMeshArray[mi].m_pMaterialDiffuse = m_pMaterialDiffuseArray[n];    // �}�e���A���E�f�B�t���[�Y�F  // -- 2020.12.15
-					m_pMeshArray[mi].m_pMaterialSpecular = m_pMaterialSpecularArray[n];  // �}�e���A���E�X�y�L�����[�F  // -- 2020.12.15
+					memcpy_s(&n, sizeof(DWORD), p, sizeof(int));       // テクスチャー番号を得る
+					m_pMeshArray[mi].m_pTexture = m_pTextureArray[n];   // テクスチャー配列のアドレスをセット
+					m_pMeshArray[mi].m_pTextureNormal = m_pTextureNormalArray[n];   // ノーマルテクスチャー配列のアドレスをセット
+					m_pMeshArray[mi].m_pTextureHeight = m_pTextureHeightArray[n];   // ハイトテクスチャー配列のアドレスをセット
+					m_pMeshArray[mi].m_pTextureSpecular = m_pTextureSpecularArray[n];   // Specularテクスチャー配列のアドレスをセット
+					m_pMeshArray[mi].m_pMaterialDiffuse = m_pMaterialDiffuseArray[n];    // マテリアル・ディフューズ色  // -- 2020.12.15
+					m_pMeshArray[mi].m_pMaterialSpecular = m_pMaterialSpecularArray[n];  // マテリアル・スペキュラー色  // -- 2020.12.15
 					p += sizeof(int);
 				}
 
-				// ���b�V���̒��S�_�̍��W�����߂�                                      // -- 2018.8.1
+				// メッシュの中心点の座標を求める                                      // -- 2018.8.1
 				m_pMeshArray[mi].m_vCenterPos = GetSkinCenterPos(skinvertices, m_pMeshArray[mi].m_dwVerticesNum);
 
-				// �s�v�ɂȂ����ꎞ�@���_�z��A�C���f�b�N�X�z����폜����
+				// 不要になった一時　頂点配列、インデックス配列を削除する
 				SAFE_DELETE_ARRAY(skinvertices);
 
 			}
 		}
 
-		// �����_�����O���̓Y���z��̗̈���m��          // -- 2018.8.1
-		m_dwRenderIdxArray = new DWORD[m_dwMeshNum];
-		// �����_�����O�������߂邽�߂̋����z��̗̈���m��  // -- 2018.8.1
-		m_fRenderDistanceArray = new float[m_dwMeshNum];
+		// レンダリング順の配列領域を確保
+		m_RenderOrder.resize(m_dwMeshNum);                   // -- 2025.3.15
 
 		// ----------------------------------------------------------------------------------------------
 		CloseHandle(hFile);
-		SAFE_DELETE_ARRAY(pBuf);  // ���̓o�b�t�@���폜����
+		SAFE_DELETE_ARRAY(pBuf);  // 入力バッファを削除する
 
 		m_dwLoadTime = timeGetTime() - startTime;
 		timeEndPeriod(1);
@@ -385,15 +395,15 @@ bool CFbxMesh::Load(const TCHAR* FName)
 
 	}
 	else {
-		MessageBox(nullptr, FName, _T("������ ���b�V���t�@�C��(.mesh)������܂��� ������"), MB_OK);
+		MessageBox(nullptr, FName, _T("■□■ メッシュファイル(.mesh)がありません ■□■"), MB_OK);
 	}
 
 	return false;
 }
 
 //------------------------------------------------------------------------  // -- 2024.3.23
-//	 �o�[�W������2.0.0�ȑO�̂Ƃ��̓|���S���̍���肪�\�ɂȂ��Ă���̂�
-//   �E���\�ɕύX����
+//	 バージョンが2.0.0以前のときはポリゴンの左回りが表になっているので
+//   右回り表に変更する
 //------------------------------------------------------------------------
 void CFbxMesh::ConvIndicesData(int mi)
 {
@@ -408,14 +418,14 @@ void CFbxMesh::ConvIndicesData(int mi)
 
 //------------------------------------------------------------------------
 //
-// �X�^�e�B�b�N���b�V���̒��S�_�̍��W�����߂�֐�
+// スタティックメッシュの中心点の座標を求める関数
 // 
-// ����
-//   const StaticVertex*  vertex   ���_�z��;
-//   const DWORD&         Num      ���_��;
+// 引数
+//   const StaticVertex*  vertex   頂点配列;
+//   const DWORD&         Num      頂点数;
 // 
-// �߂�l
-//   VECTOR3  ���b�V���̒��S�_�̍��W
+// 戻り値
+//   VECTOR3  メッシュの中心点の座標
 // 
 //------------------------------------------------------------------------
 VECTOR3 CFbxMesh::GetStaticCenterPos(const StaticVertex* vertex, const DWORD& Num)
@@ -443,24 +453,24 @@ VECTOR3 CFbxMesh::GetStaticCenterPos(const StaticVertex* vertex, const DWORD& Nu
 
 //------------------------------------------------------------------------
 //
-// �X�^�e�B�b�N���b�V���@���_�̃��C�A�E�g���m�[�}���}�b�v�p�ɕϊ����A�ڐ��Ə]�@�����v�Z���ǉ�����
+// スタティックメッシュ　頂点のレイアウトをノーマルマップ用に変換し、接線と従法線を計算し追加する
 // 
-// ����
-//   const StaticVertex*       vertices             ���_�z��
-//   const DWORD*              indices              �C���f�b�N�X�z��
-//   const DWORD&              IndicesNum           �C���f�b�N�X��
-//   StaticVertexNormal*       verticesNormal(OUT)  �m�[�}���}�b�v�p���_�z��i�o�́j
+// 引数
+//   const StaticVertex*       vertices             頂点配列
+//   const DWORD*              indices              インデックス配列
+//   const DWORD&              IndicesNum           インデックス数
+//   StaticVertexNormal*       verticesNormal(OUT)  ノーマルマップ用頂点配列（出力）
 // 
-// �߂�l
+// 戻り値
 //   bool  true
 // 
 //------------------------------------------------------------------------
 bool CFbxMesh::ChangeStaticVertexLayout(const StaticVertex* vertices, const DWORD* indices, const DWORD& IndicesNum, StaticVertexNormal* verticesNormal)
 {
 
-	// �R�p�`�|���S�����ɁA�S�Ẵ|���S���̏������s��
+	// ３角形ポリゴン毎に、全てのポリゴンの処理を行う
 	for (int i = 0; i < IndicesNum / 3; i++) {
-		// ���_�A�@���A�e�N�X�`�����W���m�[�}���}�b�v�p�̒��_���C�A�E�g�ɃR�s�[����
+		// 頂点、法線、テクスチャ座標をノーマルマップ用の頂点レイアウトにコピーする
 		verticesNormal[indices[i * 3]].Pos = vertices[indices[i * 3]].Pos;
 		verticesNormal[indices[i * 3 + 1]].Pos = vertices[indices[i * 3 + 1]].Pos;
 		verticesNormal[indices[i * 3 + 2]].Pos = vertices[indices[i * 3 + 2]].Pos;
@@ -471,12 +481,12 @@ bool CFbxMesh::ChangeStaticVertexLayout(const StaticVertex* vertices, const DWOR
 		verticesNormal[indices[i * 3 + 1]].vTex = vertices[indices[i * 3 + 1]].vTex;
 		verticesNormal[indices[i * 3 + 2]].vTex = vertices[indices[i * 3 + 2]].vTex;
 
-		//	���_3��UV���W�R�����Ƃɐڐ��Ə]�@�����v�Z����
+		//	頂点3つとUV座標３つをもとに接線と従法線を計算する
 		CalcTangentSub(verticesNormal[indices[i * 3]].Pos, verticesNormal[indices[i * 3 + 1]].Pos, verticesNormal[indices[i * 3 + 2]].Pos,
 			verticesNormal[indices[i * 3]].vTex, verticesNormal[indices[i * 3 + 1]].vTex, verticesNormal[indices[i * 3 + 2]].vTex,
 			verticesNormal[indices[i * 3]].Tangent, verticesNormal[indices[i * 3]].Binormal);
 
-		//	����ꂽ�ڐ��Ə]�@�����A�c��̂Q�̒��_�ɂ��R�s�[����
+		//	得られた接線と従法線を、残りの２つの頂点にもコピーする
 		verticesNormal[indices[i * 3 + 1]].Tangent = verticesNormal[indices[i * 3]].Tangent;
 		verticesNormal[indices[i * 3 + 2]].Tangent = verticesNormal[indices[i * 3]].Tangent;
 		verticesNormal[indices[i * 3 + 1]].Binormal = verticesNormal[indices[i * 3]].Binormal;
@@ -488,14 +498,14 @@ bool CFbxMesh::ChangeStaticVertexLayout(const StaticVertex* vertices, const DWOR
 
 //------------------------------------------------------------------------
 //
-//	�X�^�e�B�b�N���b�V���@�o�[�e�b�N�X�o�b�t�@�ƃC���f�b�N�X�o�b�t�@���Z�b�g���鏈��
+//	スタティックメッシュ　バーテックスバッファとインデックスバッファをセットする処理
 //
-// ����
-//   const DWORD&        mi        �Z�b�g���郁�b�V���z��̓Y��
-//   const SimpleVertex* vertices  ���_�z��
-//   const DWORD*        indices   �C���f�b�N�X�z��
+// 引数
+//   const DWORD&        mi        セットするメッシュ配列の添字
+//   const SimpleVertex* vertices  頂点配列
+//   const DWORD*        indices   インデックス配列
 //
-//	�߂�l 
+//	戻り値 
 //
 //------------------------------------------------------------------------
 HRESULT  CFbxMesh::SetStaticVIBuffer(const DWORD& mi, const StaticVertexNormal* vertices, const DWORD* indices)
@@ -503,7 +513,7 @@ HRESULT  CFbxMesh::SetStaticVIBuffer(const DWORD& mi, const StaticVertexNormal* 
 	D3D11_BUFFER_DESC bd;
 	D3D11_SUBRESOURCE_DATA InitData;
 
-	//�o�[�e�b�N�X�o�b�t�@�[�쐬
+	//バーテックスバッファー作成
 	bd.Usage = D3D11_USAGE_DEFAULT;
 	bd.ByteWidth = sizeof(StaticVertexNormal) * m_pMeshArray[mi].m_dwVerticesNum;
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -516,7 +526,7 @@ HRESULT  CFbxMesh::SetStaticVIBuffer(const DWORD& mi, const StaticVertexNormal* 
 		return E_FAIL;
 	}
 
-	//�C���f�b�N�X�o�b�t�@�[�쐬
+	//インデックスバッファー作成
 	bd.Usage = D3D11_USAGE_DEFAULT;
 	bd.ByteWidth = sizeof(DWORD) * m_pMeshArray[mi].m_dwIndicesNum;
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -535,14 +545,14 @@ HRESULT  CFbxMesh::SetStaticVIBuffer(const DWORD& mi, const StaticVertexNormal* 
 
 //------------------------------------------------------------------------
 //
-// �X�L�����b�V���̒��S�_�̍��W�����߂�֐�
+// スキンメッシュの中心点の座標を求める関数
 // 
-// ����
-//   const SkinVertex*    vertex   ���_�z��;
-//   const DWORD&          Num      ���_��;
+// 引数
+//   const SkinVertex*    vertex   頂点配列;
+//   const DWORD&          Num      頂点数;
 // 
-// �߂�l
-//   VECTOR3  ���b�V���̒��S�_�̍��W
+// 戻り値
+//   VECTOR3  メッシュの中心点の座標
 // 
 //------------------------------------------------------------------------
 VECTOR3 CFbxMesh::GetSkinCenterPos(const SkinVertex* vertex, const DWORD& Num)
@@ -570,24 +580,24 @@ VECTOR3 CFbxMesh::GetSkinCenterPos(const SkinVertex* vertex, const DWORD& Num)
 
 //------------------------------------------------------------------------
 //
-// �X�L�����b�V���@���_�̃��C�A�E�g���m�[�}���}�b�v�p�ɕϊ����A�ڐ��Ə]�@�����v�Z���ǉ�����
+// スキンメッシュ　頂点のレイアウトをノーマルマップ用に変換し、接線と従法線を計算し追加する
 // 
-// ����
-//   const SkinVertex*    vertices             ���_�z��
-//   const DWORD*         indices              �C���f�b�N�X�z��
-//   const DWORD&         IndicesNum           �C���f�b�N�X��
-//   SkinVertexNormal*    verticesNormal(OUT)  �m�[�}���}�b�v�p���_�z��i�o�́j
+// 引数
+//   const SkinVertex*    vertices             頂点配列
+//   const DWORD*         indices              インデックス配列
+//   const DWORD&         IndicesNum           インデックス数
+//   SkinVertexNormal*    verticesNormal(OUT)  ノーマルマップ用頂点配列（出力）
 // 
-// �߂�l
+// 戻り値
 //   bool  true
 // 
 //------------------------------------------------------------------------
 bool CFbxMesh::ChangeSkinVertexLayout(const SkinVertex* vertices, const DWORD* indices, const DWORD& IndicesNum, SkinVertexNormal* verticesNormal)
 {
 
-	// �R�p�`�|���S�����ɁA�S�Ẵ|���S���̏������s��
+	// ３角形ポリゴン毎に、全てのポリゴンの処理を行う
 	for (int i = 0; i < IndicesNum / 3; i++) {
-		// ���_�A�@���A�e�N�X�`�����W�A�N���X�^�[(�{�[��)�C���f�b�N�X�A�E�F�C�g���m�[�}���}�b�v�p�̒��_���C�A�E�g�ɃR�s�[����
+		// 頂点、法線、テクスチャ座標、クラスター(ボーン)インデックス、ウェイトをノーマルマップ用の頂点レイアウトにコピーする
 		verticesNormal[indices[i * 3]].Pos = vertices[indices[i * 3]].Pos;
 		verticesNormal[indices[i * 3 + 1]].Pos = vertices[indices[i * 3 + 1]].Pos;
 		verticesNormal[indices[i * 3 + 2]].Pos = vertices[indices[i * 3 + 2]].Pos;
@@ -613,12 +623,12 @@ bool CFbxMesh::ChangeSkinVertexLayout(const SkinVertex* vertices, const DWORD* i
 		verticesNormal[indices[i * 3 + 1]].Weits = vertices[indices[i * 3 + 1]].Weits;
 		verticesNormal[indices[i * 3 + 2]].Weits = vertices[indices[i * 3 + 2]].Weits;
 
-		//	���_3��UV���W�R�����Ƃɐڐ��Ə]�@�����v�Z����
+		//	頂点3つとUV座標３つをもとに接線と従法線を計算する
 		CalcTangentSub(verticesNormal[indices[i * 3]].Pos, verticesNormal[indices[i * 3 + 1]].Pos, verticesNormal[indices[i * 3 + 2]].Pos,
 			verticesNormal[indices[i * 3]].vTex, verticesNormal[indices[i * 3 + 1]].vTex, verticesNormal[indices[i * 3 + 2]].vTex,
 			verticesNormal[indices[i * 3]].Tangent, verticesNormal[indices[i * 3]].Binormal);
 
-		//	����ꂽ�ڐ��Ə]�@�����A�c��̂Q�̒��_�ɂ��R�s�[����
+		//	得られた接線と従法線を、残りの２つの頂点にもコピーする
 		verticesNormal[indices[i * 3 + 1]].Tangent = verticesNormal[indices[i * 3]].Tangent;
 		verticesNormal[indices[i * 3 + 2]].Tangent = verticesNormal[indices[i * 3]].Tangent;
 		verticesNormal[indices[i * 3 + 1]].Binormal = verticesNormal[indices[i * 3]].Binormal;
@@ -630,14 +640,14 @@ bool CFbxMesh::ChangeSkinVertexLayout(const SkinVertex* vertices, const DWORD* i
 
 //------------------------------------------------------------------------
 //
-//	�X�L�����b�V���@�o�[�e�b�N�X�o�b�t�@�ƃC���f�b�N�X�o�b�t�@���Z�b�g���鏈��
+//	スキンメッシュ　バーテックスバッファとインデックスバッファをセットする処理
 //
-// ����
-//   const DWORD&            mi        �Z�b�g���郁�b�V���z��̓Y��
-//   const SkinVertexNormal* vertices  ���_�z��
-//   const DWORD*            indices   �C���f�b�N�X�z��
+// 引数
+//   const DWORD&            mi        セットするメッシュ配列の添字
+//   const SkinVertexNormal* vertices  頂点配列
+//   const DWORD*            indices   インデックス配列
 //
-//	�߂�l 
+//	戻り値 
 //
 //------------------------------------------------------------------------
 HRESULT CFbxMesh::SetSkinVIBuffer(const DWORD& mi, const SkinVertexNormal* vertices, const DWORD* indices)
@@ -645,7 +655,7 @@ HRESULT CFbxMesh::SetSkinVIBuffer(const DWORD& mi, const SkinVertexNormal* verti
 	D3D11_BUFFER_DESC bd;
 	D3D11_SUBRESOURCE_DATA InitData;
 
-	//�o�[�e�b�N�X�o�b�t�@�[�쐬
+	//バーテックスバッファー作成
 	bd.Usage = D3D11_USAGE_DEFAULT;
 	bd.ByteWidth = sizeof(SkinVertexNormal) * m_pMeshArray[mi].m_dwVerticesNum;
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -658,7 +668,7 @@ HRESULT CFbxMesh::SetSkinVIBuffer(const DWORD& mi, const SkinVertexNormal* verti
 		return E_FAIL;
 	}
 
-	//�C���f�b�N�X�o�b�t�@�[�쐬
+	//インデックスバッファー作成
 	bd.Usage = D3D11_USAGE_DEFAULT;
 	bd.ByteWidth = sizeof(DWORD) * m_pMeshArray[mi].m_dwIndicesNum;
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -675,83 +685,60 @@ HRESULT CFbxMesh::SetSkinVIBuffer(const DWORD& mi, const SkinVertexNormal* verti
 }
 
 
-//------------------------------------------------------------------------  // -- 2018.8.1
+//------------------------------------------------------------------------  // -- 2025.3.15
 //
-// 	���b�V���̕`�揇�����肵�Am_dwRenderIdxArray�ɐݒ肷��֐�
+// 	メッシュの描画順を決定し、m_dwRenderIdxArrayに設定する関数
 // 
-//	�E���_���烁�b�V���̒��S�_�܂ł̋��������ɕ��ёւ��A
-//    �`�揇��m_dwRenderIdxArray�ɐݒ肷��
+//	・視点からメッシュの中心点までの距離を元に並び替え、
+//    描画順をm_dwRenderIdxArrayに設定する
 // 
-// ����
-//   const MATRIX4X4& mWorld   ���b�V���̃��[���h�}�g���b�N�X
-//   const VECTOR3& vEye    ���_���W
+// 引数
+//   const MATRIX4X4& mWorld   メッシュのワールドマトリックス
+//   const VECTOR3& vEye    視点座標
 // 
-// �߂�l
-//   �Ȃ�
+// 戻り値
+//   なし
 // 
 //------------------------------------------------------------------------
 void CFbxMesh::SetRenderIdxArray(const MATRIX4X4& mWorld, const VECTOR3& vEye)
 {
-	DWORD widx;
-	float wdis;
-	MATRIX4X4 mPos;
-
-	// ���_���烁�b�V���̒��S�_�܂ł̋�����ݒ肷��
+	// 視点からメッシュの中心点までの距離を設定する
 	for (DWORD i = 0; i < m_dwMeshNum; i++)
 	{
-		MATRIX4X4 mTemp;
-		VECTOR3   vLen;
-		m_dwRenderIdxArray[i] = i;
-		mPos = XMMatrixTranslation(m_pMeshArray[i].m_vCenterPos.x, m_pMeshArray[i].m_vCenterPos.y, m_pMeshArray[i].m_vCenterPos.z),
-
-		mTemp = mPos * mWorld;
-		vLen = GetPositionVector(mTemp) - vEye;
-		m_fRenderDistanceArray[i] = magnitude(vLen);
+		m_RenderOrder[i].Idx = i;
+		VECTOR3   vLen = m_pMeshArray[i].m_vCenterPos * mWorld - vEye;
+		m_RenderOrder[i].Distance = magnitudeSQ(vLen);
 	}
 
-	// �����̍~���ɕ��בւ���i�����@�j
 	if (m_dwMeshNum <= 1) return;
-	for (DWORD i = m_dwMeshNum - 1; i > 0; i--)
-	{
-		for (DWORD j = 0; j < i; j++)
-		{
-			if (m_fRenderDistanceArray[j] < m_fRenderDistanceArray[j + 1])
-			{
-				widx = m_dwRenderIdxArray[j];
-				m_dwRenderIdxArray[j] = m_dwRenderIdxArray[j + 1];
-				m_dwRenderIdxArray[j + 1] = widx;
 
-				wdis = m_fRenderDistanceArray[j];
-				m_fRenderDistanceArray[j] = m_fRenderDistanceArray[j + 1];
-				m_fRenderDistanceArray[j + 1] = wdis;
-			}
-		}
-	}
+	// vectorのsortを使って、描画順に並べ替え
+	std::sort(m_RenderOrder.begin(), m_RenderOrder.end());    // 比較関数（演算子オーバーロード）を使用してソート
 }
 
 
 //------------------------------------------------------------------------
 //
-//	���_3��UV���W�R�����Ƃɐڐ��Ə]�@�����v�Z����B
+//	頂点3つとUV座標３つをもとに接線と従法線を計算する。
 //
-//  const VECTOR3& v1          ���_�P
-//  const VECTOR3& v2          ���_�Q
-//  const VECTOR3& v3          ���_�R
-//  const VECTOR2& uv1         UV���W�P
-//  const VECTOR2& uv2         UV���W�Q
-//  const VECTOR2& uv3         UV���W�R
-//	VECTOR3 &Tangent           �ڐ�(OUT)
-//	VECTOR3 &Binormal          �]�@��(OUT)
+//  const VECTOR3& v1          頂点１
+//  const VECTOR3& v2          頂点２
+//  const VECTOR3& v3          頂点３
+//  const VECTOR2& uv1         UV座標１
+//  const VECTOR2& uv2         UV座標２
+//  const VECTOR2& uv3         UV座標３
+//	VECTOR3 &Tangent           接線(OUT)
+//	VECTOR3 &Binormal          従法線(OUT)
 //
-//	�߂�l bool
+//	戻り値 bool
 //
 //------------------------------------------------------------------------
 bool CFbxMesh::CalcTangentSub(const VECTOR3& v1, const VECTOR3& v2, const VECTOR3& v3,
 	const VECTOR2& uv1, const VECTOR2& uv2, const VECTOR2& uv3, VECTOR3 &Tangent, VECTOR3 &Binormal)
 {
 	//
-	// 1���_5����(x,y,z,u,v)��1���_3����(x,u,v)�ɕϊ�
-	// 3���_���畽�ʂ����
+	// 1頂点5成分(x,y,z,u,v)を1頂点3成分(x,u,v)に変換
+	// 3頂点から平面を作る
 	VECTOR3 CP0[3] = {
 		VECTOR3(v1.x, uv1.x, uv1.y),
 		VECTOR3(v1.y, uv1.x, uv1.y),
@@ -768,7 +755,7 @@ bool CFbxMesh::CalcTangentSub(const VECTOR3& v1, const VECTOR3& v2, const VECTOR
 		VECTOR3(v3.z, uv3.x, uv3.y),
 	};
 
-	// ���ʃp�����[�^����UV�����W�Z�o
+	// 平面パラメータからUV軸座標算出
 	float U[3], V[3];
 	for (int i = 0; i < 3; ++i) {
 		VECTOR3 V1 = CP1[i] - CP0[i];
@@ -777,9 +764,9 @@ bool CFbxMesh::CalcTangentSub(const VECTOR3& v1, const VECTOR3& v2, const VECTOR
 		abc = cross(V1, V2);
 
 		if (abc.x == 0.0f) {
-			// �|���S����UV��̃|���S�����k�ނ��Ă��āA�Z�o�s��
-			//MessageBox(0, _T("CalcTangentSub() : ���W�AUV������̏d�����_�����o���܂���"), _T("�G���["), MB_OK);
-			Tangent = VECTOR3(1, 0, 0);   // �G���[�̂��߂O�ɂ���
+			// ポリゴンかUV上のポリゴンが縮退していて、算出不可
+			//MessageBox(0, _T("CalcTangentSub() : 座標、UVが同一の重複頂点を検出しました"), _T("エラー"), MB_OK);
+			Tangent = VECTOR3(1, 0, 0);   // エラーのため０にする
 			Binormal = VECTOR3(0, 1, 0);
 			return false;
 		}
@@ -787,11 +774,11 @@ bool CFbxMesh::CalcTangentSub(const VECTOR3& v1, const VECTOR3& v2, const VECTOR
 		V[i] = -abc.z / abc.x;
 	}
 
-	// �ڃx�N�g�����R�s�[�A���K��
+	// 接ベクトルをコピー、正規化
 	Tangent = VECTOR3(U[0], U[1], U[2]);
 	Tangent = normalize(Tangent);
 
-	// �]�@���x�N�g�����R�s�[�A���K��
+	// 従法線ベクトルをコピー、正規化
 	Binormal = VECTOR3(V[0], V[1], V[2]);
 	Binormal = normalize(Binormal);
 
@@ -801,32 +788,32 @@ bool CFbxMesh::CalcTangentSub(const VECTOR3& v1, const VECTOR3& v2, const VECTOR
 
 //------------------------------------------------------------------------
 //
-//	�e�N�X�`�����Z�b�g���鏈��
+//	テクスチャをセットする処理
 //
-// ����
-//  const DWORD& ti        �Z�b�g����e�N�X�`���[�z��̓Y��
-//  const TCHAR* TexName   �e�N�X�`���[��
+// 引数
+//  const DWORD& ti        セットするテクスチャー配列の添字
+//  const TCHAR* TexName   テクスチャー名
 //  
-//	�߂�l 
+//	戻り値 
 //
 //------------------------------------------------------------------------
 HRESULT CFbxMesh::SetTexture(const DWORD& ti, const TCHAR* TexName)
 {
 
-	// �}�e���A���J���[�̃N�����[
+	// マテリアルカラーのクリヤー
 	m_pMaterialDiffuseArray[ti] = VECTOR4(0, 0, 0, 0);     // -- 2020.12.15
 	m_pMaterialSpecularArray[ti] = VECTOR4(0, 0, 0, 0);     // -- 2020.12.15
 
-	//�e�N�X�`���[�쐬
+	//テクスチャー作成
 	m_pTextureArray[ti] = nullptr;
 	m_pTextureArray[ti] = m_pFbxMeshCtrl->SetTextureList(TexName);                     // -- 2021.2.4
 	if (m_pTextureArray[ti] == nullptr)
 	{
-		MessageBox(nullptr, TexName, _T("������ �e�N�X�`���t�@�C��������܂��� ������"), MB_OK);
+		MessageBox(nullptr, TexName, _T("■□■ テクスチャファイルがありません ■□■"), MB_OK);
 		return E_FAIL;
 	}
 
-	// �m�[�}���e�N�X�`���쐬
+	// ノーマルテクスチャ作成
 	TCHAR fullname[256], drv[256], path[256], fname[256], ext[256];
 	_tsplitpath_s(TexName, drv, sizeof(drv) / sizeof(TCHAR), path, sizeof(path) / sizeof(TCHAR),
 		fname, sizeof(fname) / sizeof(TCHAR), ext, sizeof(ext) / sizeof(TCHAR));
@@ -840,7 +827,7 @@ HRESULT CFbxMesh::SetTexture(const DWORD& ti, const TCHAR* TexName)
 	m_pTextureNormalArray[ti] = nullptr;
 	m_pTextureNormalArray[ti] = m_pFbxMeshCtrl->SetTextureList(fullname);                     // -- 2021.2.4
 
-	// �n�C�g�e�N�X�`���쐬                                                       // -- 2020.1.15
+	// ハイトテクスチャ作成                                                       // -- 2020.1.15
 	_tcscpy_s(fullname, drv);
 	_tcscat_s(fullname, path);
 	_tcscat_s(fullname, fname);
@@ -850,7 +837,7 @@ HRESULT CFbxMesh::SetTexture(const DWORD& ti, const TCHAR* TexName)
 	m_pTextureHeightArray[ti] = nullptr;
 	m_pTextureHeightArray[ti] = m_pFbxMeshCtrl->SetTextureList(fullname);                     // -- 2021.2.4
 
-	// �X�y�L�����[�e�N�X�`���쐬
+	// スペキュラーテクスチャ作成
 	_tcscpy_s(fullname, drv);
 	_tcscat_s(fullname, path);
 	_tcscat_s(fullname, fname);
@@ -867,13 +854,13 @@ HRESULT CFbxMesh::SetTexture(const DWORD& ti, const TCHAR* TexName)
 
 //------------------------------------------------------------------------   // -- 2020.12.15
 //
-//	�}�e���A���J���[���Z�b�g���鏈��
+//	マテリアルカラーをセットする処理
 //
-// ����
-//  const DWORD& ti        �Z�b�g����e�N�X�`���[�z��̓Y��
-//  const TCHAR* Color     �J���[
+// 引数
+//  const DWORD& ti        セットするテクスチャー配列の添字
+//  const TCHAR* Color     カラー
 //  
-//	�߂�l 
+//	戻り値 
 //
 //------------------------------------------------------------------------
 bool  CFbxMesh::SetMaterial(const DWORD& ti, const TCHAR* Color)
@@ -896,28 +883,28 @@ bool  CFbxMesh::SetMaterial(const DWORD& ti, const TCHAR* Color)
 
 //------------------------------------------------------------------------
 //
-//	�A�j���[�V�����t�@�C���̓ǂݍ��ݏ���
+//	アニメーションファイルの読み込み処理
 //
-// ����
-//  const TCHAR*         FName          �A�j���t�@�C����
-//  const ROOTANIMTYPE&  RAType         ���[�g�{�[���A�j���^�C�v�i�ȗ��l:eRootAnimNone�j
+// 引数
+//  const TCHAR*         FName          アニメファイル名
+//  const ROOTANIMTYPE&  RAType         ルートボーンアニメタイプ（省略値:eRootAnimNone）
 //
-//	�߂�l bool
-//         true:����   false:�ُ�
+//	戻り値 bool
+//         true:正常   false:異常
 //
 //------------------------------------------------------------------------
 bool CFbxMesh::LoadAnimation(int id, const TCHAR* FName, bool loopFlag, const ROOTANIMTYPE& RAType)
 {
-	// ���b�V���t�@�C�����ǂݍ��܂�Ă��Ȃ��ƃG���[
+	// メッシュファイルが読み込まれていないとエラー
 	if (m_pMeshArray == nullptr)
 	{
-		MessageBox(nullptr, FName, _T("������ �Ή�����X�L�����b�V���t�@�C��(.mesh)���ǂݍ��܂�Ă��܂��� ������"), MB_OK);
+		MessageBox(nullptr, FName, _T("■□■ 対応するスキンメッシュファイル(.mesh)が読み込まれていません ■□■"), MB_OK);
 		return false;
 	}
-	// �X�^�e�B�b�N���b�V���t�@�C���̂Ƃ��̓G���[
+	// スタティックメッシュファイルのときはエラー
 	if (m_nMeshType != 2 )
 	{
-		MessageBox(nullptr, FName, _T("������ �X�^�e�B�b�N���b�V���ɂ̓A�j���[�V�����͐ݒ�ł��܂��� ������"), MB_OK);
+		MessageBox(nullptr, FName, _T("■□■ スタティックメッシュにはアニメーションは設定できません ■□■"), MB_OK);
 		return false;
 	}
 
@@ -930,22 +917,22 @@ bool CFbxMesh::LoadAnimation(int id, const TCHAR* FName, bool loopFlag, const RO
 	BYTE  *p;
 	int   mi, bi, n;
 
-	// �t�@�C���̃I�[�v������
+	// ファイルのオープン処理
 	hFile = CreateFile(FName, GENERIC_READ,
 		FILE_SHARE_READ, nullptr, OPEN_EXISTING,
 		FILE_ATTRIBUTE_NORMAL, nullptr);
 	if (hFile != INVALID_HANDLE_VALUE)
 	{
 
-		dwBufSize = GetFileSize(hFile, nullptr);     // ���̓t�@�C���̃T�C�Y�𓾂�B
-		pBuf = new BYTE[dwBufSize];				  // ���̓o�b�t�@���m�ۂ��� 
+		dwBufSize = GetFileSize(hFile, nullptr);     // 入力ファイルのサイズを得る。
+		pBuf = new BYTE[dwBufSize];				  // 入力バッファを確保する 
 
-		ReadFile(hFile, pBuf, dwBufSize, &dwLen, nullptr);		// �t�@�C�����o�b�t�@�ɓǂݍ���
+		ReadFile(hFile, pBuf, dwBufSize, &dwLen, nullptr);		// ファイルをバッファに読み込む
 
-		p = pBuf;	// �o�b�t�@�̐擪�|�C���^���Z�b�g
+		p = pBuf;	// バッファの先頭ポインタをセット
 
 		// -----------------------------------------------------------------    // -- 2020.12.15 -- 3
-		// �t�@�C���w�b�_(WCHAR��8����)�̃`�F�b�N
+		// ファイルヘッダ(WCHARの8文字)のチェック
 		WCHAR Head[8];
 		memcpy_s(Head, sizeof(Head), p, sizeof(Head));
 		if (Head[0] == L'A' && Head[1] == L'N' && Head[2] == L'M' && Head[3] == L'X')
@@ -953,10 +940,10 @@ bool CFbxMesh::LoadAnimation(int id, const TCHAR* FName, bool loopFlag, const RO
 			;
 		}
 		else {
-			MessageBox(nullptr, FName, _T("������ �A�j���[�V�����t�@�C��('ANMX')�ł͂���܂��� ������"), MB_OK);
+			MessageBox(nullptr, FName, _T("■□■ アニメーションファイル('ANMX')ではありません ■□■"), MB_OK);
 			return false;
 		}
-		// �o�[�W�����̃`�F�b�N�͍s��Ȃ�
+		// バージョンのチェックは行わない
 		if (Head[4] == L'1')
 		{
 			;
@@ -964,49 +951,49 @@ bool CFbxMesh::LoadAnimation(int id, const TCHAR* FName, bool loopFlag, const RO
 		p += sizeof(Head);
 
 		// ------------------------------------------------------------------------------------------------
-		// �A�j���[�V�����Ɋւ���f�[�^
+		// アニメーションに関するデータ
 		ANIMATION* pAnim = &m_Animation[id];
 		pAnim->used = true;
 		pAnim->loop = loopFlag;
 
-		memcpy_s(&pAnim->startFrame, sizeof(int), p, sizeof(int));       // �J�n�t���[���𓾂�
+		memcpy_s(&pAnim->startFrame, sizeof(int), p, sizeof(int));       // 開始フレームを得る
 		p += sizeof(int);
-		memcpy_s(&pAnim->endFrame, sizeof(int), p, sizeof(int));         // �I���t���[���𓾂�
+		memcpy_s(&pAnim->endFrame, sizeof(int), p, sizeof(int));         // 終了フレームを得る
 		p += sizeof(int);
 
-		// ���[�g�{�[���Ɋւ���f�[�^
-		memcpy_s(&pAnim->RootBoneMesh, sizeof(int), p, sizeof(int));       // ���[�g�{�[�����b�V���ԍ��𓾂�    // -- 2020.12.15 -- 3
+		// ルートボーンに関するデータ
+		memcpy_s(&pAnim->RootBoneMesh, sizeof(int), p, sizeof(int));       // ルートボーンメッシュ番号を得る    // -- 2020.12.15 -- 3
 		p += sizeof(int);
-		memcpy_s(&pAnim->RootBone, sizeof(int), p, sizeof(int));           // ���[�g�{�[���ԍ��𓾂�            // -- 2020.12.15 -- 3
+		memcpy_s(&pAnim->RootBone, sizeof(int), p, sizeof(int));           // ルートボーン番号を得る            // -- 2020.12.15 -- 3
 		p += sizeof(int);
 
 		// ------------------------------------------------------------------------------------------------
-		// ���b�V�����̏���
-		for (mi = 0; mi < m_dwMeshNum; mi++)   // ���b�V���������J��Ԃ�
+		// メッシュ毎の処理
+		for (mi = 0; mi < m_dwMeshNum; mi++)   // メッシュ数だけ繰り返し
 		{
-			// �{�[�����f�[�^
-			memcpy_s(&m_pMeshArray[mi].m_NumBones, sizeof(DWORD), p, sizeof(int));       // �{�[�����𓾂�
+			// ボーン数データ
+			memcpy_s(&m_pMeshArray[mi].m_NumBones, sizeof(DWORD), p, sizeof(int));       // ボーン数を得る
 			p += sizeof(int);
 
-			// �e�{�[�����̏���
+			// 各ボーン毎の処理
 			for (bi = 0; bi < m_pMeshArray[mi].m_NumBones; bi++)
 			{
 				BONE* pBone = &m_pMeshArray[mi].m_BoneArray[id][bi];
-				// �o�C���h�|�[�Y�̎��o��
-				// �i�o�C���h�|�[�Y�́A�t�s��ƂȂ��Ă���j
-				memcpy_s(&pBone->bindPose, sizeof(MATRIX4X4), p, sizeof(MATRIX4X4));  // �o�C���h�|�[�Y�s��̓]��
+				// バインドポーズの取り出し
+				// （バインドポーズは、逆行列となっている）
+				memcpy_s(&pBone->bindPose, sizeof(MATRIX4X4), p, sizeof(MATRIX4X4));  // バインドポーズ行列の転送
 				p += sizeof(MATRIX4X4);
 
-				// �t���[���|�[�Y���̎��o��
+				// フレームポーズ数の取り出し
 				memcpy_s(&pBone->framePoseNum, sizeof(int), p, sizeof(int));
 				p += sizeof(int);
 				SAFE_DELETE_ARRAY(pBone->framePose);
-				pBone->framePose = new MATRIX4X4[pBone->framePoseNum];  // �t���[���|�[�Y���̃{�[���z��𐶐�����
+				pBone->framePose = new MATRIX4X4[pBone->framePoseNum];  // フレームポーズ毎のボーン配列を生成する
 
-				// �t���[���|�[�Y�̎��o��
+				// フレームポーズの取り出し
 				for (n = 0; n < pBone->framePoseNum; n++)
 				{
-					memcpy_s(&pBone->framePose[n], sizeof(MATRIX4X4), p, sizeof(MATRIX4X4));  // �t���[���|�[�Y�s��̓]��
+					memcpy_s(&pBone->framePose[n], sizeof(MATRIX4X4), p, sizeof(MATRIX4X4));  // フレームポーズ行列の転送
 					p += sizeof(MATRIX4X4);
 				}
 			}
@@ -1014,10 +1001,10 @@ bool CFbxMesh::LoadAnimation(int id, const TCHAR* FName, bool loopFlag, const RO
 
 		// -------------------------------------------------------------------------------
 		CloseHandle(hFile);
-		SAFE_DELETE_ARRAY(pBuf);  // ���̓o�b�t�@���폜����
+		SAFE_DELETE_ARRAY(pBuf);  // 入力バッファを削除する
 
 		// -------------------------------------------------------------------------------
-		// ���[�g�{�[���A�j���[�V�����ƃV�F�[�_�[�}�g���b�N�X�̍쐬                // -- 2020.12.15 -- 3
+		// ルートボーンアニメーションとシェーダーマトリックスの作成                // -- 2020.12.15 -- 3
 		MakeRootAnimAndShaderMatrix(id, RAType);
 
 		// -------------------------------------------------------------------------------
@@ -1028,7 +1015,7 @@ bool CFbxMesh::LoadAnimation(int id, const TCHAR* FName, bool loopFlag, const RO
 
 	}
 	else {
-		MessageBox(nullptr, FName, _T("������ �A�j���[�V�����t�@�C��(.anmx)������܂��� ������"), MB_OK);
+		MessageBox(nullptr, FName, _T("■□■ アニメーションファイル(.anmx)がありません ■□■"), MB_OK);
 	}
 
 	return false;
@@ -1036,10 +1023,10 @@ bool CFbxMesh::LoadAnimation(int id, const TCHAR* FName, bool loopFlag, const RO
 
 //==========================================================================================================================================================
 //
-// ���[�g�{�[���A�j���[�V�����ƃV�F�[�_�[�}�g���b�N�X�̍쐬                                                                           // -- 2020.12.15 -- 3
+// ルートボーンアニメーションとシェーダーマトリックスの作成                                                                           // -- 2020.12.15 -- 3
 // 
-// const int& animNum  : �Z�b�g����A�j���[�V�����ԍ�
-// ROOTANIMTYPE RAType : ���[�g�{�[���A�j���^�C�v ( eRootAnimNone:���[�g�A�j���Ȃ�  eRootAnimXZ:���[�g�A�j��XZ  eRootAnim:���[�g�A�j��)
+// const int& animNum  : セットするアニメーション番号
+// ROOTANIMTYPE RAType : ルートボーンアニメタイプ ( eRootAnimNone:ルートアニメなし  eRootAnimXZ:ルートアニメXZ  eRootAnim:ルートアニメ)
 //
 //==========================================================================================================================================================
 void CFbxMesh::MakeRootAnimAndShaderMatrix(const int& animNum, ROOTANIMTYPE RAType)
@@ -1049,54 +1036,54 @@ void CFbxMesh::MakeRootAnimAndShaderMatrix(const int& animNum, ROOTANIMTYPE RATy
 
 	if (m_nMeshType != 2)
 	{
-		MessageBox(nullptr, _T("MakeRootAnimAndShaderMatrix()"), _T("������ �X�^�e�B�b�N���b�V���Ƀ��[�g�A�j���[�V�����̐ݒ�͂ł��܂��� ������"), MB_OK);
+		MessageBox(nullptr, _T("MakeRootAnimAndShaderMatrix()"), _T("■□■ スタティックメッシュにルートアニメーションの設定はできません ■□■"), MB_OK);
 		return;
 	}
 	if (!m_Animation[animNum].used)
 	{
-		MessageBox(nullptr, _T("������ MakeRootAnimAndShaderMatrix() ������"), _T("������ �X�L�����b�V���ɁA�w�肳�ꂽ�A�j���[�V�������ǂݍ��܂�Ă��܂��� ������"), MB_OK);
+		MessageBox(nullptr, _T("■□■ MakeRootAnimAndShaderMatrix() ■□■"), _T("■□■ スキンメッシュに、指定されたアニメーションが読み込まれていません ■□■"), MB_OK);
 		return;
 	}
 
-	if (m_Animation[animNum].RootBoneMesh == -1)  // ���[�g�{�[�����Ȃ��Ƃ�(�ʏ�͂��蓾�Ȃ�)
+	if (m_Animation[animNum].RootBoneMesh == -1)  // ルートボーンがないとき(通常はあり得ない)
 	{
-		if (RAType == eRootAnimNone)  // ���[�g�A�j���Ȃ��̂Ƃ�
+		if (RAType == eRootAnimNone)  // ルートアニメなしのとき
 		{
 			RootMeshNo = 0;
 			RootBoneNo = 0;
 		}
 		else {
-			// ���[�g�A�j���w�肪�ł��Ȃ��̂ŃG���[
-			MessageBox(nullptr, _T("MakeRootAnimAndShaderMatrix()"), _T("������ ���[�g�{�[�����������߁A���[�g�A�j���[�V�����͂ł��܂��� ������"), MB_OK);
+			// ルートアニメ指定ができないのでエラー
+			MessageBox(nullptr, _T("MakeRootAnimAndShaderMatrix()"), _T("■□■ ルートボーンが無いため、ルートアニメーションはできません ■□■"), MB_OK);
 			return;
 		}
 	}
 	else {
-		// ���[�g�{�[���̃��b�V���ԍ��ƃ{�[���ԍ���ݒ�
+		// ルートボーンのメッシュ番号とボーン番号を設定
 		RootMeshNo = m_Animation[animNum].RootBoneMesh;
 		RootBoneNo = m_Animation[animNum].RootBone;
 	}
 
-	// ���[�g�{�[���֌W�̕ϐ���ݒ�
-	m_RootBoneArray[animNum].bindPose = m_pMeshArray[RootMeshNo].m_BoneArray[animNum][RootBoneNo].bindPose;            // ���[�g�{�[���̃o�C���h�|�[�Y
-	m_RootBoneArray[animNum].framePoseNum = m_pMeshArray[RootMeshNo].m_BoneArray[animNum][RootBoneNo].framePoseNum;    // ���[�g�{�[���̃t���[����
-	SAFE_DELETE_ARRAY(m_RootBoneArray[animNum].framePose);                                              // �t���[���s��������N�����[����
-	m_RootBoneArray[animNum].framePose = new MATRIX4X4[m_RootBoneArray[animNum].framePoseNum];          // �t���[���s��𐶐�����
-	m_RootAnimType[animNum] = RAType;																	// ���[�g�A�j���^�C�v��ۑ�����
+	// ルートボーン関係の変数を設定
+	m_RootBoneArray[animNum].bindPose = m_pMeshArray[RootMeshNo].m_BoneArray[animNum][RootBoneNo].bindPose;            // ルートボーンのバインドポーズ
+	m_RootBoneArray[animNum].framePoseNum = m_pMeshArray[RootMeshNo].m_BoneArray[animNum][RootBoneNo].framePoseNum;    // ルートボーンのフレーム数
+	SAFE_DELETE_ARRAY(m_RootBoneArray[animNum].framePose);                                              // フレーム行列を初期クリヤーする
+	m_RootBoneArray[animNum].framePose = new MATRIX4X4[m_RootBoneArray[animNum].framePoseNum];          // フレーム行列を生成する
+	m_RootAnimType[animNum] = RAType;																	// ルートアニメタイプを保存する
 
-	// ���[�g�{�[���z��̍쐬
+	// ルートボーン配列の作成
 	for (int n = 0; n < m_RootBoneArray[animNum].framePoseNum; n++)
 	{
-		// ���[�g�{�[���A�j���^�C�v���Ƃ̏���
+		// ルートボーンアニメタイプごとの処理
 		switch (RAType)
 		{
 		case eRootAnimNone:
-			// ���[�g�{�[���A�j�����s��Ȃ��̂ŏ����l��ݒ肷��
+			// ルートボーンアニメを行わないので初期値を設定する
 			m_RootBoneArray[animNum].framePose[n] = XMMatrixIdentity();
 			break;
 
 		case eRootAnimXZ:
-			// ���[�g�{�[���̃o�C���h�|�[�Y����̍����i�w�y�ړ��̂݁j�̍s����쐬����
+			// ルートボーンのバインドポーズからの差分（ＸＺ移動のみ）の行列を作成する
 		{
 			VECTOR3   vVec;
 			m_RootBoneArray[animNum].framePose[n] =
@@ -1109,7 +1096,7 @@ void CFbxMesh::MakeRootAnimAndShaderMatrix(const int& animNum, ROOTANIMTYPE RATy
 
 		case eRootAnim:
 		{
-			// ���[�g�{�[���̃o�C���h�|�[�Y����̍����̍s����쐬����
+			// ルートボーンのバインドポーズからの差分の行列を作成する
 			m_RootBoneArray[animNum].framePose[n] = m_RootBoneArray[animNum].bindPose *
 				m_pMeshArray[RootMeshNo].m_BoneArray[animNum][RootBoneNo].framePose[n];
 		}
@@ -1117,43 +1104,43 @@ void CFbxMesh::MakeRootAnimAndShaderMatrix(const int& animNum, ROOTANIMTYPE RATy
 		}
 	}
 
-	// �V�F�[�_�[�֓n���}�g���b�N�X�̍쐬
-	for (int mi = 0; mi < m_dwMeshNum; mi++)   // ���b�V���������J��Ԃ�
+	// シェーダーへ渡すマトリックスの作成
+	for (int mi = 0; mi < m_dwMeshNum; mi++)   // メッシュ数だけ繰り返し
 	{
-		// �V�F�[�_�[�֓n���`���̍s����쐬
-		// �i�V�F�[�_�[�֓n���Ƃ��́A�@�e�t���[�����̇A�{�[�����ɕ��ׂĂ����K�v������j
-		// �i�t���[���|�[�Y���́A��̃��b�V���̃{�[���ł͑S�ē����Ȃ̂ŁAm_BoneArray[animNum][0].framePoseNum���g�p����j
-		m_pMeshArray[mi].m_pBoneShader[animNum] = new BONESHADER[m_pMeshArray[mi].m_BoneArray[animNum][0].framePoseNum];  // �V�F�[�_�[�{�[���z��𐶐�����
+		// シェーダーへ渡す形式の行列を作成
+		// （シェーダーへ渡すときは、①各フレーム毎の②ボーン毎に並べておく必要がある）
+		// （フレームポーズ数は、一つのメッシュのボーンでは全て同じなので、m_BoneArray[animNum][0].framePoseNumを使用する）
+		m_pMeshArray[mi].m_pBoneShader[animNum] = new BONESHADER[m_pMeshArray[mi].m_BoneArray[animNum][0].framePoseNum];  // シェーダーボーン配列を生成する
 
-		for (int i = 0; i < m_pMeshArray[mi].m_BoneArray[animNum][0].framePoseNum; i++)  // �s��̏�����
+		for (int i = 0; i < m_pMeshArray[mi].m_BoneArray[animNum][0].framePoseNum; i++)  // 行列の初期化
 		{
 			for (int j = 0; j < MAX_BONES; j++)
 			{
 				m_pMeshArray[mi].m_pBoneShader[animNum][i].shaderFramePose[j] = XMMatrixIdentity();
 				m_pMeshArray[mi].m_pBoneShader[animNum][i].shaderFramePose[j] =
-					XMMatrixTranspose(m_pMeshArray[mi].m_pBoneShader[animNum][i].shaderFramePose[j]);  // �]�u�s�񏉊��l
+					XMMatrixTranspose(m_pMeshArray[mi].m_pBoneShader[animNum][i].shaderFramePose[j]);  // 転置行列初期値
 			}
 		}
 
-		for (int n = 0; n < m_pMeshArray[mi].m_BoneArray[animNum][0].framePoseNum; n++)  // �e�t���[���|�[�Y���̏���
+		for (int n = 0; n < m_pMeshArray[mi].m_BoneArray[animNum][0].framePoseNum; n++)  // 各フレームポーズ毎の処理
 		{
-			for (int bi = 0; bi < m_pMeshArray[mi].m_NumBones; bi++)  // �e�{�[�����̏���
+			for (int bi = 0; bi < m_pMeshArray[mi].m_NumBones; bi++)  // 各ボーン毎の処理
 			{
 				MATRIX4X4 mFramePose;
 
 				if (RAType == eRootAnimNone)
 				{
-					// ���[�g�{�[���A�j�������Ȃ��Ƃ��́A�o�C���h�{�[�Y�̋t�s��ƃt���[���|�[�Y���|�����킹�A�o�C���h�{�[�Y����̍����̍s����쐬����
+					// ルートボーンアニメをしないときは、バインドボーズの逆行列とフレームポーズを掛け合わせ、バインドボーズからの差分の行列を作成する
 					mFramePose = m_pMeshArray[mi].m_BoneArray[animNum][bi].bindPose * m_pMeshArray[mi].m_BoneArray[animNum][bi].framePose[n];
 				}
 				else {
-					// ���[�g�{�[���A�j��������Ƃ�
+					// ルートボーンアニメをするとき
 					mFramePose = m_pMeshArray[mi].m_BoneArray[animNum][bi].framePose[n] *
-									XMMatrixInverse(nullptr, m_RootBoneArray[animNum].framePose[n]);      // �e�t���[���|�[�Y�s������[�g�{�[���s��Ƃ̍����s��ɂ���            // -- 2020.12.15 -- 3
-					mFramePose = m_pMeshArray[mi].m_BoneArray[animNum][bi].bindPose * mFramePose;      // �o�C���h�{�[�Y�̋t�s��ƃt���[���|�[�Y���|�����킹�A�o�C���h�{�[�Y����̍����̍s����쐬����            // -- 2020.12.15 -- 3
+									XMMatrixInverse(nullptr, m_RootBoneArray[animNum].framePose[n]);      // 各フレームポーズ行列をルートボーン行列との差分行列にする            // -- 2020.12.15 -- 3
+					mFramePose = m_pMeshArray[mi].m_BoneArray[animNum][bi].bindPose * mFramePose;      // バインドボーズの逆行列とフレームポーズを掛け合わせ、バインドボーズからの差分の行列を作成する            // -- 2020.12.15 -- 3
 				}
-				// �t���[���|�[�Y��]�u�s��ɂ��Ă��̂܂܃V�F�[�_�[�ɓn����悤�ɂ���
-				m_pMeshArray[mi].m_pBoneShader[animNum][n].shaderFramePose[bi] = XMMatrixTranspose(mFramePose);  // �]�u�s��
+				// フレームポーズを転置行列にしてそのままシェーダーに渡せるようにする
+				m_pMeshArray[mi].m_pBoneShader[animNum][n].shaderFramePose[bi] = XMMatrixTranspose(mFramePose);  // 転置行列
 			}
 		}
 	}
@@ -1161,35 +1148,35 @@ void CFbxMesh::MakeRootAnimAndShaderMatrix(const int& animNum, ROOTANIMTYPE RATy
 
 //==========================================================================================================================================================
 //
-// �A�j���[�V�����̍ŏI�t���[���ԍ����擾 
-// (endFrame-startFrame��Ԃ�) 
+// アニメーションの最終フレーム番号を取得 
+// (endFrame-startFrameを返す) 
 //
 //==========================================================================================================================================================
 int CFbxMesh::GetEndFrame(const int& animID)
 {
 	if (m_nMeshType != 2)
 	{
-		MessageBox(nullptr, _T("������ GetEndFrame() ������"), _T("������ �X�L�����b�V���ł͂���܂��� ������"), MB_OK);
+		MessageBox(nullptr, _T("■□■ GetEndFrame() ■□■"), _T("■□■ スキンメッシュではありません ■□■"), MB_OK);
 		return 0;
 	}
 	if (!m_Animation[animID].used)				  // -- 2024.9.5
 	{
-		MessageBox(nullptr, _T("������ GetEndFrame() ������"), _T("������ �X�L�����b�V���ɁA�w�肳�ꂽ�A�j���[�V�������ǂݍ��܂�Ă��܂��� ������"), MB_OK);
+		MessageBox(nullptr, _T("■□■ GetEndFrame() ■□■"), _T("■□■ スキンメッシュに、指定されたアニメーションが読み込まれていません ■□■"), MB_OK);
 		return 0;
 	}
 	return m_Animation[animID].endFrame - m_Animation[animID].startFrame;			 // -- 2024.9.5
 }
 
 //==========================================================================================================================================================
-// �w��{�[���̃}�g���b�N�X���擾																						    // -- 2024.9.5
-// �i���̂܂܂̑��΃}�g���b�N�X���擾�j
+// 指定ボーンのマトリックスを取得																						    // -- 2024.9.5
+// （そのままの相対マトリックスを取得）
 // 
-// �����F
-// 	  Animator* animStatus          �A�j���[�^�[
-//    const DWORD& nBone            �{�[���ԍ�
-//    const DWORD& nMesh            ���b�V���ԍ�(�ȗ��l�O)
-// �߂�l�F
-//    MATRIX4X4                     �w��{�[���̃}�g���b�N�X�i���̂܂܂̑��΃}�g���b�N�X�j
+// 引数：
+// 	  Animator* animStatus          アニメーター
+//    const DWORD& nBone            ボーン番号
+//    const DWORD& nMesh            メッシュ番号(省略値０)
+// 戻り値：
+//    MATRIX4X4                     指定ボーンのマトリックス（そのままの相対マトリックス）
 //==========================================================================================================================================================
 MATRIX4X4 CFbxMesh::GetFrameMatrices(Animator* animStatus, const DWORD& nBone, const DWORD& nMesh)
 {
@@ -1197,56 +1184,56 @@ MATRIX4X4 CFbxMesh::GetFrameMatrices(Animator* animStatus, const DWORD& nBone, c
 
 	if (m_nMeshType == 1)
 	{
-		MessageBox(nullptr, _T("������ GetFrameMatrices() ������"), _T("������ �X�^�e�B�b�N���b�V���ɂ͎g�p�ł��܂��� ������"), MB_OK);
+		MessageBox(nullptr, _T("■□■ GetFrameMatrices() ■□■"), _T("■□■ スタティックメッシュには使用できません ■□■"), MB_OK);
 		return XMMatrixIdentity();
 	}
 	if (nMesh >= m_dwMeshNum || nBone >= m_pMeshArray[nMesh].m_NumBones)
 	{
-		MessageBox(nullptr, _T("������ GetFrameMatrices() ������"), _T("������ ���b�V���ԍ��s���@���́@�{�[���ԍ��s���B ������"), MB_OK);
-		OutputDebugString(_T("������ GetFrameMatrices() ���b�V���ԍ��s���@���́@�{�[���ԍ��s�� ������\n"));
+		MessageBox(nullptr, _T("■□■ GetFrameMatrices() ■□■"), _T("■□■ メッシュ番号不正　又は　ボーン番号不正。 ■□■"), MB_OK);
+		OutputDebugString(_T("■□■ GetFrameMatrices() メッシュ番号不正　又は　ボーン番号不正 ■□■\n"));
 		return XMMatrixIdentity();
 	}
 	if (animStatus == nullptr || !m_Animation[animStatus->PlayingID()].used)		   // -- 2024.9.5
 	{
-		MessageBox(nullptr, _T("������ GetFrameMatrices() ������"), _T("������ �X�L�����b�V���ɁA�w�肳�ꂽ�A�j���[�V�������ǂݍ��܂�Ă��܂��� ������"), MB_OK);
+		MessageBox(nullptr, _T("■□■ GetFrameMatrices() ■□■"), _T("■□■ スキンメッシュに、指定されたアニメーションが読み込まれていません ■□■"), MB_OK);
 		return XMMatrixIdentity();
 	}
 
-	//  �A�j���[�V�������ς���Ă����ꍇ�A��Ɨ̈��Ńt���[�����ŏ��ɖ߂� --------------------------------- // -- 2018.8.28
-	// �Ȃ��A�ŏ��Ƃ�animFrame���O�t���[���ɂ��邱�ƁBstartFrame�ł͂Ȃ��B���R��animFrame�͓Y���ԍ�������ł���B
+	//  アニメーションが変わっていた場合、作業領域上でフレームを最初に戻す --------------------------------- // -- 2018.8.28
+	// なお、最初とはanimFrameを０フレームにすること。startFrameではない。理由はanimFrameは添字番号だからである。
 	int  animFrameW;
 	animFrameW = animStatus->CurrentFrame();		// -- 2024.9.5
 	//if (animStatus.animNum != animStatus.animNumOld) animFrameW = 0;
 
-	// �w�胁�b�V���̎w��A�j���[�V�����̎w��{�[���̎w��t���[���̃}�g���b�N�X���擾
+	// 指定メッシュの指定アニメーションの指定ボーンの指定フレームのマトリックスを取得
 	//mBoneWorld = m_pMeshArray[nMesh].m_BoneArray[animStatus->PlayingID()][nBone].framePose[animFrameW]; // -- 2018.8.28
 	mBoneWorld = GetMixBoneMatrix(animStatus, nBone, nMesh);											  // -- 2024.10.7
 
-	// ���[�g�{�[���A�j��������Ƃ��̏���                                   // -- 2020.12.15
+	// ルートボーンアニメをするときの処理                                   // -- 2020.12.15
 	if( m_RootAnimType[animStatus->PlayingID()] != eRootAnimNone)	  	// -- 2024.9.5
 	{
-		// ���[�g�{�[���A�j���s��̋t�s����|�����킹�ă}�g���b�N�X���쐬����
+		// ルートボーンアニメ行列の逆行列を掛け合わせてマトリックスを作成する
 		mBoneWorld =
 			mBoneWorld * XMMatrixInverse(nullptr, m_RootBoneArray[animStatus->PlayingID()].framePose[animFrameW]);
 	}
 
-	// �}�g���b�N�X���E����W�n���獶����W�n�ɕϊ�(Z���𔽓])
+	// マトリックスを右手座標系から左手座標系に変換(Z軸を反転)
 	mBoneWorld = XMMatrixScaling(1, 1, -1) * mBoneWorld;    // -- 2020.7.15
 
 	return mBoneWorld;
 }
 
 //==========================================================================================================================================================
-// �w��{�[���̃}�g���b�N�X���擾																					     // -- 2024.9.5
-// �i���[���h�}�g���b�N�X�Ɗ|�����킹�����ʂ��擾�j
+// 指定ボーンのマトリックスを取得																					     // -- 2024.9.5
+// （ワールドマトリックスと掛け合わせた結果を取得）
 // 
-// �����F
-// 	  Animator* animStatus          �A�j���[�^�[
-//    const MATRIX4X4& mWorld       ���[���h�}�g���b�N�X
-//    const DWORD& nBone            �{�[���ԍ�
-//    const DWORD& nMesh            ���b�V���ԍ�(�ȗ��l�O)
-// �߂�l�F
-//    MATRIX4X4                    �w��{�[���̃}�g���b�N�X�i���[���h�}�g���b�N�X�Ɗ|�����킹���}�g���b�N�X�j
+// 引数：
+// 	  Animator* animStatus          アニメーター
+//    const MATRIX4X4& mWorld       ワールドマトリックス
+//    const DWORD& nBone            ボーン番号
+//    const DWORD& nMesh            メッシュ番号(省略値０)
+// 戻り値：
+//    MATRIX4X4                    指定ボーンのマトリックス（ワールドマトリックスと掛け合わせたマトリックス）
 //==========================================================================================================================================================
 MATRIX4X4 CFbxMesh::GetFrameMatrices(Animator* animStatus, const MATRIX4X4& mWorld, const DWORD& nBone, const DWORD& nMesh)
 {
@@ -1254,46 +1241,46 @@ MATRIX4X4 CFbxMesh::GetFrameMatrices(Animator* animStatus, const MATRIX4X4& mWor
 
 	if (m_nMeshType == 1)
 	{
-		MessageBox(nullptr, _T("������ GetFrameMatrices() ������"), _T("������ �X�^�e�B�b�N���b�V���ɂ͎g�p�ł��܂��� ������"), MB_OK);
+		MessageBox(nullptr, _T("■□■ GetFrameMatrices() ■□■"), _T("■□■ スタティックメッシュには使用できません ■□■"), MB_OK);
 		return mWorld;
 	}
 	if (nMesh >= m_dwMeshNum || nBone >= m_pMeshArray[nMesh].m_NumBones)
 	{
-		MessageBox(nullptr, _T("������ GetFrameMatrices() ������"), _T("������ ���b�V���ԍ��s���@���́@�{�[���ԍ��s���B ������"), MB_OK);
-		OutputDebugString(_T("������ GetFrameMatrices() ���b�V���ԍ��s���@���́@�{�[���ԍ��s�� ������\n"));
+		MessageBox(nullptr, _T("■□■ GetFrameMatrices() ■□■"), _T("■□■ メッシュ番号不正　又は　ボーン番号不正。 ■□■"), MB_OK);
+		OutputDebugString(_T("■□■ GetFrameMatrices() メッシュ番号不正　又は　ボーン番号不正 ■□■\n"));
 		return mWorld;
 	}
 	if (animStatus == nullptr ||  !m_Animation[animStatus->PlayingID()].used)						  	// -- 2024.9.5
 	{
-		MessageBox(nullptr, _T("������ GetFrameMatrices() ������"), _T("������ �X�L�����b�V���ɁA�w�肳�ꂽ�A�j���[�V�������ǂݍ��܂�Ă��܂��� ������"), MB_OK);
+		MessageBox(nullptr, _T("■□■ GetFrameMatrices() ■□■"), _T("■□■ スキンメッシュに、指定されたアニメーションが読み込まれていません ■□■"), MB_OK);
 		return mWorld;
 	}
 
-	//  �A�j���[�V�������ς���Ă����ꍇ�A��Ɨ̈��Ńt���[�����ŏ��ɖ߂� --------------------------------- // -- 2018.8.28
-	// �Ȃ��A�ŏ��Ƃ�animFrame���O�t���[���ɂ��邱�ƁBstartFrame�ł͂Ȃ��B���R��animFrame�͓Y���ԍ�������ł���B
+	//  アニメーションが変わっていた場合、作業領域上でフレームを最初に戻す --------------------------------- // -- 2018.8.28
+	// なお、最初とはanimFrameを０フレームにすること。startFrameではない。理由はanimFrameは添字番号だからである。
 	int  animFrameW;
 	animFrameW = animStatus->CurrentFrame();
 	//if (animStatus.animNum != animStatus.animNumOld) animFrameW = 0;
 
-	// �w�胁�b�V���̎w��A�j���[�V�����̎w��{�[���̎w��t���[���̃}�g���b�N�X���擾
+	// 指定メッシュの指定アニメーションの指定ボーンの指定フレームのマトリックスを取得
 	//mBoneWorld = m_pMeshArray[nMesh].m_BoneArray[animStatus->PlayingID()][nBone].framePose[animFrameW];      // -- 2024.9.5
 	mBoneWorld = GetMixBoneMatrix(animStatus, nBone, nMesh);											       // -- 2024.10.7
 
-	// ���[�g�{�[���A�j��������Ƃ��̏���                                   // -- 2020.12.15
+	// ルートボーンアニメをするときの処理                                   // -- 2020.12.15
 	if (m_RootAnimType[animStatus->PlayingID()] != eRootAnimNone)						   // -- 2024.9.5
 	{
-		// ���[�g�{�[���A�j���s��̋t�s����|�����킹�ă}�g���b�N�X���쐬����
+		// ルートボーンアニメ行列の逆行列を掛け合わせてマトリックスを作成する
 		mBoneWorld =
 			mBoneWorld * XMMatrixInverse(nullptr, m_RootBoneArray[animStatus->PlayingID()].framePose[animFrameW]);
 	}
 
-	// �}�g���b�N�X���E����W�n���獶����W�n�ɕϊ�(Z���𔽓])
+	// マトリックスを右手座標系から左手座標系に変換(Z軸を反転)
 	mBoneWorld = XMMatrixScaling(1, 1, -1) * mBoneWorld;    // -- 2020.7.15
 
-	return mBoneWorld * mWorld;  // ���[���h�}�g���b�N�X�Ɗ|�����킹��
+	return mBoneWorld * mWorld;  // ワールドマトリックスと掛け合わせる
 }
 
-// �{�[���z�񂩂�~�b�N�X�����{�[���}�g���b�N�X�𓾂�
+// ボーン配列からミックスしたボーンマトリックスを得る
 MATRIX4X4  CFbxMesh::GetMixBoneMatrix(Animator* animStatus, const DWORD& nBone, const DWORD& nMesh)
 {
 	MATRIX4X4 mat = XMMatrixIdentity();
@@ -1310,7 +1297,7 @@ MATRIX4X4  CFbxMesh::GetMixBoneMatrix(Animator* animStatus, const DWORD& nBone, 
 			frnext = m_Animation[animNum].endFrame;
 	}
 	float rate = animStatus->CurrentFrame() - (float)frint;
-	if (animStatus->Rate() >= 1.0f) { // �u�����h����K�v�Ȃ�
+	if (animStatus->Rate() >= 1.0f) { // ブレンドする必要なし
 		VECTOR4* org1 = (VECTOR4*)&m_pMeshArray[nMesh].m_BoneArray[animNum][nBone].framePose[frint];
 		VECTOR4* org2 = (VECTOR4*)&m_pMeshArray[nMesh].m_BoneArray[animNum][nBone].framePose[frnext];
 		VECTOR4* dst = (VECTOR4*)&mat;
@@ -1348,13 +1335,13 @@ MATRIX4X4  CFbxMesh::GetMixBoneMatrix(Animator* animStatus, const DWORD& nBone, 
 
 
 //==========================================================================================================================================================
-// ���[�g�{�[���A�j���[�V�����̃}�g���b�N�X���擾                                                                                    // -- 2024.9.5
+// ルートボーンアニメーションのマトリックスを取得                                                                                    // -- 2024.9.5
 // 
-// �����F
-//    const int& UpFrame            �A�j���[�V�����t���[���̌��ݒl����̑����i�ȗ��l�F�O�j
+// 引数：
+//    const int& UpFrame            アニメーションフレームの現在値からの増分（省略値：０）
 //
-// �߂�l�F
-//    MATRIX4X4                    ���[�g�{�[���̃}�g���b�N�X
+// 戻り値：
+//    MATRIX4X4                    ルートボーンのマトリックス
 //==========================================================================================================================================================
 MATRIX4X4 CFbxMesh::GetRootAnimMatrices(Animator* animStatus, const int& UpFrame)
 {
@@ -1362,18 +1349,18 @@ MATRIX4X4 CFbxMesh::GetRootAnimMatrices(Animator* animStatus, const int& UpFrame
 
 	if (m_nMeshType != 2)
 	{
-		MessageBox(nullptr, _T("������ GetRootAnimMatrices() ������"), _T("������ �X�^�e�B�b�N���b�V���ɂ͎g�p�ł��܂��� ������"), MB_OK);
+		MessageBox(nullptr, _T("■□■ GetRootAnimMatrices() ■□■"), _T("■□■ スタティックメッシュには使用できません ■□■"), MB_OK);
 		return XMMatrixIdentity();
 	}
 	if (animStatus == nullptr || !m_Animation[animStatus->PlayingID()].used)	   // -- 2024.9.5
 	{
-		MessageBox(nullptr, _T("������ GetRootAnimMatrices() ������"), _T("������ �X�L�����b�V���ɁA�w�肳�ꂽ�A�j���[�V�������ǂݍ��܂�Ă��܂��� ������"), MB_OK);
+		MessageBox(nullptr, _T("■□■ GetRootAnimMatrices() ■□■"), _T("■□■ スキンメッシュに、指定されたアニメーションが読み込まれていません ■□■"), MB_OK);
 		return XMMatrixIdentity();
 	}
 
-	// �A�j���[�V�����t���[���ɑ����l���������Č��ݒl�Ƃ���B
-	// ����E�����l�𒴂��Ă����ꍇ�͓K�؂Ȉʒu�ɒ�������B
-	// �Ȃ��A�ŏ��Ƃ�animFrame���O�t���[���ɂ��邱�ƁBstartFrame�ł͂Ȃ��B���R��animFrame�͓Y���ԍ�������ł���B
+	// アニメーションフレームに増分値を加味して現在値とする。
+	// 上限・下限値を超えていた場合は適切な位置に訂正する。
+	// なお、最初とはanimFrameを０フレームにすること。startFrameではない。理由はanimFrameは添字番号だからである。
 	int  animFrameW;
 	animFrameW = animStatus->CurrentFrame() + UpFrame;			   // -- 2024.9.5
 	if (animFrameW < 0)
@@ -1384,26 +1371,26 @@ MATRIX4X4 CFbxMesh::GetRootAnimMatrices(Animator* animStatus, const int& UpFrame
 	{
 		animFrameW = animFrameW - (m_Animation[animStatus->PlayingID()].endFrame - m_Animation[animStatus->PlayingID()].startFrame);
 	}
-	//  �A�j���[�V�������ς���Ă����ꍇ�A��Ɨ̈��Ńt���[�����ŏ��ɖ߂�
-	// �Ȃ��A�ŏ��Ƃ�animFrame���O�t���[���ɂ��邱�ƁBstartFrame�ł͂Ȃ��B���R��animFrame�͓Y���ԍ�������ł���B
+	//  アニメーションが変わっていた場合、作業領域上でフレームを最初に戻す
+	// なお、最初とはanimFrameを０フレームにすること。startFrameではない。理由はanimFrameは添字番号だからである。
 	//if (animStatus.animNum != animStatus.animNumOld) animFrameW = 0;
 
-	// ���[�g�{�[���A�j���̌��݃t���[���̃}�g���b�N�X���擾
+	// ルートボーンアニメの現在フレームのマトリックスを取得
 	mBoneWorld = m_RootBoneArray[animStatus->PlayingID()].framePose[animFrameW];
 
 	return mBoneWorld;
 }
 
 //==========================================================================================================================================================
-// ���[�g�{�[���A�j���[�V�����̌��ݒl�t���[���̈�O�̃t���[���ʒu����̑����}�g���b�N�X���擾����                                      // -- 2024.9.5
+// ルートボーンアニメーションの現在値フレームの一つ前のフレーム位置からの増分マトリックスを取得する                                      // -- 2024.9.5
 // 
-// �����F
-//    const int& UpFrame            �A�j���[�V�����t���[���̌��ݒl����̑����i�ȗ��l�F�O�j
-//    const int& StartFrameUp       �A�j���t���[�����J�n�t���[���i�t���[���O�j�̂Ƃ��̑����l�̏������@�i�ȗ��l�F�P�j
-//                                    0:XMMatrixIdentity()�ɂ���   1:�O�`�P�̑����l���g�p����
+// 引数：
+//    const int& UpFrame            アニメーションフレームの現在値からの増分（省略値：０）
+//    const int& StartFrameUp       アニメフレームが開始フレーム（フレーム０）のときの増分値の処理方法（省略値：１）
+//                                    0:XMMatrixIdentity()にする   1:０～１の増分値を使用する
 //
-// �߂�l�F
-//    MATRIX4X4                     ���[�g�{�[���̈�O�̈ʒu����̑����}�g���b�N�X
+// 戻り値：
+//    MATRIX4X4                     ルートボーンの一つ前の位置からの増分マトリックス
 //==========================================================================================================================================================
 MATRIX4X4 CFbxMesh::GetRootAnimUpMatrices(Animator* animStatus, const int& UpFrame, const int& StartFrameUp)
 {
@@ -1411,18 +1398,18 @@ MATRIX4X4 CFbxMesh::GetRootAnimUpMatrices(Animator* animStatus, const int& UpFra
 
 	if (m_nMeshType != 2)
 	{
-		MessageBox(nullptr, _T("������ GetRootAnimUpMatrices() ������"), _T("������ �X�^�e�B�b�N���b�V���ɂ͎g�p�ł��܂��� ������"), MB_OK);
+		MessageBox(nullptr, _T("■□■ GetRootAnimUpMatrices() ■□■"), _T("■□■ スタティックメッシュには使用できません ■□■"), MB_OK);
 		return XMMatrixIdentity();
 	}
 	if (animStatus == nullptr || !m_Animation[animStatus->PlayingID()].used)		   // -- 2024.9.5
 	{
-		MessageBox(nullptr, _T("������ GetRootAnimUpMatrices() ������"), _T("������ �X�L�����b�V���ɁA�w�肳�ꂽ�A�j���[�V�������ǂݍ��܂�Ă��܂��� ������"), MB_OK);
+		MessageBox(nullptr, _T("■□■ GetRootAnimUpMatrices() ■□■"), _T("■□■ スキンメッシュに、指定されたアニメーションが読み込まれていません ■□■"), MB_OK);
 		return XMMatrixIdentity();
 	}
 
-	// �A�j���[�V�����t���[���ɑ����l���������Č��ݒl�Ƃ���B
-	// ����E�����l�𒴂��Ă����ꍇ�͓K�؂Ȉʒu�ɒ�������B
-	// �Ȃ��A�ŏ��Ƃ�animFrame���O�t���[���ɂ��邱�ƁBstartFrame�ł͂Ȃ��B���R��animFrame�͓Y���ԍ�������ł���B
+	// アニメーションフレームに増分値を加味して現在値とする。
+	// 上限・下限値を超えていた場合は適切な位置に訂正する。
+	// なお、最初とはanimFrameを０フレームにすること。startFrameではない。理由はanimFrameは添字番号だからである。
 	int  animFrameW;
 	animFrameW = animStatus->CurrentFrame() + UpFrame;				// -- 2024.9.5
 	if (animFrameW < 0)
@@ -1433,24 +1420,24 @@ MATRIX4X4 CFbxMesh::GetRootAnimUpMatrices(Animator* animStatus, const int& UpFra
 	{
 		animFrameW = animFrameW - (m_Animation[animStatus->PlayingID()].endFrame - m_Animation[animStatus->PlayingID()].startFrame);
 	}
-	//  �A�j���[�V�������ς���Ă����ꍇ�A��Ɨ̈��Ńt���[�����ŏ��ɖ߂�
-	// �Ȃ��A�ŏ��Ƃ�animFrame���O�t���[���ɂ��邱�ƁBstartFrame�ł͂Ȃ��B���R��animFrame�͓Y���ԍ�������ł���B
+	//  アニメーションが変わっていた場合、作業領域上でフレームを最初に戻す
+	// なお、最初とはanimFrameを０フレームにすること。startFrameではない。理由はanimFrameは添字番号だからである。
 	//if (animStatus.animNum != animStatus.animNumOld) animFrameW = 0;
 
-	// �A�j���[�V�����t���[���̌��ݒl���O�̏ꍇ
+	// アニメーションフレームの現在値が０の場合
 	if (animFrameW <= 0)
 	{
-		if (StartFrameUp == 0) return XMMatrixIdentity();  // �����l�͂O�ƂȂ�
-		animFrameW = 1;                                    // �O�`�P�̑����l���g�p����
+		if (StartFrameUp == 0) return XMMatrixIdentity();  // 増分値は０となる
+		animFrameW = 1;                                    // ０～１の増分値を使用する
 	}
 
-	// ���[�g�{�[���A�j���̌��݃t���[���̃}�g���b�N�X���擾
+	// ルートボーンアニメの現在フレームのマトリックスを取得
 	mBoneWorld = m_RootBoneArray[animStatus->PlayingID()].framePose[animFrameW];
 
-	// ���[�g�{�[���A�j���̌��ݒl����O�̃t���[���̃}�g���b�N�X���擾
+	// ルートボーンアニメの現在値より一つ前のフレームのマトリックスを取得
 	mBoneWorldOld = m_RootBoneArray[animStatus->PlayingID()].framePose[animFrameW-1];
 
-	// ���ݒl�t���[���}�g���b�N�X�̈�O�̃t���[���}�g���b�N�X����̑����}�g���b�N�X�𓾂�
+	// 現在値フレームマトリックスの一つ前のフレームマトリックスからの増分マトリックスを得る
 	mBoneWorld = XMMatrixInverse(nullptr, mBoneWorldOld) * mBoneWorld;
 
 	return mBoneWorld;
@@ -1458,9 +1445,9 @@ MATRIX4X4 CFbxMesh::GetRootAnimUpMatrices(Animator* animStatus, const int& UpFra
 
 //------------------------------------------------------------------------
 //																			 // -- 2024.9.5
-//	���b�V������ʂɃ����_�����O���鏈��
+//	メッシュを画面にレンダリングする処理
 //
-//	(�S�Ẵ����_�����O�̌Ăт������s������)
+//	(全てのレンダリングの呼びだしを行う処理)
 //
 //------------------------------------------------------------------------
 void CFbxMesh::Render( const MATRIX4X4& mWorld)
@@ -1484,18 +1471,18 @@ void CFbxMesh::RenderDisplace(Animator* animStatus, const MATRIX4X4& mWorld)
 
 //------------------------------------------------------------------------
 //																			 // -- 2024.9.5
-//	���b�V������ʂɃ����_�����O���鏈��
+//	メッシュを画面にレンダリングする処理
 //
-// ����
-//      const MATRIX4X4& mWorld              ���[���h�}�g���b�N�X
-//      const MATRIX4X4& mView               �r���[�}�g���b�N�X
-//      const MATRIX4X4& mProj               �v���W�F�N�V�����}�g���b�N�X
-//      const VECTOR3&   vLight              �����x�N�g��
-//      const VECTOR3&   vEye                ���_�x�N�g��
+// 引数
+//      const MATRIX4X4& mWorld              ワールドマトリックス
+//      const MATRIX4X4& mView               ビューマトリックス
+//      const MATRIX4X4& mProj               プロジェクションマトリックス
+//      const VECTOR3&   vLight              光源ベクトル
+//      const VECTOR3&   vEye                視点ベクトル
 //
-//	�߂�l HRESULT
-//		S_OK	= ����
-//		E_FAIL	= �ُ�
+//	戻り値 HRESULT
+//		S_OK	= 正常
+//		E_FAIL	= 異常
 //
 //------------------------------------------------------------------------
 void CFbxMesh::Render(const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye)
@@ -1505,7 +1492,7 @@ void CFbxMesh::Render(const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MAT
 		RenderStatic(mWorld, mView, mProj, vLight, vEye);
 	}
 	else  if (m_nMeshType == 2) {
-		MessageBox(nullptr, _T("������ Render() ������"), _T("������ �X�L�����b�V���Ȃ̂ɃA�j���[�V����Animator�̎w�肪����܂��� ������"), MB_OK);
+		MessageBox(nullptr, _T("■□■ Render()FBX,1495Line ■□■"), _T(" スキンメッシュなのにアニメーションAnimatorの指定がありません ■□■"), MB_OK);
 		return;
 	}
 }
@@ -1516,104 +1503,104 @@ void CFbxMesh::RenderDisplace( const MATRIX4X4& mWorld, const MATRIX4X4& mView, 
 		RenderDisplaceStatic(mWorld, mView, mProj, vLight, vEye);
 	}
 	else  if (m_nMeshType == 2) {
-		MessageBox(nullptr, _T("������ RenderDisplace() ������"), _T("������ �X�L�����b�V���Ȃ̂ɃA�j���[�V����Animator�̎w�肪����܂��� ������"), MB_OK);
+		MessageBox(nullptr, _T("■□■ RenderDisplace() ■□■"), _T("■□■ スキンメッシュなのにアニメーションAnimatorの指定がありません ■□■"), MB_OK);
 		return;
 	}
 }
 
 //------------------------------------------------------------------------
 //
-//	�X�^�e�B�b�N���b�V������ʂɃ����_�����O���鏈��
+//	スタティックメッシュを画面にレンダリングする処理
 //
-// ����
-//      const MATRIX4X4& mWorld              ���[���h�}�g���b�N�X
-//      const MATRIX4X4& mView               �r���[�}�g���b�N�X
-//      const MATRIX4X4& mProj               �v���W�F�N�V�����}�g���b�N�X
-//      const VECTOR3&   vLight              �����x�N�g��
-//      const VECTOR3&   vEye                ���_�x�N�g��
+// 引数
+//      const MATRIX4X4& mWorld              ワールドマトリックス
+//      const MATRIX4X4& mView               ビューマトリックス
+//      const MATRIX4X4& mProj               プロジェクションマトリックス
+//      const VECTOR3&   vLight              光源ベクトル
+//      const VECTOR3&   vEye                視点ベクトル
 //
-//	�߂�l HRESULT
-//		S_OK	= ����
-//		E_FAIL	= �ُ�
+//	戻り値 HRESULT
+//		S_OK	= 正常
+//		E_FAIL	= 異常
 //
 //------------------------------------------------------------------------
 void CFbxMesh::RenderStatic(const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye)
 {
 
-	//�g�p����V�F�[�_�[�̓o�^	
+	//使用するシェーダーの登録	
 	m_pD3D->m_pDeviceContext->VSSetShader(m_pShader->m_pFbxStaticMesh_VS, nullptr, 0);
 	m_pD3D->m_pDeviceContext->PSSetShader(m_pShader->m_pFbxStaticMesh_PS, nullptr, 0);
 
-	//�V�F�[�_�[�̃R���X�^���g�o�b�t�@�[�Ɋe��f�[�^��n��	
+	//シェーダーのコンスタントバッファーに各種データを渡す	
 	D3D11_MAPPED_SUBRESOURCE pData;
 	CONSTANT_BUFFER_WVLED cb;
 	if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferWVLED, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
 	{
-		//���[���h�s���n��
+		//ワールド行列を渡す
 		cb.mW = XMMatrixTranspose(mWorld);
 
-		//���[���h�A�J�����A�ˉe�s���n��
+		//ワールド、カメラ、射影行列を渡す
 		cb.mWVP = XMMatrixTranspose(mWorld * mView * mProj);
 
-		//���C�g������n��
+		//ライト方向を渡す
 		cb.vLightDir = VECTOR4(vLight.x, vLight.y, vLight.z, 0);
 
-		// ���_��n��
+		// 視点を渡す
 		cb.vEyePos = VECTOR4(vEye.x, vEye.y, vEye.z, 1);
 
-		//�J���[��n��
+		//カラーを渡す
 		cb.vDiffuse = m_vDiffuse;
 
-		// �e�����n���B(�g���Ă��Ȃ�)
+		// 各種情報を渡す。(使っていない)
 		cb.vDrawInfo = VECTOR4(0, 0, 0, 0);
 
 		memcpy_s(pData.pData, pData.RowPitch, (void*)(&cb), sizeof(cb));
 		m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferWVLED, 0);
 	}
 
-	//���̃R���X�^���g�o�b�t�@�[���g���V�F�[�_�[�̓o�^
+	//このコンスタントバッファーを使うシェーダーの登録
 	m_pD3D->m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferWVLED);
 	m_pD3D->m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferWVLED);
 
 
-	//���_�C���v�b�g���C�A�E�g���Z�b�g
+	//頂点インプットレイアウトをセット
 	m_pD3D->m_pDeviceContext->IASetInputLayout(m_pShader->m_pFbxStaticMesh_VertexLayout);
 
-	//�v���~�e�B�u�E�g�|���W�[���Z�b�g
+	//プリミティブ・トポロジーをセット
 	m_pD3D->m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	//�e�N�X�`���[�T���v���[���V�F�[�_�[�ɓn��
+	//テクスチャーサンプラーをシェーダーに渡す
 	m_pD3D->m_pDeviceContext->PSSetSamplers(0, 1, &m_pD3D->m_pSampleLinear);
 
-	// ���b�V���̕`�揇�����肷��m_dwRenderIdxArray�̐ݒ�   // -- 2018.8.1
+	// メッシュの描画順を決定するm_dwRenderIdxArrayの設定   // -- 2018.8.1
 	SetRenderIdxArray(mWorld, vEye);
 
-	// ���b�V���̐������e�N�X�`���[�A�o�[�e�b�N�X�o�b�t�@�A�C���f�b�N�X�o�b�t�@���Z�b�g���āA�����_�����O����
+	// メッシュの数だけテクスチャー、バーテックスバッファ、インデックスバッファをセットして、レンダリングする
 	for (DWORD mi = 0; mi < m_dwMeshNum; mi++)   // -- 2018.8.1
 	{
-		DWORD i = m_dwRenderIdxArray[mi];   // -- 2018.8.1
+		DWORD i = m_RenderOrder[mi].Idx;   // -- 2025.3.15
 
-		// �e�N�X�`���i�f�B�t���[�Y�A�m�[�}���A�X�y�L�����j���s�N�Z���V�F�[�_�[�ɓn���B�X���b�g�ԍ���0,1,3
-		SetShaderTexture(_T("PS"), 0, &m_pMeshArray[i].m_pTexture);             // �f�B�t���[�Y�e�N�X�`��
-		SetShaderTexture(_T("PS"), 1, &m_pMeshArray[i].m_pTextureNormal);       // �m�[�}���e�N�X�`��
-		SetShaderTexture(_T("PS"), 3, &m_pMeshArray[i].m_pTextureSpecular);     // �X�y�L�����e�N�X�`��
+		// テクスチャ（ディフューズ、ノーマル、スペキュラ）をピクセルシェーダーに渡す。スロット番号は0,1,3
+		SetShaderTexture(_T("PS"), 0, &m_pMeshArray[i].m_pTexture);             // ディフューズテクスチャ
+		SetShaderTexture(_T("PS"), 1, &m_pMeshArray[i].m_pTextureNormal);       // ノーマルテクスチャ
+		SetShaderTexture(_T("PS"), 3, &m_pMeshArray[i].m_pTextureSpecular);     // スペキュラテクスチャ
 
-		// �f�B�t���[�Y�e�N�X�`�����Ȃ��Ƃ��̂݃V�F�[�_�[�̃R���X�^���g�o�b�t�@�[�Ƀ}�e���A���J���[��n��        // -- 2020.12.15
+		// ディフューズテクスチャがないときのみシェーダーのコンスタントバッファーにマテリアルカラーを渡す        // -- 2020.12.15
 		if (m_pMeshArray[i].m_pTexture == nullptr)
 		{
-			SetShaderMatColor(_T("PS"), 3, i);   // �}�e���A���J���[��PS�ɓn��
+			SetShaderMatColor(_T("PS"), 3, i);   // マテリアルカラーをPSに渡す
 		}
 
-		// �o�[�e�b�N�X�o�b�t�@�[���Z�b�g
+		// バーテックスバッファーをセット
 		UINT stride = sizeof(StaticVertexNormal);
 		UINT offset = 0;
 		m_pD3D->m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pMeshArray[i].m_pVertexBuffer, &stride, &offset);
 
-		//�C���f�b�N�X�o�b�t�@�[���Z�b�g
+		//インデックスバッファーをセット
 		m_pD3D->m_pDeviceContext->IASetIndexBuffer(m_pMeshArray[i].m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-		//�v���~�e�B�u�������_�����O
-		// �i�C���f�b�N�X�̐����w�肵�ă����_�����O�j
+		//プリミティブをレンダリング
+		// （インデックスの数を指定してレンダリング）
 		m_pD3D->m_pDeviceContext->DrawIndexed(m_pMeshArray[i].m_dwIndicesNum, 0, 0);
 	}
 
@@ -1621,167 +1608,167 @@ void CFbxMesh::RenderStatic(const MATRIX4X4& mWorld, const MATRIX4X4& mView, con
 
 //------------------------------------------------------------------------
 //
-//	�X�^�e�B�b�N���b�V������ʂɃ����_�����O���鏈��(�f�B�X�v���[�X�����g�}�b�s���O)
+//	スタティックメッシュを画面にレンダリングする処理(ディスプレースメントマッピング)
 //
-// ����
-//      const MATRIX4X4&  mWorld              ���[���h�}�g���b�N�X
-//      const MATRIX4X4&4 mView               �r���[�}�g���b�N�X
-//      const MATRIX4X4&  mProj               �v���W�F�N�V�����}�g���b�N�X
-//      const VECTOR3&    vLight              �����x�N�g��
-//      const VECTOR3&    vEye                ���_�x�N�g��
+// 引数
+//      const MATRIX4X4&  mWorld              ワールドマトリックス
+//      const MATRIX4X4&4 mView               ビューマトリックス
+//      const MATRIX4X4&  mProj               プロジェクションマトリックス
+//      const VECTOR3&    vLight              光源ベクトル
+//      const VECTOR3&    vEye                視点ベクトル
 //
-//	�߂�l HRESULT
-//		S_OK	= ����
-//		E_FAIL	= �ُ�
+//	戻り値 HRESULT
+//		S_OK	= 正常
+//		E_FAIL	= 異常
 //
 //------------------------------------------------------------------------
 void CFbxMesh::RenderDisplaceStatic(const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye)
 {
 
-	//m_pD3D->m_pDeviceContext->RSSetState(m_pD3D->m_pRStateLW);  // �����A���C���[�t���[���\��
+	//m_pD3D->m_pDeviceContext->RSSetState(m_pD3D->m_pRStateLW);  // 左回り、ワイヤーフレーム表示
 
-	//�g�p����V�F�[�_�[�̓o�^	
+	//使用するシェーダーの登録	
 	m_pD3D->m_pDeviceContext->VSSetShader(m_pShader->m_pDisplaceStaticMesh_VS, nullptr, 0);
 	m_pD3D->m_pDeviceContext->HSSetShader(m_pShader->m_pDisplaceStaticMesh_HS, nullptr, 0);
 	m_pD3D->m_pDeviceContext->DSSetShader(m_pShader->m_pDisplaceStaticMesh_DS, nullptr, 0);
 	m_pD3D->m_pDeviceContext->PSSetShader(m_pShader->m_pDisplaceStaticMesh_PS, nullptr, 0);
 
 
-	// �V�F�[�_�[�̃R���X�^���g�o�b�t�@�[�Ɋe��f�[�^��n��	
+	// シェーダーのコンスタントバッファーに各種データを渡す	
 	D3D11_MAPPED_SUBRESOURCE pData;
 	CONSTANT_BUFFER_WVLED cb;
 	if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferWVLED, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
 	{
-		// ���[���h�s���n��
+		// ワールド行列を渡す
 		cb.mW = XMMatrixTranspose(mWorld);
 
-		// ���[���h�A�J�����A�ˉe�s���n��
+		// ワールド、カメラ、射影行列を渡す
 		cb.mWVP = XMMatrixTranspose(mWorld * mView * mProj);
 
-		// ���_�ʒu��n��
+		// 視点位置を渡す
 		cb.vEyePos = VECTOR4(vEye.x, vEye.y, vEye.z, 1);
 
-		// ���C�g�̕�����n��
+		// ライトの方向を渡す
 		cb.vLightDir.x = vLight.x;
 		cb.vLightDir.y = vLight.y;
 		cb.vLightDir.z = vLight.z;
 		cb.vLightDir.w = 0;
 
-		// �J���[���V�F�[�_�[�ɓn��
+		// カラーをシェーダーに渡す
 		cb.vDiffuse = m_vDiffuse;
 
-		// �e�����n���B(�g���Ă��Ȃ�)       // -- 2020.12.15
+		// 各種情報を渡す。(使っていない)       // -- 2020.12.15
 		cb.vDrawInfo = VECTOR4(0, 0, 0, 0);
 
 		memcpy_s(pData.pData, pData.RowPitch, (void*)(&cb), sizeof(cb));
 		m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferWVLED, 0);
 	}
-	// ���̃R���X�^���g�o�b�t�@�[���A�ǂ̃V�F�[�_�[�Ŏg�������w��
-	m_pD3D->m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferWVLED); // �o�[�e�b�N�X�V�F�[�_�[�Ŏg��
-	m_pD3D->m_pDeviceContext->DSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferWVLED); // �h���C���V�F�[�_�[�Ŏg��
-	m_pD3D->m_pDeviceContext->HSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferWVLED); // �n���V�F�[�_�[�Ŏg��
-	m_pD3D->m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferWVLED); // �s�N�Z���V�F�[�_�[�Ŏg��
+	// このコンスタントバッファーを、どのシェーダーで使うかを指定
+	m_pD3D->m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferWVLED); // バーテックスシェーダーで使う
+	m_pD3D->m_pDeviceContext->DSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferWVLED); // ドメインシェーダーで使う
+	m_pD3D->m_pDeviceContext->HSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferWVLED); // ハルシェーダーで使う
+	m_pD3D->m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferWVLED); // ピクセルシェーダーで使う
 
 
-	// �f�B�X�v���[�X�����g�}�b�s���O�̊e�v�f���V�F�[�_�[�ɓn��
+	// ディスプレースメントマッピングの各要素をシェーダーに渡す
 	CONSTANT_BUFFER_DISPLACE sg;
 	if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferDisplace, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
 	{
 
-		// ���f�����猩�����_�ʒu�i�܂�A���f���̋t���[���h�����������_�j��n��
+		// モデルから見た視点位置（つまり、モデルの逆ワールドをかけた視点）を渡す
 		sg.vEyePosInv = XMVector3TransformCoord(vEye, XMMatrixInverse(nullptr, mWorld));
 
-		// �ŏ�����(1.0�ȏ�)�A�ő勗��
+		// 最小距離(1.0以上)、最大距離
 		sg.fMinDistance = 5.0f;
 		sg.fMaxDistance = 40.0f;
-		// �ő啪����
+		// 最大分割数
 		sg.iMaxDevide = m_iMaxDevide;
 
-		// ������n��
+		// 高さを渡す
 		sg.vHeight = VECTOR2(0.0f, m_fHeightMax);
 
-		// �_�~�[
+		// ダミー
 		sg.vWaveMove = VECTOR4(0.0f, 0.0f, 0.0f, 0.0f);
 		sg.vSpecular = VECTOR4(0.0f, 0.0f, 0.0f, 0.0f);
 
 		memcpy_s(pData.pData, pData.RowPitch, (void*)&sg, sizeof(CONSTANT_BUFFER_DISPLACE));
 		m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferDisplace, 0);
 	}
-	// ���̃R���X�^���g�o�b�t�@�[���g���V�F�[�_�[�̓o�^
-	m_pD3D->m_pDeviceContext->VSSetConstantBuffers(1, 1, &m_pShader->m_pConstantBufferDisplace); // �o�[�e�b�N�X�V�F�[�_�[�Ŏg��
-	m_pD3D->m_pDeviceContext->DSSetConstantBuffers(1, 1, &m_pShader->m_pConstantBufferDisplace); // �h���C���V�F�[�_�[�Ŏg��
-	m_pD3D->m_pDeviceContext->HSSetConstantBuffers(1, 1, &m_pShader->m_pConstantBufferDisplace); // �n���V�F�[�_�[�Ŏg��
-	m_pD3D->m_pDeviceContext->PSSetConstantBuffers(1, 1, &m_pShader->m_pConstantBufferDisplace); // �s�N�Z���V�F�[�_�[�Ŏg��
+	// このコンスタントバッファーを使うシェーダーの登録
+	m_pD3D->m_pDeviceContext->VSSetConstantBuffers(1, 1, &m_pShader->m_pConstantBufferDisplace); // バーテックスシェーダーで使う
+	m_pD3D->m_pDeviceContext->DSSetConstantBuffers(1, 1, &m_pShader->m_pConstantBufferDisplace); // ドメインシェーダーで使う
+	m_pD3D->m_pDeviceContext->HSSetConstantBuffers(1, 1, &m_pShader->m_pConstantBufferDisplace); // ハルシェーダーで使う
+	m_pD3D->m_pDeviceContext->PSSetConstantBuffers(1, 1, &m_pShader->m_pConstantBufferDisplace); // ピクセルシェーダーで使う
 
 
-	// ���_�C���v�b�g���C�A�E�g���Z�b�g
-	//  (�f�B�X�v���C�X�����g�}�b�s���O���A���_���C�A�E�g�́A�X�^�e�B�b�N���b�V���Ƌ��p)
+	// 頂点インプットレイアウトをセット
+	//  (ディスプレイスメントマッピングも、頂点レイアウトは、スタティックメッシュと共用)
 	m_pD3D->m_pDeviceContext->IASetInputLayout(m_pShader->m_pFbxStaticMesh_VertexLayout);
 
-	// �v���~�e�B�u�E�g�|���W�[���Z�b�g(�f�B�X�v���C�X�����g�}�b�s���O�p)
+	// プリミティブ・トポロジーをセット(ディスプレイスメントマッピング用)
 	m_pD3D->m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 
 
-	// �e�N�X�`���[�T���v���[���V�F�[�_�[�ɓn��
+	// テクスチャーサンプラーをシェーダーに渡す
 	// m_pD3D->m_pDeviceContext->DSSetSamplers(0, 1, &m_pD3D->m_pSampleLinear);
 	m_pD3D->m_pDeviceContext->PSSetSamplers(0, 1, &m_pD3D->m_pSampleLinear);
 
-	// ���b�V���̕`�揇�����肷��m_dwRenderIdxArray�̐ݒ�   // -- 2018.8.1
+	// メッシュの描画順を決定するm_dwRenderIdxArrayの設定   // -- 2018.8.1
 	SetRenderIdxArray(mWorld, vEye);
 
-	// ���b�V���̐������e�N�X�`���[�A�o�[�e�b�N�X�o�b�t�@�A�C���f�b�N�X�o�b�t�@���Z�b�g���āA�����_�����O����
+	// メッシュの数だけテクスチャー、バーテックスバッファ、インデックスバッファをセットして、レンダリングする
 	for (DWORD mi = 0; mi < m_dwMeshNum; mi++)   // -- 2018.8.1
 	{
-		DWORD i = m_dwRenderIdxArray[mi];   // -- 2018.8.1
+		DWORD i = m_RenderOrder[mi].Idx;   // -- 2025.3.15
 
-		// �e�N�X�`���i�f�B�t���[�Y�A�m�[�}���A�n�C�g�A�X�y�L�����j���h���C���V�F�[�_�[�ƃs�N�Z���V�F�[�_�[�ɓn���B�X���b�g�ԍ���0�`3
-		SetShaderTexture(_T("DSPS"), 0, &m_pMeshArray[i].m_pTexture);             // �f�B�t���[�Y�e�N�X�`��
-		SetShaderTexture(_T("DSPS"), 1, &m_pMeshArray[i].m_pTextureNormal);       // �m�[�}���e�N�X�`��
-		SetShaderTexture(_T("DSPS"), 2, &m_pMeshArray[i].m_pTextureHeight);       // �n�C�g�e�N�X�`��
-		SetShaderTexture(_T("DSPS"), 3, &m_pMeshArray[i].m_pTextureSpecular);     // �X�y�L�����e�N�X�`��
+		// テクスチャ（ディフューズ、ノーマル、ハイト、スペキュラ）をドメインシェーダーとピクセルシェーダーに渡す。スロット番号は0～3
+		SetShaderTexture(_T("DSPS"), 0, &m_pMeshArray[i].m_pTexture);             // ディフューズテクスチャ
+		SetShaderTexture(_T("DSPS"), 1, &m_pMeshArray[i].m_pTextureNormal);       // ノーマルテクスチャ
+		SetShaderTexture(_T("DSPS"), 2, &m_pMeshArray[i].m_pTextureHeight);       // ハイトテクスチャ
+		SetShaderTexture(_T("DSPS"), 3, &m_pMeshArray[i].m_pTextureSpecular);     // スペキュラテクスチャ
 
-		// �f�B�t���[�Y�e�N�X�`�����Ȃ��Ƃ��̂݃V�F�[�_�[�̃R���X�^���g�o�b�t�@�[�Ƀ}�e���A���J���[��n��        // -- 2020.12.15
+		// ディフューズテクスチャがないときのみシェーダーのコンスタントバッファーにマテリアルカラーを渡す        // -- 2020.12.15
 		if (m_pMeshArray[i].m_pTexture == nullptr)
 		{
-			SetShaderMatColor(_T("DSPS"), 3, i);   // �}�e���A���J���[��DSPS�ɓn��
+			SetShaderMatColor(_T("DSPS"), 3, i);   // マテリアルカラーをDSPSに渡す
 		}
 
-		// �o�[�e�b�N�X�o�b�t�@�[���Z�b�g
+		// バーテックスバッファーをセット
 		UINT stride = sizeof(StaticVertexNormal);
 		UINT offset = 0;
 		m_pD3D->m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pMeshArray[i].m_pVertexBuffer, &stride, &offset);
 
-		//�C���f�b�N�X�o�b�t�@�[���Z�b�g
+		//インデックスバッファーをセット
 		m_pD3D->m_pDeviceContext->IASetIndexBuffer(m_pMeshArray[i].m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-		//�v���~�e�B�u�������_�����O
-		// �i�C���f�b�N�X�̐����w�肵�ă����_�����O�j
+		//プリミティブをレンダリング
+		// （インデックスの数を指定してレンダリング）
 		m_pD3D->m_pDeviceContext->DrawIndexed(m_pMeshArray[i].m_dwIndicesNum, 0, 0);
 
 	}
 
-	// �n���V�F�[�_�[�ƃh���C���V�F�[�_�[�����Z�b�g����
+	// ハルシェーダーとドメインシェーダーをリセットする
 	m_pD3D->m_pDeviceContext->HSSetShader(nullptr, nullptr, 0);
 	m_pD3D->m_pDeviceContext->DSSetShader(nullptr, nullptr, 0);
 
-	//m_pD3D->m_pDeviceContext->RSSetState(m_pD3D->m_pRStateL);  // �����ʏ�\��
+	//m_pD3D->m_pDeviceContext->RSSetState(m_pD3D->m_pRStateL);  // 左回り通常表示
 
 }
 
 //------------------------------------------------------------------------
 //																		  // -- 2024.9.5
-//	���b�V������ʂɃ����_�����O���鏈��
+//	メッシュを画面にレンダリングする処理
 //
-// ����
-//      Animator* animStatus    �A�j���[�V�����X�e�[�^�X
-//      const MATRIX4X4& mWorld         ���[���h�}�g���b�N�X
-//      const MATRIX4X4& mView          �r���[�}�g���b�N�X
-//      const MATRIX4X4& mProj          �v���W�F�N�V�����}�g���b�N�X
-//      const VECTOR3&   vLight         �����x�N�g��
-//      const VECTOR3&   vEye           ���_�x�N�g��
+// 引数
+//      Animator* animStatus    アニメーションステータス
+//      const MATRIX4X4& mWorld         ワールドマトリックス
+//      const MATRIX4X4& mView          ビューマトリックス
+//      const MATRIX4X4& mProj          プロジェクションマトリックス
+//      const VECTOR3&   vLight         光源ベクトル
+//      const VECTOR3&   vEye           視点ベクトル
 //
-//	�߂�l 
-//		�Ȃ�
+//	戻り値 
+//		なし
 //
 //------------------------------------------------------------------------
 void CFbxMesh::Render(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye)
@@ -1804,8 +1791,8 @@ void CFbxMesh::RenderDisplace(Animator* animStatus, const MATRIX4X4& mWorld, con
 		RenderDisplaceSkin(animStatus, mWorld, mView, mProj, vLight, vEye);
 	}
 }
-// �V�F�[�_�[�{�[���z��̃{�[���}�g���b�N�X���~�b�N�X����
-// �Ȃ��A�V�F�[�_�[�{�[���}�g���b�N�X�͓]�u�s��ɂȂ��Ă���
+// シェーダーボーン配列のボーンマトリックスをミックスする
+// なお、シェーダーボーンマトリックスは転置行列になっている
 void CFbxMesh::MakeBoneMatrix(Animator* animStatus, MATRIX4X4* mat, const CFbxMeshArray& _mesh)
 {
 	if (animStatus == nullptr) return;
@@ -1820,7 +1807,7 @@ void CFbxMesh::MakeBoneMatrix(Animator* animStatus, MATRIX4X4* mat, const CFbxMe
 			frnext = m_Animation[animNum].endFrame;
 	}
 	float rate = animStatus->CurrentFrame() - (float)frint;
-	if (animStatus->Rate() >= 1.0f) { // �u�����h����K�v�Ȃ�
+	if (animStatus->Rate() >= 1.0f) { // ブレンドする必要なし
 		VECTOR4* org1 = (VECTOR4*)&_mesh.m_pBoneShader[animNum][frint].shaderFramePose;
 		VECTOR4* org2 = (VECTOR4*)&_mesh.m_pBoneShader[animNum][frnext].shaderFramePose;
 		VECTOR4* dst = (VECTOR4*)mat;
@@ -1856,139 +1843,139 @@ void CFbxMesh::MakeBoneMatrix(Animator* animStatus, MATRIX4X4* mat, const CFbxMe
 
 //------------------------------------------------------------------------
 //
-//	�X�L�����b�V������ʂɃ����_�����O���鏈��
+//	スキンメッシュを画面にレンダリングする処理
 //
-// ����
-//      ANIMATION_STATUS& animStatus    �A�j���[�V�����X�e�[�^�X
-//      const MATRIX4X4& mWorld         ���[���h�}�g���b�N�X
-//      const MATRIX4X4& mView          �r���[�}�g���b�N�X
-//      const MATRIX4X4& mProj          �v���W�F�N�V�����}�g���b�N�X
-//      const VECTOR3&   vLight         �����x�N�g��
-//      const VECTOR3&   vEye           ���_�x�N�g��
+// 引数
+//      ANIMATION_STATUS& animStatus    アニメーションステータス
+//      const MATRIX4X4& mWorld         ワールドマトリックス
+//      const MATRIX4X4& mView          ビューマトリックス
+//      const MATRIX4X4& mProj          プロジェクションマトリックス
+//      const VECTOR3&   vLight         光源ベクトル
+//      const VECTOR3&   vEye           視点ベクトル
 //
-//	�߂�l 
-//		�Ȃ�
+//	戻り値 
+//		なし
 //
 //------------------------------------------------------------------------
 void CFbxMesh::RenderSkin(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye)
 {
-	// ���b�V���̕`��
+	// メッシュの描画
 	Draw(animStatus, mWorld, mView, mProj, vLight, vEye);				   // -- 2024.9.5
 }
 
 //------------------------------------------------------------------------
 //																		   // -- 2024.9.5
-//	�X�L�����b�V������ʂɕ`�悷�鏈��
+//	スキンメッシュを画面に描画する処理
 //
-// ����
-//      const int&       animNum   �A�j���[�V�����ԍ� 
-//      const int&       frame     �A�j���[�V�����t���[��
-//      const MATRIX4X4& mWorld    ���[���h�}�g���b�N�X
-//      const MATRIX4X4& mView     �r���[�}�g���b�N�X
-//      const MATRIX4X4& mProj     �v���W�F�N�V�����}�g���b�N�X
-//      const VECTOR3&   vLight    �����x�N�g��
-//      const VECTOR3&   vEye      ���_�x�N�g��
+// 引数
+//      const int&       animNum   アニメーション番号 
+//      const int&       frame     アニメーションフレーム
+//      const MATRIX4X4& mWorld    ワールドマトリックス
+//      const MATRIX4X4& mView     ビューマトリックス
+//      const MATRIX4X4& mProj     プロジェクションマトリックス
+//      const VECTOR3&   vLight    光源ベクトル
+//      const VECTOR3&   vEye      視点ベクトル
 //
-//	�߂�l 
-//		�Ȃ�
+//	戻り値 
+//		なし
 //
 //------------------------------------------------------------------------
 void CFbxMesh::Draw(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye)
 {
 	if (animStatus == nullptr) return;    // -- 2024.9.5
 
-	//�g�p����V�F�[�_�[�̓o�^	
+	//使用するシェーダーの登録	
 	m_pD3D->m_pDeviceContext->VSSetShader(m_pShader->m_pFbxSkinMesh_VS, nullptr, 0);
 	m_pD3D->m_pDeviceContext->PSSetShader(m_pShader->m_pFbxSkinMesh_PS, nullptr, 0);
 
-	//�V�F�[�_�[�̃R���X�^���g�o�b�t�@�[�Ɋe��f�[�^��n��	
+	//シェーダーのコンスタントバッファーに各種データを渡す	
 	D3D11_MAPPED_SUBRESOURCE pData;
 	CONSTANT_BUFFER_WVLED cb;
 	if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferWVLED, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
 	{
-		//���[���h�s���n��
+		//ワールド行列を渡す
 		cb.mW = XMMatrixTranspose(mWorld);
 
-		//���[���h�A�J�����A�ˉe�s���n��
+		//ワールド、カメラ、射影行列を渡す
 		cb.mWVP = XMMatrixTranspose(mWorld * mView * mProj);
 
-		//���C�g������n��
+		//ライト方向を渡す
 		cb.vLightDir = VECTOR4(vLight.x, vLight.y, vLight.z, 0);
 
-		// ���_��n��
+		// 視点を渡す
 		cb.vEyePos = VECTOR4(vEye.x, vEye.y, vEye.z, 1);
 
-		//�J���[��n��
+		//カラーを渡す
 		cb.vDiffuse = m_vDiffuse;
 
-		// �e�����n���B(�g���Ă��Ȃ�)       // -- 2020.12.15
+		// 各種情報を渡す。(使っていない)       // -- 2020.12.15
 		cb.vDrawInfo = VECTOR4(0, 0, 0, 0);
 
 		memcpy_s(pData.pData, pData.RowPitch, (void*)(&cb), sizeof(cb));
 		m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferWVLED, 0);
 	}
 
-	//���̃R���X�^���g�o�b�t�@�[���g���V�F�[�_�[�̓o�^
+	//このコンスタントバッファーを使うシェーダーの登録
 	m_pD3D->m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferWVLED);
 	m_pD3D->m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferWVLED);
 
 
-	//���̃R���X�^���g�o�b�t�@�[���g���V�F�[�_�[�̓o�^
+	//このコンスタントバッファーを使うシェーダーの登録
 	m_pD3D->m_pDeviceContext->VSSetConstantBuffers(1, 1, &m_pShader->m_pConstantBufferBone2);
 	m_pD3D->m_pDeviceContext->PSSetConstantBuffers(1, 1, &m_pShader->m_pConstantBufferBone2);
 
-	//���_�C���v�b�g���C�A�E�g���Z�b�g
+	//頂点インプットレイアウトをセット
 	m_pD3D->m_pDeviceContext->IASetInputLayout(m_pShader->m_pFbxSkinMesh_VertexLayout);
 
-	//�v���~�e�B�u�E�g�|���W�[���Z�b�g
+	//プリミティブ・トポロジーをセット
 	m_pD3D->m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	//�e�N�X�`���[�T���v���[���V�F�[�_�[�ɓn��
+	//テクスチャーサンプラーをシェーダーに渡す
 	m_pD3D->m_pDeviceContext->PSSetSamplers(0, 1, &m_pD3D->m_pSampleLinear);
 
-	// ���b�V���̕`�揇�����肷��m_dwRenderIdxArray�̐ݒ�   // -- 2018.8.1
+	// メッシュの描画順を決定するm_dwRenderIdxArrayの設定   // -- 2018.8.1
 	SetRenderIdxArray(mWorld, vEye);
 
-	// ���b�V���̐������e�N�X�`���[�A�o�[�e�b�N�X�o�b�t�@�A�C���f�b�N�X�o�b�t�@�A�{�[���s����Z�b�g���āA�����_�����O����
+	// メッシュの数だけテクスチャー、バーテックスバッファ、インデックスバッファ、ボーン行列をセットして、レンダリングする
 	for (DWORD mi = 0; mi < m_dwMeshNum; mi++)   // -- 2018.8.1
 	{
-		DWORD i = m_dwRenderIdxArray[mi];   // -- 2018.8.1
+		DWORD i = m_RenderOrder[mi].Idx;   // -- 2025.3.15
 
-		// �e�N�X�`���i�f�B�t���[�Y�A�m�[�}���A�X�y�L�����j���s�N�Z���V�F�[�_�[�ɓn���B�X���b�g�ԍ���0,1,3
-		SetShaderTexture(_T("PS"), 0, &m_pMeshArray[i].m_pTexture);             // �f�B�t���[�Y�e�N�X�`��
-		SetShaderTexture(_T("PS"), 1, &m_pMeshArray[i].m_pTextureNormal);       // �m�[�}���e�N�X�`��
-		SetShaderTexture(_T("PS"), 3, &m_pMeshArray[i].m_pTextureSpecular);     // �X�y�L�����e�N�X�`��
+		// テクスチャ（ディフューズ、ノーマル、スペキュラ）をピクセルシェーダーに渡す。スロット番号は0,1,3
+		SetShaderTexture(_T("PS"), 0, &m_pMeshArray[i].m_pTexture);             // ディフューズテクスチャ
+		SetShaderTexture(_T("PS"), 1, &m_pMeshArray[i].m_pTextureNormal);       // ノーマルテクスチャ
+		SetShaderTexture(_T("PS"), 3, &m_pMeshArray[i].m_pTextureSpecular);     // スペキュラテクスチャ
 
-		// �f�B�t���[�Y�e�N�X�`�����Ȃ��Ƃ��̂݃V�F�[�_�[�̃R���X�^���g�o�b�t�@�[�Ƀ}�e���A���J���[��n��        // -- 2020.12.15
+		// ディフューズテクスチャがないときのみシェーダーのコンスタントバッファーにマテリアルカラーを渡す        // -- 2020.12.15
 		if (m_pMeshArray[i].m_pTexture == nullptr)
 		{
-			SetShaderMatColor(_T("PS"), 3, i);   // �}�e���A���J���[��PS�ɓn��
+			SetShaderMatColor(_T("PS"), 3, i);   // マテリアルカラーをPSに渡す
 		}
 
-		// �o�[�e�b�N�X�o�b�t�@�[���Z�b�g
+		// バーテックスバッファーをセット
 		UINT stride = sizeof(SkinVertexNormal);
 		UINT offset = 0;
 		m_pD3D->m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pMeshArray[i].m_pVertexBuffer, &stride, &offset);
 
-		//�C���f�b�N�X�o�b�t�@�[���Z�b�g
+		//インデックスバッファーをセット
 		m_pD3D->m_pDeviceContext->IASetIndexBuffer(m_pMeshArray[i].m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-		// �{�[���s����{�[���̃R���X�^���g�o�b�t�@�ɃZ�b�g
+		// ボーン行列をボーンのコンスタントバッファにセット
 		if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(
-			m_pShader->m_pConstantBufferBone2,   // �}�b�v���郊�\�[�X�E�{�[���s��p�R���X�^���g�o�b�t�@
-			0,                               // �T�u���\�[�X�̃C���f�b�N�X�ԍ�
-			D3D11_MAP_WRITE_DISCARD,         // �������݃A�N�Z�X
+			m_pShader->m_pConstantBufferBone2,   // マップするリソース・ボーン行列用コンスタントバッファ
+			0,                               // サブリソースのインデックス番号
+			D3D11_MAP_WRITE_DISCARD,         // 書き込みアクセス
 			0,                               //
-			&pData)))                        // �f�[�^�̏������ݐ�|�C���^
+			&pData)))                        // データの書き込み先ポインタ
 		{
-			// ���̃��b�V���̃V�F�[�_�[�{�[���z��̂����A�w�肳�ꂽ�A�j���[�V�����ԍ��ianimNum�j�A�t���[���ԍ�(frame)�̃{�[���s��z���擪����{�[���������]������
+			// このメッシュのシェーダーボーン配列のうち、指定されたアニメーション番号（animNum）、フレーム番号(frame)のボーン行列配列を先頭からボーン数だけ転送する
 			MakeBoneMatrix(animStatus, (MATRIX4X4*)pData.pData, m_pMeshArray[i]);
-//			memcpy_s(pData.pData, sizeof(MATRIX4X4)*m_pMeshArray[i].m_NumBones, &m_pMeshArray[i].m_pBoneShader[animNum][frame].shaderFramePose, sizeof(MATRIX4X4)*m_pMeshArray[i].m_NumBones);		// cbBones�̏������� �S�{�[���̃t���[���|�[�Y�s���n��
+//			memcpy_s(pData.pData, sizeof(MATRIX4X4)*m_pMeshArray[i].m_NumBones, &m_pMeshArray[i].m_pBoneShader[animNum][frame].shaderFramePose, sizeof(MATRIX4X4)*m_pMeshArray[i].m_NumBones);		// cbBonesの書き込み 全ボーンのフレームポーズ行列を渡す
 			m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferBone2, 0);
 		}
 
-		//�v���~�e�B�u�������_�����O
-		// �i�C���f�b�N�X�̐����w�肵�ă����_�����O�j
+		//プリミティブをレンダリング
+		// （インデックスの数を指定してレンダリング）
 		m_pD3D->m_pDeviceContext->DrawIndexed(m_pMeshArray[i].m_dwIndicesNum, 0, 0);
 	}
 
@@ -1996,187 +1983,187 @@ void CFbxMesh::Draw(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4
 
 //------------------------------------------------------------------------    // -- 2024.9.5
 //
-//	�X�L�����b�V������ʂɃ����_�����O���鏈��(�f�B�X�v���[�X�����g�}�b�s���O)
+//	スキンメッシュを画面にレンダリングする処理(ディスプレースメントマッピング)
 //
-// ����
-//      ANIMATION_STATUS& animStatus    �A�j���[�V�����X�e�[�^�X
-//      const MATRIX4X4& mWorld         ���[���h�}�g���b�N�X
-//      const MATRIX4X4& mView          �r���[�}�g���b�N�X
-//      const MATRIX4X4& mProj          �v���W�F�N�V�����}�g���b�N�X
-//      const VECTOR3&   vLight         �����x�N�g��
-//      const VECTOR3&   vEye           ���_�x�N�g��
+// 引数
+//      ANIMATION_STATUS& animStatus    アニメーションステータス
+//      const MATRIX4X4& mWorld         ワールドマトリックス
+//      const MATRIX4X4& mView          ビューマトリックス
+//      const MATRIX4X4& mProj          プロジェクションマトリックス
+//      const VECTOR3&   vLight         光源ベクトル
+//      const VECTOR3&   vEye           視点ベクトル
 //
-//	�߂�l 
-//		�Ȃ�
+//	戻り値 
+//		なし
 //
 //------------------------------------------------------------------------
 void CFbxMesh::RenderDisplaceSkin(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye)
 {
-	// ���b�V���̕`��
+	// メッシュの描画
 	DrawDisplace(animStatus, mWorld, mView, mProj, vLight, vEye);		  // -- 2024.9.5
 }
 
 //------------------------------------------------------------------------  // -- 2020.1.15
 //
-//	�X�L�����b�V������ʂɕ`�悷�鏈��(�f�B�X�v���[�X�����g�}�b�s���O)
+//	スキンメッシュを画面に描画する処理(ディスプレースメントマッピング)
 //
-// ����
-//      const int&       animNum   �A�j���[�V�����ԍ� 
-//      const int&       frame     �A�j���[�V�����t���[��
-//      const MATRIX4X4& mWorld    ���[���h�}�g���b�N�X
-//      const MATRIX4X4& mView     �r���[�}�g���b�N�X
-//      const MATRIX4X4& mProj     �v���W�F�N�V�����}�g���b�N�X
-//      const VECTOR3&   vLight    �����x�N�g��
-//      const VECTOR3&   vEye      ���_�x�N�g��
+// 引数
+//      const int&       animNum   アニメーション番号 
+//      const int&       frame     アニメーションフレーム
+//      const MATRIX4X4& mWorld    ワールドマトリックス
+//      const MATRIX4X4& mView     ビューマトリックス
+//      const MATRIX4X4& mProj     プロジェクションマトリックス
+//      const VECTOR3&   vLight    光源ベクトル
+//      const VECTOR3&   vEye      視点ベクトル
 //
-//	�߂�l 
-//		�Ȃ�
+//	戻り値 
+//		なし
 //
 //------------------------------------------------------------------------
 void CFbxMesh::DrawDisplace(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye)
 {
 	if (animStatus == nullptr) return;    // -- 2024.9.5
 
-	//�g�p����V�F�[�_�[�̓o�^	
+	//使用するシェーダーの登録	
 	m_pD3D->m_pDeviceContext->VSSetShader(m_pShader->m_pDisplaceSkinMesh_VS, nullptr, 0);
 	m_pD3D->m_pDeviceContext->HSSetShader(m_pShader->m_pDisplaceSkinMesh_HS, nullptr, 0);
 	m_pD3D->m_pDeviceContext->DSSetShader(m_pShader->m_pDisplaceSkinMesh_DS, nullptr, 0);
 	m_pD3D->m_pDeviceContext->PSSetShader(m_pShader->m_pDisplaceSkinMesh_PS, nullptr, 0);
 
 
-	// �V�F�[�_�[�̃R���X�^���g�o�b�t�@�[�Ɋe��f�[�^��n��	
+	// シェーダーのコンスタントバッファーに各種データを渡す	
 	D3D11_MAPPED_SUBRESOURCE pData;
 	CONSTANT_BUFFER_WVLED cb;
 	if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferWVLED, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
 	{
-		// ���[���h�s���n��
+		// ワールド行列を渡す
 		cb.mW = XMMatrixTranspose(mWorld);
 
-		// ���[���h�A�J�����A�ˉe�s���n��
+		// ワールド、カメラ、射影行列を渡す
 		cb.mWVP = XMMatrixTranspose(mWorld * mView * mProj);
 
-		// ���_�ʒu��n��
+		// 視点位置を渡す
 		cb.vEyePos = VECTOR4(vEye.x, vEye.y, vEye.z, 1);
 
-		// ���C�g�̕�����n��
+		// ライトの方向を渡す
 		cb.vLightDir.x = vLight.x;
 		cb.vLightDir.y = vLight.y;
 		cb.vLightDir.z = vLight.z;
 		cb.vLightDir.w = 0;
 
-		// �J���[���V�F�[�_�[�ɓn��
+		// カラーをシェーダーに渡す
 		cb.vDiffuse = m_vDiffuse;
 
-		// �e�����n���B(�g���Ă��Ȃ�)       // -- 2020.12.15
+		// 各種情報を渡す。(使っていない)       // -- 2020.12.15
 		cb.vDrawInfo = VECTOR4(0, 0, 0, 0);
 
 		memcpy_s(pData.pData, pData.RowPitch, (void*)(&cb), sizeof(cb));
 		m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferWVLED, 0);
 	}
-	// ���̃R���X�^���g�o�b�t�@�[���A�ǂ̃V�F�[�_�[�Ŏg�������w��
-	m_pD3D->m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferWVLED); // �o�[�e�b�N�X�V�F�[�_�[�Ŏg��
-	m_pD3D->m_pDeviceContext->DSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferWVLED); // �h���C���V�F�[�_�[�Ŏg��
-	m_pD3D->m_pDeviceContext->HSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferWVLED); // �n���V�F�[�_�[�Ŏg��
-	m_pD3D->m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferWVLED); // �s�N�Z���V�F�[�_�[�Ŏg��
+	// このコンスタントバッファーを、どのシェーダーで使うかを指定
+	m_pD3D->m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferWVLED); // バーテックスシェーダーで使う
+	m_pD3D->m_pDeviceContext->DSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferWVLED); // ドメインシェーダーで使う
+	m_pD3D->m_pDeviceContext->HSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferWVLED); // ハルシェーダーで使う
+	m_pD3D->m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferWVLED); // ピクセルシェーダーで使う
 
 
-	// �f�B�X�v���[�X�����g�}�b�s���O�̊e�v�f���V�F�[�_�[�ɓn��
+	// ディスプレースメントマッピングの各要素をシェーダーに渡す
 	CONSTANT_BUFFER_DISPLACE sg;
 	if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferDisplace, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
 	{
 
-		// ���f�����猩�����_�ʒu�i�܂�A���f���̋t���[���h�����������_�j��n��
+		// モデルから見た視点位置（つまり、モデルの逆ワールドをかけた視点）を渡す
 		sg.vEyePosInv = XMVector3TransformCoord(vEye, XMMatrixInverse(nullptr, mWorld));
 
-		// �ŏ�����(1.0�ȏ�)�A�ő勗��
+		// 最小距離(1.0以上)、最大距離
 		sg.fMinDistance = 3.0f;
 		sg.fMaxDistance = 30.0f;
-		// �ő啪����
+		// 最大分割数
 		sg.iMaxDevide = m_iMaxDevide;
 
-		// ������n��
+		// 高さを渡す
 		sg.vHeight = VECTOR2(0.0f, m_fHeightMax);
 
-		// �_�~�[
+		// ダミー
 		sg.vWaveMove = VECTOR4(0.0f, 0.0f, 0.0f, 0.0f);
 		sg.vSpecular = VECTOR4(0.0f, 0.0f, 0.0f, 0.0f);
 
 		memcpy_s(pData.pData, pData.RowPitch, (void*)&sg, sizeof(CONSTANT_BUFFER_DISPLACE));
 		m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferDisplace, 0);
 	}
-	// ���̃R���X�^���g�o�b�t�@�[���g���V�F�[�_�[�̓o�^
+	// このコンスタントバッファーを使うシェーダーの登録
 	m_pD3D->m_pDeviceContext->VSSetConstantBuffers(1, 1, &m_pShader->m_pConstantBufferDisplace);
 	m_pD3D->m_pDeviceContext->DSSetConstantBuffers(1, 1, &m_pShader->m_pConstantBufferDisplace);
 	m_pD3D->m_pDeviceContext->HSSetConstantBuffers(1, 1, &m_pShader->m_pConstantBufferDisplace);
 	m_pD3D->m_pDeviceContext->PSSetConstantBuffers(1, 1, &m_pShader->m_pConstantBufferDisplace);
 
 
-	//���̃R���X�^���g�o�b�t�@�[���g���V�F�[�_�[�̓o�^
+	//このコンスタントバッファーを使うシェーダーの登録
 	m_pD3D->m_pDeviceContext->VSSetConstantBuffers(2, 1, &m_pShader->m_pConstantBufferBone2);
 	m_pD3D->m_pDeviceContext->PSSetConstantBuffers(2, 1, &m_pShader->m_pConstantBufferBone2);
 
 
-	// ���_�C���v�b�g���C�A�E�g���Z�b�g
-	//  (�f�B�X�v���C�X�����g�}�b�s���O���A���_���C�A�E�g�́A�X�L�����b�V���Ƌ��p)
+	// 頂点インプットレイアウトをセット
+	//  (ディスプレイスメントマッピングも、頂点レイアウトは、スキンメッシュと共用)
 	m_pD3D->m_pDeviceContext->IASetInputLayout(m_pShader->m_pFbxSkinMesh_VertexLayout);
 
-	// �v���~�e�B�u�E�g�|���W�[���Z�b�g(�f�B�X�v���C�X�����g�}�b�s���O�p)
+	// プリミティブ・トポロジーをセット(ディスプレイスメントマッピング用)
 	m_pD3D->m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 
 
-	// �e�N�X�`���[�T���v���[���V�F�[�_�[�ɓn��
+	// テクスチャーサンプラーをシェーダーに渡す
 	// m_pD3D->m_pDeviceContext->DSSetSamplers(0, 1, &m_pD3D->m_pSampleLinear);
 	m_pD3D->m_pDeviceContext->PSSetSamplers(0, 1, &m_pD3D->m_pSampleLinear);
 
-	// ���b�V���̕`�揇�����肷��m_dwRenderIdxArray�̐ݒ� 
+	// メッシュの描画順を決定するm_dwRenderIdxArrayの設定 
 	SetRenderIdxArray(mWorld, vEye);
 
-	// ���b�V���̐������e�N�X�`���[�A�o�[�e�b�N�X�o�b�t�@�A�C���f�b�N�X�o�b�t�@���Z�b�g���āA�����_�����O����
+	// メッシュの数だけテクスチャー、バーテックスバッファ、インデックスバッファをセットして、レンダリングする
 	for (DWORD mi = 0; mi < m_dwMeshNum; mi++)
 	{
-		DWORD i = m_dwRenderIdxArray[mi];
+		DWORD i = m_RenderOrder[mi].Idx;	// -- 2025.3.15
 
-		// �e�N�X�`���i�f�B�t���[�Y�A�m�[�}���A�n�C�g�A�X�y�L�����j���h���C���V�F�[�_�[�ƃs�N�Z���V�F�[�_�[�ɓn���B�X���b�g�ԍ���0�`3
-		SetShaderTexture(_T("DSPS"), 0, &m_pMeshArray[i].m_pTexture);             // �f�B�t���[�Y�e�N�X�`��
-		SetShaderTexture(_T("DSPS"), 1, &m_pMeshArray[i].m_pTextureNormal);       // �m�[�}���e�N�X�`��
-		SetShaderTexture(_T("DSPS"), 2, &m_pMeshArray[i].m_pTextureHeight);       // �n�C�g�e�N�X�`��
-		SetShaderTexture(_T("DSPS"), 3, &m_pMeshArray[i].m_pTextureSpecular);     // �X�y�L�����e�N�X�`��
+		// テクスチャ（ディフューズ、ノーマル、ハイト、スペキュラ）をドメインシェーダーとピクセルシェーダーに渡す。スロット番号は0～3
+		SetShaderTexture(_T("DSPS"), 0, &m_pMeshArray[i].m_pTexture);             // ディフューズテクスチャ
+		SetShaderTexture(_T("DSPS"), 1, &m_pMeshArray[i].m_pTextureNormal);       // ノーマルテクスチャ
+		SetShaderTexture(_T("DSPS"), 2, &m_pMeshArray[i].m_pTextureHeight);       // ハイトテクスチャ
+		SetShaderTexture(_T("DSPS"), 3, &m_pMeshArray[i].m_pTextureSpecular);     // スペキュラテクスチャ
 
-		// �f�B�t���[�Y�e�N�X�`�����Ȃ��Ƃ��̂݃V�F�[�_�[�̃R���X�^���g�o�b�t�@�[�Ƀ}�e���A���J���[��n��        // -- 2020.12.15
+		// ディフューズテクスチャがないときのみシェーダーのコンスタントバッファーにマテリアルカラーを渡す        // -- 2020.12.15
 		if (m_pMeshArray[i].m_pTexture == nullptr)
 		{
-			SetShaderMatColor(_T("DSPS"), 3, i);   // �}�e���A���J���[��DSPS�ɓn��
+			SetShaderMatColor(_T("DSPS"), 3, i);   // マテリアルカラーをDSPSに渡す
 		}
 
-		// �o�[�e�b�N�X�o�b�t�@�[���Z�b�g
+		// バーテックスバッファーをセット
 		UINT stride = sizeof(SkinVertexNormal);
 		UINT offset = 0;
 		m_pD3D->m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pMeshArray[i].m_pVertexBuffer, &stride, &offset);
 
-		//�C���f�b�N�X�o�b�t�@�[���Z�b�g
+		//インデックスバッファーをセット
 		m_pD3D->m_pDeviceContext->IASetIndexBuffer(m_pMeshArray[i].m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-		// �{�[���s����{�[���̃R���X�^���g�o�b�t�@�ɃZ�b�g
+		// ボーン行列をボーンのコンスタントバッファにセット
 		if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(
-			m_pShader->m_pConstantBufferBone2,   // �}�b�v���郊�\�[�X�E�{�[���s��p�R���X�^���g�o�b�t�@
-			0,                               // �T�u���\�[�X�̃C���f�b�N�X�ԍ�
-			D3D11_MAP_WRITE_DISCARD,         // �������݃A�N�Z�X
+			m_pShader->m_pConstantBufferBone2,   // マップするリソース・ボーン行列用コンスタントバッファ
+			0,                               // サブリソースのインデックス番号
+			D3D11_MAP_WRITE_DISCARD,         // 書き込みアクセス
 			0,                               //
-			&pData)))                        // �f�[�^�̏������ݐ�|�C���^
+			&pData)))                        // データの書き込み先ポインタ
 		{
-			// ���̃��b�V���̃V�F�[�_�[�{�[���z��̂����A�w�肳�ꂽ�A�j���[�V�����ԍ��ianimNum�j�A�t���[���ԍ�(frame)�̃{�[���s��z���擪����{�[���������]������
-//			memcpy_s(pData.pData, sizeof(MATRIX4X4)*m_pMeshArray[i].m_NumBones, &m_pMeshArray[i].m_pBoneShader[animNum][frame].shaderFramePose, sizeof(MATRIX4X4)*m_pMeshArray[i].m_NumBones);		// cbBones�̏������� �S�{�[���̃t���[���|�[�Y�s���n��
+			// このメッシュのシェーダーボーン配列のうち、指定されたアニメーション番号（animNum）、フレーム番号(frame)のボーン行列配列を先頭からボーン数だけ転送する
+//			memcpy_s(pData.pData, sizeof(MATRIX4X4)*m_pMeshArray[i].m_NumBones, &m_pMeshArray[i].m_pBoneShader[animNum][frame].shaderFramePose, sizeof(MATRIX4X4)*m_pMeshArray[i].m_NumBones);		// cbBonesの書き込み 全ボーンのフレームポーズ行列を渡す
 			MakeBoneMatrix(animStatus, (MATRIX4X4*)pData.pData, m_pMeshArray[i]);
 			m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferBone2, 0);
 		}
 
-		//�v���~�e�B�u�������_�����O
-		// �i�C���f�b�N�X�̐����w�肵�ă����_�����O�j
+		//プリミティブをレンダリング
+		// （インデックスの数を指定してレンダリング）
 		m_pD3D->m_pDeviceContext->DrawIndexed(m_pMeshArray[i].m_dwIndicesNum, 0, 0);
 
 	}
 
-	// �n���V�F�[�_�[�ƃh���C���V�F�[�_�[�����Z�b�g����
+	// ハルシェーダーとドメインシェーダーをリセットする
 	m_pD3D->m_pDeviceContext->HSSetShader(nullptr, nullptr, 0);
 	m_pD3D->m_pDeviceContext->DSSetShader(nullptr, nullptr, 0);
 
@@ -2184,28 +2171,28 @@ void CFbxMesh::DrawDisplace(Animator* animStatus, const MATRIX4X4& mWorld, const
 
 //------------------------------------------------------------------------
 //
-//	�e�N�X�`�����V�F�[�_�[�ɓn������
+//	テクスチャをシェーダーに渡す処理
 //
-// ����
-//  TCHAR ProfileName[]        : �ݒ肷��V�F�[�_�[�̎�ށi"PS" or "DSPS"�j
-//  int   SlotNo               : �ݒ肷��X���b�g�ԍ�
-//  ID3D11ShaderResourceView** : �n���e�N�X�`��
+// 引数
+//  TCHAR ProfileName[]        : 設定するシェーダーの種類（"PS" or "DSPS"）
+//  int   SlotNo               : 設定するスロット番号
+//  ID3D11ShaderResourceView** : 渡すテクスチャ
 //  
-//  �߂�l 
+//  戻り値 
 //
 //------------------------------------------------------------------------
 void  CFbxMesh::SetShaderTexture(const TCHAR ProfileName[], int SlotNo, ID3D11ShaderResourceView** ppTexture)
 {
-	int prof = _tcscmp(_T("PS"), ProfileName);  // "PS"�݂̂̂Ƃ���0, "DSPS"�̂Ƃ���0�ȊO
+	int prof = _tcscmp(_T("PS"), ProfileName);  // "PS"のみのときは0, "DSPS"のときは0以外
 
 	if (ppTexture && *ppTexture)
 	{
-		// �e�N�X�`��������Ƃ�
-		if (prof != 0) m_pD3D->m_pDeviceContext->DSSetShaderResources(SlotNo, 1, ppTexture);  // �e�N�X�`���[���h���C���V�F�[�_�[�ɓn��
-		m_pD3D->m_pDeviceContext->PSSetShaderResources(SlotNo, 1, ppTexture);  // �e�N�X�`���[���s�N�Z���V�F�[�_�[�ɓn��
+		// テクスチャがあるとき
+		if (prof != 0) m_pD3D->m_pDeviceContext->DSSetShaderResources(SlotNo, 1, ppTexture);  // テクスチャーをドメインシェーダーに渡す
+		m_pD3D->m_pDeviceContext->PSSetShaderResources(SlotNo, 1, ppTexture);  // テクスチャーをピクセルシェーダーに渡す
 	}
 	else {
-		// �e�N�X�`���������Ƃ�
+		// テクスチャが無いとき
 		ID3D11ShaderResourceView* Nothing[1] = { 0 };
 		if (prof != 0) m_pD3D->m_pDeviceContext->DSSetShaderResources(SlotNo, 1, Nothing);
 		m_pD3D->m_pDeviceContext->PSSetShaderResources(SlotNo, 1, Nothing);
@@ -2214,50 +2201,50 @@ void  CFbxMesh::SetShaderTexture(const TCHAR ProfileName[], int SlotNo, ID3D11Sh
 
 //------------------------------------------------------------------------
 //
-//	�}�e���A���J���[���V�F�[�_�[�ɓn������
+//	マテリアルカラーをシェーダーに渡す処理
 //
-// ����
-//  TCHAR ProfileName[]        : �ݒ肷��V�F�[�_�[�̎�ށi"PS" or "DSPS"�j
-//  int   SlotNo               : �ݒ肷��X���b�g�ԍ�
-//  int   i                    : ���b�V���ԍ�
+// 引数
+//  TCHAR ProfileName[]        : 設定するシェーダーの種類（"PS" or "DSPS"）
+//  int   SlotNo               : 設定するスロット番号
+//  int   i                    : メッシュ番号
 //  
-//  �߂�l 
+//  戻り値 
 //
 //------------------------------------------------------------------------
 void  CFbxMesh::SetShaderMatColor(const TCHAR ProfileName[], int SlotNo, int i )
 {
-	int prof = _tcscmp(_T("PS"), ProfileName);  // "PS"�݂̂̂Ƃ���0, "DSPS"�̂Ƃ���0�ȊO
+	int prof = _tcscmp(_T("PS"), ProfileName);  // "PS"のみのときは0, "DSPS"のときは0以外
 
-	//�V�F�[�_�[�̃R���X�^���g�o�b�t�@�[�Ɋe��f�[�^��n��
+	//シェーダーのコンスタントバッファーに各種データを渡す
 	D3D11_MAPPED_SUBRESOURCE pData;
 	CONSTANT_BUFFER_MATERIAL cb = {};
 	if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferMaterial, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
 	{
-		// �}�e���A���J���[��n��
+		// マテリアルカラーを渡す
 		cb.vMatDuffuse = m_pMeshArray[i].m_pMaterialDiffuse;
 		cb.vMatSpecular = m_pMeshArray[i].m_pMaterialSpecular;
 		memcpy_s(pData.pData, pData.RowPitch, (void*)(&cb), sizeof(cb));
 		m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferMaterial, 0);
 	}
 
-	//���̃R���X�^���g�o�b�t�@�[���g���V�F�[�_�[�̓o�^
+	//このコンスタントバッファーを使うシェーダーの登録
 	if (prof != 0) m_pD3D->m_pDeviceContext->DSSetConstantBuffers(SlotNo, 1, &m_pShader->m_pConstantBufferMaterial);
 	m_pD3D->m_pDeviceContext->PSSetConstantBuffers(SlotNo, 1, &m_pShader->m_pConstantBufferMaterial);
 }
 
 // ----------------------------------------------------------------------------------------------------------------
 // 
-// FbxMeshCtrl  ���b�V���R���g���[���N���X                                              // -- 2021.2.4
+// FbxMeshCtrl  メッシュコントロールクラス                                              // -- 2021.2.4
 // 
-// ���b�V���̑����I�ȊǗ����s���N���X
-// ��Ƀe�N�X�`���̊Ǘ����s���B
-// �����̃��b�V���Ԃœ���̃e�N�X�`�����g���Ă���ꍇ�A�d������ǂݍ��݂�r������
+// メッシュの総合的な管理を行うクラス
+// 主にテクスチャの管理を行う。
+// 複数のメッシュ間で同一のテクスチャが使われている場合、重複する読み込みを排除する
 // 
 // -----------------------------------------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------
 //
-//	CFbxMeshCtrl  �R���X�g���N�^	
+//	CFbxMeshCtrl  コンストラクタ	
 //
 //------------------------------------------------------------------------
 CFbxMeshCtrl::CFbxMeshCtrl(CShader* pShader)
@@ -2267,89 +2254,89 @@ CFbxMeshCtrl::CFbxMeshCtrl(CShader* pShader)
 }
 //------------------------------------------------------------------------
 //
-//	CFbxMeshCtrl  �f�X�g���N�^	
+//	CFbxMeshCtrl  デストラクタ	
 //
 //------------------------------------------------------------------------
 CFbxMeshCtrl::~CFbxMeshCtrl()
 {
-	std::list<TextureList>::iterator itr;    // ���X�g�̃C�e���[�^
+	std::list<TextureList>::iterator itr;    // リストのイテレータ
 	for (itr = m_TexList.begin(); itr != m_TexList.end(); itr++)
 	{
-		// ���ۂ͎��O�Ƀ����[�X����Ă����ɂ͗��Ȃ��͂������A�O�̂��߃����[�X����
-		SAFE_RELEASE(itr->m_pTexture);   // �e�N�X�`���������[�X
+		// 実際は事前にリリースされてここには来ないはずだが、念のためリリースする
+		SAFE_RELEASE(itr->m_pTexture);   // テクスチャをリリース
 	}
-	m_TexList.clear();		// ���X�g�폜
+	m_TexList.clear();		// リスト削除
 }
 
 //------------------------------------------------------------------------
 //
-//	�e�N�X�`����ǂݍ��ޏ���	
+//	テクスチャを読み込む処理	
 //
-//	�����e�N�X�`�����d�����ēǂݍ��܂Ȃ��悤�Ƀ��X�g�ŊǗ�����	
-//	���ꖼ�̂̃e�N�X�`���́A�d�����ēǂݍ��܂��A���X�g��̃e�N�X�`���A�h���X��Ԃ�
-//	���X�g��ɂȂ��e�N�X�`���i�V�K�̃e�N�X�`���j�́A�ǂݍ���Ń��X�g�̖����ɓo�^����B���̃A�h���X��Ԃ��B
-//	���X�g�̃J�E���^(m_nCnt)�ŁA����e�N�X�`�����g�p���Ă��郁�b�V���̐��𐔂��Ă����B
+//	同じテクスチャを重複して読み込まないようにリストで管理する	
+//	同一名称のテクスチャは、重複して読み込まず、リスト上のテクスチャアドレスを返す
+//	リスト上にないテクスチャ（新規のテクスチャ）は、読み込んでリストの末尾に登録する。そのアドレスを返す。
+//	リストのカウンタ(m_nCnt)で、同一テクスチャを使用しているメッシュの数を数えておく。
 //
-//	����
-//	  const TCHAR FName[] : �e�N�X�`����
+//	引数
+//	  const TCHAR FName[] : テクスチャ名
 //
-//	�߂�l
-//	  ID3D11ShaderResourceView*	�e�N�X�`��
+//	戻り値
+//	  ID3D11ShaderResourceView*	テクスチャ
 //------------------------------------------------------------------------
 ID3D11ShaderResourceView* CFbxMeshCtrl::SetTextureList(const TCHAR FName[])
 {
 	TextureList tl;
-	std::list<TextureList>::iterator itr;    // ���X�g�̃C�e���[�^
+	std::list<TextureList>::iterator itr;    // リストのイテレータ
 
 	for (itr = m_TexList.begin(); itr != m_TexList.end(); itr++)
 	{
-		if (_tcscmp(itr->m_FName, FName) == 0)  // ���X�g�̒��Ɉ�v����e�N�X�`�����������Ƃ�
+		if (_tcscmp(itr->m_FName, FName) == 0)  // リストの中に一致するテクスチャがあったとき
 		{
-			itr->m_nCnt++;            // �J�E���g�ɂP�������i����͎g�p���Ă���ӏ��̃J�E���g�ɂȂ�j
-			return itr->m_pTexture;   // ���X�g�̒��̃e�N�X�`���A�h���X��Ԃ�
+			itr->m_nCnt++;            // カウントに１をたす（これは使用している箇所のカウントになる）
+			return itr->m_pTexture;   // リストの中のテクスチャアドレスを返す
 		}
 	}
 
-	// ���X�g�̒��Ɉ�v����e�N�X�`�����Ȃ������Ƃ��̓e�N�X�`����ǂݍ���Ń��X�g�ɒǉ�����
+	// リストの中に一致するテクスチャがなかったときはテクスチャを読み込んでリストに追加する
 	if (FAILED(m_pD3D->CreateShaderResourceViewFromFile(FName, &tl.m_pTexture, 3)))
 	{
-		// �e�N�X�`�����Ȃ������Ƃ�
-		//MessageBox(nullptr, FName, _T("������ SetTextureList �e�N�X�`���t�@�C��������܂��� ������"), MB_OK);
+		// テクスチャがなかったとき
+		//MessageBox(nullptr, FName, _T("■□■ SetTextureList テクスチャファイルがありません ■□■"), MB_OK);
 		return nullptr;
 	}
-	// �e�N�X�`�����������Ƃ�
+	// テクスチャがあったとき
 	_tcscpy_s(tl.m_FName, FName);
-	tl.m_nCnt = 1;				// �J�E���g���P�ɂ���
-	m_TexList.push_back(tl);  // ���X�g�̖����ɒǉ�����
+	tl.m_nCnt = 1;				// カウントを１にする
+	m_TexList.push_back(tl);  // リストの末尾に追加する
 
-	return tl.m_pTexture;	// �ǂݍ��񂾃e�N�X�`���A�h���X��Ԃ�
+	return tl.m_pTexture;	// 読み込んだテクスチャアドレスを返す
 }
 
 //------------------------------------------------------------------------
 //
-//	�w��̃e�N�X�`�������X�g����폜����	
+//	指定のテクスチャをリストから削除する	
 //
-//	���X�g�����ǂ�w��̃e�N�X�`���i�A�h���X�j����������
-//	����e�N�X�`��������������A�J�E���^(m_nCnt)����P������
-//	�J�E���^���O�ɂȂ�����A�������̃e�N�X�`�����g�p���Ă��郁�b�V����
-//	����Ȃ��Ȃ����ƌ������ƂȂ̂ŁA�e�N�X�`������������̃��X�g���폜����B
+//	リストをたどり指定のテクスチャ（アドレス）を検索する
+//	同一テクスチャが見つかったら、カウンタ(m_nCnt)から１を引く
+//	カウンタが０になったら、もうそのテクスチャを使用しているメッシュが
+//	一つもなくなったと言うことなので、テクスチャを解放しそのリストも削除する。
 //
-//	����
-//	  ID3D11ShaderResourceView* pTexture :	�e�N�X�`���A�h���X
+//	引数
+//	  ID3D11ShaderResourceView* pTexture :	テクスチャアドレス
 //
 //------------------------------------------------------------------------
 void CFbxMeshCtrl::DeleteTextureList(ID3D11ShaderResourceView* pTexture)
 {
-	std::list<TextureList>::iterator itr;    // ���X�g�̃C�e���[�^
+	std::list<TextureList>::iterator itr;    // リストのイテレータ
 
 	for (itr = m_TexList.begin(); itr != m_TexList.end(); itr++)
 	{
-		if (itr->m_pTexture == pTexture)  // �w��̃e�N�X�`�����������Ƃ�
+		if (itr->m_pTexture == pTexture)  // 指定のテクスチャがあったとき
 		{
-			itr->m_nCnt--;              // �J�E���^����P������
+			itr->m_nCnt--;              // カウンタから１を引く
 			if (itr->m_nCnt <= 0)
 			{
-				// �J�E���^���O�ɂȂ����̂ŁA�ǂ��ł��g���Ă��Ȃ��e�N�X�`���̂��ߍ폜����
+				// カウンタが０になったので、どこでも使われていないテクスチャのため削除する
 				SAFE_RELEASE(itr->m_pTexture);
 				m_TexList.erase(itr);
 			}

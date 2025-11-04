@@ -26,7 +26,6 @@ void CAnimalManager::Update()
 {
     if (GameDevice()->m_pDI->CheckKey(KD_TRG,DIK_0))
     {
-        //m_animals.emplace_back(new CACube);
         Instantiate<CACube>();
     }
     if (GameDevice()->m_pDI->CheckKey(KD_TRG,DIK_9))ObjectManager::FindGameObject<SpatialGrid>()->ClearGrid();
@@ -37,8 +36,18 @@ void CAnimalManager::Draw()
 {
 }
 
+void CAnimalManager::HitCheck()
+{
+    SphereCollider coll;
+    coll.center = VECTOR3(0, 0, 0);
+    coll.radius = 1;
+    MeshCollider::CollInfo info;
+}
+
 
 VECTOR3 CAnimalManager::GetObjectSize(MeshCollider* meshColl) const
 {
     return meshColl->bBox.max;
 }
+
+

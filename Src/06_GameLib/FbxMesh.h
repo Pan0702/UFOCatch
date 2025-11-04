@@ -11,6 +11,21 @@
 //=============================================================================
 #pragma once
 
+
+
+//=============================================================================
+//		メッシュの読み込みと描画のプログラム
+//　                                                  ver 4.1        2025.6.24
+//
+//		メッシュ処理
+//
+//      (メッシュコントロールクラスでテクスチャの総合管理を行う)
+//
+//
+//																	FbxMesh.h
+//=============================================================================
+#pragma once
+
 #include <list>
 #include "../02_DirectX/Direct3D.h"
 #include "../04_FrameWork/Shader.h"
@@ -121,6 +136,17 @@ struct BONESHADER
 // ルートボーンアニメーションタイプ
 enum ROOTANIMTYPE { eRootAnimNone = 0, eRootAnimXZ = 1, eRootAnim = 2 };          // -- 2020.12.15 -- 3
 
+// レンダリング順の構造体			  // -- 2025.3.15
+struct RENDERORDER
+{
+	DWORD                Idx;       // レンダリング順の添字
+	float                Distance;  // レンダリング順を決めるための距離
+	bool operator<(const RENDERORDER& another) const {
+		//メンバ変数であるDistanceで比較した結果を
+		//この構造体の比較とする
+		return Distance > another.Distance;
+	}
+};
 
 // メッシュ配列
 struct CFbxMeshArray
@@ -200,8 +226,7 @@ public:
 
 	DWORD                 m_dwLoadTime;         // ロード時間
 
-	DWORD*                m_dwRenderIdxArray;       // レンダリング順の添字配列
-	float*                m_fRenderDistanceArray;   // レンダリング順を決めるための距離
+	std::vector<RENDERORDER>  m_RenderOrder;        // レンダリング順を決めるための配列	  // -- 2025.3.15
 
 	VECTOR3               m_vMin;                   // モデルの大きさを測るための最小値  // -- 2021.2.4
 	VECTOR3               m_vMax;                   // モデルの大きさを測るための最大値  // -- 2021.2.4

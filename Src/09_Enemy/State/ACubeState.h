@@ -45,10 +45,11 @@ class CIdleState : public CACubeState
 {
 public:
     CIdleState(CACube* cube);
+    void Enter() override;
     void Update() override;
 
 private:
-    int timerCount;
+    float timerCount;
 };
 
 class CWalkState : public CACubeState
