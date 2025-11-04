@@ -10,9 +10,10 @@
 
 PlayScene::PlayScene()
 {
-	Instantiate<CPlayer>();
-	Instantiate<CPlayerCamera>();
-	Instantiate<CAnimalManager>();
+    Instantiate<CPlayer>();
+    Instantiate<CPlayerCamera>();
+    new CAnimalManager();
+    flag = false;
 }
 
 PlayScene::~PlayScene()
@@ -21,13 +22,18 @@ PlayScene::~PlayScene()
 
 void PlayScene::Update()
 {
-	if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_T)) {
-		SceneManager::ChangeScene("TitleScene");
-	}
+    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_T))
+    {
+        flag = ObjectManager::FindGameObject<CAnimalManager>()->CubesFree();
+    }
+    if (flag)
+    {
+        SceneManager::ChangeScene("TitleScene");
+    }
 }
 
 void PlayScene::Draw()
 {
-	GameDevice()->m_pFont->Draw(
-		20, 20, "PlayScene", 16, RGB(255, 255, 0));
+    GameDevice()->m_pFont->Draw(
+        20, 20, "PlayScene", 16, RGB(255, 255, 0));
 }
