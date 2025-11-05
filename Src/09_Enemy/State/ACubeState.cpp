@@ -9,6 +9,7 @@ namespace
     constexpr float MAX_MOVE_AMOUNT = 3.5f;
     constexpr float MIN_MOVE_AMOUNT = 1.0f;
     constexpr float TURN_ANGLE = 180.0f;
+    constexpr int MAX_SIZE = 3;
     std::queue<CACubeState::Type> actionQueue;
 }
 
@@ -17,9 +18,17 @@ CACubeState::CACubeState(CACube* cube, Type type)
 {
 }
 
+void CACubeState::Next()
+{
+    Type type = actionQueue.front();
+    actionQueue.pop();
+    SetNextState();
+    m_pCube->SetState(type);
+}
+
 void CACubeState::SetNextState()
 {
-    while (actionQueue.size() <= 3)
+    while (actionQueue.size() <= MAX_SIZE)
     {
         float randomNum = Randomf(0, 1);
         if (randomNum < 0.5f)
@@ -41,20 +50,43 @@ CIdleState::CIdleState(CACube* cube)
 
 void CIdleState::Enter()
 {
-   timerCount = 0;
+    stateWait = static_cast<int>(round(Randomf(0, 1)));
+    if (stateWait == 1)
+    {
+        m_pCube->SetAnim(A_RUN);
+    }
+    timerCount = 0;
 }
 
 void CIdleState::Update()
 {
+    switch (stateWait)
+    {
+    case 0:
+        Stop();
+        break;
+    case 1:
+        Idle();
+        break;
+    }
+    m_pCube->IsSuctionCheck();
+}
+
+void CIdleState::Stop()
+{
     timerCount += SceneManager::DeltaTime();
     if (timerCount > 1)
     {
-        Type type = actionQueue.front();
-        actionQueue.pop();
-        SetNextState();
-        m_pCube->SetState(type);
+        Next();
     }
-    m_pCube->IsSuctionCheck();
+}
+
+void CIdleState::Idle()
+{
+   if (m_pCube->AnimationFinish())
+   {
+       Next();
+   }
 }
 
 CWalkState::CWalkState(CACube* cube)
@@ -79,6 +111,7 @@ void CWalkState::Enter()
         }
     }
     m_pCube->SetRotationY(m_turnAmount);
+    m_pCube->SetAnim(A_WALK);
 }
 
 bool CWalkState::BoundaryCheck(const VECTOR2& areaSize) const
@@ -99,11 +132,7 @@ void CWalkState::Update()
 
     if (m_totalPosZMoveAmount > m_moveAmount)
     {
-        
-        Type type = actionQueue.front();
-        actionQueue.pop();
-        SetNextState();
-        m_pCube->SetState(type);
+        Next();
     }
     m_pCube->IsSuctionCheck();
 }
@@ -112,11 +141,11 @@ CSuction::CSuction(CACube* cube)
     : CACubeState(cube, Type::Suction)
       , m_pPlayer(ObjectManager::FindGameObject<CPlayer>())
 {
-    m_distanceFromObjectToUFO = m_pCube->SuctionSpeed();
 }
 
 void CSuction::Update()
 {
+    m_distanceFromObjectToUFO = m_pCube->SuctionSpeed();
     if (m_pPlayer->GetIsSuckUp())
     {
         if (m_pPlayer->GetPos().y <= m_pCube->GetTransform().position.y)
@@ -130,9 +159,7 @@ void CSuction::Update()
     }
     else
     {
-        Type type = actionQueue.front();
-        actionQueue.pop();
-        m_pCube->SetState(type);
+        Next();
     }
 }
 

@@ -36,9 +36,9 @@ public:
 
 protected:
     CACubeState(CACube* cube, Type type);
+    void Next();
     CACube* m_pCube;
     const Type m_type;
-    
 };
 
 class CIdleState : public CACubeState
@@ -49,7 +49,11 @@ public:
     void Update() override;
 
 private:
+    void Stop();
+    void Idle();
+private:
     float timerCount;
+    int stateWait;
 };
 
 class CWalkState : public CACubeState

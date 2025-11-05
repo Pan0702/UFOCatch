@@ -15,20 +15,18 @@ public:
     ~CACube();
 
     void SetState(CACubeState::Type type);
-    void Destroy();
     void IsSuctionCheck();
-    VECTOR3 SuctionSpeed();
-
-    VECTOR3 GetPos() { return transform.position; }
+    VECTOR3 SuctionSpeed() const;
+    void SetAnim(const int& animNum) const;
+    bool AnimationFinish() const;
+    
     void AddPos(const VECTOR3& pos) { transform.position = transform.position + pos; }
     void SetRotationY(const float& angle) { transform.rotation.y = angle; }
-    VECTOR2 GetMoveAreaSize(){return m_moveAreaSize;}
+    VECTOR2 GetMoveAreaSize() const{return m_moveAreaSize;}
 
 private:
     void Update() override;
-    void HitCheck();
     void Draw() override;
- 
 
 private:
 
