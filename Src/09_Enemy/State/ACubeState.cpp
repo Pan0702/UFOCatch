@@ -98,7 +98,10 @@ CWalkState::CWalkState(CACube* cube)
 void CWalkState::Enter()
 {
     bool boundaryFlag = false;
-    while (!boundaryFlag)
+    int retryCount = 0;
+    constexpr int MAX_RETRY = 50; 
+
+    while (!boundaryFlag && retryCount < MAX_RETRY)
     {
         m_totalPosZMoveAmount = 0;
         m_turnAmount = Randomf(-TURN_ANGLE, TURN_ANGLE) * DegToRad;
@@ -108,6 +111,13 @@ void CWalkState::Enter()
         {
             boundaryFlag = true;
         }
+        retryCount++;
+    }
+    
+    if (!boundaryFlag)
+    {
+        m_moveAmount = 0.0f;
+        m_turnAmount = Randomf(-TURN_ANGLE, TURN_ANGLE) * DegToRad;
     }
     m_currentRotation = m_pCube->GetTransform().rotation.y;
     m_targetRotation = m_currentRotation + m_turnAmount;

@@ -100,15 +100,16 @@ bool CACube::AnimationFinish() const
 void CACube::SetRotationY(const float& angle)
 {
     float degAngle = angle * RadToDeg;
-    bool boundryFlag = false;
-    while (not boundryFlag)
-    {
-        degAngle -= (degAngle > 0.0f) ? 360.0f : -360.0f;
 
-        if (-360.0f < degAngle < 360.0f)
-        {
-            boundryFlag = true;
-        }
+    // -180 ~ 180度の範囲に正規化
+    while (degAngle > 180.0f)
+    {
+        degAngle -= 360.0f;
     }
+    while (degAngle < -180.0f)
+    {
+        degAngle += 360.0f;
+    }
+
     transform.rotation.y = degAngle * DegToRad;
 }
