@@ -12,21 +12,18 @@
 CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos), m_moveAreaSize(moveAreaSize)
 {
-    m_pMesh= new CFbxMesh();
+    m_pMesh = new CFbxMesh();
     m_pAnimator = new Animator();
     m_pMesh->Load("data/NewAnimal/Dog/Dog.mesh");
     m_pAnimator->SetModel(m_pMesh);
     m_pMesh->LoadAnimation(AnimationType::A_IDEL, "data/NewAnimal/Dog/Dog_Idle.anmx", false);
-     m_pMesh->LoadAnimation(AnimationType::A_WALK, "data/NewAnimal/Dog/Dog_Walk.anmx", true);
-     m_pMesh->LoadAnimation(AnimationType::A_RUN, "data/NewAnimal/Dog/Dog_Idle.anmx", true);
-    
-    m_pAnimator->Play(A_WALK);
+    m_pMesh->LoadAnimation(AnimationType::A_WALK, "data/NewAnimal/Dog/Dog_Walk.anmx", true);
+    m_pMesh->LoadAnimation(AnimationType::A_RUN, "data/NewAnimal/Dog/Dog_Idle.anmx", true);
 
-    
+    m_pAnimator->Play(A_WALK);
 
     transform.position = iniPos;
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
-    
 
     m_cubeStates[CACubeState::Type::Idle] = new CIdleState(this);
     m_cubeStates[CACubeState::Type::Walk] = new CWalkState(this);
@@ -54,9 +51,8 @@ void CACube::Update()
         m_pCubeState->Update();
     }
     ImGui::Begin("begin");
-    ImGui::Text("CurrentAnim: %lf",m_pAnimator->CurrentFrame());
+    ImGui::Text("CurrentAnim: %lf", transform.rotation.y * RadToDeg);
     ImGui::End();
-    
 }
 
 
@@ -70,12 +66,12 @@ void CACube::SetState(CACubeState::Type type)
 
 void CACube::Draw()
 {
-    m_pMesh->Render(m_pAnimator,transform.matrix());
+    m_pMesh->Render(m_pAnimator, transform.matrix());
 }
 
 void CACube::IsSuctionCheck()
 {
-    if (m_pPlayer->IsWithSuctionCone(transform.position  /* + VECTOR3(0, m_maxSize.y, 0)*/) && m_pPlayer->GetIsSuckUp())
+    if (m_pPlayer->IsWithSuctionCone(transform.position /* + VECTOR3(0, m_maxSize.y, 0)*/) && m_pPlayer->GetIsSuckUp())
     {
         SetState(CACubeState::Type::Suction);
     }
@@ -94,10 +90,25 @@ void CACube::SetAnim(const int& animNum) const
 
 bool CACube::AnimationFinish() const
 {
-    if (m_pAnimator->CurrentFrame() >= 580.0f)
+    if (m_pAnimator->CurrentFrame() >= 570.0f)
     {
         return true;
     }
     return false;
 }
 
+void CACube::SetRotationY(const float& angle)
+{
+    float degAngle = angle * RadToDeg;
+    bool boundryFlag = false;
+    while (not boundryFlag)
+    {
+        degAngle -= (degAngle > 0.0f) ? 360.0f : -360.0f;
+
+        if (-360.0f < degAngle < 360.0f)
+        {
+            boundryFlag = true;
+        }
+    }
+    transform.rotation.y = degAngle * DegToRad;
+}

@@ -30,7 +30,7 @@ void SpatialGrid::ClearGrid()
 
 void SpatialGrid::Insert(CACube* cube)
 {
-    std::string cellPos = CalcGridPos(cube->GetPos());
+    std::string cellPos = CalcGridPos(cube->GetTransform().position);
     m_grid[cellPos].push_back(cube);
 }
 

@@ -66,11 +66,13 @@ public:
 private:
     bool BoundaryCheck(const VECTOR2& areaSize) const;
     VECTOR3 BASE_POS;
-    float m_moveSpeed;
     float m_turnAmount;
     float m_moveAmount;
     float m_totalPosZMoveAmount;
     VECTOR3 m_position;
+    bool m_rotation;
+    float m_currentRotation;
+    float m_targetRotation;
 };
 
 class CSuction : public CACubeState
