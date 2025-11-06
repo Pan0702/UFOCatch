@@ -5,7 +5,6 @@
 #include <thread>
 
 #include "AnimalManager.h"
-#include "AnimalManager.h"
 #include "SpatialGrid.h"
 #include "State/ACubeState.h"
 
@@ -29,8 +28,8 @@ CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     m_cubeStates[CACubeState::Type::Walk] = new CWalkState(this);
     m_cubeStates[CACubeState::Type::Suction] = new CSuction(this);
     m_cubeStates[CACubeState::Type::Destroy] = new CDestroy(this);
-    m_pCubeState = m_cubeStates[CACubeState::Type::Idle];
-    m_pCubeState->SetNextState();
+    m_pCurrentState = m_cubeStates[CACubeState::Type::Idle];
+    m_pCurrentState->SetNextState();
 }
 
 CACube::~CACube()
@@ -46,9 +45,9 @@ void CACube::Update()
 {
     m_isInConeArea = m_pPlayer->IsWithSuctionCone(transform.position);
     m_pAnimator->Update();
-    if (m_pCubeState)
+    if (m_pCurrentState)
     {
-        m_pCubeState->Update();
+        m_pCurrentState->Update();
     }
     ImGui::Begin("begin");
     ImGui::Text("CurrentAnim: %lf", transform.rotation.y * RadToDeg);
@@ -59,9 +58,9 @@ void CACube::Update()
 //Stateをここでセット
 void CACube::SetState(CACubeState::Type type)
 {
-    m_pCubeState->Exit();
-    m_pCubeState = m_cubeStates[type];
-    m_pCubeState->Enter();
+    m_pCurrentState->Exit();
+    m_pCurrentState = m_cubeStates[type];
+    m_pCurrentState->Enter();
 }
 
 void CACube::Draw()
@@ -100,8 +99,7 @@ bool CACube::AnimationFinish() const
 void CACube::SetRotationY(const float& angle)
 {
     float degAngle = angle * RadToDeg;
-
-    // -180 ~ 180度の範囲に正規化
+    
     while (degAngle > 180.0f)
     {
         degAngle -= 360.0f;

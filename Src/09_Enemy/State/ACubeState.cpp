@@ -47,7 +47,7 @@ CIdleState::CIdleState(CACube* cube)
       , timerCount(0)
 {
 }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void CIdleState::Enter()
 {
     stateWait = static_cast<int>(round(Randomf(0, 1)));
@@ -88,7 +88,7 @@ void CIdleState::Idle()
         Next();
     }
 }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CWalkState::CWalkState(CACube* cube)
     : CACubeState(cube, Type::Walk)
       , BASE_POS(0, 0, 0)
@@ -158,7 +158,7 @@ void CWalkState::Update()
     }
     m_pCube->IsSuctionCheck();
 }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CSuction::CSuction(CACube* cube)
     : CACubeState(cube, Type::Suction)
       , m_pPlayer(ObjectManager::FindGameObject<CPlayer>())
@@ -184,7 +184,7 @@ void CSuction::Update()
         Next();
     }
 }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CDestroy::CDestroy(CACube* cube)
     : CACubeState(cube, Type::Destroy)
 {

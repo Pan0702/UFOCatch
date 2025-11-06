@@ -49,7 +49,13 @@ public:
     void Update() override;
 
 private:
+    ///
+    ///その場で止まるだけ
+    ///
     void Stop();
+    ///
+    ///animationを再生
+    ///
     void Idle();
 private:
     float timerCount;
