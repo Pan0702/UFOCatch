@@ -8,7 +8,7 @@ namespace
     constexpr float MAX_MOVE_AMOUNT = 3.5f;
     constexpr float MIN_MOVE_AMOUNT = 1.0f;
     constexpr float TURN_ANGLE = 180.0f;
-    constexpr int MAX_SIZE = 3;
+    constexpr int NEXT_STATE_MAX_SIZE = 3;
     constexpr float ROTATION_LERP_SPEED = 10.0f;
     std::queue<CACubeState::Type> actionQueue;
 }
@@ -28,7 +28,7 @@ void CACubeState::Next()
 
 void CACubeState::SetNextState()
 {
-    while (actionQueue.size() <= MAX_SIZE)
+    while (actionQueue.size() <= NEXT_STATE_MAX_SIZE)
     {
         float randomNum = Randomf(0, 1);
         if (randomNum > 0.3f)
@@ -48,12 +48,18 @@ CIdleState::CIdleState(CACube* cube)
 {
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///Idle
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void CIdleState::Enter()
 {
     stateWait = static_cast<int>(round(Randomf(0, 1)));
     if (stateWait == 1)
     {
-        m_pCube->SetAnim(A_RUN);
+        m_pCube->GetAnimator()->MergePlay(A_IDEL);
+        m_pCube->GetAnimator()->SetPlaySpeed(1.0f);
+    }else
+    {
+        m_pCube->GetAnimator()->Stop();
     }
     timerCount = 0;
 }
@@ -63,6 +69,7 @@ void CIdleState::Update()
     switch (stateWait)
     {
     case 0:
+        
         Stop();
         break;
     case 1:
@@ -83,10 +90,19 @@ void CIdleState::Stop()
 
 void CIdleState::Idle()
 {
-    if (m_pCube->AnimationFinish())
+    if (AnimationFinish())
     {
         Next();
     }
+}
+
+bool CIdleState::AnimationFinish()
+{
+    if (m_pCube->GetAnimator()->CurrentFrame() >= 570.0f)
+    {
+        return true;
+    }
+    return false;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CWalkState::CWalkState(CACube* cube)
@@ -122,7 +138,8 @@ void CWalkState::Enter()
     m_currentRotation = m_pCube->GetTransform().rotation.y;
     m_targetRotation = m_currentRotation + m_turnAmount;
     m_rotation = true;
-    m_pCube->SetAnim(A_WALK);
+    m_pCube->GetAnimator()->MergePlay(A_WALK);
+    m_pCube->GetAnimator()->SetPlaySpeed(1.0f);
 }
 
 bool CWalkState::BoundaryCheck(const VECTOR2& areaSize) const
@@ -158,6 +175,7 @@ void CWalkState::Update()
     }
     m_pCube->IsSuctionCheck();
 }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CSuction::CSuction(CACube* cube)
     : CACubeState(cube, Type::Suction)

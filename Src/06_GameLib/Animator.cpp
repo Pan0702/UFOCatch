@@ -136,6 +136,12 @@ bool Animator::Finished()
 	const ANIMATION &info = base->m_Animation[main.id];
 	return !info.loop && main.frame >= info.endFrame;
 }
+
+void Animator::Stop()
+{
+	playSpeed = 0.0f;
+}
+
 float Animator::Rate()
 {
 	return rate;

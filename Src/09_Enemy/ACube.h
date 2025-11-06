@@ -22,13 +22,10 @@ public:
 
     VECTOR3 SuctionSpeed() const;
     ///
-    ///アニメーションを変更する
-    ///
-    void SetAnim(const int& animNum) const;
-    ///
     ///Idleアニメーションが終わったらtrueを返す
     ///
     bool AnimationFinish() const;
+    void AnimationStop() const;
 
     void AddPos(const VECTOR3& pos) { transform.position = transform.position + pos; }
     void SetRotationY(const float& angle);

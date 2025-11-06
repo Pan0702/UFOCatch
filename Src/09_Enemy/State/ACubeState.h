@@ -57,6 +57,7 @@ private:
     ///animationを再生
     ///
     void Idle();
+    bool AnimationFinish();
 private:
     float timerCount;
     int stateWait;

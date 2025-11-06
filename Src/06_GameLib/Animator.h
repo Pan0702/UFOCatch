@@ -9,9 +9,9 @@ public:
 	void Update();
 
 	/// <summary>
-	/// ƒAƒjƒ[ƒVƒ‡ƒ“‚ğ‚Â‚¯‚éƒ‚ƒfƒ‹‚ğw’è‚·‚é
+	/// ï¿½Aï¿½jï¿½ï¿½ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â‚ï¿½ï¿½éƒ‚ï¿½fï¿½ï¿½ï¿½ï¿½ï¿½wï¿½è‚·ï¿½ï¿½
 	/// </summary>
-	/// <param name="mesh">ƒ‚ƒfƒ‹ƒf[ƒ^</param>
+	/// <param name="mesh">ï¿½ï¿½ï¿½fï¿½ï¿½ï¿½fï¿½[ï¿½^</param>
 	void SetModel(CFbxMesh* mesh);
 
 	void Play(int id, bool force = false);
@@ -23,6 +23,7 @@ public:
 	float CurrentFrame();
 	float SubFrame();
 	bool Finished();
+	void Stop();
 private:
 	CFbxMesh* base;
 	struct Info {

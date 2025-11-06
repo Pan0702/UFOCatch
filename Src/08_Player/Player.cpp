@@ -154,7 +154,7 @@ bool CPlayer::IsWithSuctionCone(const VECTOR3& targetPos) const
     return false;
 }
 
-//
+
 // void CPlayer::DrawCircle(const VECTOR3& center, float radius, DWORD color)
 // {
 //     CSprite spr;

@@ -82,24 +82,11 @@ VECTOR3 CACube::SuctionSpeed() const
         CalcSuctionVelocity(100, transform.position);
 }
 
-void CACube::SetAnim(const int& animNum) const
-{
-    m_pAnimator->MergePlay(animNum);
-}
-
-bool CACube::AnimationFinish() const
-{
-    if (m_pAnimator->CurrentFrame() >= 570.0f)
-    {
-        return true;
-    }
-    return false;
-}
 
 void CACube::SetRotationY(const float& angle)
 {
     float degAngle = angle * RadToDeg;
-    
+
     while (degAngle > 180.0f)
     {
         degAngle -= 360.0f;
