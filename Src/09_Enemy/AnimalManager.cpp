@@ -28,7 +28,11 @@ void CAnimalManager::Update()
     {
         new CACube(VECTOR3(0,0,0),VECTOR2(5,5));
     }
-    if (GameDevice()->m_pDI->CheckKey(KD_TRG,DIK_9))ObjectManager::FindGameObject<SpatialGrid>()->ClearGrid();
+    if (GameDevice()->m_pDI->CheckKey(KD_TRG,DIK_9))
+    {
+        new CEnemyHuman();
+    }
+    
 }
 
 

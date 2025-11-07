@@ -8,9 +8,15 @@ CEnemyHuman::CEnemyHuman()
 {
     transform.position = VECTOR3(0, 0, 0);
     m_pMesh = new CFbxMesh();
-    m_pMesh->Load("data/Ghost/Ghost.mesh");
+    m_pMesh->Load("data/NewAnimal/Human/Human.mesh");
     m_pAnimator = new Animator();
-    m_pAnimator->SetModel(m_pMesh);
+    m_pAnimator->SetModel(m_pMesh); 
+    m_pMesh->LoadAnimation(A_IDEL, "data/NewAnimal/Human/Human_Idle.anmx", false);
+    m_pMesh->LoadAnimation(A_WALK, "data/NewAnimal/Human/Human_Walk.anmx", true);
+    m_pMesh->LoadAnimation(A_FIND, "data/NewAnimal/Human/Human_Find.anmx", false);
+  
+    m_pAnimator->Play(A_WALK);
+    m_pAnimator->SetPlaySpeed(1.0f);
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     m_dwColor = 100;
     
@@ -22,6 +28,7 @@ CEnemyHuman::~CEnemyHuman()
 
 void CEnemyHuman::Update()
 {
+    m_pAnimator->Update();
     if (GameDevice()->m_pDI->CheckKey(KD_DAT,DIK_L))
     {
         transform.rotation.y += XM_PI / 12;
@@ -39,11 +46,9 @@ void CEnemyHuman::Update()
 
 void CEnemyHuman::Draw()
 {
-    m_pMesh->Render(transform.matrix());
+    m_pMesh->Render(m_pAnimator, transform.matrix());
     DrawDirectionLine();
     FanShape();
-
-    
 }
 
 void CEnemyHuman::DrawDirectionLine()
