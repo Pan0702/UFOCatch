@@ -525,9 +525,9 @@
     <ClInclude Include="Src\02_DirectX\Direct3D.h" />
     <ClInclude Include="Src\02_DirectX\XAudio.h" />
     <ClInclude Include="Src\07_Scene\LevelSelectionScene.h" />
-    <ClInclude Include="Src\09_Enemy\ACube.h" />
-    <ClInclude Include="Src\09_Enemy\AnimalManager.h" />
-    <ClInclude Include="Src\09_Enemy\EnemyHuman.h" />
+    <ClInclude Include="Src\09_Enemy\Actor\ACube.h" />
+    <ClInclude Include="Src\09_Enemy\Actor\AnimalManager.h" />
+    <ClInclude Include="Src\09_Enemy\Actor\EnemyHuman.h" />
     <ClInclude Include="Src\04_FrameWork\GameObject.h" />
     <ClInclude Include="Src\04_FrameWork\ObjectManager.h" />
     <ClInclude Include="Src\04_FrameWork\ResourceManager.h" />
@@ -556,7 +556,9 @@
     <ClInclude Include="Src\07_Scene\PlayScene.h" />
     <ClInclude Include="Src\07_Scene\TitleScene.h" />
     <ClInclude Include="Src\09_Enemy\SpatialGrid.h" />
-    <ClInclude Include="Src\09_Enemy\State\ACubeState.h" />
+    <ClInclude Include="Src\09_Enemy\State\CubeState.h" />
+    <ClInclude Include="Src\09_Enemy\State\BaseState.h" />
+    <ClInclude Include="Src\09_Enemy\State\HumanState.h" />
     <ClInclude Include="Src\GameInstance.h" />
     <ClInclude Include="Src\Stage.h" />
     <ClInclude Include="Src\01_WinMain\Main.h" />
@@ -802,7 +804,7 @@
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="Src\07_Scene\LevelSelectionScene.cpp" />
-    <ClCompile Include="Src\09_Enemy\ACube.cpp">
+    <ClCompile Include="Src\09_Enemy\Actor\ACube.cpp">
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
@@ -879,7 +881,7 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="Src\09_Enemy\AnimalManager.cpp">
+    <ClCompile Include="Src\09_Enemy\Actor\AnimalManager.cpp">
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
@@ -956,7 +958,7 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="Src\09_Enemy\EnemyHuman.cpp">
+    <ClCompile Include="Src\09_Enemy\Actor\EnemyHuman.cpp">
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
@@ -2651,7 +2653,9 @@
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="Src\09_Enemy\SpatialGrid.cpp" />
-    <ClCompile Include="Src\09_Enemy\State\ACubeState.cpp" />
+    <ClCompile Include="Src\09_Enemy\State\CubeState.cpp" />
+    <ClCompile Include="Src\09_Enemy\State\BaseState.cpp" />
+    <ClCompile Include="Src\09_Enemy\State\HumanState.cpp" />
     <ClCompile Include="Src\GameInstance.cpp" />
     <ClCompile Include="Src\Stage.cpp" />
     <ClCompile Include="Src\01_WinMain\Main.cpp">

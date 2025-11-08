@@ -1,12 +1,12 @@
 #include "ACube.h"
 
-#include "../08_Player/Player.h"
+#include "....//08_Player/Player.h"
 #include <queue>
 #include <thread>
 
 #include "AnimalManager.h"
-#include "SpatialGrid.h"
-#include "State/ACubeState.h"
+#include "../SpatialGrid.h"
+#include "../State/BaseState.h"
 
 CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos), m_moveAreaSize(moveAreaSize)
@@ -24,11 +24,11 @@ CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     transform.position = iniPos;
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
 
-    m_cubeStates[CACubeState::Type::Idle] = new CIdleState(this);
-    m_cubeStates[CACubeState::Type::Walk] = new CWalkState(this);
-    m_cubeStates[CACubeState::Type::Suction] = new CSuction(this);
-    m_cubeStates[CACubeState::Type::Destroy] = new CDestroy(this);
-    m_pCurrentState = m_cubeStates[CACubeState::Type::Idle];
+    m_cubeStates[CBaseState::Type::Idle] = new CIdleState(this);
+    m_cubeStates[CBaseState::Type::Walk] = new CWalkState(this);
+    m_cubeStates[CBaseState::Type::Suction] = new CSuction(this);
+    m_cubeStates[CBaseState::Type::Destroy] = new CDestroy(this);
+    m_pCurrentState = m_cubeStates[CBaseState::Type::Idle];
     m_pCurrentState->SetNextState();
 }
 
@@ -56,7 +56,7 @@ void CACube::Update()
 
 
 //Stateをここでセット
-void CACube::SetState(CACubeState::Type type)
+void CACube::SetState(CBaseState::Type type)
 {
     m_pCurrentState->Exit();
     m_pCurrentState = m_cubeStates[type];
@@ -72,7 +72,7 @@ void CACube::IsSuctionCheck()
 {
     if (m_pPlayer->IsWithSuctionCone(transform.position /* + VECTOR3(0, m_maxSize.y, 0)*/) && m_pPlayer->GetIsSuckUp())
     {
-        SetState(CACubeState::Type::Suction);
+        SetState(CBaseState::Type::Suction);
     }
 }
 

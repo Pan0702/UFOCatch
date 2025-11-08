@@ -1,55 +1,22 @@
-#include "ACubeState.h"
-
-#include "../ACube.h"
-
+#include "CubeState.h"
+#include "../Actor/ACube.h"
 namespace
 {
     constexpr float MOVE_SPEED = 1.2f;
     constexpr float MAX_MOVE_AMOUNT = 3.5f;
     constexpr float MIN_MOVE_AMOUNT = 1.0f;
     constexpr float TURN_ANGLE = 180.0f;
-    constexpr int NEXT_STATE_MAX_SIZE = 3;
     constexpr float ROTATION_LERP_SPEED = 10.0f;
-    std::queue<CACubeState::Type> actionQueue;
-}
 
-CACubeState::CACubeState(CACube* cube, Type type)
-    : m_pCube(cube), m_type(type)
-{
-}
-
-void CACubeState::Next()
-{
-    Type type = actionQueue.front();
-    actionQueue.pop();
-    SetNextState();
-    m_pCube->SetState(type);
-}
-
-void CACubeState::SetNextState()
-{
-    while (actionQueue.size() <= NEXT_STATE_MAX_SIZE)
-    {
-        float randomNum = Randomf(0, 1);
-        if (randomNum > 0.3f)
-        {
-            actionQueue.push(Type::Walk);
-        }
-        else
-        {
-            actionQueue.push(Type::Idle);
-        }
-    }
-}
-
-CIdleState::CIdleState(CACube* cube)
-    : CACubeState(cube, Type::Idle)
-      , timerCount(0)
-{
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///Idle
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+CIdleState::CIdleState(CACube* cube)
+    : CBaseState(cube, Type::Idle)
+      , timerCount(0)
+{
+}
 void CIdleState::Enter()
 {
     stateWait = static_cast<int>(round(Randomf(0, 1)));
@@ -75,6 +42,9 @@ void CIdleState::Update()
     case 1:
         Idle();
         break;
+        default:
+        assert("error:cubeState");
+            break;
     }
     m_pCube->IsSuctionCheck();
 }
@@ -106,7 +76,7 @@ bool CIdleState::AnimationFinish()
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CWalkState::CWalkState(CACube* cube)
-    : CACubeState(cube, Type::Walk)
+    : CBaseState(cube, Type::Walk)
       , BASE_POS(0, 0, 0)
 {
 }
@@ -178,7 +148,7 @@ void CWalkState::Update()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CSuction::CSuction(CACube* cube)
-    : CACubeState(cube, Type::Suction)
+    : CBaseState(cube, Type::Suction)
       , m_pPlayer(ObjectManager::FindGameObject<CPlayer>())
 {
 }
@@ -204,7 +174,7 @@ void CSuction::Update()
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CDestroy::CDestroy(CACube* cube)
-    : CACubeState(cube, Type::Destroy)
+    : CBaseState(cube, Type::Destroy)
 {
 }
 

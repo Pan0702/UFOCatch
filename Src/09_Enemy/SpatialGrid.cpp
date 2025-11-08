@@ -1,5 +1,6 @@
 #include "SpatialGrid.h"
 
+#include <string>
 #include <unordered_set>
 
 namespace

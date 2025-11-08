@@ -1,47 +1,6 @@
-#pragma once
-#include <queue>
+#include "BaseState.h"
 
-#include "../../08_Player/Player.h"
-
-class CACube;
-
-class CACubeState
-{
-public:
-    enum class Type
-    {
-        Idle,
-        Walk,
-        Suction,
-        Destroy,
-    };
-
-    virtual ~CACubeState()
-    {
-    }
-
-    virtual void Enter()
-    {
-    }
-
-    virtual void Update()
-    {
-    }
-
-    virtual void Exit()
-    {
-    }
-
-    virtual void SetNextState();
-
-protected:
-    CACubeState(CACube* cube, Type type);
-    void Next();
-    CACube* m_pCube;
-    const Type m_type;
-};
-
-class CIdleState : public CACubeState
+class CIdleState : public CBaseState
 {
 public:
     CIdleState(CACube* cube);
@@ -63,7 +22,7 @@ private:
     int stateWait;
 };
 
-class CWalkState : public CACubeState
+class CWalkState : public CBaseState
 {
 public:
     CWalkState(CACube* cube);
@@ -82,7 +41,7 @@ private:
     float m_targetRotation;
 };
 
-class CSuction : public CACubeState
+class CSuction : public CBaseState
 {
 public:
     CSuction(CACube* cube);
@@ -93,7 +52,7 @@ private:
     VECTOR3 m_distanceFromObjectToUFO;
 };
 
-class CDestroy : public CACubeState
+class CDestroy : public CBaseState
 {
 public:
     CDestroy(CACube* cube);

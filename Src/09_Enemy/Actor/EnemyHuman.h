@@ -1,6 +1,6 @@
 #pragma once
 #include "AnimalManager.h"
-#include "../05_CommonFile/Object3D.h"
+#include "../../05_CommonFile/Object3D.h"
 
 
 class CEnemyHuman : public CAnimalManager
