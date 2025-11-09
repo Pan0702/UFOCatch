@@ -1,16 +1,19 @@
 #include "AnimalManager.h"
 
 #include "ACube.h"
-#include "../06_GameLib/BBox.h""
-#include "../08_Player/Player.h"
-#include <chrono>
+#include "../../06_GameLib/BBox.h""
+#include "../../08_Player/Player.h"
 #include <thread>
 
-#include "EnemyHuman.h"
+#include "Human.h"
 
+namespace
+{
+    constexpr float HALF_ROTATION_DEG = 180.0f;
+    constexpr float FULL_ROTATION_DEG = 360.0f;
+}
 CAnimalManager::CAnimalManager()
 {
-    Instantiate<SpatialGrid>();
 }
 
 CAnimalManager::~CAnimalManager()
@@ -30,7 +33,7 @@ void CAnimalManager::Update()
     }
     if (GameDevice()->m_pDI->CheckKey(KD_TRG,DIK_9))
     {
-        new CEnemyHuman();
+        new CHuman();
     }
     
 }
@@ -52,6 +55,21 @@ void CAnimalManager::HitCheck()
 VECTOR3 CAnimalManager::GetObjectSize(MeshCollider* meshColl) const
 {
     return meshColl->bBox.max;
+}
+void CAnimalManager::SetRotationY(const float& angle)
+{
+    float degAngle = angle * RadToDeg;
+
+    while (degAngle > HALF_ROTATION_DEG)
+    {
+        degAngle -= FULL_ROTATION_DEG;
+    }
+    while (degAngle < -HALF_ROTATION_DEG)
+    {
+        degAngle += FULL_ROTATION_DEG;
+    }
+
+    transform.rotation.y = degAngle * DegToRad;
 }
 
 

@@ -1,5 +1,6 @@
 #include "CubeState.h"
 #include "../Actor/ACube.h"
+
 namespace
 {
     constexpr float MOVE_SPEED = 1.2f;
@@ -7,49 +8,52 @@ namespace
     constexpr float MIN_MOVE_AMOUNT = 1.0f;
     constexpr float TURN_ANGLE = 180.0f;
     constexpr float ROTATION_LERP_SPEED = 10.0f;
-
 }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///Idle
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-CIdleState::CIdleState(CACube* cube)
+CCubeIdleState::CCubeIdleState(CACube* cube)
     : CBaseState(cube, Type::Idle)
       , timerCount(0)
+,stateWait(0)
 {
 }
-void CIdleState::Enter()
+
+void CCubeIdleState::Enter()
 {
     stateWait = static_cast<int>(round(Randomf(0, 1)));
     if (stateWait == 1)
     {
-        m_pCube->GetAnimator()->MergePlay(A_IDEL);
-        m_pCube->GetAnimator()->SetPlaySpeed(1.0f);
-    }else
+        m_pOwner->GetAnimator()->MergePlay(A_IDEL);
+        m_pOwner->GetAnimator()->SetPlaySpeed(1.0f);
+    }
+    else
     {
-        m_pCube->GetAnimator()->Stop();
+        m_pOwner->GetAnimator()->Stop();
     }
     timerCount = 0;
 }
 
-void CIdleState::Update()
+void CCubeIdleState::Update()
 {
     switch (stateWait)
     {
     case 0:
-        
+
         Stop();
         break;
     case 1:
         Idle();
         break;
-        default:
+    default:
         assert("error:cubeState");
-            break;
+        break;
     }
-    m_pCube->IsSuctionCheck();
+    m_pOwner->IsSuctionCheck();
 }
 
-void CIdleState::Stop()
+void CCubeIdleState::Stop()
 {
     timerCount += SceneManager::DeltaTime();
     if (timerCount > 1)
@@ -58,7 +62,7 @@ void CIdleState::Stop()
     }
 }
 
-void CIdleState::Idle()
+void CCubeIdleState::Idle()
 {
     if (AnimationFinish())
     {
@@ -66,53 +70,54 @@ void CIdleState::Idle()
     }
 }
 
-bool CIdleState::AnimationFinish()
+bool CCubeIdleState::AnimationFinish() const
 {
-    if (m_pCube->GetAnimator()->CurrentFrame() >= 570.0f)
+    if (m_pOwner->GetAnimator()->CurrentFrame() >= 570.0f)
     {
         return true;
     }
     return false;
 }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-CWalkState::CWalkState(CACube* cube)
+CCubeWalkState::CCubeWalkState(CACube* cube)
     : CBaseState(cube, Type::Walk)
       , BASE_POS(0, 0, 0)
 {
 }
 
-void CWalkState::Enter()
+void CCubeWalkState::Enter()
 {
     bool boundaryFlag = false;
     int retryCount = 0;
-    constexpr int MAX_RETRY = 50; 
+    constexpr int MAX_RETRY = 50;
 
     while (!boundaryFlag && retryCount < MAX_RETRY)
     {
         m_totalPosZMoveAmount = 0;
         m_turnAmount = Randomf(-TURN_ANGLE, TURN_ANGLE) * DegToRad;
         m_moveAmount = Randomf(MIN_MOVE_AMOUNT, MAX_MOVE_AMOUNT);
-        m_position = m_pCube->GetTransform().position;
-        if (BoundaryCheck(m_pCube->GetMoveAreaSize()))
+        m_position = m_pOwner->GetTransform().position;
+        if (BoundaryCheck(m_pOwner->GetMoveAreaSize()))
         {
             boundaryFlag = true;
         }
         retryCount++;
     }
-    
+
     if (!boundaryFlag)
     {
         m_moveAmount = 0.0f;
         m_turnAmount = Randomf(-TURN_ANGLE, TURN_ANGLE) * DegToRad;
     }
-    m_currentRotation = m_pCube->GetTransform().rotation.y;
+    m_currentRotation = m_pOwner->GetTransform().rotation.y;
     m_targetRotation = m_currentRotation + m_turnAmount;
     m_rotation = true;
-    m_pCube->GetAnimator()->MergePlay(A_WALK);
-    m_pCube->GetAnimator()->SetPlaySpeed(1.0f);
+    m_pOwner->GetAnimator()->MergePlay(A_WALK);
+    m_pOwner->GetAnimator()->SetPlaySpeed(1.0f);
 }
 
-bool CWalkState::BoundaryCheck(const VECTOR2& areaSize) const
+bool CCubeWalkState::BoundaryCheck(const VECTOR2& areaSize) const
 {
     VECTOR3 tmpPos = m_position + VECTOR3(0, 0, m_moveAmount) * XMMatrixRotationY(m_turnAmount);
     if (tmpPos.x <= areaSize.x && tmpPos.x >= -areaSize.x && tmpPos.z <= areaSize.y && tmpPos.z >= -areaSize.y)
@@ -122,7 +127,7 @@ bool CWalkState::BoundaryCheck(const VECTOR2& areaSize) const
     return false;
 }
 
-void CWalkState::Update()
+void CCubeWalkState::Update()
 {
     if (m_rotation)
     {
@@ -133,9 +138,9 @@ void CWalkState::Update()
             m_currentRotation = m_targetRotation;
             m_rotation = false;
         }
-        m_pCube->SetRotationY(m_currentRotation);
+        m_pOwner->SetRotationY(m_currentRotation);
     }
-    m_pCube->AddPos(
+    m_pOwner->AddPos(
         VECTOR3(0, 0, MOVE_SPEED * SceneManager::DeltaTime()) * XMMatrixRotationY(m_currentRotation));
     m_totalPosZMoveAmount += MOVE_SPEED * SceneManager::DeltaTime();
 
@@ -143,28 +148,29 @@ void CWalkState::Update()
     {
         Next();
     }
-    m_pCube->IsSuctionCheck();
+    m_pOwner->IsSuctionCheck();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-CSuction::CSuction(CACube* cube)
+CCubeSuction::CCubeSuction(CACube* cube)
     : CBaseState(cube, Type::Suction)
       , m_pPlayer(ObjectManager::FindGameObject<CPlayer>())
+      ,m_distanceFromObjectToUFO(VECTOR3(0,0,0))
 {
 }
 
-void CSuction::Update()
+void CCubeSuction::Update()
 {
-    m_distanceFromObjectToUFO = m_pCube->SuctionSpeed();
+    m_distanceFromObjectToUFO = m_pOwner->SuctionSpeed();
     if (m_pPlayer->GetIsSuckUp())
     {
-        if (m_pPlayer->GetPos().y <= m_pCube->GetTransform().position.y)
+        if (m_pPlayer->GetPos().y <= m_pOwner->GetTransform().position.y)
         {
-            m_pCube->SetState(Type::Destroy);
+            m_pOwner->SetState(Type::Destroy);
         }
         else
         {
-            m_pCube->AddPos(m_distanceFromObjectToUFO);
+            m_pOwner->AddPos(m_distanceFromObjectToUFO);
         }
     }
     else
@@ -172,13 +178,14 @@ void CSuction::Update()
         Next();
     }
 }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-CDestroy::CDestroy(CACube* cube)
+CCubeDestroy::CCubeDestroy(CACube* cube)
     : CBaseState(cube, Type::Destroy)
 {
 }
 
-void CDestroy::Enter()
+void CCubeDestroy::Enter()
 {
-    m_pCube->DestroyMe();
+    m_pOwner->DestroyMe();
 }

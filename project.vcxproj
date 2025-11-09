@@ -527,7 +527,7 @@
     <ClInclude Include="Src\07_Scene\LevelSelectionScene.h" />
     <ClInclude Include="Src\09_Enemy\Actor\ACube.h" />
     <ClInclude Include="Src\09_Enemy\Actor\AnimalManager.h" />
-    <ClInclude Include="Src\09_Enemy\Actor\EnemyHuman.h" />
+    <ClInclude Include="Src\09_Enemy\Actor\Human.h" />
     <ClInclude Include="Src\04_FrameWork\GameObject.h" />
     <ClInclude Include="Src\04_FrameWork\ObjectManager.h" />
     <ClInclude Include="Src\04_FrameWork\ResourceManager.h" />
@@ -958,7 +958,7 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="Src\09_Enemy\Actor\EnemyHuman.cpp">
+    <ClCompile Include="Src\09_Enemy\Actor\Human.cpp">
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>

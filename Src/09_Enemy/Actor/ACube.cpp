@@ -1,12 +1,13 @@
 #include "ACube.h"
 
-#include "....//08_Player/Player.h"
+#include "../../08_Player/Player.h"
 #include <queue>
 #include <thread>
 
 #include "AnimalManager.h"
 #include "../SpatialGrid.h"
 #include "../State/BaseState.h"
+#include "../State/CubeState.h"
 
 CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos), m_moveAreaSize(moveAreaSize)
@@ -24,11 +25,11 @@ CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     transform.position = iniPos;
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
 
-    m_cubeStates[CBaseState::Type::Idle] = new CIdleState(this);
-    m_cubeStates[CBaseState::Type::Walk] = new CWalkState(this);
-    m_cubeStates[CBaseState::Type::Suction] = new CSuction(this);
-    m_cubeStates[CBaseState::Type::Destroy] = new CDestroy(this);
-    m_pCurrentState = m_cubeStates[CBaseState::Type::Idle];
+    m_cubeStates[CBaseState<CACube>::Type::Idle] = new CCubeIdleState(this);
+    m_cubeStates[CBaseState<CACube>::Type::Walk] = new CCubeWalkState(this);
+    m_cubeStates[CBaseState<CACube>::Type::Suction] = new CCubeSuction(this);
+    m_cubeStates[CBaseState<CACube>::Type::Destroy] = new CCubeDestroy(this);
+    m_pCurrentState = m_cubeStates[CBaseState<CACube>::Type::Idle];
     m_pCurrentState->SetNextState();
 }
 
@@ -56,7 +57,7 @@ void CACube::Update()
 
 
 //Stateをここでセット
-void CACube::SetState(CBaseState::Type type)
+void CACube::SetState(CBaseState<CACube>::Type type)
 {
     m_pCurrentState->Exit();
     m_pCurrentState = m_cubeStates[type];
@@ -72,7 +73,7 @@ void CACube::IsSuctionCheck()
 {
     if (m_pPlayer->IsWithSuctionCone(transform.position /* + VECTOR3(0, m_maxSize.y, 0)*/) && m_pPlayer->GetIsSuckUp())
     {
-        SetState(CBaseState::Type::Suction);
+        SetState(CBaseState<CACube>::Type::Suction);
     }
 }
 
@@ -83,18 +84,4 @@ VECTOR3 CACube::SuctionSpeed() const
 }
 
 
-void CACube::SetRotationY(const float& angle)
-{
-    float degAngle = angle * RadToDeg;
 
-    while (degAngle > 180.0f)
-    {
-        degAngle -= 360.0f;
-    }
-    while (degAngle < -180.0f)
-    {
-        degAngle += 360.0f;
-    }
-
-    transform.rotation.y = degAngle * DegToRad;
-}

@@ -2,10 +2,9 @@
 #include <fstream>
 #include "../06_GameLib/CsvReader.h"
 #include <assert.h>
-#include "../09_Enemy/AnimalManager.h"
+#include "../09_Enemy/Actor/AnimalManager.h"
 #include "../08_Player/PCamera.h"
 #include "../08_Player/Player.h"
-#include "../09_Enemy/EnemyHuman.h"
 
 
 PlayScene::PlayScene()

@@ -1,9 +1,11 @@
 #include "BaseState.h"
 
-class CIdleState : public CBaseState
+class CACube;
+
+class CCubeIdleState : public CBaseState<CACube>
 {
 public:
-    CIdleState(CACube* cube);
+    CCubeIdleState(CACube* cube);
     void Enter() override;
     void Update() override;
 
@@ -16,16 +18,16 @@ private:
     ///animationを再生
     ///
     void Idle();
-    bool AnimationFinish();
+    bool AnimationFinish() const;
 private:
     float timerCount;
     int stateWait;
 };
 
-class CWalkState : public CBaseState
+class CCubeWalkState : public CBaseState<CACube>
 {
 public:
-    CWalkState(CACube* cube);
+    CCubeWalkState(CACube* cube);
     void Enter() override;
     void Update() override;
 
@@ -41,10 +43,10 @@ private:
     float m_targetRotation;
 };
 
-class CSuction : public CBaseState
+class CCubeSuction : public CBaseState<CACube>
 {
 public:
-    CSuction(CACube* cube);
+    CCubeSuction(CACube* cube);
     void Update() override;
 
 private:
@@ -52,9 +54,9 @@ private:
     VECTOR3 m_distanceFromObjectToUFO;
 };
 
-class CDestroy : public CBaseState
+class CCubeDestroy : public CBaseState<CACube>
 {
 public:
-    CDestroy(CACube* cube);
+    CCubeDestroy(CACube* cube);
     void Enter() override;
 };
