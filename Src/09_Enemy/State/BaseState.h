@@ -20,7 +20,10 @@ public:
     virtual void Enter(){}
     virtual void Update(){}
     virtual void Exit(){}
-    
+
+    ///
+    ///次のstateが４つ配列に入ってなかったら次の配列をランダムでセット
+    ///
     void SetNextState()
     {
         while (actionQueue.size() <= NEXT_STATE_MAX_SIZE)
@@ -38,10 +41,14 @@ public:
     }
 
 protected:
+    
     CBaseState(T* owner, Type type)
-    : m_pOwner(owner), m_type(type)
+    : m_pOwner(owner), m_kType(type)
     {
     }
+    ///
+    ///配列から行動を取り出し、それをセット
+    ///
     void Next()
     {
         Type type = actionQueue.front();
@@ -51,8 +58,8 @@ protected:
     }
     T* m_pOwner;
 private:
-    const int NEXT_STATE_MAX_SIZE = 3;
-    const Type m_type;
+    static constexpr int NEXT_STATE_MAX_SIZE = 3;
+     const Type m_kType;
     std::queue<CBaseState::Type> actionQueue;
     
 };

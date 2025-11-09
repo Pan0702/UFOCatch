@@ -7,6 +7,7 @@ namespace
 
 }
 CHuman::CHuman()
+    :m_AreaSize(10,10)
 {
     transform.position = VECTOR3(0, 0, 0);
     m_pMesh = new CFbxMesh();
