@@ -1,12 +1,33 @@
 #include "HumanState.h"
+#include "../../06_GameLib/MyMath.h"
+#include "../../06_GameLib/Lerp.h"
 
 namespace
 {
+    //////////////////////////////////////////////
+    ///WalkÇ≈égÇÌÇÍÇƒÇÈíËêî
+    /// //////////////////////////////////////////
     constexpr float MOVE_SPEED = 1.2f;
     constexpr float MAX_MOVE_AMOUNT = 3.5f;
     constexpr float MIN_MOVE_AMOUNT = 1.0f;
     constexpr float TURN_ANGLE = 180.0f;
     constexpr float ROTATION_LERP_SPEED = 10.0f;
+    //////////////////////////////////////////////
+    ///IdleÇ≈égÇÌÇÍÇƒÇÈíËêî
+    /// //////////////////////////////////////////
+    constexpr float ANIMATION_FPS = 30.0f; 
+    constexpr float TOTAL_FRAMES = 100.0f; 
+    constexpr float NECK_ANIMATION_END = 86.0f; 
+    constexpr float WAIT_START_FRAME = 6.0f; 
+    constexpr float CYCLE_DURATION = 81.0f; 
+    constexpr float HALF_CYCLE_DURATION = 41.0f; 
+    constexpr float CHANGE_DURATION = 15.0f; 
+    constexpr float HOLD_END_FRAME = 27.0f; 
+    constexpr float RETURN_START_FRAME = 27.0f;
+    constexpr float RETURN_END_FRAME = 41.0f;
+    constexpr float CHANGE_DIVISOR = 14.0f; 
+    constexpr float RETURN_DIVISOR = 13.0f; 
+    constexpr float ANGLE = 50.0f; 
 }
 CHumanIdleState::CHumanIdleState(CHuman* human)
     : CBaseState(human, Type::Idle)
@@ -15,11 +36,105 @@ CHumanIdleState::CHumanIdleState(CHuman* human)
 
 void CHumanIdleState::Enter()
 {
+    frameCount = 0;
+    currentAngle = 0;
+    animationTime = 0;
+    stateIdle = 0;//static_cast<int>(round(Randomf(0, 1)));
+    if (stateIdle)
+    {
+        m_pOwner->GetAnimator()->MergePlay(A_IDEL);
+    }
+    else
+    {
+        m_pOwner->GetAnimator()->MergePlay(A_FIND);
+    }
+    
 }
 
 void CHumanIdleState::Update()
 {
+    switch (stateIdle)
+    {
+    case 0:
+        LookAround();
+        break;
+    case 1:
+        Idel();
+        break;
+    default:
+        assert("error:cubeState");
+        break;
+    }
+    // ImGui::Begin("begin");
+    // ImGui::Text("aaa%lf",)
 }
+
+void CHumanIdleState::LookAround()
+{
+    RotationANgle();
+    if (m_pOwner->GetAnimator()->Finished())
+    {
+        Next();
+        m_pOwner->AddAngle(0);
+    }
+}
+
+void CHumanIdleState::RotationANgle()
+{
+    animationTime += SceneManager::DeltaTime();
+        
+    float currentFrame = GetCurrentFrame();
+    
+    if (currentFrame >= TOTAL_FRAMES) { 
+        animationTime = 0.0f;
+        currentAngle = 0.0f;
+        return;
+    }
+    
+    if (currentFrame > NECK_ANIMATION_END) {  
+        return;
+    }
+        
+    if (currentFrame <= WAIT_START_FRAME) {
+        currentAngle = 0.0f;
+    }
+    else {
+        float cycleFrame = currentFrame - WAIT_START_FRAME;
+            
+        if (cycleFrame <= CYCLE_DURATION) {
+            int halfCycle = static_cast<int>((cycleFrame - 1.0f) / HALF_CYCLE_DURATION);
+            float localFrame = fmodf(cycleFrame - 1.0f, HALF_CYCLE_DURATION);
+                
+            float targetAngle = (halfCycle == 0) ? ANGLE : -ANGLE;
+                
+            if (localFrame < CHANGE_DURATION) {
+                float t = localFrame / CHANGE_DIVISOR;
+                currentAngle = Lerp(0.0f, targetAngle, t);
+            }
+            else if (localFrame < HOLD_END_FRAME) {
+                currentAngle = targetAngle;
+            }
+            else if (localFrame < RETURN_END_FRAME) {
+                float t = (localFrame - RETURN_START_FRAME) / RETURN_DIVISOR;
+                currentAngle = Lerp(targetAngle, 0.0f, t);
+            }
+        }
+    }
+    m_pOwner->AddAngle(currentAngle * DegToRad);
+}
+
+float CHumanIdleState::GetCurrentFrame() const {
+    return animationTime * ANIMATION_FPS;
+}
+void CHumanIdleState::Idel()
+{
+    if (m_pOwner->GetAnimator()->Finished())
+    {
+        Next();
+    }
+}
+
+
 
 CHumanWalkState::CHumanWalkState(CHuman* human)
     : CBaseState(human, Type::Idle)
@@ -32,7 +147,7 @@ void CHumanWalkState::Enter()
     int retryCount = 0;
     constexpr int MAX_RETRY = 50;
 
-    while (!boundaryFlag && retryCount < MAX_RETRY)
+    while (!boundaryFlag)
     {
         m_totalPosZMoveAmount = 0;
         m_turnAmount = Randomf(-TURN_ANGLE, TURN_ANGLE) * DegToRad;
@@ -41,6 +156,11 @@ void CHumanWalkState::Enter()
         {
             boundaryFlag = true;
         }
+        if (retryCount < MAX_RETRY)
+        {
+            boundaryFlag = true;
+        }
+        
         retryCount++;
     }
 
@@ -53,17 +173,12 @@ void CHumanWalkState::Enter()
     m_targetRotation = m_currentRotation + m_turnAmount;
     m_isRotation = true;
     m_pOwner->GetAnimator()->MergePlay(A_WALK);
-    m_pOwner->GetAnimator()->SetPlaySpeed(1.0f);
 }
 
 bool CHumanWalkState::BoundaryCheck(const VECTOR2& areaSize) const
 {
-    VECTOR3 tmpPos = m_pOwner->GetTransform().position + VECTOR3(0, 0, m_moveAmount) * XMMatrixRotationY(m_turnAmount);
-    if (tmpPos.x <= areaSize.x && tmpPos.x >= -areaSize.x && tmpPos.z <= areaSize.y && tmpPos.z >= -areaSize.y)
-    {
-        return true;
-    }
-    return false;
+    VECTOR3 NextPos = m_pOwner->GetTransform().position + VECTOR3(0, 0, m_moveAmount) * XMMatrixRotationY(m_turnAmount);
+    return  IsInsideAreaXZ(NextPos,areaSize);
 }
 
 void CHumanWalkState::Update()

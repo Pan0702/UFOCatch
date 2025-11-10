@@ -483,4 +483,12 @@ inline float MyRamdom(const float& min,const float& max,std::mt19937& gen)
 	float num = dist(gen);
 	return num;
 }
-
+inline bool IsInsideAreaXZ(const VECTOR3& pos,const VECTOR2& size)
+{
+	if (pos.x >= -size.x && pos.x <= size.x &&
+		pos.z >= -size.y && pos.z <= size.y)
+	{
+		return true;
+	}
+	return false;
+}

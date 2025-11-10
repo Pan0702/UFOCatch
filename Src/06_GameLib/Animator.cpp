@@ -89,7 +89,7 @@ void Animator::Play(int id, bool force)
 
 void Animator::MergePlay(int id, float time)
 {
-	//	playSpeed = 1.0f;
+	playSpeed = 1.0f;
 	if (base == nullptr)
 		return;
 

@@ -21,7 +21,7 @@ private:
     bool AnimationFinish() const;
 private:
     float timerCount;
-    int stateWait;
+    int stateIdle;
 };
 
 class CCubeWalkState : public CBaseState<CACube>

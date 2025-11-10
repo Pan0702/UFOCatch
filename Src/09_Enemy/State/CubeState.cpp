@@ -16,14 +16,14 @@ namespace
 CCubeIdleState::CCubeIdleState(CACube* cube)
     : CBaseState(cube, Type::Idle)
       , timerCount(0)
-,stateWait(0)
+,stateIdle(0)
 {
 }
 
 void CCubeIdleState::Enter()
 {
-    stateWait = static_cast<int>(round(Randomf(0, 1)));
-    if (stateWait == 1)
+    stateIdle = static_cast<int>(round(Randomf(0, 1)));
+    if (stateIdle)
     {
         m_pOwner->GetAnimator()->MergePlay(A_IDEL);
         m_pOwner->GetAnimator()->SetPlaySpeed(1.0f);
@@ -37,7 +37,7 @@ void CCubeIdleState::Enter()
 
 void CCubeIdleState::Update()
 {
-    switch (stateWait)
+    switch (stateIdle)
     {
     case 0:
 

@@ -14,6 +14,7 @@ public:
     
     void AddPos(const VECTOR3& pos){ transform.position = transform.position + pos;}
     VECTOR2 GetAreaSize() const{return m_AreaSize;}
+    void AddAngle(float a){angle = a;}
 
 private:
     void Update() override;
@@ -27,4 +28,5 @@ private:
     CBaseState<CHuman>* m_pCurrentState;
     DWORD m_dwColor;
     VECTOR2 m_AreaSize;
+    float angle;
 };

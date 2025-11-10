@@ -51,9 +51,9 @@ protected:
     ///
     void Next()
     {
+        SetNextState();
         Type type = actionQueue.front();
         actionQueue.pop();
-        SetNextState();
         m_pOwner->SetState(type);
     }
     T* m_pOwner;
