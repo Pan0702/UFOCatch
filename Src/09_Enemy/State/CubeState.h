@@ -11,13 +11,12 @@ public:
 
 private:
     ///
-    ///その場で止まるだけ
-    ///
-    void Stop();
+    ///その場で止まるだけ///
+    void Idle();
     ///
     ///animationを再生
     ///
-    void Idle();
+    void IdleAnim();
     bool AnimationFinish() const;
 private:
     float timerCount;

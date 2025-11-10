@@ -39,7 +39,6 @@ public:
             }
         }
     }
-
 protected:
     
     CBaseState(T* owner, Type type)

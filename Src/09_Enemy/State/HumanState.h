@@ -20,7 +20,6 @@ private:
     int frameCount;
     float currentAngle;
     float animationTime;
-    
 };
 
 class CHumanWalkState : public CBaseState<CHuman>

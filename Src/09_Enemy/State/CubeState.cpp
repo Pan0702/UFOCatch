@@ -41,10 +41,10 @@ void CCubeIdleState::Update()
     {
     case 0:
 
-        Stop();
+        Idle();
         break;
     case 1:
-        Idle();
+        IdleAnim();
         break;
     default:
         assert("error:cubeState");
@@ -53,7 +53,7 @@ void CCubeIdleState::Update()
     m_pOwner->IsSuctionCheck();
 }
 
-void CCubeIdleState::Stop()
+void CCubeIdleState::Idle()
 {
     timerCount += SceneManager::DeltaTime();
     if (timerCount > 1)
@@ -62,7 +62,7 @@ void CCubeIdleState::Stop()
     }
 }
 
-void CCubeIdleState::Idle()
+void CCubeIdleState::IdleAnim()
 {
     if (AnimationFinish())
     {

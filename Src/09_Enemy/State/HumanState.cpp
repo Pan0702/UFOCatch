@@ -48,7 +48,6 @@ void CHumanIdleState::Enter()
     {
         m_pOwner->GetAnimator()->MergePlay(A_FIND);
     }
-    
 }
 
 void CHumanIdleState::Update()
