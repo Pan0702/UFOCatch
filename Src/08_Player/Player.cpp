@@ -91,14 +91,15 @@ void CPlayer::UpdateCameraPos()
 
 //吸い込むスピードを計算
 //
-VECTOR3 CPlayer::CalcSuctionVelocity(const int& moveDivisor, const VECTOR3& animalPos) const
+VECTOR3 CPlayer::CalcSuctionVelocity(const float& moveTime, const VECTOR3& animalPos) const
 {
     float k = (0 - animalPos.y) / (animalPos.y - transform.position.y);
     VECTOR3 suctionDirection =
         VECTOR3(animalPos.x + k * (animalPos.x - transform.position.x), 0,
                 animalPos.z + k * (animalPos.z - transform.position.z));
     suctionDirection = transform.position - suctionDirection;
-    return suctionDirection / moveDivisor;
+    VECTOR3 vecocity = suctionDirection / moveTime;
+    return vecocity * SceneManager::DeltaTime();
 }
 
 bool CPlayer::IsTargetInVidionFan(const float& humanRotateY, const VECTOR3& targetPosition)
