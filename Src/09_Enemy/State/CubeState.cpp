@@ -12,11 +12,21 @@ namespace
     constexpr float ROTATION_LERP_SPEED = 10.0f;
 }
 
+CCubeBase::CCubeBase(CACube* cube, Type type)
+    :m_pOwner(cube), m_kType(type)
+{
+}
+
+void CCubeBase::NextState()
+{
+    m_pOwner->SetState(NextStatePop());
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///Idle
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CCubeIdleState::CCubeIdleState(CACube* cube)
-    : CBaseState(cube, Type::Idle)
+    : CCubeBase(cube, Type::Idle)
       , timerCount(0)
 ,stateIdle(0)
 {
@@ -60,7 +70,7 @@ void CCubeIdleState::Idle()
     timerCount += SceneManager::DeltaTime();
     if (timerCount > 1)
     {
-        Next();
+        NextStatePop();
     }
 }
 
@@ -68,7 +78,7 @@ void CCubeIdleState::IdleAnim()
 {
     if (AnimationFinish())
     {
-        Next();
+        NextStatePop();
     }
 }
 
@@ -83,7 +93,7 @@ bool CCubeIdleState::AnimationFinish() const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CCubeWalkState::CCubeWalkState(CACube* cube)
-    : CBaseState(cube, Type::Walk)
+    : CCubeBase(cube, Type::Walk)
       , BASE_POS(0, 0, 0)
 {
 }
@@ -148,14 +158,14 @@ void CCubeWalkState::Update()
 
     if (m_totalPosZMoveAmount > m_moveAmount)
     {
-        Next();
+        NextStatePop();
     }
     m_pOwner->IsSuctionCheck();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CCubeSuction::CCubeSuction(CACube* cube)
-    : CBaseState(cube, Type::Suction)
+    : CCubeBase(cube, Type::Suction)
       , m_pPlayer(ObjectManager::FindGameObject<CPlayer>())
       ,m_distanceFromObjectToUFO(VECTOR3(0,0,0))
 {
@@ -177,18 +187,18 @@ void CCubeSuction::Update()
     }
     else
     {
-        Next();
+        NextStatePop();
     }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CCubeDestroy::CCubeDestroy(CACube* cube)
-    : CBaseState(cube, Type::Destroy)
+    : CCubeBase(cube, Type::Destroy)
 {
 }
 
 void CCubeDestroy::Enter()
 {
-    ObjectManager::FindGameObject<CGameInstance>()->PushArry("Dog");
+    //ObjectManager::FindGameObject<CGameInstance>()->PushArry("Dog");
     m_pOwner->DestroyMe();
 }

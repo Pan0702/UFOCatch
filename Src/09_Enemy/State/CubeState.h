@@ -1,8 +1,20 @@
 #include "BaseState.h"
+#include "BaseState.h"
 
 class CACube;
 
-class CCubeIdleState : public CBaseState<CACube>
+class CCubeBase : public CBaseState
+{
+public:
+    CCubeBase(CACube* cube, Type type);
+    CACube* m_pOwner;
+    const Type m_kType;
+
+protected:
+    void NextState();
+};
+
+class CCubeIdleState : public CCubeBase
 {
 public:
     CCubeIdleState(CACube* cube);
@@ -18,12 +30,13 @@ private:
     ///
     void IdleAnim();
     bool AnimationFinish() const;
+
 private:
     float timerCount;
     int stateIdle;
 };
 
-class CCubeWalkState : public CBaseState<CACube>
+class CCubeWalkState : public CCubeBase
 {
 public:
     CCubeWalkState(CACube* cube);
@@ -42,7 +55,7 @@ private:
     float m_targetRotation;
 };
 
-class CCubeSuction : public CBaseState<CACube>
+class CCubeSuction : public CCubeBase
 {
 public:
     CCubeSuction(CACube* cube);
@@ -53,7 +66,7 @@ private:
     VECTOR3 m_distanceFromObjectToUFO;
 };
 
-class CCubeDestroy : public CBaseState<CACube>
+class CCubeDestroy : public CCubeBase
 {
 public:
     CCubeDestroy(CACube* cube);
