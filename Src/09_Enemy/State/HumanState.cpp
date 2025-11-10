@@ -64,8 +64,6 @@ void CHumanIdleState::Update()
         assert("error:cubeState");
         break;
     }
-    // ImGui::Begin("begin");
-    // ImGui::Text("aaa%lf",)
 }
 
 void CHumanIdleState::LookAround()

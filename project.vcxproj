@@ -525,6 +525,7 @@
     <ClInclude Include="Src\02_DirectX\Direct3D.h" />
     <ClInclude Include="Src\02_DirectX\XAudio.h" />
     <ClInclude Include="Src\07_Scene\LevelSelectionScene.h" />
+    <ClInclude Include="Src\07_Scene\ResultScene.h" />
     <ClInclude Include="Src\09_Enemy\Actor\ACube.h" />
     <ClInclude Include="Src\09_Enemy\Actor\AnimalManager.h" />
     <ClInclude Include="Src\09_Enemy\Actor\Human.h" />
@@ -559,6 +560,7 @@
     <ClInclude Include="Src\09_Enemy\State\CubeState.h" />
     <ClInclude Include="Src\09_Enemy\State\BaseState.h" />
     <ClInclude Include="Src\09_Enemy\State\HumanState.h" />
+    <ClInclude Include="Src\10_Stage\Ground.h" />
     <ClInclude Include="Src\GameInstance.h" />
     <ClInclude Include="Src\Stage.h" />
     <ClInclude Include="Src\01_WinMain\Main.h" />
@@ -804,6 +806,7 @@
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="Src\07_Scene\LevelSelectionScene.cpp" />
+    <ClCompile Include="Src\07_Scene\ResultScene.cpp" />
     <ClCompile Include="Src\09_Enemy\Actor\ACube.cpp">
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -2656,6 +2659,7 @@
     <ClCompile Include="Src\09_Enemy\State\CubeState.cpp" />
     <ClCompile Include="Src\09_Enemy\State\BaseState.cpp" />
     <ClCompile Include="Src\09_Enemy\State\HumanState.cpp" />
+    <ClCompile Include="Src\10_Stage\Ground.cpp" />
     <ClCompile Include="Src\GameInstance.cpp" />
     <ClCompile Include="Src\Stage.cpp" />
     <ClCompile Include="Src\01_WinMain\Main.cpp">

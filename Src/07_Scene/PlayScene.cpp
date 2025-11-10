@@ -5,6 +5,7 @@
 #include "../09_Enemy/Actor/AnimalManager.h"
 #include "../08_Player/PCamera.h"
 #include "../08_Player/Player.h"
+#include "../10_Stage/Ground.h"
 
 
 PlayScene::PlayScene()
@@ -12,7 +13,7 @@ PlayScene::PlayScene()
     Instantiate<CPlayer>();
     Instantiate<CPlayerCamera>();
     new CAnimalManager();
-    flag = false;
+    Instantiate<CGround>();
 }
 
 PlayScene::~PlayScene()
@@ -22,9 +23,6 @@ PlayScene::~PlayScene()
 void PlayScene::Update()
 {
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_T))
-    {
-        flag = true;
-    }if (flag)
     {
         SceneManager::ChangeScene("TitleScene");
     }

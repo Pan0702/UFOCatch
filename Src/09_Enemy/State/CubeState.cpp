@@ -1,4 +1,6 @@
 #include "CubeState.h"
+
+#include "../../GameInstance.h"
 #include "../Actor/ACube.h"
 
 namespace
@@ -187,5 +189,6 @@ CCubeDestroy::CCubeDestroy(CACube* cube)
 
 void CCubeDestroy::Enter()
 {
+    ObjectManager::FindGameObject<CGameInstance>()->PushArry("Dog");
     m_pOwner->DestroyMe();
 }
