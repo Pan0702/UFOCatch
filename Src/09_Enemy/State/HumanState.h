@@ -1,8 +1,19 @@
 #pragma once
 #include "BaseState.h"
-#include "../Actor/Human.h"
+class CHuman;
 
-class CHumanIdleState : public CBaseState<CHuman>
+class CHumanBase : public CBaseState
+{
+public:
+    CHumanBase(CHuman* cube, Type type);
+    CHuman* m_pOwner;
+    const Type m_kType;
+
+protected:
+    void NextState();
+};
+
+class CHumanIdleState : public CHumanBase
 {
 public:
     CHumanIdleState(CHuman* human);
@@ -22,7 +33,7 @@ private:
     float animationTime;
 };
 
-class CHumanWalkState : public CBaseState<CHuman>
+class CHumanWalkState : public CHumanBase
 {
 public:
     CHumanWalkState(CHuman* human);
@@ -39,7 +50,7 @@ private:
     float m_targetRotation;
 };
 
-class CHumanDestroy : public CBaseState<CHuman>
+class CHumanDestroy : public CHumanBase
 {
 public:
     CHumanDestroy(CHuman* human);

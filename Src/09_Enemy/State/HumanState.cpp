@@ -1,11 +1,11 @@
 #include "HumanState.h"
 #include "../../06_GameLib/MyMath.h"
 #include "../../06_GameLib/Lerp.h"
-
+#include "../Actor/Human.h"
 namespace
 {
     //////////////////////////////////////////////
-    ///Walk‚ÅŽg‚í‚ê‚Ä‚é’è”
+    ///Walkï¿½ÅŽgï¿½ï¿½ï¿½Ä‚ï¿½è”
     /// //////////////////////////////////////////
     constexpr float MOVE_SPEED = 1.2f;
     constexpr float MAX_MOVE_AMOUNT = 3.5f;
@@ -13,7 +13,7 @@ namespace
     constexpr float TURN_ANGLE = 180.0f;
     constexpr float ROTATION_LERP_SPEED = 10.0f;
     //////////////////////////////////////////////
-    ///Idle‚ÅŽg‚í‚ê‚Ä‚é’è”
+    ///Idleï¿½ÅŽgï¿½ï¿½ï¿½Ä‚ï¿½è”
     /// //////////////////////////////////////////
     constexpr float ANIMATION_FPS = 30.0f; 
     constexpr float TOTAL_FRAMES = 100.0f; 
@@ -29,8 +29,19 @@ namespace
     constexpr float RETURN_DIVISOR = 13.0f; 
     constexpr float ANGLE = 50.0f; 
 }
+
+
+CHumanBase::CHumanBase(CHuman* human, Type type)
+    :m_pOwner(human), m_kType(type)
+{
+}
+
+void CHumanBase::NextState()
+{
+    m_pOwner->SetState(NextStatePop());
+}
 CHumanIdleState::CHumanIdleState(CHuman* human)
-    : CBaseState(human, Type::Idle)
+    : CHumanBase(human, Type::Idle)
 {
 }
 
@@ -71,7 +82,7 @@ void CHumanIdleState::LookAround()
     RotationANgle();
     if (m_pOwner->GetAnimator()->Finished())
     {
-        Next();
+        NextStatePop();
         m_pOwner->AddAngle(0);
     }
 }
@@ -127,14 +138,14 @@ void CHumanIdleState::Idel()
 {
     if (m_pOwner->GetAnimator()->Finished())
     {
-        Next();
+        NextStatePop();
     }
 }
 
 
 
 CHumanWalkState::CHumanWalkState(CHuman* human)
-    : CBaseState(human, Type::Idle)
+    : CHumanBase(human, Type::Idle)
 {
 }
 
@@ -198,12 +209,12 @@ void CHumanWalkState::Update()
 
     if (m_totalPosZMoveAmount > m_moveAmount)
     {
-        Next();
+        NextStatePop();
     }
 }
 
 CHumanDestroy::CHumanDestroy(CHuman* human)
-    : CBaseState(human, Type::Idle)
+    : CHumanBase(human, Type::Idle)
 {
 }
 

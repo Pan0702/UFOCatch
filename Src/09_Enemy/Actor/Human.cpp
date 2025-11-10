@@ -22,10 +22,10 @@ CHuman::CHuman()
     m_dwColor = 100;
     angle = 0.0f;
 
-    m_cubeStates[CBaseState<CHuman>::Type::Idle] = new CHumanIdleState(this);
-    m_cubeStates[CBaseState<CHuman>::Type::Walk] = new CHumanWalkState(this);
-    m_cubeStates[CBaseState<CHuman>::Type::Destroy] = new CHumanDestroy(this);
-    m_pCurrentState = m_cubeStates[CBaseState<CHuman>::Type::Idle];
+    m_cubeStates[CBaseState::Type::Idle] = new CHumanIdleState(this);
+    m_cubeStates[CBaseState::Type::Walk] = new CHumanWalkState(this);
+    m_cubeStates[CBaseState::Type::Destroy] = new CHumanDestroy(this);
+    m_pCurrentState = m_cubeStates[CBaseState::Type::Idle];
     m_pCurrentState->SetNextState();
 }
 
@@ -60,7 +60,7 @@ void CHuman::Draw()
     DrawDirectionLine();
 }
 
-void CHuman::SetState(CBaseState<CHuman>::Type type)
+void CHuman::SetState(CBaseState::Type type)
 {
     m_pCurrentState->Exit();
     m_pCurrentState = m_cubeStates[type];
