@@ -32,7 +32,7 @@ public:
 
 
     void AddExp(int exp){ m_exp += exp; }
-    bool GetIsSuckUp() const { return m_isSuctionActive; }
+    bool GetIsSuckUp() const { return m_SuctionActive; }
 
 private:
     
@@ -75,7 +75,7 @@ private:
     float m_coneDegree;
     int m_allExp;
     int m_exp;
-    bool m_isSuctionActive;
+    bool m_SuctionActive;
 
 
 };

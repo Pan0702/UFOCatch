@@ -31,7 +31,10 @@ CPlayer::~CPlayer() = default;
 void CPlayer::Update()
 {
     m_pAnimator->Update();
-    this->HandleMovementInput();
+    if (not m_SuctionActive)
+    {
+        HandleMovementInput();
+    }
 
     // コーンの半径を計算
     m_coneRadius = transform.position.y * tan(DegToRad * m_coneDegree);
@@ -41,7 +44,7 @@ void CPlayer::Update()
     // カメラ位置を更新
     UpdateCameraPos();
 
-    m_isSuctionActive = GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_J);
+    m_SuctionActive = GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_J);
 }
 
 // void CPlayer::Draw()
@@ -93,18 +96,20 @@ void CPlayer::UpdateCameraPos()
 //
 VECTOR3 CPlayer::CalcSuctionVelocity(const float& moveTime, const VECTOR3& animalPos) const
 {
-    float k = (0 - animalPos.y) / (animalPos.y - transform.position.y);
-    VECTOR3 suctionDirection =
-        VECTOR3(animalPos.x + k * (animalPos.x - transform.position.x), 0,
-                animalPos.z + k * (animalPos.z - transform.position.z));
-    suctionDirection = transform.position - suctionDirection;
-    VECTOR3 vecocity = suctionDirection / moveTime;
-    return vecocity * SceneManager::DeltaTime();
+    //Y座標が0の点（求めるための内分比の係数//
+    float projectionFactorY0 = (0 - animalPos.y) / (animalPos.y - transform.position.y);
+    //0地点での動物のポジション
+    VECTOR3 targetPointOnPlane =
+        VECTOR3(animalPos.x + projectionFactorY0 * (animalPos.x - transform.position.x), 0,
+                animalPos.z + projectionFactorY0 * (animalPos.z - transform.position.z));
+    VECTOR3 pullVectorToTarget = transform.position - targetPointOnPlane;
+    VECTOR3 suctionVelocityPerFrame = pullVectorToTarget / moveTime;
+    return suctionVelocityPerFrame * SceneManager::DeltaTime();
 }
 
 bool CPlayer::IsTargetInVidionFan(const float& humanRotateY, const VECTOR3& targetPosition)
 {
-    const float distanceHumanFromPlayer = CalcDistance3D(transform.position, targetPosition);
+    const float distanceHumanFromPlayer = CalcDistanceXZ(transform.position, targetPosition);
     VECTOR3 rayEndPosition = targetPosition + RAY_LNEGTH * XMMatrixRotationY(humanRotateY);
     const VECTOR2 vectorFromTargetToRayEnd = VECTOR2(rayEndPosition.x - targetPosition.x,
                                                      rayEndPosition.z - targetPosition.z);

@@ -438,7 +438,7 @@ inline float Pow2(const float& n)
  * @param v2 2番目の3Dベクトル
  * @return 2つの点のx座標とy座標の差によって形成される直角三角形の斜辺の長さ
  */
-inline float CalcDistance3D(const VECTOR3& v1,const VECTOR3& v2)
+inline float CalcDistanceXZ(const VECTOR3& v1,const VECTOR3& v2)
 {
 	VECTOR2 distance = VECTOR2(v1.x - v2.x, v1.z - v2.z);
 	return sqrtf(Pow2(distance.x) + Pow2(distance.y));

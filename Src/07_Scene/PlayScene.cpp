@@ -13,7 +13,7 @@ PlayScene::PlayScene()
     Instantiate<CPlayer>();
     Instantiate<CPlayerCamera>();
     new CAnimalManager();
-    Instantiate<CGround>();
+   // Instantiate<CGround>();
 }
 
 PlayScene::~PlayScene()
