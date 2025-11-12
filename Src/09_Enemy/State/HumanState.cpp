@@ -36,12 +36,21 @@ CHumanBase::CHumanBase(CHuman* human, Type type)
 {
 }
 
+CHumanBase::~CHumanBase()
+{
+    if (m_pOwner != nullptr)
+    {
+        SAFE_DELETE(m_pOwner);
+        m_pOwner = nullptr;
+    }
+}
+
 void CHumanBase::NextState()
 {
-    m_pOwner->SetState(NextStatePop());
+    m_pOwner->ChangeState(NextStatePop());
 }
 CHumanIdleState::CHumanIdleState(CHuman* human)
-    : CHumanBase(human, Type::Idle)
+    : CHumanBase(human, Type::IDLE)
 {
 }
 
@@ -57,7 +66,7 @@ void CHumanIdleState::Enter()
     }
     else
     {
-        m_pOwner->GetAnimator()->MergePlay(A_FIND);
+        m_pOwner->GetAnimator()->MergePlay(A_SEACH);
     }
 }
 
@@ -145,7 +154,7 @@ void CHumanIdleState::Idel()
 
 
 CHumanWalkState::CHumanWalkState(CHuman* human)
-    : CHumanBase(human, Type::Idle)
+    : CHumanBase(human, Type::IDLE)
 {
 }
 
@@ -213,12 +222,12 @@ void CHumanWalkState::Update()
     }
 }
 
-CHumanDestroy::CHumanDestroy(CHuman* human)
-    : CHumanBase(human, Type::Idle)
+CHumanFindPlayer::CHumanFindPlayer(CHuman* human)
+    : CHumanBase(human, Type::IDLE)
 {
 }
 
-void CHumanDestroy::Enter()
+void CHumanFindPlayer::Enter()
 {
-    m_pOwner->DestroyMe();
+    ObjectManager::FindGameObject<CPlayer>()->SubHp(1);
 }

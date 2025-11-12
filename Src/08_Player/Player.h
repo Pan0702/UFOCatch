@@ -33,6 +33,7 @@ public:
 
     void AddExp(int exp){ m_exp += exp; }
     bool GetIsSuckUp() const { return m_SuctionActive; }
+    void SubHp(int hp){ m_hp -= hp; }
 
 private:
     
@@ -75,7 +76,9 @@ private:
     float m_coneDegree;
     int m_allExp;
     int m_exp;
+    int m_hp;
     bool m_SuctionActive;
+    
 
 
 };

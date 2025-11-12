@@ -6,6 +6,7 @@ class CHumanBase : public CBaseState
 {
 public:
     CHumanBase(CHuman* cube, Type type);
+    ~CHumanBase();
     CHuman* m_pOwner;
     const Type m_kType;
 
@@ -50,9 +51,9 @@ private:
     float m_targetRotation;
 };
 
-class CHumanDestroy : public CHumanBase
+class CHumanFindPlayer : public CHumanBase
 {
 public:
-    CHumanDestroy(CHuman* human);
+    CHumanFindPlayer(CHuman* human);
     void Enter() override;
 };

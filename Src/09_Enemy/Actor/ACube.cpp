@@ -25,11 +25,11 @@ CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     transform.position = iniPos;
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
 
-    m_cubeStates[CBaseState::Type::Idle] = new CCubeIdleState(this);
-    m_cubeStates[CBaseState::Type::Walk] = new CCubeWalkState(this);
-    m_cubeStates[CBaseState::Type::Suction] = new CCubeSuction(this);
-    m_cubeStates[CBaseState::Type::Destroy] = new CCubeDestroy(this);
-    m_pCurrentState = m_cubeStates[CBaseState::Type::Idle];
+    m_cubeStates[CBaseState::Type::IDLE] = new CCubeIdleState(this);
+    m_cubeStates[CBaseState::Type::WALK] = new CCubeWalkState(this);
+    m_cubeStates[CBaseState::Type::SUCTION] = new CCubeSuction(this);
+    m_cubeStates[CBaseState::Type::DESTROY] = new CCubeDestroy(this);
+    m_pCurrentState = m_cubeStates[CBaseState::Type::IDLE];
     m_pCurrentState->SetNextState();
 }
 
@@ -73,7 +73,7 @@ void CACube::IsSuctionCheck()
 {
     if (m_pPlayer->IsWithSuctionCone(transform.position /* + VECTOR3(0, m_maxSize.y, 0)*/) && m_pPlayer->GetIsSuckUp())
     {
-        SetState(CBaseState::Type::Suction);
+        SetState(CBaseState::Type::SUCTION);
     }
 }
 

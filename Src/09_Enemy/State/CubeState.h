@@ -7,6 +7,7 @@ class CCubeBase : public CBaseState
 {
 public:
     CCubeBase(CACube* cube, Type type);
+    ~CCubeBase();
     CACube* m_pOwner;
     const Type m_kType;
 

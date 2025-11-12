@@ -4,33 +4,50 @@
 namespace
 {
     constexpr float LINE_LENGTH = 7.0f;
-
 }
+
 CHuman::CHuman()
-    :m_AreaSize(10,10)
+    : m_AreaSize(10, 10)
 {
     transform.position = VECTOR3(0, 0, 0);
     m_pMesh = new CFbxMesh();
     m_pMesh->Load("data/NewAnimal/Human/Human.mesh");
     m_pAnimator = new Animator();
-    m_pAnimator->SetModel(m_pMesh); 
+    m_pAnimator->SetModel(m_pMesh);
     m_pMesh->LoadAnimation(A_IDEL, "data/NewAnimal/Human/Human_Idle.anmx", false);
     m_pMesh->LoadAnimation(A_WALK, "data/NewAnimal/Human/Human_Walk.anmx", true);
-    m_pMesh->LoadAnimation(A_FIND, "data/NewAnimal/Human/Human_Find.anmx", false);
-    
+    m_pMesh->LoadAnimation(A_SEACH, "data/NewAnimal/Human/Human_Find.anmx", false);
+
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     m_dwColor = 100;
     angle = 0.0f;
 
-    m_cubeStates[CBaseState::Type::Idle] = new CHumanIdleState(this);
-    m_cubeStates[CBaseState::Type::Walk] = new CHumanWalkState(this);
-    m_cubeStates[CBaseState::Type::Destroy] = new CHumanDestroy(this);
-    m_pCurrentState = m_cubeStates[CBaseState::Type::Idle];
+    m_cubeStates[CBaseState::Type::IDLE] = new CHumanIdleState(this);
+    m_cubeStates[CBaseState::Type::WALK] = new CHumanWalkState(this);
+    m_cubeStates[CBaseState::Type::FIND_PLAYER] = new CHumanFindPlayer(this);
+    m_pCurrentState = m_cubeStates[CBaseState::Type::IDLE];
     m_pCurrentState->SetNextState();
 }
 
 CHuman::~CHuman()
 {
+    if ( m_pMesh != nullptr)
+    {
+        SAFE_DELETE( m_pMesh);
+        m_pMesh = nullptr;
+    }
+    if ( m_pAnimator != nullptr )
+    {
+        SAFE_DELETE( m_pAnimator);
+        m_pAnimator = nullptr;
+    }
+    for (auto& state : m_cubeStates)
+    {
+        if (state.second == nullptr) continue;
+        SAFE_DELETE( state.second);
+        state.second = nullptr;
+    }
+    m_cubeStates.clear();
 }
 
 void CHuman::Update()
@@ -40,9 +57,10 @@ void CHuman::Update()
         m_pCurrentState->Update();
     }
     m_pAnimator->Update();
-    if (m_pPlayer->IsTargetInVidionFan(transform.rotation.y + angle,transform.position))
+    if (m_pPlayer->IsTargetInVidionFan(transform.rotation.y + angle, transform.position))
     {
         m_dwColor = 255;
+        ChangeState(CBaseState::Type::FIND_PLAYER);
     }
     else
     {
@@ -50,7 +68,7 @@ void CHuman::Update()
     }
     ImGui::Begin("Human");
     ImGui::Text("Rotation: %lf", angle * RadToDeg);
-    ImGui::Text("AnimFrame%lf",m_pAnimator->CurrentFrame());
+    ImGui::Text("AnimFrame%lf", m_pAnimator->CurrentFrame());
     ImGui::End();
 }
 
@@ -60,7 +78,7 @@ void CHuman::Draw()
     DrawDirectionLine();
 }
 
-void CHuman::SetState(CBaseState::Type type)
+void CHuman::ChangeState(CBaseState::Type type)
 {
     m_pCurrentState->Exit();
     m_pCurrentState = m_cubeStates[type];
@@ -72,15 +90,14 @@ void CHuman::SetState(CBaseState::Type type)
 //範囲内なら水色、外なら緑になる
 void CHuman::DrawDirectionLine()
 {
-    
     CSprite spr;
     MATRIX4X4 mat = XMMatrixRotationY(angle + transform.rotation.y);
 
     VECTOR3 startPos = transform.position;
-    
+
     VECTOR3 endPos = startPos + VECTOR3(0, 0, LINE_LENGTH) * mat;
 
-    
+
     spr.DrawLine3D(startPos, endPos, RGB(0, 255, m_dwColor));
 }
 

@@ -30,5 +30,5 @@ enum AnimationType
     A_IDEL = 0,
     A_WALK,
     A_RUN,
-    A_FIND
+    A_SEACH
 };

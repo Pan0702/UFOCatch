@@ -18,7 +18,7 @@ CAnimalManager::CAnimalManager()
 
 CAnimalManager::~CAnimalManager()
 {
-    if (m_pPlayer)
+    if (m_pPlayer != nullptr)
     {
         delete m_pPlayer;
         m_pPlayer = nullptr;

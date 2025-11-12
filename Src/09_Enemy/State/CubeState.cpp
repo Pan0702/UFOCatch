@@ -17,6 +17,15 @@ CCubeBase::CCubeBase(CACube* cube, Type type)
 {
 }
 
+CCubeBase::~CCubeBase()
+{
+    if (m_pOwner != nullptr)
+    {
+        SAFE_DELETE(m_pOwner);
+        m_pOwner = nullptr;
+    }
+}
+
 void CCubeBase::NextState()
 {
     m_pOwner->SetState(NextStatePop());
@@ -26,7 +35,7 @@ void CCubeBase::NextState()
 ///Idle
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CCubeIdleState::CCubeIdleState(CACube* cube)
-    : CCubeBase(cube, Type::Idle)
+    : CCubeBase(cube, Type::IDLE)
       , timerCount(0)
 ,stateIdle(0)
 {
@@ -93,7 +102,7 @@ bool CCubeIdleState::AnimationFinish() const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CCubeWalkState::CCubeWalkState(CACube* cube)
-    : CCubeBase(cube, Type::Walk)
+    : CCubeBase(cube, Type::WALK)
       , BASE_POS(0, 0, 0)
 {
 }
@@ -165,7 +174,7 @@ void CCubeWalkState::Update()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CCubeSuction::CCubeSuction(CACube* cube)
-    : CCubeBase(cube, Type::Suction)
+    : CCubeBase(cube, Type::SUCTION)
       , m_pPlayer(ObjectManager::FindGameObject<CPlayer>())
       ,m_distanceFromObjectToUFO(VECTOR3(0,0,0))
 {
@@ -178,7 +187,7 @@ void CCubeSuction::Update()
     {
         if (m_pPlayer->GetPos().y <= m_pOwner->GetTransform().position.y)
         {
-            m_pOwner->SetState(Type::Destroy);
+            m_pOwner->SetState(Type::DESTROY);
         }
         else
         {
@@ -193,7 +202,7 @@ void CCubeSuction::Update()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CCubeDestroy::CCubeDestroy(CACube* cube)
-    : CCubeBase(cube, Type::Destroy)
+    : CCubeBase(cube, Type::DESTROY)
 {
 }
 

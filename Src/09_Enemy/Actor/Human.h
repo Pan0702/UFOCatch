@@ -11,7 +11,7 @@ class CHuman : public CAnimalManager
 public:
     CHuman();
     ~CHuman();
-    void SetState(CBaseState::Type type);
+    void ChangeState(CBaseState::Type type);
     
     void AddPos(const VECTOR3& pos){ transform.position = transform.position + pos;}
     VECTOR2 GetAreaSize() const{return m_AreaSize;}

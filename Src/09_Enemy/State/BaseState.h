@@ -7,12 +7,13 @@ class CBaseState
 public:
     enum class Type
     {
-        Idle,
-        Walk,
-        Suction,
-        Destroy,
-        LookAround,
-        Escape
+        IDLE,
+        WALK,
+        SUCTION,
+        DESTROY,
+        SEARCH,
+        FIND_PLAYER,
+        ESCAPE
     };
 
     virtual ~CBaseState(){}

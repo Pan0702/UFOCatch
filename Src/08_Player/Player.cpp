@@ -24,6 +24,7 @@ CPlayer::CPlayer()
     m_coneDegree = 20;
     m_allExp = 1;
     m_exp = 0;
+    m_hp = 1;
 }
 
 CPlayer::~CPlayer() = default;
@@ -35,7 +36,7 @@ void CPlayer::Update()
     {
         HandleMovementInput();
     }
-
+    m_SuctionActive = GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_J);
     // コーンの半径を計算
     m_coneRadius = transform.position.y * tan(DegToRad * m_coneDegree);
 
@@ -43,8 +44,11 @@ void CPlayer::Update()
 
     // カメラ位置を更新
     UpdateCameraPos();
+    if (m_hp <= 0)
+    {
+        SceneManager::ChangeScene("TitleScene");
+    }
 
-    m_SuctionActive = GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_J);
 }
 
 // void CPlayer::Draw()

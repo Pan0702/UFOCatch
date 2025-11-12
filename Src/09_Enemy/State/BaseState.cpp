@@ -21,11 +21,11 @@ void CBaseState::SetNextState()
         float randomNum = Randomf(0, 1);
         if (randomNum > 0.3f)
         {
-            actionQueue.push(Type::Walk);
+            actionQueue.push(Type::WALK);
         }
         else
         {
-            actionQueue.push(Type::Idle);
+            actionQueue.push(Type::IDLE);
         }
     }
 }
