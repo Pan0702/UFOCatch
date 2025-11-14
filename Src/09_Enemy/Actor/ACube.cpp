@@ -80,7 +80,7 @@ void CACube::IsSuctionCheck()
 VECTOR3 CACube::SuctionSpeed() const
 {
     return m_pPlayer->
-        CalcSuctionVelocity(1, transform.position);
+        CalcSuctionDisplacement(1, transform.position);
 }
 
 

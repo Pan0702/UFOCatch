@@ -21,7 +21,7 @@ public:
     /// @param animalPos 
     /// @return 1回当たりの移動量を返す
     /// 
-    VECTOR3 CalcSuctionVelocity(const float& moveTime, const VECTOR3& animalPos) const;
+    VECTOR3 CalcSuctionDisplacement(const float& moveTime, const VECTOR3& animalPos) const;
 
     /// 
     /// @param humanRotateY Radでの度数

@@ -8,7 +8,7 @@
 namespace
 {
     constexpr float LINE_LENGTH = 7;
-    constexpr float ANGLE = 20;
+    constexpr float HUMAN_ANGLE = 20;
     const VECTOR3 RAY_LNEGTH = VECTOR3(0, 0, 7);
 }
 
@@ -98,7 +98,7 @@ void CPlayer::UpdateCameraPos()
 
 //吸い込むスピードを計算
 //
-VECTOR3 CPlayer::CalcSuctionVelocity(const float& moveTime, const VECTOR3& animalPos) const
+VECTOR3 CPlayer::CalcSuctionDisplacement(const float& moveTime, const VECTOR3& animalPos) const
 {
     //Y座標が0の点（求めるための内分比の係数//
     float projectionFactorY0 = (0 - animalPos.y) / (animalPos.y - transform.position.y);
@@ -107,8 +107,8 @@ VECTOR3 CPlayer::CalcSuctionVelocity(const float& moveTime, const VECTOR3& anima
         VECTOR3(animalPos.x + projectionFactorY0 * (animalPos.x - transform.position.x), 0,
                 animalPos.z + projectionFactorY0 * (animalPos.z - transform.position.z));
     VECTOR3 pullVectorToTarget = transform.position - targetPointOnPlane;
-    VECTOR3 suctionVelocityPerFrame = pullVectorToTarget / moveTime;
-    return suctionVelocityPerFrame * SceneManager::DeltaTime();
+    VECTOR3 suctionDisplacementPerFrame = pullVectorToTarget / moveTime;
+    return suctionDisplacementPerFrame * SceneManager::DeltaTime();
 }
 
 bool CPlayer::IsTargetInVidionFan(const float& humanRotateY, const VECTOR3& targetPosition)
@@ -142,7 +142,7 @@ bool CPlayer::IsBeyondInsideFanShapeAngle(const VECTOR2& vectorTargetToRayEnd, c
     const VECTOR2 HumanFromPlayerNorm = normalize(vectorTargetToRayEnd);
     const VECTOR2 HumanFromEndPosNorm = normalize(vectorTargetToPlayer);
     const float anglePlayerFromEndPos = CalcVector2Angle(HumanFromPlayerNorm, HumanFromEndPosNorm);
-    if (ANGLE < anglePlayerFromEndPos)
+    if (HUMAN_ANGLE < anglePlayerFromEndPos)
     {
         return true;
     }
@@ -154,8 +154,8 @@ bool CPlayer::IsBeyondInsideFanShapeAngle(const VECTOR2& vectorTargetToRayEnd, c
 //
 bool CPlayer::IsWithSuctionCone(const VECTOR3& targetPos) const
 {
-    const float distnceAnimalFromPlayer = transform.position.y - targetPos.y;
-    const float coneRadiusAtTargetHeight = distnceAnimalFromPlayer * std::tan(DegToRad * m_coneDegree);
+    const float distanceAnimalFromPlayer = transform.position.y - targetPos.y;
+    const float coneRadiusAtTargetHeight = distanceAnimalFromPlayer * std::tan(DegToRad * m_coneDegree);
     if (Pow2(targetPos.x - transform.position.x) + Pow2(targetPos.z - transform.position.z)
         <= Pow2(coneRadiusAtTargetHeight))
     {

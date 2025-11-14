@@ -21,7 +21,6 @@ CCubeBase::~CCubeBase()
 {
     if (m_pOwner != nullptr)
     {
-        SAFE_DELETE(m_pOwner);
         m_pOwner = nullptr;
     }
 }

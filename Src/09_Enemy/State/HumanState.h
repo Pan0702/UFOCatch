@@ -56,4 +56,5 @@ class CHumanFindPlayer : public CHumanBase
 public:
     CHumanFindPlayer(CHuman* human);
     void Enter() override;
+    void Update() override;
 };

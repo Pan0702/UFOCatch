@@ -40,7 +40,6 @@ CHumanBase::~CHumanBase()
 {
     if (m_pOwner != nullptr)
     {
-        SAFE_DELETE(m_pOwner);
         m_pOwner = nullptr;
     }
 }
@@ -59,7 +58,7 @@ void CHumanIdleState::Enter()
     frameCount = 0;
     currentAngle = 0;
     animationTime = 0;
-    stateIdle = 0;//static_cast<int>(round(Randomf(0, 1)));
+    stateIdle = static_cast<int>(round(Randomf(0, 1)));
     if (stateIdle)
     {
         m_pOwner->GetAnimator()->MergePlay(A_IDEL);
@@ -91,8 +90,8 @@ void CHumanIdleState::LookAround()
     RotationANgle();
     if (m_pOwner->GetAnimator()->Finished())
     {
-        NextStatePop();
-        m_pOwner->AddAngle(0);
+        m_pOwner->SetAngle(0);
+        m_pOwner->ChangeState(NextStatePop());
     }
 }
 
@@ -137,7 +136,7 @@ void CHumanIdleState::RotationANgle()
             }
         }
     }
-    m_pOwner->AddAngle(currentAngle * DegToRad);
+    m_pOwner->SetAngle(currentAngle * DegToRad);
 }
 
 float CHumanIdleState::GetCurrentFrame() const {
@@ -147,7 +146,7 @@ void CHumanIdleState::Idel()
 {
     if (m_pOwner->GetAnimator()->Finished())
     {
-        NextStatePop();
+        m_pOwner->ChangeState(NextStatePop());
     }
 }
 
@@ -218,16 +217,28 @@ void CHumanWalkState::Update()
 
     if (m_totalPosZMoveAmount > m_moveAmount)
     {
-        NextStatePop();
+        m_pOwner->ChangeState(NextStatePop());
     }
 }
 
 CHumanFindPlayer::CHumanFindPlayer(CHuman* human)
-    : CHumanBase(human, Type::IDLE)
+    : CHumanBase(human, Type::FIND_PLAYER)
 {
 }
 
 void CHumanFindPlayer::Enter()
 {
-    ObjectManager::FindGameObject<CPlayer>()->SubHp(1);
+    //ObjectManager::FindGameObject<CPlayer>()->SubHp(1);
+    m_pOwner->GetAnimator()->MergePlay(A_IDEL);
+   
+}
+
+void CHumanFindPlayer::Update()
+{
+   if (not m_pOwner->GetInSight())
+   {
+       m_pOwner->SetAngle(0);
+       m_pOwner->ChangeState(Type::WALK);
+   }
+    
 }
