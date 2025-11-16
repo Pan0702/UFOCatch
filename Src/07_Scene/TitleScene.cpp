@@ -23,7 +23,7 @@ void TitleScene::Update()
 	}
 	if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_RETURN))
 	{
-		SceneManager::ChangeScene("SelectScene");
+		SceneManager::ChangeScene("ResultScene");
 	}
 }
 

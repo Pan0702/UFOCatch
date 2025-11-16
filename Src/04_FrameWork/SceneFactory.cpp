@@ -2,18 +2,23 @@
 #include <windows.h>
 #include <assert.h>
 
+#include "../GameInstance.h"
 #include "../07_Scene/LevelSelectionScene.h"
 #include "../07_Scene/TitleScene.h"
 #include "../07_Scene/PlayScene.h"
+#include "../07_Scene/ResultScene.h"
 
 SceneBase* SceneFactory::CreateFirst()
 {
+	SingleInstantiate<CGameInstance>();
 	return new TitleScene();
+	
 	return nullptr;
 }
 
 SceneBase * SceneFactory::Create(const std::string & name)
 {
+
 	if (name == "TitleScene") {
 		return new TitleScene();
 	}
@@ -23,6 +28,10 @@ SceneBase * SceneFactory::Create(const std::string & name)
 	if (name == "SelectScene")
 	{
 		return new CLevelSelectionScene();
+	}
+	if (name == "ResultScene")
+	{
+		return new CResultScene();
 	}
 	
 	assert(false);

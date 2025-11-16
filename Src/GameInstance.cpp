@@ -2,7 +2,10 @@
 
 CGameInstance::CGameInstance() : m_score(0), m_exp(0), m_allExp(0)
 {
+    ObjectManager::DontDestroy(this);		// DataCarrierは消されない
+    ObjectManager::SetVisible(this, false);// DataCarrierは表示しない
     PushArry("Dog");
+    m_score = 0;
 }
 
 CGameInstance::~CGameInstance() = default;

@@ -562,6 +562,7 @@
     <ClInclude Include="Src\09_Enemy\State\BaseState.h" />
     <ClInclude Include="Src\09_Enemy\State\HumanState.h" />
     <ClInclude Include="Src\10_Stage\Ground.h" />
+    <ClInclude Include="Src\11_GameSystem\TimeLimit.h" />
     <ClInclude Include="Src\GameInstance.h" />
     <ClInclude Include="Src\Stage.h" />
     <ClInclude Include="Src\01_WinMain\Main.h" />
@@ -2662,6 +2663,7 @@
     <ClCompile Include="Src\09_Enemy\State\BaseState.cpp" />
     <ClCompile Include="Src\09_Enemy\State\HumanState.cpp" />
     <ClCompile Include="Src\10_Stage\Ground.cpp" />
+    <ClCompile Include="Src\11_GameSystem\TimeLimit.cpp" />
     <ClCompile Include="Src\GameInstance.cpp" />
     <ClCompile Include="Src\Stage.cpp" />
     <ClCompile Include="Src\01_WinMain\Main.cpp">

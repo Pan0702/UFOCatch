@@ -17,11 +17,11 @@ public:
 
 
     /// g引き寄せるための移動量を計算 
-    /// @param moveTime
+    /// @param moveTimeSecond
     /// @param animalPos 
     /// @return 1回当たりの移動量を返す
     /// 
-    VECTOR3 CalcSuctionDisplacement(const float& moveTime, const VECTOR3& animalPos) const;
+    VECTOR3 CalcSuctionDisplacement(const float& moveTimeSecond, const VECTOR3& animalPos) const;
 
     /// 
     /// @param humanRotateY Radでの度数

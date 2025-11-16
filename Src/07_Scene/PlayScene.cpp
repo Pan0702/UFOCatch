@@ -6,6 +6,7 @@
 #include "../08_Player/PCamera.h"
 #include "../08_Player/Player.h"
 #include "../10_Stage/Ground.h"
+#include "../11_GameSystem/TimeLimit.h"
 
 
 PlayScene::PlayScene()
@@ -13,7 +14,8 @@ PlayScene::PlayScene()
     Instantiate<CPlayer>();
     Instantiate<CPlayerCamera>();
     new CAnimalManager();
-   // Instantiate<CGround>();
+   Instantiate<CGround>();
+    new CTimeLimit(10);
 }
 
 PlayScene::~PlayScene()

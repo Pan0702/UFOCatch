@@ -1,8 +1,5 @@
 #pragma once
 #include <unordered_map>
-#include <vector>
-
-#include "Stage.h"
 #include "05_CommonFile/Object3D.h"
 
 class CGameInstance : public Object3D
@@ -13,6 +10,8 @@ public:
     void PushArry(const std::string& animalName);
     int PopArry(const std::string& animalName);
     void AddElement(const std::string& animalName);
+    void AddScore(int score){m_score += score;}
+    int GetScore(){return m_score;}
 
 private:
     void Update() override;

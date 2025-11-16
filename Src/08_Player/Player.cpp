@@ -98,7 +98,7 @@ void CPlayer::UpdateCameraPos()
 
 //吸い込むスピードを計算
 //
-VECTOR3 CPlayer::CalcSuctionDisplacement(const float& moveTime, const VECTOR3& animalPos) const
+VECTOR3 CPlayer::CalcSuctionDisplacement(const float& moveTimeSecond, const VECTOR3& animalPos) const
 {
     //Y座標が0の点（求めるための内分比の係数//
     float projectionFactorY0 = (0 - animalPos.y) / (animalPos.y - transform.position.y);
@@ -107,7 +107,7 @@ VECTOR3 CPlayer::CalcSuctionDisplacement(const float& moveTime, const VECTOR3& a
         VECTOR3(animalPos.x + projectionFactorY0 * (animalPos.x - transform.position.x), 0,
                 animalPos.z + projectionFactorY0 * (animalPos.z - transform.position.z));
     VECTOR3 pullVectorToTarget = transform.position - targetPointOnPlane;
-    VECTOR3 suctionDisplacementPerFrame = pullVectorToTarget / moveTime;
+    VECTOR3 suctionDisplacementPerFrame = pullVectorToTarget / moveTimeSecond;
     return suctionDisplacementPerFrame * SceneManager::DeltaTime();
 }
 
