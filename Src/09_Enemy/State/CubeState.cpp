@@ -207,6 +207,6 @@ CCubeDestroy::CCubeDestroy(CACube* cube)
 
 void CCubeDestroy::Enter()
 {
-    //ObjectManager::FindGameObject<CGameInstance>()->PushArry("Dog");
+    ObjectManager::FindGameObject<CGameInstance>()->AddScore(100);
     m_pOwner->DestroyMe();
 }
