@@ -6,16 +6,12 @@ class CVisionSystem : public Object3D
 public:
     CVisionSystem();
     ~CVisionSystem();
-    void Update() override;
-    
-    bool SectorCircleCollision(const VECTOR2& sectorCenter, const float& humanAngle);
+    bool IsAngleInSector(const float& angle);
+    bool SectorCircleCollision(const VECTOR2& humanPos, float humanAngle);
 
 private:
-    bool IsAngleInSector(const float& angle) const;
-    void SetSectorAngles(const float& centerAngle);
-    bool IsPointInSector(const VECTOR2& sectorCenter) const;
-    bool LineSegmentCircleIntersection(const VECTOR2& start, const VECTOR2& end, float radius) const;
-   
+    bool LineSegmentCircleIntersection(const VECTOR2& lineStart, const VECTOR2& lineEnd, const VECTOR2& circleCenter, float circleRadius) const;
+
 
 
     struct CircleInfo

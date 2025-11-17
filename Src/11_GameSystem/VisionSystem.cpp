@@ -9,17 +9,17 @@ CVisionSystem::~CVisionSystem() = default;
 
 
 
-bool CVisionSystem::IsAngleInSector(float angle) const
+bool CVisionSystem::IsAngleInSector(const float& angle) 
 {
     
-    if (start <= end)
+    if (m_sectorInfo.startAngle <= m_sectorInfo.endAngle)
     {
-        return angle >= start && angle <= end;
+        return angle >= m_sectorInfo.startAngle && angle <= m_sectorInfo.endAngle;
     }
     else
     {
-        // îŒ`‚ª0“x‚ğ‚Ü‚½‚®ê‡
-        return angle >= start || angle <= end;
+        // ï¿½ï¿½`ï¿½ï¿½0ï¿½xï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½ê‡
+        return angle >= m_sectorInfo.startAngle || angle <= m_sectorInfo.endAngle;
     }
 }
 
@@ -28,63 +28,61 @@ bool CVisionSystem::LineSegmentCircleIntersection(const VECTOR2& lineStart,
                                                  const VECTOR2& circleCenter, 
                                                  float circleRadius) const
 {
-    // ü•ª‚Ì•ûŒüƒxƒNƒgƒ‹
     VECTOR2 lineDirection = lineEnd - lineStart;
-    
-    // ü•ª‚Ìn“_‚©‚ç‰~‚Ì’†S‚Ö‚ÌƒxƒNƒgƒ‹
     VECTOR2 startToCenter = lineStart - circleCenter;
     
-    // “ñŸ•û’ö® at? + bt + c = 0 ‚ÌŒW”
     float quadraticA = lineDirection.x * lineDirection.x + lineDirection.y * lineDirection.y;
     float quadraticB = 2.0f * (startToCenter.x * lineDirection.x + startToCenter.y * lineDirection.y);
     float quadraticC = (startToCenter.x * startToCenter.x + startToCenter.y * startToCenter.y) - 
                        circleRadius * circleRadius;
     
-    // ”»•Ê®
     float discriminant = quadraticB * quadraticB - 4.0f * quadraticA * quadraticC;
     
     if (discriminant < 0.0f)
     {
-        return false;  // Œğ“_‚È‚µ
+        return false;
     }
     
-    // Œğ“_‚Ìƒpƒ‰ƒ[ƒ^t ‚ğŒvZ
     float sqrtDiscriminant = std::sqrt(discriminant);
     float t1 = (-quadraticB - sqrtDiscriminant) / (2.0f * quadraticA);
     float t2 = (-quadraticB + sqrtDiscriminant) / (2.0f * quadraticA);
     
-    // Œğ“_‚ªü•ªãit ¸ [0,1]j‚É‚ ‚é‚©ƒ`ƒFƒbƒN
     return (t1 >= 0.0f && t1 <= 1.0f) || 
            (t2 >= 0.0f && t2 <= 1.0f) || 
            (t1 < 0.0f && t2 > 1.0f);
 }
-
-bool CVisionSystem::SectorCircleCollision(const VECTOR2& sectorCenter, 
-                                         const VECTOR2& circleCenter) const
+bool CVisionSystem::SectorCircleCollision(const VECTOR2& humanPos, float humanAngle)
 {
-    // îŒ`‚Ì’†S‚©‚ç‰~‚Ì’†S‚Ö‚ÌƒxƒNƒgƒ‹
-    VECTOR2 diff = circleCenter - sectorCenter;
+    // è¦–é‡è§’ã‚’ä½¿ã£ã¦æ‰‡å½¢ã®é–‹å§‹ãƒ»çµ‚äº†è§’åº¦ã‚’è¨­å®š
+    float fieldOfView = 40.0f;  // è¦–é‡è§’ï¼ˆåº¦ï¼‰
+    float halfFOV = (fieldOfView * 0.5f) * DegToRad;
+    
+    m_sectorInfo.startAngle = humanAngle - halfFOV;
+    m_sectorInfo.endAngle = humanAngle + halfFOV;
+    
+    // æ‰‡å½¢ã®ä¸­å¿ƒï¼ˆHumanã®ä½ç½®ï¼‰ã‹ã‚‰å††ã®ä¸­å¿ƒã¸ã®ãƒ™ã‚¯ãƒˆãƒ«
+    VECTOR2 diff = m_circleInfo.center - humanPos;
     float distSquared = diff.x * diff.x + diff.y * diff.y;
     float dist = std::sqrt(distSquared);
     
-    // ‘ŠúƒŠƒ^[ƒ“: ‰~‚ªîŒ`‚ÌŠOÚ‰~‚ÌŠO‘¤
+    // æ—©æœŸãƒªã‚¿ãƒ¼ãƒ³
     float sumRadius = m_sectorInfo.radius + m_circleInfo.radius;
     if (distSquared > sumRadius * sumRadius)
     {
         return false;
     }
     
-    // ƒP[ƒX1: ‰~‚Ì’†S‚ªîŒ`“à‚É‚ ‚é
+    // ã‚±ãƒ¼ã‚¹1: å††ã®ä¸­å¿ƒãŒæ‰‡å½¢å†…
     if (dist <= m_sectorInfo.radius)
     {
-        float angle = std::atan2(diff.x, diff.y);  // ’ˆÓ: atan2(x, y) ‚ÅZ²³•ûŒü‚ª0“x
+        float angle = std::atan2(diff.x, diff.y);
         if (IsAngleInSector(angle))
         {
             return true;
         }
     }
     
-    // ƒP[ƒX2: ‰~‚ªîŒ`‚Ì‰~ŒÊ‚ÆŒğ·
+    // ã‚±ãƒ¼ã‚¹2: å††ãŒæ‰‡å½¢ã®å††å¼§ã¨äº¤å·®
     if (dist < m_sectorInfo.radius + m_circleInfo.radius && 
         dist > std::abs(m_sectorInfo.radius - m_circleInfo.radius))
     {
@@ -95,24 +93,24 @@ bool CVisionSystem::SectorCircleCollision(const VECTOR2& sectorCenter,
         }
     }
     
-    // ƒP[ƒX3: îŒ`‚Ì•Ói”¼Œaüj‚Æ‰~‚ÌŒğ·
-    VECTOR2 edge1End = sectorCenter + VECTOR2(
+    // ã‚±ãƒ¼ã‚¹3: æ‰‡å½¢ã®è¾ºã¨å††ã®äº¤å·®
+    VECTOR2 edge1End = humanPos + VECTOR2(
         std::sin(m_sectorInfo.startAngle) * m_sectorInfo.radius,
         std::cos(m_sectorInfo.startAngle) * m_sectorInfo.radius
     );
     
-    VECTOR2 edge2End = sectorCenter + VECTOR2(
+    VECTOR2 edge2End = humanPos + VECTOR2(
         std::sin(m_sectorInfo.endAngle) * m_sectorInfo.radius,
         std::cos(m_sectorInfo.endAngle) * m_sectorInfo.radius
     );
     
-    if (LineSegmentCircleIntersection(sectorCenter, edge1End, circleCenter, m_circleInfo.radius) ||
-        LineSegmentCircleIntersection(sectorCenter, edge2End, circleCenter, m_circleInfo.radius))
+    if (LineSegmentCircleIntersection(humanPos, edge1End, m_circleInfo.center, m_circleInfo.radius) ||
+        LineSegmentCircleIntersection(humanPos, edge2End, m_circleInfo.center, m_circleInfo.radius))
     {
         return true;
     }
     
-    // ƒP[ƒX4: îŒ`‚Ì’†S‚ª‰~“à‚É‚ ‚é
+    // ã‚±ãƒ¼ã‚¹4: æ‰‡å½¢ã®ä¸­å¿ƒãŒå††å†…
     if (distSquared <= m_circleInfo.radius * m_circleInfo.radius)
     {
         return true;
