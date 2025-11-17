@@ -38,7 +38,7 @@ public:
 private:
     
     void Update() override;
-    // void Draw();
+    void Draw() override;
     
     //判定円の描画
     

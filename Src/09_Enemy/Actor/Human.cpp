@@ -31,7 +31,7 @@ CHuman::CHuman()
     m_pCurrentState = m_cubeStates[CBaseState::Type::IDLE];
     m_pCurrentState->Enter();
     m_pCurrentState->SetNextState();
-   // m_pFunShape = new CFunShape();
+   m_pFunShape = new CFunShape();
 }
 
 CHuman::~CHuman()
@@ -52,7 +52,7 @@ void CHuman::Update()
         m_pCurrentState->Update();
     }
     m_pAnimator->Update();
-    m_inSight = ObjectManager::FindGameObject<CVisionSystem>()->SectorCircleCollision(ToVec2XZ(transform.position));
+    m_inSight = ObjectManager::FindGameObject<CVisionSystem>()->SectorCircleCollision(ToVec2XZ(transform.position), transform.rotation.y);
     if (m_inSight)
     {
         m_dwColor = 255;
@@ -64,17 +64,7 @@ void CHuman::Update()
     }
     AtkArea();
     ImGui::Begin("HumanState");
-    const char* currentStateName = "Unknown";
-    if (m_pCurrentState == m_cubeStates[CBaseState::Type::IDLE])
-        currentStateName = "IDLE";
-    else if (m_pCurrentState == m_cubeStates[CBaseState::Type::WALK])
-        currentStateName = "WALK";
-    else if (m_pCurrentState == m_cubeStates[CBaseState::Type::SUCTION])
-        currentStateName = "SUCTION";
-    else if (m_pCurrentState == m_cubeStates[CBaseState::Type::FIND_PLAYER])
-        currentStateName = "DESTROY";
-
-    ImGui::Text("Current State: %s", currentStateName);
+    ImGui::Text("%lf",transform.rotation.y * RadToDeg);
     ImGui::End();
 }
 
@@ -83,7 +73,7 @@ void CHuman::Draw()
 {
     m_pMesh->Render(m_pAnimator, transform.matrix());
     DrawDirectionLine();
-   // FanShape();
+   //FanShape();
 }
 
 void CHuman::ChangeState(CBaseState::Type type)
@@ -95,7 +85,7 @@ void CHuman::ChangeState(CBaseState::Type type)
 
 void CHuman::AtkArea()
 {
-     //m_pFunShape->PosSet(transform.position, angle + transform.rotation.y);
+     m_pFunShape->PosSet(transform.position, angle + transform.rotation.y);
 }
 //Humanの範囲をLineで可視化
 //範囲内なら水色、外なら緑になる

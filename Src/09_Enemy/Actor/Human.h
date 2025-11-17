@@ -24,7 +24,6 @@ private:
     void Draw() override;
     ///範囲を描画
     void DrawDirectionLine();
-    void FanShape();
     void AtkArea();
     ///
 private:

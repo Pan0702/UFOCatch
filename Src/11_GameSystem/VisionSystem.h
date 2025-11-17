@@ -6,12 +6,16 @@ class CVisionSystem : public Object3D
 public:
     CVisionSystem();
     ~CVisionSystem();
-    bool SectorCircleCollision(const VECTOR2& sectorCenter) const;
+    void Update() override;
+    
+    bool SectorCircleCollision(const VECTOR2& sectorCenter, const float& humanAngle);
 
 private:
     bool IsAngleInSector(const float& angle) const;
+    void SetSectorAngles(const float& centerAngle);
     bool IsPointInSector(const VECTOR2& sectorCenter) const;
     bool LineSegmentCircleIntersection(const VECTOR2& start, const VECTOR2& end, float radius) const;
+   
 
 
     struct CircleInfo
@@ -34,13 +38,19 @@ private:
         float startAngle ;
         float endAngle ;
         SectorInfo()
-            : radius(7.0f),startAngle(-20 * DegToRad),endAngle(20 * DegToRad)
+            : radius(7.0f),startAngle(0),endAngle(0)
         {}
         void SetRadius(const float& radius_) { radius = radius_; }
+        void SetAngle(const XMMATRIX& mat)
+        {
+            startAngle = (-20 * DegToRad);
+        }
     };
 
     SectorInfo m_sectorInfo;
 public:
     CircleInfo GetCircleInfo() const { return m_circleInfo; }
     SectorInfo GetSectorInfo() const { return m_sectorInfo; }
+    void SetCircleCenter(const VECTOR3& pos) { m_circleInfo.SetCenter(pos); }
+    void SetCircleRadius(const float& radius) { m_circleInfo.SetRadius(radius); }
 };
