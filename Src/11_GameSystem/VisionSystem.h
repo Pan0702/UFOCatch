@@ -43,4 +43,6 @@ private:
 public:
     CircleInfo GetCircleInfo() const { return m_circleInfo; }
     SectorInfo GetSectorInfo() const { return m_sectorInfo; }
+    void SetCircleCenter(const VECTOR3& pos) { m_circleInfo.SetCenter(pos); }
+    void SetCircleRadius(const float& radius) { m_circleInfo.SetRadius(radius); }
 };

@@ -51,9 +51,9 @@ void CPlayer::Update()
     }
 
     ObjectManager::FindGameObject<CVisionSystem>()->
-            GetCircleInfo().SetCenter(transform.position);
+            SetCircleCenter(transform.position);
     ObjectManager::FindGameObject<CVisionSystem>()->
-        GetCircleInfo().SetRadius(m_coneRadius);
+        SetCircleRadius(m_coneRadius);
 }
 
 // void CPlayer::Draw()
