@@ -4,6 +4,7 @@
 
 
 #include "../06_GameLib/Lerp.h"
+#include "../11_GameSystem/VisionSystem.h"
 
 namespace
 {
@@ -49,11 +50,15 @@ void CPlayer::Update()
         SceneManager::ChangeScene("TitleScene");
     }
 
+    ObjectManager::FindGameObject<CVisionSystem>()->
+            GetCircleInfo().SetCenter(transform.position);
+    ObjectManager::FindGameObject<CVisionSystem>()->
+        GetCircleInfo().SetRadius(m_coneRadius);
 }
 
 // void CPlayer::Draw()
 // {
-//     //DrawCircle(VECTOR3(transform.position.x, 0, transform.position.z), m_coneRadius, RGB(0, 255, 0));
+//     DrawCircle(VECTOR3(transform.position.x, 0, transform.position.z), m_coneRadius, RGB(0, 255, 0));
 //     
 // }
 
@@ -83,8 +88,7 @@ void CPlayer::IncreaseSuctionConeHeight()
 {
     transform.position.y += 3.0f;
 
-    // 半径を更新
-    //
+    // 半径を更新//
     m_coneRadius = transform.position.y * tan(DegToRad * m_coneDegree);
 }
 
@@ -101,7 +105,7 @@ void CPlayer::UpdateCameraPos()
 VECTOR3 CPlayer::CalcSuctionDisplacement(const float& moveTimeSecond, const VECTOR3& animalPos) const
 {
     //Y座標が0の点（求めるための内分比の係数//
-    float projectionFactorY0 = (0 - animalPos.y) / (animalPos.y - transform.position.y);
+    float projectionFactorY0 = avoidZero((0 - animalPos.y) / (animalPos.y - transform.position.y));
     //0地点での動物のポジション
     VECTOR3 targetPointOnPlane =
         VECTOR3(animalPos.x + projectionFactorY0 * (animalPos.x - transform.position.x), 0,
@@ -111,7 +115,21 @@ VECTOR3 CPlayer::CalcSuctionDisplacement(const float& moveTimeSecond, const VECT
     return suctionDisplacementPerFrame * SceneManager::DeltaTime();
 }
 
-bool CPlayer::IsTargetInVidionFan(const float& humanRotateY, const VECTOR3& targetPosition)
+//エリア内にいるかチェック
+//
+bool CPlayer::IsWithSuctionCone(const VECTOR3& targetPos) const
+{
+    const float distanceAnimalFromPlayer = transform.position.y - targetPos.y;
+    const float coneRadiusAtTargetHeight = distanceAnimalFromPlayer * std::tan(DegToRad * m_coneDegree);
+    if (Pow2(targetPos.x - transform.position.x) + Pow2(targetPos.z - transform.position.z)
+        <= Pow2(coneRadiusAtTargetHeight))
+    {
+        return true;
+    }
+    return false;
+}
+
+bool CPlayer::UFOInVisionFan(const float& humanRotateY, const VECTOR3& targetPosition)
 {
     const float distanceHumanFromPlayer = CalcDistanceXZ(transform.position, targetPosition);
     VECTOR3 rayEndPosition = targetPosition + RAY_LNEGTH * XMMatrixRotationY(humanRotateY);
@@ -150,46 +168,34 @@ bool CPlayer::IsBeyondInsideFanShapeAngle(const VECTOR2& vectorTargetToRayEnd, c
 }
 
 
-//エリア内にいるかチェック
-//
-bool CPlayer::IsWithSuctionCone(const VECTOR3& targetPos) const
+
+
+
+void CPlayer::DrawCircle(const VECTOR3& center, float radius, DWORD color)
 {
-    const float distanceAnimalFromPlayer = transform.position.y - targetPos.y;
-    const float coneRadiusAtTargetHeight = distanceAnimalFromPlayer * std::tan(DegToRad * m_coneDegree);
-    if (Pow2(targetPos.x - transform.position.x) + Pow2(targetPos.z - transform.position.z)
-        <= Pow2(coneRadiusAtTargetHeight))
+    CSprite spr;
+    constexpr int segments = 32; // 円を構成する線分の数
+    const float angleStep = 2.0f * 3.14159f / segments; // 各線分の角度
+
+    for (int i = 0; i < segments; ++i)
     {
-        return true;
+        // 現在の点
+        float angle1 = i * angleStep;
+        VECTOR3 point1 = center;
+        point1.x += radius * cos(angle1);
+        point1.z += radius * sin(angle1);
+
+        // 次の点
+        float angle2 = (i + 1) % segments * angleStep;
+        VECTOR3 point2 = center;
+        point2.x += radius * cos(angle2);
+        point2.z += radius * sin(angle2);
+
+        // 線を描画
+        spr.DrawLine3D(point1, point2, color);
     }
-    return false;
+    spr.DrawLine3D(transform.position, VECTOR3(center.x + m_coneRadius, center.y, center.z), color);
+    spr.DrawLine3D(transform.position, VECTOR3(center.x - m_coneRadius, center.y, center.z), color);
+    spr.DrawLine3D(transform.position, VECTOR3(center.x, center.y, center.z + m_coneRadius), color);
+    spr.DrawLine3D(transform.position, VECTOR3(center.x, center.y, center.z - m_coneRadius), color);
 }
-
-
-// void CPlayer::DrawCircle(const VECTOR3& center, float radius, DWORD color)
-// {
-//     CSprite spr;
-//     constexpr int segments = 32; // 円を構成する線分の数
-//     const float angleStep = 2.0f * 3.14159f / segments; // 各線分の角度
-//
-//     for (int i = 0; i < segments; ++i)
-//     {
-//         // 現在の点
-//         float angle1 = i * angleStep;
-//         VECTOR3 point1 = center;
-//         point1.x += radius * cos(angle1);
-//         point1.z += radius * sin(angle1);
-//
-//         // 次の点
-//         float angle2 = (i + 1) % segments * angleStep;
-//         VECTOR3 point2 = center;
-//         point2.x += radius * cos(angle2);
-//         point2.z += radius * sin(angle2);
-//
-//         // 線を描画
-//         spr.DrawLine3D(point1, point2, color);
-//     }
-//     spr.DrawLine3D(transform.position, VECTOR3(center.x + m_coneRadius, center.y, center.z), color);
-//     spr.DrawLine3D(transform.position, VECTOR3(center.x - m_coneRadius, center.y, center.z), color);
-//     spr.DrawLine3D(transform.position, VECTOR3(center.x, center.y, center.z + m_coneRadius), color);
-//     spr.DrawLine3D(transform.position, VECTOR3(center.x, center.y, center.z - m_coneRadius), color);
-// }

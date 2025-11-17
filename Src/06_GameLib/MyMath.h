@@ -234,6 +234,8 @@ struct VECTOR2 : public XMFLOAT2
 	operator XMFLOAT2() const {
 		return XMFLOAT2(this->x, this->y);
 	}
+
+	
 };
 
 //
@@ -491,4 +493,10 @@ inline bool IsInsideAreaXZ(const VECTOR3& pos,const VECTOR2& size)
 		return true;
 	}
 	return false;
+}
+
+inline VECTOR2 ToVec2XZ(const VECTOR3& pos)
+{
+	VECTOR2 tmp =  VECTOR2(pos.x, pos.z);
+	return tmp;
 }

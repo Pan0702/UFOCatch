@@ -28,7 +28,7 @@ public:
     /// @param targetPosition オブジェクトの場所
     /// @return
     /// 
-    bool IsTargetInVidionFan(const float& humanRotateY, const VECTOR3& targetPosition);
+    bool UFOInVisionFan(const float& humanRotateY, const VECTOR3& targetPosition);
 
 
     void AddExp(int exp){ m_exp += exp; }
@@ -38,7 +38,7 @@ public:
 private:
     
     void Update() override;
-   // void Draw();
+    // void Draw();
     
     //判定円の描画
     

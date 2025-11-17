@@ -10,11 +10,14 @@ CGround::CGround()
     transform.scale = VECTOR3(200, 10, 200);
 }
 
-CGround::~CGround()
-{
-}
+CGround::~CGround() = default;
 
 void CGround::Update()
 {
     Object3D::Update();
+}
+
+void CGround::Draw()
+{
+    //Object3D::Draw();
 }

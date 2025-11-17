@@ -7,6 +7,7 @@
 #include "../08_Player/Player.h"
 #include "../10_Stage/Ground.h"
 #include "../11_GameSystem/TimeLimit.h"
+#include "../11_GameSystem/VisionSystem.h"
 
 
 PlayScene::PlayScene()
@@ -16,6 +17,7 @@ PlayScene::PlayScene()
     new CAnimalManager();
    Instantiate<CGround>();
     new CTimeLimit(10);
+    Instantiate<CVisionSystem>();
 }
 
 PlayScene::~PlayScene()

@@ -1,6 +1,7 @@
 #include "Human.h"
 
 #include "FunShape.h"
+#include "../../11_GameSystem/VisionSystem.h"
 #include "../State/HumanState.h"
 
 namespace
@@ -30,7 +31,7 @@ CHuman::CHuman()
     m_pCurrentState = m_cubeStates[CBaseState::Type::IDLE];
     m_pCurrentState->Enter();
     m_pCurrentState->SetNextState();
-    m_pFunShape = new CFunShape();
+   // m_pFunShape = new CFunShape();
 }
 
 CHuman::~CHuman()
@@ -51,8 +52,7 @@ void CHuman::Update()
         m_pCurrentState->Update();
     }
     m_pAnimator->Update();
-    m_inSight = m_pPlayer->IsTargetInVidionFan(transform.rotation.y + angle, transform.position);
-      // & m_pPlayer->GetIsSuckUp();
+    m_inSight = ObjectManager::FindGameObject<CVisionSystem>()->SectorCircleCollision(ToVec2XZ(transform.position));
     if (m_inSight)
     {
         m_dwColor = 255;
@@ -82,7 +82,7 @@ void CHuman::Update()
 void CHuman::Draw()
 {
     m_pMesh->Render(m_pAnimator, transform.matrix());
-   // DrawDirectionLine();
+    DrawDirectionLine();
    // FanShape();
 }
 
@@ -95,21 +95,21 @@ void CHuman::ChangeState(CBaseState::Type type)
 
 void CHuman::AtkArea()
 {
-     m_pFunShape->PosSet(transform.position, angle + transform.rotation.y);
+     //m_pFunShape->PosSet(transform.position, angle + transform.rotation.y);
 }
 //Humanの範囲をLineで可視化
 //範囲内なら水色、外なら緑になる
-// void CHuman::DrawDirectionLine()
-// {
-//     CSprite spr;
-//     MATRIX4X4 mat = XMMatrixRotationY(angle + transform.rotation.y);
-//
-//     VECTOR3 startPos = transform.position;
-//
-//     VECTOR3 endPos = startPos + VECTOR3(0, 0, LINE_LENGTH) * mat;
-//
-//     spr.DrawLine3D(startPos, endPos, RGB(0, 255, m_dwColor));
-// }
+void CHuman::DrawDirectionLine()
+{
+    CSprite spr;
+    MATRIX4X4 mat = XMMatrixRotationY(angle + transform.rotation.y);
+
+    VECTOR3 startPos = transform.position;
+
+    VECTOR3 endPos = startPos + VECTOR3(0, 0, LINE_LENGTH) * mat;
+
+    spr.DrawLine3D(startPos, endPos, RGB(0, 255, m_dwColor));
+}
 
 
 

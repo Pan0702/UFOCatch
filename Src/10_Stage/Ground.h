@@ -6,4 +6,5 @@ public:
     CGround();
     ~CGround();
     void Update();
+    void Draw() override;
 };
