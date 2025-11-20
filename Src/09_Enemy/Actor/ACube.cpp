@@ -30,6 +30,7 @@ CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     m_cubeStates[CBaseState::Type::SUCTION] = new CCubeSuction(this);
     m_cubeStates[CBaseState::Type::DESTROY] = new CCubeDestroy(this);
     m_pCurrentState = m_cubeStates[CBaseState::Type::IDLE];
+    m_pCurrentState->Enter();
     m_pCurrentState->SetNextState();
 }
 
