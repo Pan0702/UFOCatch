@@ -78,7 +78,7 @@ void CCubeIdleState::Idle()
     timerCount += SceneManager::DeltaTime();
     if (timerCount > 1)
     {
-        NextStatePop();
+        m_pOwner->SetState(NextStatePop());
     }
 }
 
@@ -86,7 +86,7 @@ void CCubeIdleState::IdleAnim()
 {
     if (AnimationFinish())
     {
-        NextStatePop();
+        m_pOwner->SetState(NextStatePop());
     }
 }
 
@@ -166,7 +166,7 @@ void CCubeWalkState::Update()
 
     if (m_totalPosZMoveAmount > m_moveAmount)
     {
-        NextStatePop();
+        m_pOwner->SetState(NextStatePop());
     }
     m_pOwner->IsSuctionCheck();
 }
@@ -208,5 +208,6 @@ CCubeDestroy::CCubeDestroy(CACube* cube)
 void CCubeDestroy::Enter()
 {
     ObjectManager::FindGameObject<CGameInstance>()->AddScore(100);
+    ObjectManager::FindGameObject<CPlayer>()->AddExp(1);
     m_pOwner->DestroyMe();
 }

@@ -5,12 +5,11 @@ namespace
     const VECTOR3 INIT_UP_DIR = VECTOR3(0, 1, 0);
     const VECTOR3 BASE_CAM_OFFSET = VECTOR3(0, 20, -1);
     const VECTOR3 INIT_CAM_LOOK = VECTOR3(0, 1, 0); 
-    const float REFERENCE_HEIGHT = 5.0f; // 基準高さ（半径3の時）
+    const float REFERENCE_HEIGHT = 5.0f; // 基準高さ（
 }
 
 CPlayerCamera::CPlayerCamera()
 {
-
 }
 
 CPlayerCamera::~CPlayerCamera()
@@ -19,6 +18,7 @@ CPlayerCamera::~CPlayerCamera()
 
 void CPlayerCamera::Update()
 {
+    
     GameDevice()->m_mView = XMMatrixLookAtLH(
         m_camPos, m_camLook, INIT_UP_DIR);
 }
@@ -36,6 +36,6 @@ void CPlayerCamera::PosSet(const VECTOR3& pos, const float& coneHeight)
     scaledCamOffset.z = BASE_CAM_OFFSET.z * scale;
     
     //m_camPos = pos + BASE_CAM_OFFSET;
-    m_camPos = pos + scaledCamOffset;
-    m_camLook = pos + INIT_CAM_LOOK;
+    m_targetPos = pos + scaledCamOffset;
+    m_targetLook = pos + INIT_CAM_LOOK;
 }

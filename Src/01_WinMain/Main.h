@@ -16,13 +16,13 @@
 #include "../06_GameLib/resource.h"
 //#include "GameMain.h"
 
-// #define WINDOW_WIDTH   1920 //�E�B���h�E��
-// #define WINDOW_HEIGHT  1080 //�E�B���h�E����
-//
-#define WINDOW_WIDTH   1366   //�E�B���h�E��
-#define WINDOW_HEIGHT  768    //�E�B���h�E����
+ // #define WINDOW_WIDTH   1920 //横幅
+ // #define WINDOW_HEIGHT  1080 //高さ
 
-#define APP_NAME _T("Project")
+#define WINDOW_WIDTH   1366   
+#define WINDOW_HEIGHT  768    
+
+#define APP_NAME _T("UNAP")
 
 class CGameMain;
 

@@ -21,9 +21,13 @@ void TitleScene::Update()
 			CheckKey(KD_TRG, DIK_P)) {
 		SceneManager::ChangeScene("PlayScene");
 	}
-	if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_RETURN))
+	if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_1))
 	{
 		SceneManager::ChangeScene("ResultScene");
+	}
+	if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_2))
+	{
+		SceneManager::ChangeScene("SelectScene");
 	}
 }
 

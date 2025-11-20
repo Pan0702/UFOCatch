@@ -46,6 +46,14 @@ void CResultScene::Draw()
     DrawScore(m_score);
 }
 
+void CResultScene::Update()
+{
+    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_T))
+    {
+        SceneManager::ChangeScene("TitleScene");
+    }
+}
+
 void CResultScene::CalcScore()
 {
     m_score = ObjectManager::FindGameObject<CGameInstance>()->GetScore();

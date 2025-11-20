@@ -57,6 +57,10 @@ void CLevelSelectionScene::Update()
     {
         SceneManager::ChangeScene("PlayScene");
     }
+    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_T))
+    {
+        SceneManager::ChangeScene("TitleScene");
+    }
 }
 
 void CLevelSelectionScene::Draw()

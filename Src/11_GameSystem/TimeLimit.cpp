@@ -1,5 +1,7 @@
 #include "TimeLimit.h"
 
+#include "../07_Scene/PlayScene.h"
+
 CTimeLimit::CTimeLimit(const float maxTimeSec)
     : m_CurrentTime(maxTimeSec), m_maxTime(maxTimeSec)
 {
@@ -21,6 +23,7 @@ void CTimeLimit::Update()
 
 void CTimeLimit::TimeOut()
 {
+    //ObjectManager::FindGameObject<PlayScene>()->ChangeResultScene();
 }
 
 void CTimeLimit::Draw()

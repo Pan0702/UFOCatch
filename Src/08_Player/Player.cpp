@@ -4,6 +4,7 @@
 
 
 #include "../06_GameLib/Lerp.h"
+#include "../07_Scene/PlayScene.h"
 #include "../11_GameSystem/VisionSystem.h"
 
 namespace
@@ -47,7 +48,7 @@ void CPlayer::Update()
     UpdateCameraPos();
     if (m_hp <= 0)
     {
-        SceneManager::ChangeScene("TitleScene");
+        ObjectManager::FindGameObject<PlayScene>()->ChangeResultScene();
     }
 
     ObjectManager::FindGameObject<CVisionSystem>()->
@@ -55,18 +56,6 @@ void CPlayer::Update()
     ObjectManager::FindGameObject<CVisionSystem>()->
         SetCircleRadius(m_coneRadius);
 }
-
-void CPlayer::Draw()
-{
-    Object3D::Draw();
-    DrawCircle(VECTOR3(transform.position.x, 0, transform.position.z), m_coneRadius, RGB(0, 255, 0));
-}
-
-// void CPlayer::Draw()
-// {
-//    
-//     
-// }
 
 void CPlayer::HandleMovementInput()
 {
@@ -98,7 +87,7 @@ void CPlayer::IncreaseSuctionConeHeight()
     m_coneRadius = transform.position.y * tan(DegToRad * m_coneDegree);
 }
 
-void CPlayer::UpdateCameraPos()
+void CPlayer::UpdateCameraPos() const
 {
     // カメラ位置をコーンの高さに基づいて設定//
     ObjectManager::FindGameObject<CPlayerCamera>()->PosSet(
@@ -173,9 +162,11 @@ bool CPlayer::IsBeyondInsideFanShapeAngle(const VECTOR2& vectorTargetToRayEnd, c
     return false;
 }
 
-
-
-
+void CPlayer::Draw()
+{
+    Object3D::Draw();
+    DrawCircle(VECTOR3(transform.position.x, 0, transform.position.z), m_coneRadius, RGB(0, 255, 0));
+}
 
 void CPlayer::DrawCircle(const VECTOR3& center, float radius, DWORD color)
 {

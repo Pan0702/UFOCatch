@@ -8,5 +8,7 @@ public:
 	~PlayScene();
 	void Update() override;
 	void Draw() override;
+	void ChangeResultScene();
 private:
+	
 };

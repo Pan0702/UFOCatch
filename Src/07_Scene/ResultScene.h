@@ -9,6 +9,7 @@ public:
 
 private:
     void Draw() override;
+    void Update() override;
     void CalcScore();
     void DrawScore(const int& score) const;
 

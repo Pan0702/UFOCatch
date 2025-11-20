@@ -228,7 +228,7 @@ CHumanFindPlayer::CHumanFindPlayer(CHuman* human)
 
 void CHumanFindPlayer::Enter()
 {
-    //ObjectManager::FindGameObject<CPlayer>()->SubHp(1);
+    ObjectManager::FindGameObject<CPlayer>()->SubHp(1);
     m_pOwner->GetAnimator()->MergePlay(A_IDEL);
    
 }

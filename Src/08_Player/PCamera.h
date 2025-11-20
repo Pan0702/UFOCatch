@@ -14,4 +14,6 @@ private:
     VECTOR3 m_camPos;
     VECTOR3 m_camLook;
     VECTOR3 m_upDir;
+    VECTOR3 m_targetPos;
+    VECTOR3 m_targetLook;
 };

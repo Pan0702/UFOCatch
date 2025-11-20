@@ -30,10 +30,23 @@ void PlayScene::Update()
     {
         SceneManager::ChangeScene("TitleScene");
     }
+    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_1))
+    {
+        SceneManager::ChangeScene("ResultScene");
+    }
+    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_2))
+    {
+        SceneManager::ChangeScene("SelectScene");
+    }
 }
 
 void PlayScene::Draw()
 {
     GameDevice()->m_pFont->Draw(
         20, 20, "PlayScene", 16, RGB(255, 255, 0));
+}
+
+void PlayScene::ChangeResultScene()
+{
+    SceneManager::ChangeScene("ResultScene");
 }

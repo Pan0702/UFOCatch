@@ -55,7 +55,7 @@ private:
     
     ///カメラの場所を更新
     ///
-    void UpdateCameraPos();
+    void UpdateCameraPos() const;
     
     /// 
     /// @param dis 
