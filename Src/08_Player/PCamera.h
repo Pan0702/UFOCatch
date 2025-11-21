@@ -6,7 +6,7 @@ class CPlayerCamera:public Object3D
 public:
     CPlayerCamera();
     ~CPlayerCamera();
-    void PosSet(const VECTOR3& pos, const float& distance);
+    void UpdateForPlayerHeight(const VECTOR3& pos, const float& distance);
 private:
     void Update() override;
 

@@ -90,7 +90,7 @@ void CPlayer::IncreaseSuctionConeHeight()
 void CPlayer::UpdateCameraPos() const
 {
     // カメラ位置をコーンの高さに基づいて設定//
-    ObjectManager::FindGameObject<CPlayerCamera>()->PosSet(
+    ObjectManager::FindGameObject<CPlayerCamera>()->UpdateForPlayerHeight(
         transform.position, transform.position.y);
 }
 
