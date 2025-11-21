@@ -3,13 +3,15 @@
 namespace
 {
     const VECTOR3 INIT_UP_DIR = VECTOR3(0, 1, 0);
-    const VECTOR3 BASE_CAM_OFFSET = VECTOR3(0, 15, -10);
+    const VECTOR3 BASE_CAM_OFFSET = VECTOR3(0, 20, -10);
     const VECTOR3 INIT_CAM_LOOK = VECTOR3(0, 1, 0); 
-    const float REFERENCE_HEIGHT = 5.0f; // 基準高さ
+    const float REFERENCE_HEIGHT = 5.0f; // 基準高さ（
 }
 
 CPlayerCamera::CPlayerCamera()
 {
+    m_camLook = INIT_CAM_LOOK;
+    m_camPos = BASE_CAM_OFFSET;
 }
 
 CPlayerCamera::~CPlayerCamera()
@@ -20,10 +22,10 @@ void CPlayerCamera::Update()
 {
     
     GameDevice()->m_mView = XMMatrixLookAtLH(
-        m_camPos, m_targetLook, INIT_UP_DIR);
+        m_camPos, m_camLook, INIT_UP_DIR);
 }
 
-void CPlayerCamera::UpdateForPlayerHeight(const VECTOR3& pos, const float& coneHeight)
+void CPlayerCamera::PosSet(const VECTOR3& pos, const float& coneHeight)
 {
     // コーンの高さに応じてカメラ距離をスケーリング
     // 高さ10(半径3) → 高さ20(半径6)で見かけのサイズを同じにする
@@ -35,7 +37,7 @@ void CPlayerCamera::UpdateForPlayerHeight(const VECTOR3& pos, const float& coneH
     scaledCamOffset.y = BASE_CAM_OFFSET.y * scale;
     scaledCamOffset.z = BASE_CAM_OFFSET.z * scale;
     
-    m_camPos = pos + BASE_CAM_OFFSET;
+    //m_camPos = pos + BASE_CAM_OFFSET;
     m_targetPos = pos + scaledCamOffset;
     m_targetLook = pos + INIT_CAM_LOOK;
 }

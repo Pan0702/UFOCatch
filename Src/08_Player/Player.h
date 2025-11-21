@@ -23,12 +23,7 @@ public:
     /// 
     VECTOR3 CalcSuctionDisplacement(const float& moveTimeSecond, const VECTOR3& animalPos) const;
 
-    /// 
-    /// @param humanRotateY Radでの度数
-    /// @param targetPosition オブジェクトの場所
-    /// @return
-    /// 
-    bool UFOInVisionFan(const float& humanRotateY, const VECTOR3& targetPosition);
+
 
 
     void AddExp(int exp){ m_exp += exp; }
@@ -41,21 +36,35 @@ private:
     void Draw() override;
     
     //判定円の描画
-    
+    ///Debug///
     void DrawCircle(const VECTOR3& center, float radius, DWORD color);
     
     void HandleMovementInput();
     
-    ///一定数吸い込んだかチェック
-    ///
+    ///一定数吸い込んだかチェック ///
     void CheckLevel();
-    ///プレイヤーの高さを増加
-    //////
+    ///プレイヤーの高さを増加 ///
     void IncreaseSuctionConeHeight();
     
-    ///カメラの場所を更新
-    ///
+    ///カメラの場所を更新 ///
     void UpdateCameraPos() const;
+    
+    float m_coneRadius;
+    float m_coneDegree;
+    int m_allExp;
+    int m_exp;
+    int m_hp;
+    bool m_SuctionActive;
+    float m_coneTopPos;
+    
+private:
+    /*
+    *    /// 
+    /// @param humanRotateY Radでの度数
+    /// @param targetPosition オブジェクトの場所
+    /// @return
+    /// 
+    bool UFOInVisionFan(const float& humanRotateY, const VECTOR3& targetPosition);
     
     /// 
     /// @param dis 
@@ -69,16 +78,5 @@ private:
     /// @return　角度がHumanの視界より小さかったらtrue,大きかったらfalse
     /// 
     bool IsBeyondInsideFanShapeAngle(const VECTOR2& vectorTargetToRayEnd, const VECTOR2& vectorTargetToPlayer);
-
-
-
-    float m_coneRadius;
-    float m_coneDegree;
-    int m_allExp;
-    int m_exp;
-    int m_hp;
-    bool m_SuctionActive;
-    
-
-
+    */
 };

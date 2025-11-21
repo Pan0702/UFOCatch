@@ -1,18 +1,9 @@
 #include "Player.h"
 #include "PCamera.h"
 #include <iostream>
-
-
 #include "../06_GameLib/Lerp.h"
 #include "../07_Scene/PlayScene.h"
 #include "../11_GameSystem/VisionSystem.h"
-
-namespace
-{
-    constexpr float LINE_LENGTH = 7;
-    constexpr float HUMAN_ANGLE = 20;
-    const VECTOR3 RAY_LNEGTH = VECTOR3(0, 0, 7);
-}
 
 CPlayer::CPlayer()
 {
@@ -23,10 +14,13 @@ CPlayer::CPlayer()
     m_pAnimator->SetModel(m_pMesh);
     m_pMesh->LoadAnimation(0, "data/Mousey/Anim_Run.anmx", true);
     m_pAnimator->Play(0);
-    m_coneDegree = 20;
+    m_coneDegree = 10;
+    //半径の計算
+    m_coneRadius = transform.position.y * tan(DegToRad * m_coneDegree);
     m_allExp = 1;
     m_exp = 0;
     m_hp = 1;
+    m_coneTopPos = transform.position.y;
 }
 
 CPlayer::~CPlayer() = default;
@@ -39,8 +33,6 @@ void CPlayer::Update()
         HandleMovementInput();
     }
     m_SuctionActive = GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_J);
-    // コーンの半径を計算
-    m_coneRadius = transform.position.y * tan(DegToRad * m_coneDegree);
 
     CheckLevel();
 
@@ -81,7 +73,7 @@ void CPlayer::CheckLevel()
 
 void CPlayer::IncreaseSuctionConeHeight()
 {
-    transform.position.y += 3.0f;
+    transform.position.y += 1.5f;
 
     // 半径を更新//
     m_coneRadius = transform.position.y * tan(DegToRad * m_coneDegree);
@@ -90,23 +82,37 @@ void CPlayer::IncreaseSuctionConeHeight()
 void CPlayer::UpdateCameraPos() const
 {
     // カメラ位置をコーンの高さに基づいて設定//
-    ObjectManager::FindGameObject<CPlayerCamera>()->UpdateForPlayerHeight(
+    ObjectManager::FindGameObject<CPlayerCamera>()->PosSet(
         transform.position, transform.position.y);
 }
 
 
+
 //吸い込むスピードを計算
-//
+//高さの差が大きいほど遅く、近いほど速く吸い込む
 VECTOR3 CPlayer::CalcSuctionDisplacement(const float& moveTimeSecond, const VECTOR3& animalPos) const
 {
+
+    float heightDiff = transform.position.y - animalPos.y;
+    float progress = 1.0f - (heightDiff / transform.position.y);
+    progress = max(0.0f, min(1.0f, progress)); 
+    
+    float eased = progress * progress * progress ;
+
+    // 速度係数を計算
+    constexpr float minSpeed = 0.4f;  
+    constexpr float maxSpeed = 1.8f;  
+    float heightSpeedMultiplier = minSpeed + (maxSpeed - minSpeed) * eased;
+
     //Y座標が0の点（求めるための内分比の係数//
     float projectionFactorY0 = avoidZero((0 - animalPos.y) / (animalPos.y - transform.position.y));
-    //0地点での動物のポジション
+    //0地点での動物のポジション//
     VECTOR3 targetPointOnPlane =
         VECTOR3(animalPos.x + projectionFactorY0 * (animalPos.x - transform.position.x), 0,
                 animalPos.z + projectionFactorY0 * (animalPos.z - transform.position.z));
     VECTOR3 pullVectorToTarget = transform.position - targetPointOnPlane;
-    VECTOR3 suctionDisplacementPerFrame = pullVectorToTarget / moveTimeSecond;
+    
+    VECTOR3 suctionDisplacementPerFrame = pullVectorToTarget / moveTimeSecond * heightSpeedMultiplier;
     return suctionDisplacementPerFrame * SceneManager::DeltaTime();
 }
 
@@ -123,9 +129,11 @@ bool CPlayer::IsWithSuctionCone(const VECTOR3& targetPos) const
     }
     return false;
 }
-
+/*
 bool CPlayer::UFOInVisionFan(const float& humanRotateY, const VECTOR3& targetPosition)
 {
+
+const VECTOR3 RAY_LNEGTH = VECTOR3(0, 0, 7);
     const float distanceHumanFromPlayer = CalcDistanceXZ(transform.position, targetPosition);
     VECTOR3 rayEndPosition = targetPosition + RAY_LNEGTH * XMMatrixRotationY(humanRotateY);
     const VECTOR2 vectorFromTargetToRayEnd = VECTOR2(rayEndPosition.x - targetPosition.x,
@@ -143,6 +151,7 @@ bool CPlayer::UFOInVisionFan(const float& humanRotateY, const VECTOR3& targetPos
 
 bool CPlayer::IsBeyondMaxDistance(const float& dis)
 {
+constexpr float LINE_LENGTH = 7;
     if (LINE_LENGTH < dis)
     {
         return true;
@@ -152,6 +161,7 @@ bool CPlayer::IsBeyondMaxDistance(const float& dis)
 
 bool CPlayer::IsBeyondInsideFanShapeAngle(const VECTOR2& vectorTargetToRayEnd, const VECTOR2& vectorTargetToPlayer)
 {
+constexpr float HUMAN_ANGLE = 20;
     const VECTOR2 HumanFromPlayerNorm = normalize(vectorTargetToRayEnd);
     const VECTOR2 HumanFromEndPosNorm = normalize(vectorTargetToPlayer);
     const float anglePlayerFromEndPos = CalcVector2Angle(HumanFromPlayerNorm, HumanFromEndPosNorm);
@@ -161,6 +171,7 @@ bool CPlayer::IsBeyondInsideFanShapeAngle(const VECTOR2& vectorTargetToRayEnd, c
     }
     return false;
 }
+*/
 
 void CPlayer::Draw()
 {
@@ -168,6 +179,7 @@ void CPlayer::Draw()
     DrawCircle(VECTOR3(transform.position.x, 0, transform.position.z), m_coneRadius, RGB(0, 255, 0));
 }
 
+///Debug///
 void CPlayer::DrawCircle(const VECTOR3& center, float radius, DWORD color)
 {
     CSprite spr;

@@ -37,10 +37,6 @@ private:
             : radius(7.0f),startAngle(0),endAngle(0)
         {}
         void SetRadius(const float& radius_) { radius = radius_; }
-        void SetAngle(const XMMATRIX& mat)
-        {
-            startAngle = (-20 * DegToRad);
-        }
     };
 
     SectorInfo m_sectorInfo;

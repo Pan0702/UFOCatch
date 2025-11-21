@@ -6,9 +6,6 @@ CVisionSystem::~CVisionSystem() = default;
 
 
 
-
-
-
 bool CVisionSystem::IsAngleInSector(const float& angle) 
 {
     
@@ -72,7 +69,7 @@ bool CVisionSystem::SectorCircleCollision(const VECTOR2& humanPos, float humanAn
         return false;
     }
     
-    // ケース1: 円の中心が扇形内
+    // 円の中心が扇形内
     if (dist <= m_sectorInfo.radius)
     {
         float angle = std::atan2(diff.x, diff.y);
@@ -82,7 +79,7 @@ bool CVisionSystem::SectorCircleCollision(const VECTOR2& humanPos, float humanAn
         }
     }
     
-    // ケース2: 円が扇形の円弧と交差
+    // 円が扇形の円弧と交差
     if (dist < m_sectorInfo.radius + m_circleInfo.radius && 
         dist > std::abs(m_sectorInfo.radius - m_circleInfo.radius))
     {
@@ -93,7 +90,7 @@ bool CVisionSystem::SectorCircleCollision(const VECTOR2& humanPos, float humanAn
         }
     }
     
-    // ケース3: 扇形の辺と円の交差
+    //  扇形の辺と円の交差
     VECTOR2 edge1End = humanPos + VECTOR2(
         std::sin(m_sectorInfo.startAngle) * m_sectorInfo.radius,
         std::cos(m_sectorInfo.startAngle) * m_sectorInfo.radius
@@ -110,7 +107,7 @@ bool CVisionSystem::SectorCircleCollision(const VECTOR2& humanPos, float humanAn
         return true;
     }
     
-    // ケース4: 扇形の中心が円内
+    // 扇形の中心が円内
     if (distSquared <= m_circleInfo.radius * m_circleInfo.radius)
     {
         return true;
