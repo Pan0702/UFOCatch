@@ -1,6 +1,7 @@
 #include "HumanState.h"
 #include "../../06_GameLib/MyMath.h"
 #include "../../06_GameLib/Lerp.h"
+#include "../../08_Player/PHP.h"
 #include "../Actor/Human.h"
 namespace
 {
@@ -228,7 +229,7 @@ CHumanFindPlayer::CHumanFindPlayer(CHuman* human)
 
 void CHumanFindPlayer::Enter()
 {
-    ObjectManager::FindGameObject<CPlayer>()->SubHp(1);
+    ObjectManager::FindGameObject<CPlayerHP>()->SubHP(1);
     m_pOwner->GetAnimator()->MergePlay(A_IDEL);
    
 }

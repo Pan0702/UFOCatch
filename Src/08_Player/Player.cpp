@@ -1,6 +1,8 @@
 #include "Player.h"
 #include "PCamera.h"
 #include <iostream>
+
+#include "PHP.h"
 #include "../06_GameLib/Lerp.h"
 #include "../07_Scene/PlayScene.h"
 #include "../11_GameSystem/VisionSystem.h"
@@ -13,13 +15,13 @@ CPlayer::CPlayer()
     m_pAnimator = new Animator();
     m_pAnimator->SetModel(m_pMesh);
     m_pMesh->LoadAnimation(0, "data/Mousey/Anim_Run.anmx", true);
+    new CPlayerHP(2);
     m_pAnimator->Play(0);
     m_coneDegree = 10;
     //半径の計算
     m_coneRadius = transform.position.y * tan(DegToRad * m_coneDegree);
     m_allExp = 1;
     m_exp = 0;
-    m_hp = 1;
     m_coneTopPos = transform.position.y;
 }
 
@@ -36,12 +38,11 @@ void CPlayer::Update()
 
     CheckLevel();
 
+    // Lerp処理
+    UpdateHeightAndRadiusLerp();
+
     // カメラ位置を更新
     UpdateCameraPos();
-    if (m_hp <= 0)
-    {
-        ObjectManager::FindGameObject<PlayScene>()->ChangeResultScene();
-    }
 
     ObjectManager::FindGameObject<CVisionSystem>()->
             SetCircleCenter(transform.position);
@@ -51,6 +52,8 @@ void CPlayer::Update()
 
 void CPlayer::HandleMovementInput()
 {
+    if (transform.position.x >= 50.0f || transform.position.x <= -50.0f )return;
+    if (transform.position.z >= 50.0f || transform.position.z <= -50.0f )return;
     const float moveSpeed = 5.0f; // 秒間5ユニットの移動速度
     const float moveAmount = moveSpeed * SceneManager::DeltaTime();
     auto* input = GameDevice()->m_pDI;
@@ -73,10 +76,23 @@ void CPlayer::CheckLevel()
 
 void CPlayer::IncreaseSuctionConeHeight()
 {
-    transform.position.y += 1.5f;
+    const float targetHeight = transform.position.y + 1.0f;
+    const float targetRadius = targetHeight * tan(DegToRad * m_coneDegree);
+    
+    m_heightLerp.Start(transform.position.y, targetHeight, 0.05f);
+    m_radiusLerp.Start(m_coneRadius, targetRadius, 0.05f);
+}
 
-    // 半径を更新//
-    m_coneRadius = transform.position.y * tan(DegToRad * m_coneDegree);
+void CPlayer::UpdateHeightAndRadiusLerp()
+{
+    if (m_heightLerp.IsLerping())
+    {
+        transform.position.y = m_heightLerp.Update(SceneManager::DeltaTime());
+    }
+    if (m_radiusLerp.IsLerping())
+    {
+        m_coneRadius = m_radiusLerp.Update(SceneManager::DeltaTime());
+    }
 }
 
 void CPlayer::UpdateCameraPos() const
@@ -89,17 +105,16 @@ void CPlayer::UpdateCameraPos() const
 
 
 //吸い込むスピードを計算
-//高さの差が大きいほど遅く、近いほど速く吸い込む
+//高さの差が大きいほど遅く、近いほど速く吸い込む//
 VECTOR3 CPlayer::CalcSuctionDisplacement(const float& moveTimeSecond, const VECTOR3& animalPos) const
 {
 
     float heightDiff = transform.position.y - animalPos.y;
     float progress = 1.0f - (heightDiff / transform.position.y);
-    progress = max(0.0f, min(1.0f, progress)); 
-    
+    progress = max(0.0f, min(1.0f, progress));
     float eased = progress * progress * progress ;
 
-    // 速度係数を計算
+    // 速度係数を計算//
     constexpr float minSpeed = 0.4f;  
     constexpr float maxSpeed = 1.8f;  
     float heightSpeedMultiplier = minSpeed + (maxSpeed - minSpeed) * eased;

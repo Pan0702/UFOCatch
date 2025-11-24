@@ -526,6 +526,7 @@
     <ClInclude Include="Src\02_DirectX\XAudio.h" />
     <ClInclude Include="Src\07_Scene\LevelSelectionScene.h" />
     <ClInclude Include="Src\07_Scene\ResultScene.h" />
+    <ClInclude Include="Src\08_Player\PHP.h" />
     <ClInclude Include="Src\09_Enemy\Actor\ACube.h" />
     <ClInclude Include="Src\09_Enemy\Actor\AnimalManager.h" />
     <ClInclude Include="Src\09_Enemy\Actor\FunShape.h" />
@@ -810,6 +811,7 @@
     </ClCompile>
     <ClCompile Include="Src\07_Scene\LevelSelectionScene.cpp" />
     <ClCompile Include="Src\07_Scene\ResultScene.cpp" />
+    <ClCompile Include="Src\08_Player\PHP.cpp" />
     <ClCompile Include="Src\09_Enemy\Actor\ACube.cpp">
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>

@@ -1,5 +1,6 @@
 #pragma once
 #include "../05_CommonFile/Object3D.h"
+#include "../06_GameLib/LerpValue.h"
 
 class CPlayer:public Object3D
 {
@@ -22,13 +23,9 @@ public:
     /// @return 1回当たりの移動量を返す
     /// 
     VECTOR3 CalcSuctionDisplacement(const float& moveTimeSecond, const VECTOR3& animalPos) const;
-
-
-
-
+    
     void AddExp(int exp){ m_exp += exp; }
     bool GetIsSuckUp() const { return m_SuctionActive; }
-    void SubHp(int hp){ m_hp -= hp; }
 
 private:
     
@@ -45,21 +42,28 @@ private:
     void CheckLevel();
     ///プレイヤーの高さを増加 ///
     void IncreaseSuctionConeHeight();
-    
+
     ///カメラの場所を更新 ///
     void UpdateCameraPos() const;
+
+    ///高さと半径のLerp処理 ///
+    void UpdateHeightAndRadiusLerp();
     
     float m_coneRadius;
     float m_coneDegree;
     int m_allExp;
     int m_exp;
-    int m_hp;
     bool m_SuctionActive;
     float m_coneTopPos;
+
+    // Lerp用の変数（7つ→2つに削減）
+    LerpValue m_heightLerp;
+    LerpValue m_radiusLerp;
+
     
 private:
     /*
-    *    /// 
+     *
     /// @param humanRotateY Radでの度数
     /// @param targetPosition オブジェクトの場所
     /// @return
@@ -80,3 +84,5 @@ private:
     bool IsBeyondInsideFanShapeAngle(const VECTOR2& vectorTargetToRayEnd, const VECTOR2& vectorTargetToPlayer);
     */
 };
+
+
