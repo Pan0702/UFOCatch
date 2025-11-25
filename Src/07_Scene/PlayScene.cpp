@@ -16,7 +16,7 @@ PlayScene::PlayScene()
     Instantiate<CPlayerCamera>();
     new CAnimalManager();
    Instantiate<CGround>();
-    new CTimeLimit(10);
+    new CTimeLimit(30);
     Instantiate<CVisionSystem>();
 }
 

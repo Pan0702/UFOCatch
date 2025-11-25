@@ -6,12 +6,11 @@ class CPlayerHP : public Object3D
 public:
     CPlayerHP(const int& hp);
     ~CPlayerHP();
-    void SubHP(const int& hp){m_currentHp -= hp;}
+    void SubHP(const int& hp);
 
 private:
     void Update() override;
     void Draw() override;
-
     int m_currentHp;
     int m_maxHp;
     CSprite* m_pSprite;
@@ -21,5 +20,6 @@ private:
     VECTOR2 m_imageSize;
     VECTOR2 m_drawImageSize;
     int m_k;
-
+    bool m_damage;
+    float m_invincible;
 };

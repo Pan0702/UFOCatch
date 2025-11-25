@@ -566,7 +566,6 @@
     <ClInclude Include="Src\11_GameSystem\TimeLimit.h" />
     <ClInclude Include="Src\11_GameSystem\VisionSystem.h" />
     <ClInclude Include="Src\GameInstance.h" />
-    <ClInclude Include="Src\Stage.h" />
     <ClInclude Include="Src\01_WinMain\Main.h" />
     <ClInclude Include="Src\01_WinMain\MainControl.h" />
   </ItemGroup>
@@ -2669,7 +2668,6 @@
     <ClCompile Include="Src\11_GameSystem\TimeLimit.cpp" />
     <ClCompile Include="Src\11_GameSystem\VisionSystem.cpp" />
     <ClCompile Include="Src\GameInstance.cpp" />
-    <ClCompile Include="Src\Stage.cpp" />
     <ClCompile Include="Src\01_WinMain\Main.cpp">
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>

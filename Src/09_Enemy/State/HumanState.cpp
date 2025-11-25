@@ -8,27 +8,27 @@ namespace
     //////////////////////////////////////////////
     ///Walk�Ŏg���Ă�萔
     /// //////////////////////////////////////////
-    constexpr float MOVE_SPEED = 1.2f;
-    constexpr float MAX_MOVE_AMOUNT = 3.5f;
-    constexpr float MIN_MOVE_AMOUNT = 1.0f;
-    constexpr float TURN_ANGLE = 180.0f;
-    constexpr float ROTATION_LERP_SPEED = 10.0f;
+    constexpr float MOVE_SPEED = 1.2f;              // Humanの移動速度（単位：メートル/秒）
+    constexpr float MAX_MOVE_AMOUNT = 3.5f;         // 1回の移動で進む最大距離
+    constexpr float MIN_MOVE_AMOUNT = 1.0f;         // 1回の移動で進む最小距離
+    constexpr float TURN_ANGLE = 180.0f;            // 方向転換時の最大回転角度（度数法）
+    constexpr float ROTATION_LERP_SPEED = 10.0f;    // 回転補間の速度係数（値が大きいほど素早く回転）
     //////////////////////////////////////////////
     ///Idle�Ŏg���Ă�萔
     /// //////////////////////////////////////////
-    constexpr float ANIMATION_FPS = 30.0f; 
-    constexpr float TOTAL_FRAMES = 100.0f; 
-    constexpr float NECK_ANIMATION_END = 86.0f; 
-    constexpr float WAIT_START_FRAME = 6.0f; 
-    constexpr float CYCLE_DURATION = 81.0f; 
-    constexpr float HALF_CYCLE_DURATION = 41.0f; 
-    constexpr float CHANGE_DURATION = 15.0f; 
-    constexpr float HOLD_END_FRAME = 27.0f; 
-    constexpr float RETURN_START_FRAME = 27.0f;
-    constexpr float RETURN_END_FRAME = 41.0f;
-    constexpr float CHANGE_DIVISOR = 14.0f; 
-    constexpr float RETURN_DIVISOR = 13.0f; 
-    constexpr float ANGLE = 50.0f; 
+    constexpr float ANIMATION_FPS = 30.0f;          // アニメーションのフレームレート（1秒あたりのフレーム数） 
+    constexpr float TOTAL_FRAMES = 100.0f;          // アニメーション全体の総フレーム数 
+    constexpr float NECK_ANIMATION_END = 86.0f;     // 首の回転アニメーションが終了するフレーム番号 
+    constexpr float WAIT_START_FRAME = 6.0f;        // 首の回転が開始されるまでの待機フレーム数 
+    constexpr float CYCLE_DURATION = 81.0f;         // 左右を見回す1サイクルの合計フレーム数 
+    constexpr float HALF_CYCLE_DURATION = 41.0f;    // 半サイクル（片側を見る）のフレーム数 
+    constexpr float CHANGE_DURATION = 15.0f;        // 首を回転させる動作にかかるフレーム数 
+    constexpr float HOLD_END_FRAME = 27.0f;         // 首を回転させた状態を保持する終了フレーム 
+    constexpr float RETURN_START_FRAME = 27.0f;     // 首を元の位置に戻し始めるフレーム
+    constexpr float RETURN_END_FRAME = 41.0f;       // 首を元の位置に戻し終わるフレーム
+    constexpr float CHANGE_DIVISOR = 14.0f;         // 首の回転補間計算用の除数（CHANGE_DURATION - 1） 
+    constexpr float RETURN_DIVISOR = 13.0f;         // 首の復帰補間計算用の除数（RETURN_END_FRAME - RETURN_START_FRAME - 1） 
+    constexpr float ANGLE = 50.0f;                  // 首を左右に回転させる角度（度数法） 
 }
 
 

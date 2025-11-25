@@ -38,6 +38,6 @@ void CPlayerCamera::PosSet(const VECTOR3& pos, const float& coneHeight)
     scaledCamOffset.z = BASE_CAM_OFFSET.z * scale;
     
     //m_camPos = pos + BASE_CAM_OFFSET;
-    m_targetPos = pos + scaledCamOffset;
-    m_targetLook = pos + INIT_CAM_LOOK;
+    m_camPos = pos + scaledCamOffset;
+    m_camLook = pos + INIT_CAM_LOOK;
 }
