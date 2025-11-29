@@ -242,7 +242,7 @@ VECTOR3 GetTargetRotateVector(const MATRIX4X4& mWorld, const VECTOR3& vTarget)
     vOut = vRb - vRa; // ©•ª‚ªƒ^[ƒQƒbƒg‚ğŒü‚­‚½‚ß‚ÌŠp“x
 
     // ì¬‚µ‚½Šp“x‚Ì³‹K‰»
-    // ”O‚Ì‚½‚ß‚ÉŠp“x‚ğ‚O`‚QƒÎ‚É³‹K‰»‚·‚é
+    // ”O‚Ì‚½‚ß‚ÉŠp“x‚ğ‚O?‚QƒÎ‚É³‹K‰»‚·‚é
     if (vOut.x < 0) vOut.x += XM_PI * 2;
     if (vOut.x >= XM_PI * 2) vOut.x -= XM_PI * 2;
     if (vOut.y < 0) vOut.y += XM_PI * 2;

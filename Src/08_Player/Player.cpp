@@ -1,10 +1,10 @@
+#define NOMINMAX
 #include "Player.h"
 #include "PCamera.h"
 #include <iostream>
-
+#include <algorithm>
 #include "PHP.h"
 #include "../06_GameLib/Lerp.h"
-#include "../07_Scene/PlayScene.h"
 #include "../11_GameSystem/VisionSystem.h"
 
 CPlayer::CPlayer()
@@ -52,9 +52,11 @@ void CPlayer::Update()
 
 void CPlayer::HandleMovementInput()
 {
-    if (transform.position.x >= 50.0f || transform.position.x <= -50.0f )return;
-    if (transform.position.z >= 50.0f || transform.position.z <= -50.0f )return;
-    const float moveSpeed = 5.0f; // 秒間5ユニットの移動速度
+    // 位置を-50.0f ~ 50.0fの範囲内に制限//
+    constexpr float maxPos = 20.0f;
+    transform.position.x = std::max(-maxPos,std::min(maxPos,transform.position.x));
+    transform.position.z = std::max(-maxPos,std::min(maxPos,transform.position.z));
+    const float moveSpeed = 5.0f; // 秒間5ユニットの移動速度//
     const float moveAmount = moveSpeed * SceneManager::DeltaTime();
     auto* input = GameDevice()->m_pDI;
     if (input->CheckKey(KD_DAT, DIK_W)) transform.position.z += moveAmount;
@@ -111,7 +113,7 @@ VECTOR3 CPlayer::CalcSuctionDisplacement(const float& moveTimeSecond, const VECT
 
     float heightDiff = transform.position.y - animalPos.y;
     float progress = 1.0f - (heightDiff / transform.position.y);
-    progress = max(0.0f, min(1.0f, progress));
+    progress = std::max(0.0f, std::min(1.0f, progress));
     float eased = progress * progress * progress ;
 
     // 速度係数を計算//

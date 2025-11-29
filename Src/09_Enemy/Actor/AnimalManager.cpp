@@ -14,7 +14,10 @@ namespace
 }
 CAnimalManager::CAnimalManager()
 {
-}
+
+} 
+
+
 
 CAnimalManager::~CAnimalManager()
 {
@@ -28,7 +31,7 @@ void CAnimalManager::Update()
     }
     if (GameDevice()->m_pDI->CheckKey(KD_TRG,DIK_9))
     {
-        new CHuman();
+        new CHuman(VECTOR3(0,0,0),VECTOR2(5,5));
     }
     
 }
@@ -44,6 +47,12 @@ void CAnimalManager::HitCheck()
     coll.center = VECTOR3(0, 0, 0);
     coll.radius = 1;
     MeshCollider::CollInfo info;
+}
+
+void CAnimalManager::EnemySpawn()
+{
+
+    new CHuman(VECTOR3(8, 0, 8), VECTOR2(20, 20));
 }
 
 

@@ -21,6 +21,7 @@ private:
     void Update() override;
     void Draw() override;
     void HitCheck();
+    void EnemySpawn();
 
 
 };

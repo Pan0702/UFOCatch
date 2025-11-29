@@ -23,7 +23,7 @@ void CTimeLimit::Update()
 
 void CTimeLimit::TimeOut()
 {
-    //ObjectManager::FindGameObject<PlayScene>()->ChangeResultScene();
+    ObjectManager::FindGameObject<PlayScene>()->ChangeResultScene();
 }
 
 void CTimeLimit::Draw()

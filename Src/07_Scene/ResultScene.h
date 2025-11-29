@@ -10,12 +10,13 @@ public:
 private:
     void Draw() override;
     void Update() override;
-    void CalcScore();
+    void CalcRank();
     void DrawScore(const int& score) const;
 
 private:
     int m_score;
-    int num;
+    int m_rankImageNum;
+    int m_maxScore;
     CSprite* m_pSprite;
     CSpriteImage* m_pResultImage;
     CSpriteImage* m_pNumImage;

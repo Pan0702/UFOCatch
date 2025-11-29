@@ -9,10 +9,10 @@ namespace
     constexpr float LINE_LENGTH = 7.0f;
 }
 
-CHuman::CHuman()
-    : m_AreaSize(10, 10)
+CHuman::CHuman(VECTOR3 pos, VECTOR2 areaSize)
+    :m_AreaSize(areaSize)
 {
-    transform.position = VECTOR3(0, 0, 0);
+    transform.position = pos;
     m_pMesh = new CFbxMesh();
     m_pMesh->Load("data/NewAnimal/Human/Human.mesh");
     m_pAnimator = new Animator();
@@ -83,7 +83,7 @@ void CHuman::ChangeState(CBaseState::Type type)
     m_pCurrentState->Enter();
 }
 
-void CHuman::AtkArea()
+void CHuman::AtkArea() const 
 {
      m_pFunShape->PosSet(transform.position, angle + transform.rotation.y);
 }

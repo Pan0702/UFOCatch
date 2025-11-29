@@ -10,10 +10,11 @@ class CHumanBase;
 class CHuman : public CAnimalManager
 {
 public:
-    CHuman();
+    CHuman(VECTOR3 pos,VECTOR2 areaSize = VECTOR2(10, 10));
     ~CHuman();
     void ChangeState(CBaseState::Type type);
-    
+
+
     void AddPos(const VECTOR3& pos){ transform.position = transform.position + pos;}
     VECTOR2 GetAreaSize() const{return m_AreaSize;}
     void SetAngle(float a){angle = a;}
@@ -24,7 +25,7 @@ private:
     void Draw() override;
     ///範囲を描画
     void DrawDirectionLine();
-    void AtkArea();
+    void AtkArea() const;
     ///
 private:
     std::unordered_map<CBaseState::Type, CHumanBase*> m_cubeStates;
