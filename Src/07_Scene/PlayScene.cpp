@@ -6,6 +6,7 @@
 #include "../08_Player/PCamera.h"
 #include "../08_Player/Player.h"
 #include "../09_Enemy/Actor/ACube.h"
+#include "../09_Enemy/Actor/AnimalFactor.h"
 #include "../09_Enemy/Actor/Human.h"
 #include "../10_Stage/Ground.h"
 #include "../11_GameSystem/TimeLimit.h"
@@ -20,7 +21,9 @@ PlayScene::PlayScene()
    Instantiate<CGround>();
     new CTimeLimit(30);
     Instantiate<CVisionSystem>();
+    Instantiate<CAnimalFactor>();
     Instantiate<CPlayer>();
+
 }
 
 PlayScene::~PlayScene()
