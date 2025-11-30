@@ -11,25 +11,22 @@ CPlayer::CPlayer()
 {
     transform.position = VECTOR3(0, 5, 0);
     m_pMesh = new CFbxMesh();
-    m_pMesh->Load("data/Mousey/Mousey.mesh");
-    m_pAnimator = new Animator();
-    m_pAnimator->SetModel(m_pMesh);
-    m_pMesh->LoadAnimation(0, "data/Mousey/Anim_Run.anmx", true);
-    new CPlayerHP(2);
-    m_pAnimator->Play(0);
-    m_coneDegree = 10;
+    m_pMesh->Load("data/Player/UFO.mesh");
+    new CPlayerHP(1000);
+    m_coneDegree = 7;
     //半径の計算
     m_coneRadius = transform.position.y * tan(DegToRad * m_coneDegree);
     m_allExp = 1;
     m_exp = 0;
+    m_zoomUp = false;
     m_coneTopPos = transform.position.y;
+    transform.scale = VECTOR3(0.5f,0.5f,0.5f);
 }
 
 CPlayer::~CPlayer() = default;
 
 void CPlayer::Update()
 {
-    m_pAnimator->Update();
     if (not m_SuctionActive)
     {
         HandleMovementInput();
@@ -56,7 +53,7 @@ void CPlayer::HandleMovementInput()
     constexpr float maxPos = 20.0f;
     transform.position.x = std::max(-maxPos,std::min(maxPos,transform.position.x));
     transform.position.z = std::max(-maxPos,std::min(maxPos,transform.position.z));
-    const float moveSpeed = 5.0f; // 秒間5ユニットの移動速度//
+    constexpr  float moveSpeed = 5.0f; // 秒間5ユニットの移動速度//
     const float moveAmount = moveSpeed * SceneManager::DeltaTime();
     auto* input = GameDevice()->m_pDI;
     if (input->CheckKey(KD_DAT, DIK_W)) transform.position.z += moveAmount;
@@ -69,8 +66,8 @@ void CPlayer::CheckLevel()
 {
     if (m_exp >= m_allExp)
     {
-        int tmp = m_exp - m_allExp;
-        m_allExp *= 1.3;
+        float tmp = m_exp - m_allExp;
+        m_allExp *= 1.3f;
         m_exp = tmp;
         IncreaseSuctionConeHeight();
     }
@@ -97,11 +94,25 @@ void CPlayer::UpdateHeightAndRadiusLerp()
     }
 }
 
-void CPlayer::UpdateCameraPos() const
+void CPlayer::UpdateCameraPos() 
 {
-    // カメラ位置をコーンの高さに基づいて設定//
-    ObjectManager::FindGameObject<CPlayerCamera>()->PosSet(
-        transform.position, transform.position.y);
+    if (not m_SuctionActive)
+    {
+        if (m_zoomUp)
+        {
+            ObjectManager::FindGameObject<CPlayerCamera>()->ZoomOut(transform.position);
+            m_zoomUp = false;
+        }else
+        {
+            // カメラ位置をコーンの高さに基づいて設定//
+            ObjectManager::FindGameObject<CPlayerCamera>()->PosSet(
+                transform.position, transform.position.y);
+        }
+    }else
+    {
+        m_zoomUp = true;
+        ObjectManager::FindGameObject<CPlayerCamera>()->ZoomIn(transform.position);
+    }
 }
 
 
@@ -146,49 +157,6 @@ bool CPlayer::IsWithSuctionCone(const VECTOR3& targetPos) const
     }
     return false;
 }
-/*
-bool CPlayer::UFOInVisionFan(const float& humanRotateY, const VECTOR3& targetPosition)
-{
-
-const VECTOR3 RAY_LNEGTH = VECTOR3(0, 0, 7);
-    const float distanceHumanFromPlayer = CalcDistanceXZ(transform.position, targetPosition);
-    VECTOR3 rayEndPosition = targetPosition + RAY_LNEGTH * XMMatrixRotationY(humanRotateY);
-    const VECTOR2 vectorFromTargetToRayEnd = VECTOR2(rayEndPosition.x - targetPosition.x,
-                                                     rayEndPosition.z - targetPosition.z);
-    const VECTOR2 vectorFromTargetToPlayer = VECTOR2(transform.position.x - targetPosition.x,
-                                                     transform.position.z - targetPosition.z);
-
-    if (IsBeyondMaxDistance(distanceHumanFromPlayer) || IsBeyondInsideFanShapeAngle(
-        vectorFromTargetToRayEnd, vectorFromTargetToPlayer))
-    {
-        return false;
-    }
-    return true;
-}
-
-bool CPlayer::IsBeyondMaxDistance(const float& dis)
-{
-constexpr float LINE_LENGTH = 7;
-    if (LINE_LENGTH < dis)
-    {
-        return true;
-    }
-    return false;
-}
-
-bool CPlayer::IsBeyondInsideFanShapeAngle(const VECTOR2& vectorTargetToRayEnd, const VECTOR2& vectorTargetToPlayer)
-{
-constexpr float HUMAN_ANGLE = 20;
-    const VECTOR2 HumanFromPlayerNorm = normalize(vectorTargetToRayEnd);
-    const VECTOR2 HumanFromEndPosNorm = normalize(vectorTargetToPlayer);
-    const float anglePlayerFromEndPos = CalcVector2Angle(HumanFromPlayerNorm, HumanFromEndPosNorm);
-    if (HUMAN_ANGLE < anglePlayerFromEndPos)
-    {
-        return true;
-    }
-    return false;
-}
-*/
 
 void CPlayer::Draw()
 {
@@ -206,7 +174,7 @@ void CPlayer::DrawCircle(const VECTOR3& center, float radius, DWORD color)
     for (int i = 0; i < segments; ++i)
     {
         // 現在の点
-        float angle1 = i * angleStep;
+        float angle1 = static_cast<float>(i) * angleStep;
         VECTOR3 point1 = center;
         point1.x += radius * cos(angle1);
         point1.z += radius * sin(angle1);

@@ -15,10 +15,10 @@ CTimeLimit::~CTimeLimit() = default;
 void CTimeLimit::Update()
 {
     m_CurrentTime -= SceneManager::DeltaTime();
-    if (m_CurrentTime <= 0)
-    {
-        TimeOut();
-    }
+    // if (m_CurrentTime <= 0)
+    // {
+    //     TimeOut();
+    // }
 }
 
 void CTimeLimit::TimeOut()

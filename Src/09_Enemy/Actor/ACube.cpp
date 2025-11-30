@@ -44,7 +44,11 @@ CACube::~CACube()
 
 void CACube::Update()
 {
-    m_isInConeArea = m_pPlayer->IsWithSuctionCone(transform.position);
+    m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
+    if (m_pPlayer != nullptr)
+    {
+        m_isInConeArea = m_pPlayer->IsWithSuctionCone(transform.position);
+    }
     m_pAnimator->Update();
     if (m_pCurrentState)
     {
@@ -71,6 +75,7 @@ void CACube::Draw()
 
 void CACube::IsSuctionCheck()
 {
+    if (m_pPlayer == nullptr)return;
     if (m_pPlayer->IsWithSuctionCone(transform.position /* + VECTOR3(0, m_maxSize.y, 0)*/) && m_pPlayer->GetIsSuckUp())
     {
         SetState(CBaseState::Type::SUCTION);

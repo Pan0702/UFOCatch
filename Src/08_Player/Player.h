@@ -48,41 +48,20 @@ private:
 
     ///高さと半径のLerp処理 ///
     void UpdateHeightAndRadiusLerp();
-    
+    void UpdateCameraPos();
+
     float m_coneRadius;
     float m_coneDegree;
-    int m_allExp;
-    int m_exp;
+    float m_allExp;
+    float m_exp;
     bool m_SuctionActive;
+    bool m_zoomUp;
     float m_coneTopPos;
 
-    // Lerp用の変数（7つ→2つに削減）
+    // Lerp用の変数
     LerpValue m_heightLerp;
     LerpValue m_radiusLerp;
-
     
-private:
-    /*
-     *
-    /// @param humanRotateY Radでの度数
-    /// @param targetPosition オブジェクトの場所
-    /// @return
-    /// 
-    bool UFOInVisionFan(const float& humanRotateY, const VECTOR3& targetPosition);
-    
-    /// 
-    /// @param dis 
-    /// @return
-    /// 
-    bool IsBeyondMaxDistance(const float& dis);
-
-    /// 2点を与えてヴェクトルからなす角を求めてHumanの視界の角度より大きいか判別
-    /// @param vectorTargetToRayEnd 
-    /// @param vectorTargetToPlayer 
-    /// @return　角度がHumanの視界より小さかったらtrue,大きかったらfalse
-    /// 
-    bool IsBeyondInsideFanShapeAngle(const VECTOR2& vectorTargetToRayEnd, const VECTOR2& vectorTargetToPlayer);
-    */
 };
 
 

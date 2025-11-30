@@ -174,7 +174,6 @@ void CCubeWalkState::Update()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CCubeSuction::CCubeSuction(CACube* cube)
     : CCubeBase(cube, Type::SUCTION)
-      , m_pPlayer(ObjectManager::FindGameObject<CPlayer>())
       ,m_distanceFromObjectToUFO(VECTOR3(0,0,0))
 {
 }
@@ -182,20 +181,24 @@ CCubeSuction::CCubeSuction(CACube* cube)
 void CCubeSuction::Update()
 {
     m_distanceFromObjectToUFO = m_pOwner->SuctionSpeed();
-    if (m_pPlayer->GetIsSuckUp())
+    m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
+    if (m_pPlayer != nullptr)
     {
-        if (m_pPlayer->GetPos().y <= m_pOwner->GetTransform().position.y)
+        if (m_pPlayer->GetIsSuckUp())
         {
-            m_pOwner->SetState(Type::DESTROY);
+            if (m_pPlayer->GetPos().y <= m_pOwner->GetTransform().position.y)
+            {
+                m_pOwner->SetState(Type::DESTROY);
+            }
+            else
+            {
+                m_pOwner->AddPos(m_distanceFromObjectToUFO);
+            }
         }
         else
         {
-            m_pOwner->AddPos(m_distanceFromObjectToUFO);
+            m_pOwner->SetState(NextStatePop());
         }
-    }
-    else
-    {
-        NextStatePop();
     }
 }
 
