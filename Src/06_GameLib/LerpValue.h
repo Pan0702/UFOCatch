@@ -1,16 +1,9 @@
 #pragma once
 #include "Lerp.h"
-#include "../04_FrameWork//SceneManager.h"
 
 /// 単一の値をLerpするための汎用構造体
 struct LerpValue
 {
-    float start;
-    float target;
-    float timer;
-    float duration;
-    bool isLerping;
-
     LerpValue() : start(0), target(0), timer(0), duration(0), isLerping(false) {}
 
     /// Lerpを開始
@@ -41,4 +34,44 @@ struct LerpValue
     }
     
     bool IsLerping() const { return isLerping; }
+private:
+    float start;
+    float target;
+    float timer;
+    float duration;
+    bool isLerping;
+};
+
+
+struct LerpValueVec3 {
+
+    LerpValueVec3() : start(VECTOR3(0, 0, 0)), target(VECTOR3(0, 0, 0)){
+    }
+
+    /// Lerpを開始
+    void Start(const VECTOR3 &from, const VECTOR3 &to, float dur) {
+        x.Start(from.x, to.x, dur);
+        y.Start(from.y, to.y, dur);
+        z.Start(from.z, to.z, dur);
+    }
+
+    /// 毎フレーム更新して現在の値を返す
+    VECTOR3 Update(float deltaTime) {
+        return VECTOR3(x.Update(deltaTime),
+                       y.Update(deltaTime),
+                       z.Update(deltaTime));
+    }
+
+    bool IsLerping() const {
+        return x.IsLerping() &&
+               y.IsLerping() &&
+               z.IsLerping();
+    }
+    
+private:
+    VECTOR3 start;
+    VECTOR3 target;
+    LerpValue x;
+    LerpValue y;
+    LerpValue z;
 };
