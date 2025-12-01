@@ -3,17 +3,9 @@
 #include "../../GameInstance.h"
 #include "../Actor/ACube.h"
 
-namespace
-{
-    constexpr float MOVE_SPEED = 1.2f;
-    constexpr float MAX_MOVE_AMOUNT = 3.5f;
-    constexpr float MIN_MOVE_AMOUNT = 1.0f;
-    constexpr float TURN_ANGLE = 180.0f;
-    constexpr float ROTATION_LERP_SPEED = 10.0f;
-}
 
 CCubeBase::CCubeBase(CACube* cube, Type type)
-    :m_pOwner(cube), m_kType(type)
+    : m_pOwner(cube), m_kType(type)
 {
 }
 
@@ -36,7 +28,7 @@ void CCubeBase::NextState()
 CCubeIdleState::CCubeIdleState(CACube* cube)
     : CCubeBase(cube, Type::IDLE)
       , timerCount(0)
-,stateIdle(0)
+      , stateIdle(0)
 {
 }
 
@@ -110,11 +102,13 @@ void CCubeWalkState::Enter()
 {
     bool boundaryFlag = false;
     int retryCount = 0;
-    constexpr int MAX_RETRY = 50;
-
+    static constexpr int MAX_RETRY = 50;
+    static constexpr float TURN_ANGLE = 180.0f;
     while (!boundaryFlag && retryCount < MAX_RETRY)
     {
         m_totalPosZMoveAmount = 0;
+        static  float MAX_MOVE_AMOUNT = 3.5f;
+        static constexpr float MIN_MOVE_AMOUNT = 1.0f;
         m_turnAmount = Randomf(-TURN_ANGLE, TURN_ANGLE) * DegToRad;
         m_moveAmount = Randomf(MIN_MOVE_AMOUNT, MAX_MOVE_AMOUNT);
         m_position = m_pOwner->GetTransform().position;
@@ -151,6 +145,7 @@ void CCubeWalkState::Update()
 {
     if (m_rotation)
     {
+        static constexpr float ROTATION_LERP_SPEED = 10.0f;
         float t = ROTATION_LERP_SPEED * SceneManager::DeltaTime();
         m_currentRotation = m_currentRotation + (m_targetRotation - m_currentRotation) * t;
         if (abs(m_targetRotation - m_currentRotation) < 0.01f)
@@ -160,6 +155,7 @@ void CCubeWalkState::Update()
         }
         m_pOwner->SetRotationY(m_currentRotation);
     }
+    static constexpr float MOVE_SPEED = 1.2f;
     m_pOwner->AddPos(
         VECTOR3(0, 0, MOVE_SPEED * SceneManager::DeltaTime()) * XMMatrixRotationY(m_currentRotation));
     m_totalPosZMoveAmount += MOVE_SPEED * SceneManager::DeltaTime();
@@ -174,7 +170,7 @@ void CCubeWalkState::Update()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CCubeSuction::CCubeSuction(CACube* cube)
     : CCubeBase(cube, Type::SUCTION)
-      ,m_distanceFromObjectToUFO(VECTOR3(0,0,0))
+      , m_distanceFromObjectToUFO(VECTOR3(0, 0, 0))
 {
 }
 
@@ -182,8 +178,7 @@ void CCubeSuction::Update()
 {
     m_distanceFromObjectToUFO = m_pOwner->SuctionSpeed();
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
-    if (m_pPlayer != nullptr)
-    {
+    if (m_pPlayer != nullptr){
         if (m_pPlayer->GetIsSuckUp())
         {
             if (m_pPlayer->GetPos().y <= m_pOwner->GetTransform().position.y)

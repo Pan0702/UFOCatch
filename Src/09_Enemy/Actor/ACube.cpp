@@ -54,9 +54,6 @@ void CACube::Update()
     {
         m_pCurrentState->Update();
     }
-    ImGui::Begin("begin");
-    ImGui::Text("CurrentAnim: %lf", transform.rotation.y * RadToDeg);
-    ImGui::End();
 }
 
 

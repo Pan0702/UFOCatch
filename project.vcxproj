@@ -524,6 +524,7 @@
     <ClInclude Include="Src\02_DirectX\DInput.h" />
     <ClInclude Include="Src\02_DirectX\Direct3D.h" />
     <ClInclude Include="Src\02_DirectX\XAudio.h" />
+    <ClInclude Include="Src\06_GameLib\LerpValue.h" />
     <ClInclude Include="Src\07_Scene\LevelSelectionScene.h" />
     <ClInclude Include="Src\07_Scene\ResultScene.h" />
     <ClInclude Include="Src\08_Player\PHP.h" />

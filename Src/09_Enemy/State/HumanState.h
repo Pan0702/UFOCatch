@@ -23,8 +23,8 @@ public:
 
 private:
     void LookAround();
-    void Idel();
-    void RotationANgle();
+    void Idle();
+    void RotationAngle();
     float GetCurrentFrame() const;
 
 private:
