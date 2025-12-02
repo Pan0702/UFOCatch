@@ -24,7 +24,10 @@ public:
     /// 
     VECTOR3 CalcSuctionDisplacement(const float& moveTimeSecond, const VECTOR3& animalPos) const;
     
-    void AddExp(int exp){ m_exp += exp; }
+    void AddExp(float exp){ m_exp += exp; }
+    float GetExp()const {return m_exp;}
+    float GetAllExp()const {return m_allExp;}
+    
     bool GetIsSuckUp() const { return m_SuctionActive; }
 
 private:

@@ -5,10 +5,10 @@
 namespace
 {
     const VECTOR3 INIT_UP_DIR = VECTOR3(0, 1, 0);
-    const VECTOR3 INIT_CAM_POS = VECTOR3(0, 10, -5);
-    const VECTOR3 INIT_CAM_LOOK = VECTOR3(0, 1, 0);
-    const VECTOR3 INIT_SUCTION_CAM_POS = VECTOR3(0, 2, -7);
-    constexpr float REFERENCE_HEIGHT = 5.0f; // 基準高さ
+    const VECTOR3 INIT_CAM_POS = VECTOR3(0, 8, -4);
+    const VECTOR3 INIT_CAM_LOOK = VECTOR3(0, 1, -1.5);
+    const VECTOR3 INIT_SUCTION_CAM_POS = VECTOR3(0, 4, -7);
+    constexpr float REFERENCE_HEIGHT = 5.0f; // 基準高さ//
 }
 
 CPlayerCamera::CPlayerCamera()
@@ -42,15 +42,11 @@ void CPlayerCamera::UpdateCameraLerp()
 
 void CPlayerCamera::PosSet(const VECTOR3& pos, const float& coneHeight)
 {
-    // コーンの高さに応じてカメラ距離をスケーリング
-    // 高さ10(半径3) → 高さ20(半径6)で見かけのサイズを同じにする
+    // コーンの高さに応じてカメラ距離をスケーリング//
     float scale = coneHeight / REFERENCE_HEIGHT;
 
-    // カメラオフセットをスケーリング
-    VECTOR3 scaledCamOffset;
-    scaledCamOffset.x = INIT_CAM_POS.x * scale;
-    scaledCamOffset.y = INIT_CAM_POS.y * scale;
-    scaledCamOffset.z = INIT_CAM_POS.z * scale;
+    // カメラオフセットをスケーリング//
+    VECTOR3 scaledCamOffset = INIT_CAM_POS * scale;
 
     //m_camPos = pos + BASE_CAM_OFFSET;
     m_camPos = pos + scaledCamOffset;
@@ -66,12 +62,9 @@ void CPlayerCamera::ZoomIn(const VECTOR3& pos)
 
 void CPlayerCamera::ZoomOut(const VECTOR3& pos)
 {
-    // PosSetと同じ計算で通常カメラ位置を求める
+    // カメラオフセットをスケーリング//
     float scale = pos.y / REFERENCE_HEIGHT;
-    VECTOR3 scaledCamOffset;
-    scaledCamOffset.x = INIT_CAM_POS.x * scale;
-    scaledCamOffset.y = INIT_CAM_POS.y * scale;
-    scaledCamOffset.z = INIT_CAM_POS.z * scale;
+    VECTOR3 scaledCamOffset = INIT_CAM_POS * scale;
 
     // 現在位置から通常位置へ戻る
     m_camPosLerp.Start(m_camPos, pos + scaledCamOffset, 0.04f);

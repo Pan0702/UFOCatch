@@ -14,13 +14,14 @@ CPlayer::CPlayer()
     m_pMesh->Load("data/Player/UFO.mesh");
     new CPlayerHP(1000);
     m_coneDegree = 7;
-    //半径の計算
+    //半径の計算//
     m_coneRadius = transform.position.y * tan(DegToRad * m_coneDegree);
     m_allExp = 1;
-    m_exp = 0;
+    m_exp = 0.01;
     m_zoomUp = false;
     m_coneTopPos = transform.position.y;
     transform.scale = VECTOR3(0.5f,0.5f,0.5f);
+    m_SuctionActive = false;
 }
 
 CPlayer::~CPlayer() = default;
@@ -35,10 +36,10 @@ void CPlayer::Update()
 
     CheckLevel();
 
-    // Lerp処理
+    // Lerp処理//
     UpdateHeightAndRadiusLerp();
 
-    // カメラ位置を更新
+    // カメラ位置を更新//
     UpdateCameraPos();
 
     ObjectManager::FindGameObject<CVisionSystem>()->
@@ -75,10 +76,10 @@ void CPlayer::CheckLevel()
 
 void CPlayer::IncreaseSuctionConeHeight()
 {
-    const float targetHeight = transform.position.y + 1.0f;
+    const float targetHeight = m_coneTopPos+ 1.0f;
     const float targetRadius = targetHeight * tan(DegToRad * m_coneDegree);
     
-    m_heightLerp.Start(transform.position.y, targetHeight, 0.05f);
+    m_heightLerp.Start(m_coneTopPos, targetHeight, 0.05f);
     m_radiusLerp.Start(m_coneRadius, targetRadius, 0.05f);
 }
 
@@ -86,7 +87,7 @@ void CPlayer::UpdateHeightAndRadiusLerp()
 {
     if (m_heightLerp.IsLerping())
     {
-        transform.position.y = m_heightLerp.Update(SceneManager::DeltaTime());
+        m_coneTopPos = m_heightLerp.Update(SceneManager::DeltaTime());
     }
     if (m_radiusLerp.IsLerping())
     {
@@ -106,7 +107,7 @@ void CPlayer::UpdateCameraPos()
         {
             // カメラ位置をコーンの高さに基づいて設定//
             ObjectManager::FindGameObject<CPlayerCamera>()->PosSet(
-                transform.position, transform.position.y);
+                transform.position, m_coneTopPos);
         }
     }else
     {
@@ -122,8 +123,8 @@ void CPlayer::UpdateCameraPos()
 VECTOR3 CPlayer::CalcSuctionDisplacement(const float& moveTimeSecond, const VECTOR3& animalPos) const
 {
 
-    float heightDiff = transform.position.y - animalPos.y;
-    float progress = 1.0f - (heightDiff / transform.position.y);
+    float heightDiff = m_coneTopPos - animalPos.y;
+    float progress = 1.0f - (heightDiff / m_coneTopPos);
     progress = std::max(0.0f, std::min(1.0f, progress));
     float eased = progress * progress * progress ;
 
@@ -133,7 +134,7 @@ VECTOR3 CPlayer::CalcSuctionDisplacement(const float& moveTimeSecond, const VECT
     float heightSpeedMultiplier = minSpeed + (maxSpeed - minSpeed) * eased;
 
     //Y座標が0の点（求めるための内分比の係数//
-    float projectionFactorY0 = avoidZero((0 - animalPos.y) / (animalPos.y - transform.position.y));
+    float projectionFactorY0 = avoidZero((0 - animalPos.y) / (animalPos.y - m_coneTopPos));
     //0地点での動物のポジション//
     VECTOR3 targetPointOnPlane =
         VECTOR3(animalPos.x + projectionFactorY0 * (animalPos.x - transform.position.x), 0,
@@ -148,7 +149,7 @@ VECTOR3 CPlayer::CalcSuctionDisplacement(const float& moveTimeSecond, const VECT
 //
 bool CPlayer::IsWithSuctionCone(const VECTOR3& targetPos) const
 {
-    const float distanceAnimalFromPlayer = transform.position.y - targetPos.y;
+    const float distanceAnimalFromPlayer = m_coneTopPos - targetPos.y;
     const float coneRadiusAtTargetHeight = distanceAnimalFromPlayer * std::tan(DegToRad * m_coneDegree);
     if (Pow2(targetPos.x - transform.position.x) + Pow2(targetPos.z - transform.position.z)
         <= Pow2(coneRadiusAtTargetHeight))

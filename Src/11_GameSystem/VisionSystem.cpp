@@ -1,5 +1,8 @@
 #include "VisionSystem.h"
 
+#include "../08_Player/PHP.h"
+#include "../08_Player/Player.h"
+
 
 CVisionSystem::CVisionSystem() = default;
 CVisionSystem::~CVisionSystem() = default;
@@ -50,17 +53,35 @@ bool CVisionSystem::LineSegmentCircleIntersection(const VECTOR2& lineStart,
 }
 bool CVisionSystem::SectorCircleCollision(const VECTOR2& humanPos, float humanAngle)
 {
+    // デバッグ用
+    CPlayerHP* pHP = ObjectManager::FindGameObject<CPlayerHP>();
+    bool damageFlag = false;
+    if (pHP != nullptr)
+    {
+        damageFlag = pHP->GetDamageFlag();
+    }
+
+    ImGui::Begin("VisionSystem Debug");
+    ImGui::Text("CPlayerHP: %s", pHP ? "Valid" : "NULL");
+    ImGui::Text("m_damage: %s", damageFlag ? "true" : "false");
+    ImGui::End();
+
+    // m_damageがtrueの時（無敵時間中）は範囲外として扱う
+    if (pHP && damageFlag)
+    {
+        return false;
+    }
+
     // 視野角を使って扇形の開始・終了角度を設定
     float fieldOfView = 40.0f;  // 視野角（度）
     float halfFOV = (fieldOfView * 0.5f) * DegToRad;
-    
+
     m_sectorInfo.startAngle = humanAngle - halfFOV;
     m_sectorInfo.endAngle = humanAngle + halfFOV;
     
     // 扇形の中心（Humanの位置）から円の中心へのベクトル
     VECTOR2 diff = m_circleInfo.center - humanPos;
     float distSquared = diff.x * diff.x + diff.y * diff.y;
-    float dist = std::sqrt(distSquared);
     
     // 早期リターン
     float sumRadius = m_sectorInfo.radius + m_circleInfo.radius;
@@ -70,7 +91,7 @@ bool CVisionSystem::SectorCircleCollision(const VECTOR2& humanPos, float humanAn
     }
     
     // 円の中心が扇形内
-    if (dist <= m_sectorInfo.radius)
+    if (distSquared <= Pow2(m_sectorInfo.radius))
     {
         float angle = std::atan2(diff.x, diff.y);
         if (IsAngleInSector(angle))
@@ -80,8 +101,8 @@ bool CVisionSystem::SectorCircleCollision(const VECTOR2& humanPos, float humanAn
     }
     
     // 円が扇形の円弧と交差
-    if (dist < m_sectorInfo.radius + m_circleInfo.radius && 
-        dist > std::abs(m_sectorInfo.radius - m_circleInfo.radius))
+    if (distSquared < Pow2(m_sectorInfo.radius + m_circleInfo.radius) && 
+        distSquared > Pow2(std::abs(m_sectorInfo.radius - m_circleInfo.radius)))
     {
         float angle = std::atan2(diff.x, diff.y);
         if (IsAngleInSector(angle))

@@ -67,17 +67,17 @@ void CPlayerHP::Update()
 
 void CPlayerHP::Draw()
 {
-    for (int i = 0; i < m_maxHp; i++)
-    {
-        if (i <= m_currentHp - 1)
-        {
-            m_pSprite->Draw(m_pHpImage,m_hpPos.x + i * m_k,m_hpPos.y,0,0,m_imageSize.x,m_imageSize.y,m_drawImageSize.x,m_drawImageSize.y);
-        }
-        else
-        {
-            m_pSprite->Draw(m_pHpDamageImage,m_hpPos.x + i * m_k,m_hpPos.y,0,0,m_imageSize.x,m_imageSize.y,m_drawImageSize.x,m_drawImageSize.y);
-        }
-    }
+    // for (int i = 0; i < m_maxHp; i++)
+    // {
+    //     if (i <= m_currentHp - 1)
+    //     {
+    //         m_pSprite->Draw(m_pHpImage,m_hpPos.x + i * m_k,m_hpPos.y,0,0,m_imageSize.x,m_imageSize.y,m_drawImageSize.x,m_drawImageSize.y);
+    //     }
+    //     else
+    //     {
+    //         m_pSprite->Draw(m_pHpDamageImage,m_hpPos.x + i * m_k,m_hpPos.y,0,0,m_imageSize.x,m_imageSize.y,m_drawImageSize.x,m_drawImageSize.y);
+    //     }
+    // }
 }
 
 

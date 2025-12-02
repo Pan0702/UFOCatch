@@ -7,11 +7,7 @@ public:
 	Animator();
 	~Animator();
 	void Update();
-
-	/// <summary>
-	/// �A�j���[�V���������郂�f�����w�肷��
-	/// </summary>
-	/// <param name="mesh">���f���f�[�^</param>
+	
 	void SetModel(CFbxMesh* mesh);
 
 	void Play(int id, bool force = false);

@@ -9,6 +9,7 @@
 #include "../09_Enemy/Actor/AnimalFactor.h"
 #include "../09_Enemy/Actor/Human.h"
 #include "../10_Stage/Ground.h"
+#include "../11_GameSystem/DisplayInfo.h"
 #include "../11_GameSystem/TimeLimit.h"
 #include "../11_GameSystem/VisionSystem.h"
 
@@ -19,10 +20,11 @@ PlayScene::PlayScene()
     Instantiate<CPlayerCamera>();
     new CAnimalManager();
    Instantiate<CGround>();
-    new CTimeLimit(30);
-    Instantiate<CVisionSystem>();
+    //new CTimeLimit(30);
     Instantiate<CAnimalFactor>();
     Instantiate<CPlayer>();
+    Instantiate<CVisionSystem>();
+    Instantiate<CDisplayInfo>();
 
 }
 

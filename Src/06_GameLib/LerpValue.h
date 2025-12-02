@@ -35,11 +35,11 @@ struct LerpValue
     
     bool IsLerping() const { return isLerping; }
 private:
-    float start;
-    float target;
-    float timer;
-    float duration;
-    bool isLerping;
+    float start;      // 開始値 //
+    float target;     // 目標値 //
+    float timer;      // 経過時間 //
+    float duration;   // 補間にかける総時間 //
+    bool isLerping;   // 補間中かどうか //
 };
 
 

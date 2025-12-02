@@ -181,7 +181,7 @@ void CCubeSuction::Update()
     if (m_pPlayer != nullptr){
         if (m_pPlayer->GetIsSuckUp())
         {
-            if (m_pPlayer->GetPos().y <= m_pOwner->GetTransform().position.y)
+            if (m_pPlayer->GetTransform().position.y - 0.15f <= m_pOwner->GetTransform().position.y )
             {
                 m_pOwner->SetState(Type::DESTROY);
             }

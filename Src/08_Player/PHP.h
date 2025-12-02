@@ -7,6 +7,7 @@ public:
     CPlayerHP(const int& hp);
     ~CPlayerHP();
     void SubHP(const int& hp);
+    bool GetDamageFlag(){return m_damage;}
 
 private:
     void Update() override;
