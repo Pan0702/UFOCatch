@@ -20,9 +20,9 @@ PlayScene::PlayScene()
     new CAnimalManager();
    Instantiate<CGround>();
     new CTimeLimit(30);
-    Instantiate<CVisionSystem>();
     Instantiate<CAnimalFactor>();
     Instantiate<CPlayer>();
+    Instantiate<CVisionSystem>();
 
 }
 
