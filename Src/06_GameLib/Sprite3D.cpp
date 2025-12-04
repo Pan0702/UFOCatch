@@ -768,6 +768,59 @@ void CSprite::DrawRect(const float& posX, const float& posY, const DWORD& width,
     ResetShader();
 }
 
+void CSprite::DrawCircle(CSpriteImage* pImage, float posX, float posY, DWORD srcX, DWORD srcY, DWORD srcWid,
+                         DWORD srcHei, float startRad,float endRad, float fAlpha)
+{
+    SetSrc(pImage,srcX,srcY,srcWid,srcHei);
+    //シェーダー設定
+    SetShader();
+
+    //頂点バッファこ
+    UINT hStrides = sizeof(SpriteVertex);
+    UINT hOffsets = 0;
+    m_pD3D->m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBufferSprite, &hStrides, &hOffsets);
+    //ワールド行列作成
+    MATRIX4X4 mWorld, mScal, mRot, mTrans;
+    XMStoreFloat4x4(&mScal, XMMatrixScaling(srcWid, srcHei, 1));
+    XMStoreFloat4x4(&mRot, XMMatrixIdentity());
+    XMStoreFloat4x4(&mTrans, XMMatrixTranslation(posX, posY, 0));
+
+    mWorld = mScal * mRot * mTrans;
+
+    D3D11_MAPPED_SUBRESOURCE pData;
+    CONSTANT_BUFFER_SPRITE cb;
+    if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(
+        m_pShader->m_pConstantBufferSprite3D,0,D3D11_MAP_WRITE_DISCARD,0,&pData)))
+    {
+        cb.mW = XMMatrixTranspose(XMLoadFloat4x4(&mWorld));
+        cb.ViewPortWidth = static_cast<float>(m_pD3D->m_dwWindowWidth);
+        cb.ViewPortHeight = static_cast<float>(m_pD3D->m_dwWindowHeight);
+        
+        //UV offset
+        cb.vUVOffset.x = posX / static_cast<float>(m_pImage->m_dwImageWidth);
+        cb.vUVOffset.y = posY / static_cast<float>(m_pImage->m_dwImageHeight);
+        
+        //color
+        cb.vColor = VECTOR4(1,1,1,fAlpha);
+        
+        //円の角度設定
+        cb.vMatInfo.x = 1;      //　テクスチャあり
+        cb.vMatInfo.y = startRad;   //　開始角度
+        cb.vMatInfo.z = endRad;    //　終了角度
+        cb.vMatInfo.w = 1;      //　円モードon
+        
+        memcpy_s(pData.pData, pData.RowPitch, (void*)(&cb), sizeof(cb));
+        m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferSprite3D, 0);
+    }
+    
+    //テクスチャセット
+    m_pD3D->m_pDeviceContext->PSSetShaderResources(0,1,&pImage->m_pTexture);
+    
+    //描画
+    m_pD3D->m_pDeviceContext->Draw(4,0);
+    ResetShader();
+}
+
 
 //------------------------------------------------------------------------
 //

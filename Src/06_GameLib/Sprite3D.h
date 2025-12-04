@@ -32,6 +32,12 @@ struct SpriteVertex
 	VECTOR2 UV;	   //�e�N�X�`���[���W
 };
 
+struct CircleDrawParams
+{
+	float startAngle;
+	float endAngle;
+	VECTOR3 center;
+};
 //
 // CSpriteImage�N���X
 //
@@ -117,7 +123,8 @@ public:
 	void    Draw(CSpriteImage* pImage, const MATRIX4X4& mWorld, const DWORD& srcX, const DWORD& srcY, const DWORD& srcwidth, const DWORD& srcheight, const DWORD& destwidth, const DWORD& destheight, const float& fAlpha = 1.0f);
 	void    DrawLine(const float& StartX, const float& StartY, const float& EndX, const float& EndY, const DWORD& WidthIn, const DWORD& colorABGR, const float& fAlpha = 1.0f);
 	void    DrawRect(const float& posX, const float& posY, const DWORD& width, const DWORD& height, const DWORD& colorABGR, const float& fAlpha = 1.0f);    // -- 2018.3.20
-
+	//自作関数
+	void	DrawCircle(CSpriteImage* pImage, float posX, float posY, DWORD srcX, DWORD srcY, DWORD srcWid, DWORD srcHei, float startRad = 0, float endRad = 6.28318f, float fAlpha = 1.0f);
 	// 3DSprite   // -- 2018.8.10
 	HRESULT SetSrc3D(const float& fDestWidth, const float& fDestHeight, const DWORD& dwSrcX, const DWORD& dwSrcY, const DWORD& dwSrcWidth, const DWORD& dwSrcHeight);   // 2018.9.30
 	HRESULT SetSrc3D(CSpriteImage* pImage, const float& fDestWidth, const float& fDestHeight, const DWORD& dwSrcX, const DWORD& dwSrcY, const DWORD& dwSrcWidth, const DWORD& dwSrcHeight);

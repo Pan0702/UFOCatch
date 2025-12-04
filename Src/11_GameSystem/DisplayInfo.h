@@ -15,7 +15,7 @@ private:
     void GiwakuDraw() const;
     void ExpDraw();
     
-    CSprite* m_sprite;
+    CSprite* m_pSprite;
     CSpriteImage* m_playUIImage;
     CSpriteImage* m_expImage;
 

@@ -4,7 +4,7 @@
 
 CDisplayInfo::CDisplayInfo()
 {
-    m_sprite = new CSprite();
+    m_pSprite = new CSprite();
     m_playUIImage = new CSpriteImage("data/PlayUI.png");
     m_expImage = new CSpriteImage("data/PlayUIParts.png");
     m_prevProportion = 0;
@@ -13,7 +13,7 @@ CDisplayInfo::CDisplayInfo()
 
 CDisplayInfo::~CDisplayInfo()
 {
-    SAFE_DELETE(m_sprite);
+    SAFE_DELETE(m_pSprite);
     SAFE_DELETE(m_playUIImage);
 }
 
@@ -38,7 +38,7 @@ void CDisplayInfo::Draw()
 {
     ExpDraw();
     //BaseUIを描画
-    m_sprite->Draw(m_playUIImage, 0, 0, 0, 0, 1366, 768);
+    m_pSprite->Draw(m_playUIImage, 0, 0, 0, 0, 1366, 768);
     GiwakuDraw();
 }
 
@@ -46,17 +46,17 @@ void CDisplayInfo::Draw()
 void CDisplayInfo::GiwakuDraw() const
 {
     //疑惑ゲージを描画
-    m_sprite->Draw(m_expImage, 1124, 468, 0, 0, 235, 230);
-    
+    //m_pSprite->Draw(m_expImage, 1124, 468, 0, 0, 235, 230);
+    m_pSprite->DrawCircle(m_expImage, 1124, 468, 0, 0, 235, 230,0.0f,DegToRad * 90.0f);
     
     //疑惑から確信に変わったときの見た目を描画
-    m_sprite->Draw(m_expImage, 1192, 588, 240, 0, 97, 73);
+    m_pSprite->Draw(m_expImage, 1192, 588, 240, 0, 97, 73);
 }
 
 void CDisplayInfo::ExpDraw()
 {
     //LvBaseを描画
-    m_sprite->Draw(m_expImage, 144, 713, 0, 300, 1224, 55);
+    m_pSprite->Draw(m_expImage, 144, 713, 0, 300, 1224, 55);
     CPlayer* pl = ObjectManager::FindGameObject<CPlayer>();
     float proportion = avoidZero(pl->GetExp() / pl->GetAllExp());
     static constexpr float epsilon = 0.001f;
@@ -68,5 +68,5 @@ void CDisplayInfo::ExpDraw()
         m_prevProportion = proportion;
     }
     //Lvを描画
-    m_sprite->Draw(m_expImage, 144, 721, 0, 240, m_currentWidth, 47);
+    m_pSprite->Draw(m_expImage, 144, 721, 0, 240, m_currentWidth, 47);
 }
