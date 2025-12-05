@@ -1,28 +1,28 @@
 // -----------------------------------------------------------------------
 // 
-// �R�c�X�v���C�g�̃V�F�[�_�[
+// ３Ｄスプライトのシェーダー
 // 
 //                                                              2021.1.11
 //                                                          Sprite3D.hlsli
 // -----------------------------------------------------------------------
 
-// �O���[�o��
+// グローバル
 Texture2D g_Texture: register(t0);
 SamplerState g_Sampler : register(s0);
 
-// �R���X�^���g�o�b�t�@
+// コンスタントバッファ
 cbuffer global_0:register(b0)
 {
-    matrix g_WVP; // ���[���h����ˉe�܂ł̕ϊ��s��  // -- 2018.8.10
-    matrix g_W; // ���[���h�ϊ��s��̂�
-    float g_ViewPortWidth; // �r���[�|�[�g�i�X�N���[���j���T�C�Y
-    float g_ViewPortHeight; // �r���[�|�[�g�i�X�N���[���j�c�T�C�Y
-    float2 g_UVOffset; // �e�N�X�`�����W�@�I�t�Z�b�g
-    float4 g_Diffuse; // �f�B�t���[�Y�J���[                        // 2020.1.24
-    float4 g_MatInfo; // �}�e���A���֘A���@x:�e�N�X�`���L�薳��  // 2017.10.8
+    matrix g_WVP; // ワールドから射影までの変換行列  // -- 2018.8.10
+    matrix g_W; // ワールド変換行列のみ
+    float g_ViewPortWidth; // ビューポート（スクリーン）横サイズ
+    float g_ViewPortHeight; // ビューポート（スクリーン）縦サイズ
+    float2 g_UVOffset; // テクスチャ座標　オフセット
+    float4 g_Diffuse; // ディフューズカラー                        // 2020.1.24
+    float4 g_MatInfo; // マテリアル関連情報　x:テクスチャ有り無し  // 2017.10.8
 };
 
-// �\����
+// 構造体
 struct PS_INPUT
 {
     float4 Pos : SV_POSITION;
@@ -30,7 +30,7 @@ struct PS_INPUT
 };
 
 //
-// �o�[�e�b�N�X�V�F�[�_�[
+// バーテックスシェーダー
 //
 PS_INPUT VS(float4 Pos : POSITION, float2 UV : TEXCOORD)
 {
@@ -47,7 +47,7 @@ PS_INPUT VS(float4 Pos : POSITION, float2 UV : TEXCOORD)
 }
 
 //
-// �o�[�e�b�N�X�V�F�[�_�[ 3D�X�v���C�g�i�r���{�[�h�j
+// バーテックスシェーダー 3Dスプライト（ビルボード）
 //
 PS_INPUT VS_BILL(float4 PosB : POSITION, float2 UV : TEXCOORD)
 {
@@ -59,47 +59,54 @@ PS_INPUT VS_BILL(float4 PosB : POSITION, float2 UV : TEXCOORD)
 }
 
 //
-// �s�N�Z���V�F�[�_�[
+// ピクセルシェーダー
 //
-// �E�e�N�X�`���̗L�薳���𔻒f������@�Ɉȉ���2�̕��@������
-//   ?@�@g_MatInfo.x�����Ĕ��f����B1:�e�N�X�`���L��
-//   ?A�@�e�N�X�`���̃T�C�Y��GetDimensions()�֐��Œ��ׁA�T�C�Y���O�Ȃ�e�N�X�`������
-//   �����ł́A?@�̕��@���Ƃ��Ă���
+// ・テクスチャの有り無しを判断する方法に以下の2つの方法がある
+//   ?@　g_MatInfo.xを見て判断する。1:テクスチャ有り
+//   ?A　テクスチャのサイズをGetDimensions()関数で調べ、サイズが０ならテクスチャ無し
+//   ここでは、?@の方法をとっている
 //
 float4 PS(PS_INPUT In) : SV_Target
 {
     //uint width, height;
-    //g_Texture.GetDimensions(width, height);  // �e�N�X�`���̃T�C�Y�𓾂�  // -- 2020.1.15
+    //g_Texture.GetDimensions(width, height);  // テクスチャのサイズを得る  // -- 2020.1.15
 
     float4 Color;
     if (g_MatInfo.x == 1)
     //if (width != 0)
     {
-        // �e�N�X�`���L��̂Ƃ�
+        // テクスチャ有りのとき
         float4 texColor = g_Texture.Sample(g_Sampler, In.UV);
         Color.rgb = texColor.rgb * g_Diffuse.rgb;
         Color.a = texColor.a - (1 - g_Diffuse.a); // -- 2020.1.15
-        //�~�̊p�x�������L��̏ꍇ
+        //円の角度制限が有りの場合
         if (g_MatInfo.w == 1)
         {
-            //UV���W�̒��S����̑��Έʒu
-            float2 pos = In.UV - float2(0.5, 0.5);
-            //�p�x�̌v�Z�AUV���W��Y�����Ȃ̂�-��t����
-            float angle = atan2(-pos.y, pos.x);
-            //0~2�΂ɐ��K��
-            if (angle < 0) angle += 6.28318530718f;
-            float startAngle = g_MatInfo.y;
-            float endAngle = g_MatInfo.z;
-            //�͈͊O��pixel��j��
-            if (angle < startAngle || angle > endAngle)
-            {
+            float PI = 3.14159265f;
+
+            // UV座標から中心を引いて相対位置を計算
+            // UVオフセットを引いて正規化（0～1の範囲に）
+            float2 normalizedUV = In.UV - g_UVOffset;
+            float2 pos = normalizedUV - float2(0.5, 0.5);
+
+            // 12時方向を0度、時計回りに角度を計算
+            // UV座標系: Y軸は下が0、上が1
+            float angle = atan2(pos.x, pos.y);
+
+            // 0～2πの範囲に正規化
+            if (angle < 0.0f) {
+                angle += 2.0f * PI;
+            }
+
+            // 開始角度から終了角度の範囲外を破棄
+            if (angle < g_MatInfo.y || angle > g_MatInfo.z) {
                 discard;
             }
         }
     }
     else
     {
-        // �e�N�X�`���Ȃ��̂Ƃ�
+        // テクスチャなしのとき
         Color = g_Diffuse;
     }
     return saturate(Color);

@@ -771,34 +771,52 @@ void CSprite::DrawRect(const float& posX, const float& posY, const DWORD& width,
 void CSprite::DrawCircle(CSpriteImage* pImage, float posX, float posY, DWORD srcX, DWORD srcY, DWORD srcWid,
                          DWORD srcHei, float startRad,float endRad, float fAlpha)
 {
-    SetSrc(pImage,srcX,srcY,srcWid,srcHei);
+    // 円形プログレスバー用に、UV座標を0～1の範囲に設定
+    m_pImage = pImage;
+
+    // UV座標を0～1に固定（角度計算用）
+    SpriteVertex vertices[] =
+    {
+        VECTOR3(0, (float)srcHei, 0), VECTOR2(0.0f, 1.0f),  // 左上
+        VECTOR3(0, 0, 0), VECTOR2(0.0f, 0.0f),              // 左下
+        VECTOR3((float)srcWid, (float)srcHei, 0), VECTOR2(1.0f, 1.0f),  // 右上
+        VECTOR3((float)srcWid, 0, 0), VECTOR2(1.0f, 0.0f),  // 右下
+    };
+
+    // 頂点バッファを更新
+    if (m_pVertexBufferSprite)
+    {
+        D3D11_MAPPED_SUBRESOURCE mapResource;
+        if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pVertexBufferSprite, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapResource)))
+        {
+            memcpy_s(mapResource.pData, sizeof(vertices), vertices, sizeof(vertices));
+            m_pD3D->m_pDeviceContext->Unmap(m_pVertexBufferSprite, 0);
+        }
+    }
+
     //シェーダー設定
     SetShader();
 
-    //頂点バッファこ
-    UINT hStrides = sizeof(SpriteVertex);
-    UINT hOffsets = 0;
-    m_pD3D->m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBufferSprite, &hStrides, &hOffsets);
+    //頂点バッファ
+    UINT stride = sizeof(SpriteVertex);
+    UINT offset = 0;
     //ワールド行列作成
-    MATRIX4X4 mWorld, mScal, mRot, mTrans;
-    XMStoreFloat4x4(&mScal, XMMatrixScaling(srcWid, srcHei, 1));
-    XMStoreFloat4x4(&mRot, XMMatrixIdentity());
-    XMStoreFloat4x4(&mTrans, XMMatrixTranslation(posX, posY, 0));
+    MATRIX4X4 mWorld = XMMatrixTranslation(posX, posY, 0.0f);
+    m_pD3D->m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBufferSprite, &stride, &offset);
 
-    mWorld = mScal * mRot * mTrans;
-
+    //シェーダーのコンスタントバッファーに各種データを渡す
     D3D11_MAPPED_SUBRESOURCE pData;
-    CONSTANT_BUFFER_SPRITE cb;
+    CONSTANT_BUFFER_SPRITE     cb;
     if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(
         m_pShader->m_pConstantBufferSprite3D,0,D3D11_MAP_WRITE_DISCARD,0,&pData)))
     {
-        cb.mW = XMMatrixTranspose(XMLoadFloat4x4(&mWorld));
+        cb.mW = XMMatrixTranspose(mWorld);
         cb.ViewPortWidth = static_cast<float>(m_pD3D->m_dwWindowWidth);
         cb.ViewPortHeight = static_cast<float>(m_pD3D->m_dwWindowHeight);
-        
+
         //UV offset
-        cb.vUVOffset.x = posX / static_cast<float>(m_pImage->m_dwImageWidth);
-        cb.vUVOffset.y = posY / static_cast<float>(m_pImage->m_dwImageHeight);
+        cb.vUVOffset.x = 0;
+        cb.vUVOffset.y = 0;
         
         //color
         cb.vColor = VECTOR4(1,1,1,fAlpha);
@@ -813,11 +831,11 @@ void CSprite::DrawCircle(CSpriteImage* pImage, float posX, float posY, DWORD src
         m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferSprite3D, 0);
     }
     
-    //テクスチャセット
-    m_pD3D->m_pDeviceContext->PSSetShaderResources(0,1,&pImage->m_pTexture);
-    
+    //テクスチャーをシェーダーに渡す
+    m_pD3D->m_pDeviceContext->PSSetShaderResources(0, 1, &m_pImage->m_pTexture);
+
     //描画
-    m_pD3D->m_pDeviceContext->Draw(4,0);
+    m_pD3D->m_pDeviceContext->Draw(4, 0);
     ResetShader();
 }
 

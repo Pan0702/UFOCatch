@@ -7,8 +7,15 @@ CDisplayInfo::CDisplayInfo()
     m_pSprite = new CSprite();
     m_playUIImage = new CSpriteImage("data/PlayUI.png");
     m_expImage = new CSpriteImage("data/PlayUIParts.png");
+
+    // 経験値ゲージ初期化
     m_prevProportion = 0;
     m_currentWidth = 0;
+
+    // 疑惑ゲージ初期化
+    m_prevGiwakuProportion = 0;
+    m_currentAngle = 0;
+    tmp = 0;
 }
 
 CDisplayInfo::~CDisplayInfo()
@@ -30,7 +37,7 @@ void CDisplayInfo::Update()
     }
 
     ImGui::Begin("DisplayInfo");
-    ImGui::Text("%lf", m_currentWidth);
+    ImGui::SliderFloat("tst",&tmp,0,XM_2PI);
     ImGui::End();
 }
 
@@ -43,11 +50,12 @@ void CDisplayInfo::Draw()
 }
 
 
-void CDisplayInfo::GiwakuDraw() const
+void CDisplayInfo::GiwakuDraw()
 {
     //疑惑ゲージを描画
     //m_pSprite->Draw(m_expImage, 1124, 468, 0, 0, 235, 230);
-    m_pSprite->DrawCircle(m_expImage, 1124, 468, 0, 0, 235, 230,0.0f,DegToRad * 90.0f);
+    //m_pSprite->DrawCircle(m_expImage, 1124, 468, 0, 0, 235, 230,0.0f,3.141492f);
+    m_pSprite->DrawCircle(m_expImage, 1124, 468, 0, 0, 235, 235,0.0f, tmp);
     
     //疑惑から確信に変わったときの見た目を描画
     m_pSprite->Draw(m_expImage, 1192, 588, 240, 0, 97, 73);
