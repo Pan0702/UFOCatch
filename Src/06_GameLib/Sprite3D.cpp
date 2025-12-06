@@ -777,10 +777,10 @@ void CSprite::DrawCircle(CSpriteImage* pImage, float posX, float posY, DWORD src
     // UV座標を0～1に固定（角度計算用）
     SpriteVertex vertices[] =
     {
-        VECTOR3(0, (float)srcHei, 0), VECTOR2(0.0f, 1.0f),  // 左上
+        VECTOR3(0, static_cast<float>(srcHei), 0), VECTOR2(0.0f, 1.0f),  // 左上
         VECTOR3(0, 0, 0), VECTOR2(0.0f, 0.0f),              // 左下
-        VECTOR3((float)srcWid, (float)srcHei, 0), VECTOR2(1.0f, 1.0f),  // 右上
-        VECTOR3((float)srcWid, 0, 0), VECTOR2(1.0f, 0.0f),  // 右下
+        VECTOR3(static_cast<float>(srcWid), static_cast<float>(srcHei), 0), VECTOR2(1.0f, 1.0f),  // 右上
+        VECTOR3(static_cast<float>(srcWid), 0, 0), VECTOR2(1.0f, 0.0f),  // 右下
     };
 
     // 頂点バッファを更新

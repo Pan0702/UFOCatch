@@ -91,7 +91,7 @@ float4 PS(PS_INPUT In) : SV_Target
 
             // 12時方向を0度、時計回りに角度を計算
             // UV座標系: Y軸は下が0、上が1
-            float angle = atan2(pos.x, pos.y);
+            float angle = atan2(pos.x, -pos.y);
 
             // 0～2πの範囲に正規化
             if (angle < 0.0f) {

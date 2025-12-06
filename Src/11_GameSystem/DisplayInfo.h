@@ -18,6 +18,7 @@ private:
     CSprite* m_pSprite;
     CSpriteImage* m_playUIImage;
     CSpriteImage* m_expImage;
+    CSpriteImage* m_giwakuImage;
 
     // 経験値ゲージ用
     LerpValue m_xpWeightLerp;

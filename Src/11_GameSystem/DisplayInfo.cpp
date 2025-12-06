@@ -7,6 +7,7 @@ CDisplayInfo::CDisplayInfo()
     m_pSprite = new CSprite();
     m_playUIImage = new CSpriteImage("data/PlayUI.png");
     m_expImage = new CSpriteImage("data/PlayUIParts.png");
+    m_giwakuImage = new CSpriteImage("data/Circle.png");
 
     // 経験値ゲージ初期化
     m_prevProportion = 0;
@@ -55,7 +56,7 @@ void CDisplayInfo::GiwakuDraw()
     //疑惑ゲージを描画
     //m_pSprite->Draw(m_expImage, 1124, 468, 0, 0, 235, 230);
     //m_pSprite->DrawCircle(m_expImage, 1124, 468, 0, 0, 235, 230,0.0f,3.141492f);
-    m_pSprite->DrawCircle(m_expImage, 1124, 468, 0, 0, 235, 235,0.0f, tmp);
+    m_pSprite->DrawCircle(m_giwakuImage, 1122, 469, 0, 0, 230, 230,0.0f, tmp);
     
     //疑惑から確信に変わったときの見た目を描画
     m_pSprite->Draw(m_expImage, 1192, 588, 240, 0, 97, 73);
