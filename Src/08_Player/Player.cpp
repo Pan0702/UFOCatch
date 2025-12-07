@@ -20,8 +20,9 @@ CPlayer::CPlayer()
     m_exp = 0.01;
     m_zoomUp = false;
     m_coneTopPos = transform.position.y;
-    transform.scale = VECTOR3(0.5f,0.5f,0.5f);
+    transform.scale = VECTOR3(0.5f, 0.5f, 0.5f);
     m_SuctionActive = false;
+    m_draw = true;
 }
 
 CPlayer::~CPlayer() = default;
@@ -32,8 +33,16 @@ void CPlayer::Update()
     {
         HandleMovementInput();
     }
-    m_SuctionActive = GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_J);
+    //吸い込みキーの状態を取得
 
+    if (not ObjectManager::FindGameObject<CPlayerHP>()->GetFoundFlag())
+    {
+        m_SuctionActive = GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_J);
+    }else
+    {
+        m_SuctionActive = false;
+    }
+    
     CheckLevel();
 
     // Lerp処理//
@@ -43,7 +52,7 @@ void CPlayer::Update()
     UpdateCameraPos();
 
     ObjectManager::FindGameObject<CVisionSystem>()->
-            SetCircleCenter(transform.position);
+        SetCircleCenter(transform.position);
     ObjectManager::FindGameObject<CVisionSystem>()->
         SetCircleRadius(m_coneRadius);
 }
@@ -52,9 +61,11 @@ void CPlayer::HandleMovementInput()
 {
     // 位置を-50.0f ~ 50.0fの範囲内に制限//
     constexpr float maxPos = 20.0f;
-    transform.position.x = std::max(-maxPos,std::min(maxPos,transform.position.x));
-    transform.position.z = std::max(-maxPos,std::min(maxPos,transform.position.z));
-    constexpr  float moveSpeed = 5.0f; // 秒間5ユニットの移動速度//
+    //移動制限//
+    transform.position.x = std::max(-maxPos, std::min(maxPos, transform.position.x));
+    transform.position.z = std::max(-maxPos, std::min(maxPos, transform.position.z));
+
+    constexpr float moveSpeed = 5.0f; // 秒間5ユニットの移動速度//
     const float moveAmount = moveSpeed * SceneManager::DeltaTime();
     auto* input = GameDevice()->m_pDI;
     if (input->CheckKey(KD_DAT, DIK_W)) transform.position.z += moveAmount;
@@ -65,6 +76,7 @@ void CPlayer::HandleMovementInput()
 
 void CPlayer::CheckLevel()
 {
+    //レベルアップ処理
     if (m_exp >= m_allExp)
     {
         float tmp = m_exp - m_allExp;
@@ -76,15 +88,18 @@ void CPlayer::CheckLevel()
 
 void CPlayer::IncreaseSuctionConeHeight()
 {
-    const float targetHeight = m_coneTopPos+ 1.0f;
+    //吸い込むコーンの大きさを変更
+    const float targetHeight = m_coneTopPos + 1.0f;
     const float targetRadius = targetHeight * tan(DegToRad * m_coneDegree);
-    
+
+    //大きさ変更したときのLerp
     m_heightLerp.Start(m_coneTopPos, targetHeight, 0.05f);
     m_radiusLerp.Start(m_coneRadius, targetRadius, 0.05f);
 }
 
 void CPlayer::UpdateHeightAndRadiusLerp()
 {
+    //Lero中かどうか
     if (m_heightLerp.IsLerping())
     {
         m_coneTopPos = m_heightLerp.Update(SceneManager::DeltaTime());
@@ -95,42 +110,46 @@ void CPlayer::UpdateHeightAndRadiusLerp()
     }
 }
 
-void CPlayer::UpdateCameraPos() 
+void CPlayer::UpdateCameraPos()
 {
+    //吸い込み中じゃなかったら
     if (not m_SuctionActive)
     {
         if (m_zoomUp)
         {
+            //始点切り替え
             ObjectManager::FindGameObject<CPlayerCamera>()->ZoomOut(transform.position);
             m_zoomUp = false;
-        }else
+        }
+        else
         {
             // カメラ位置をコーンの高さに基づいて設定//
             ObjectManager::FindGameObject<CPlayerCamera>()->PosSet(
                 transform.position, m_coneTopPos);
         }
-    }else
+    }
+    else
     {
+        //吸い込み中だったら
         m_zoomUp = true;
+        //始点切り替え
         ObjectManager::FindGameObject<CPlayerCamera>()->ZoomIn(transform.position);
     }
 }
-
 
 
 //吸い込むスピードを計算
 //高さの差が大きいほど遅く、近いほど速く吸い込む//
 VECTOR3 CPlayer::CalcSuctionDisplacement(const float& moveTimeSecond, const VECTOR3& animalPos) const
 {
-
     float heightDiff = m_coneTopPos - animalPos.y;
     float progress = 1.0f - (heightDiff / m_coneTopPos);
     progress = std::max(0.0f, std::min(1.0f, progress));
-    float eased = progress * progress * progress ;
+    float eased = progress * progress * progress;
 
     // 速度係数を計算//
-    constexpr float minSpeed = 0.4f;  
-    constexpr float maxSpeed = 1.8f;  
+    constexpr float minSpeed = 0.4f;
+    constexpr float maxSpeed = 1.8f;
     float heightSpeedMultiplier = minSpeed + (maxSpeed - minSpeed) * eased;
 
     //Y座標が0の点（求めるための内分比の係数//
@@ -140,7 +159,7 @@ VECTOR3 CPlayer::CalcSuctionDisplacement(const float& moveTimeSecond, const VECT
         VECTOR3(animalPos.x + projectionFactorY0 * (animalPos.x - transform.position.x), 0,
                 animalPos.z + projectionFactorY0 * (animalPos.z - transform.position.z));
     VECTOR3 pullVectorToTarget = transform.position - targetPointOnPlane;
-    
+
     VECTOR3 suctionDisplacementPerFrame = pullVectorToTarget / moveTimeSecond * heightSpeedMultiplier;
     return suctionDisplacementPerFrame * SceneManager::DeltaTime();
 }
@@ -161,7 +180,19 @@ bool CPlayer::IsWithSuctionCone(const VECTOR3& targetPos) const
 
 void CPlayer::Draw()
 {
-    Object3D::Draw();
+    CPlayerHP* hp = ObjectManager::FindGameObject<CPlayerHP>();
+    if (hp->GetFoundFlag())
+    {
+        m_draw = !m_draw;
+    }
+    else
+    {
+        m_draw = true;
+    }
+    if (m_draw)
+    {
+        Object3D::Draw();
+    }
     DrawCircle(VECTOR3(transform.position.x, 0, transform.position.z), m_coneRadius, RGB(0, 255, 0));
 }
 

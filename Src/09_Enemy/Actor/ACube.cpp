@@ -67,9 +67,7 @@ void CACube::SetState(CBaseState::Type type)
 
 void CACube::Draw()
 {
-
-        m_pMesh->Render(m_pAnimator, transform.matrix());
-    
+    m_pMesh->Render(m_pAnimator, transform.matrix());
 }
 
 void CACube::IsSuctionCheck()
@@ -86,6 +84,3 @@ VECTOR3 CACube::SuctionSpeed() const
     return m_pPlayer->
         CalcSuctionDisplacement(1, transform.position);
 }
-
-
-

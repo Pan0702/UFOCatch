@@ -58,7 +58,7 @@ bool CVisionSystem::SectorCircleCollision(const VECTOR2& humanPos, float humanAn
     bool damageFlag = false;
     if (pHP != nullptr)
     {
-        damageFlag = pHP->GetDamageFlag();
+        damageFlag = pHP->GetFoundFlag();
     }
 
     ImGui::Begin("VisionSystem Debug");

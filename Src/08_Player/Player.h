@@ -57,9 +57,11 @@ private:
     float m_coneDegree;
     float m_allExp;
     float m_exp;
+    //吸い込み状態
     bool m_SuctionActive;
     bool m_zoomUp;
     float m_coneTopPos;
+    bool m_draw;
 
     // Lerp用の変数
     LerpValue m_heightLerp;

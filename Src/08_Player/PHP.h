@@ -6,21 +6,22 @@ class CPlayerHP : public Object3D
 public:
     CPlayerHP(const int& hp);
     ~CPlayerHP();
-    void SubHP(const int& hp);
-    bool GetDamageFlag(){return m_damage;}
+    void SubHP();
+    void ResetFlag();
+    
+    bool GetFoundFlag() const { return m_found; }
+    float GetFindCount() const { return m_findCount; }
+    float GetMaxFindCount() const { return m_findMaxCount; }
+    float GetInvincible() const { return m_invincible; }
 
 private:
-    void Update() override;
-    void Draw() override;
+    void Update() override;;
+    
     int m_currentHp;
     int m_maxHp;
-    CSprite* m_pSprite;
-    CSpriteImage* m_pHpImage;
-    CSpriteImage* m_pHpDamageImage;
-    VECTOR2 m_hpPos;
-    VECTOR2 m_imageSize;
-    VECTOR2 m_drawImageSize;
-    int m_k;
-    bool m_damage;
+    bool m_found;
+    bool m_seemToFind;
     float m_invincible;
+    float m_findCount;
+    float m_findMaxCount;
 };

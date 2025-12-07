@@ -1,6 +1,7 @@
 #include "Human.h"
 
 #include "FunShape.h"
+#include "../../08_Player/PHP.h"
 #include "../../11_GameSystem/VisionSystem.h"
 #include "../State/HumanState.h"
 
@@ -10,7 +11,7 @@ namespace
 }
 
 CHuman::CHuman(VECTOR3 pos, VECTOR2 areaSize)
-    :m_AreaSize(areaSize)
+    : m_AreaSize(areaSize)
 {
     transform.position = pos;
     m_pMesh = new CFbxMesh();
@@ -31,7 +32,7 @@ CHuman::CHuman(VECTOR3 pos, VECTOR2 areaSize)
     m_pCurrentState = m_cubeStates[CBaseState::Type::IDLE];
     m_pCurrentState->Enter();
     m_pCurrentState->SetNextState();
-   m_pFunShape = new CFunShape();
+    m_pFunShape = new CFunShape();
 }
 
 CHuman::~CHuman()
@@ -47,12 +48,15 @@ CHuman::~CHuman()
 
 void CHuman::Update()
 {
+    m_pAnimator->Update();
+    CVisionSystem*vision = ObjectManager::FindGameObject<CVisionSystem>();
+    m_inSight = vision->SectorCircleCollision(ToVec2XZ(transform.position), transform.rotation.y)
+        && ObjectManager::FindGameObject<CPlayer>()->GetIsSuckUp();
+
     if (m_pCurrentState)
     {
         m_pCurrentState->Update();
     }
-    m_pAnimator->Update();
-    m_inSight = ObjectManager::FindGameObject<CVisionSystem>()->SectorCircleCollision(ToVec2XZ(transform.position), transform.rotation.y);
     if (m_inSight)
     {
         m_dwColor = 255;
@@ -61,11 +65,9 @@ void CHuman::Update()
     else
     {
         m_dwColor = 0;
+        ObjectManager::FindGameObject<CPlayerHP>()->ResetFlag();
     }
     AtkArea();
-    ImGui::Begin("HumanState");
-    ImGui::Text("%lf",transform.rotation.y * RadToDeg);
-    ImGui::End();
 }
 
 
@@ -73,7 +75,7 @@ void CHuman::Draw()
 {
     m_pMesh->Render(m_pAnimator, transform.matrix());
     DrawDirectionLine();
-   //FanShape();
+    //FanShape();
 }
 
 void CHuman::ChangeState(CBaseState::Type type)
@@ -83,10 +85,11 @@ void CHuman::ChangeState(CBaseState::Type type)
     m_pCurrentState->Enter();
 }
 
-void CHuman::AtkArea() const 
+void CHuman::AtkArea() const
 {
-     m_pFunShape->PosSet(transform.position, angle + transform.rotation.y);
+    m_pFunShape->PosSet(transform.position, angle + transform.rotation.y);
 }
+
 //Humanの範囲をLineで可視化
 //範囲内なら水色、外なら緑になる
 void CHuman::DrawDirectionLine()
@@ -100,7 +103,6 @@ void CHuman::DrawDirectionLine()
 
     spr.DrawLine3D(startPos, endPos, RGB(0, 255, m_dwColor));
 }
-
 
 
 // void CHuman::FanShape()
