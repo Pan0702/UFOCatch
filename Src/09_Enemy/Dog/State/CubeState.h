@@ -1,5 +1,4 @@
-#include "BaseState.h"
-#include "BaseState.h"
+#include "../../Base/StateBase.h"
 
 class CACube;
 

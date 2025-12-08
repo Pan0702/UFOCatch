@@ -3,7 +3,8 @@
 #include "FunShape.h"
 #include "../../08_Player/PHP.h"
 #include "../../11_GameSystem/VisionSystem.h"
-#include "../State/HumanState.h"
+#include "State/HumanState.h"
+#include "../System/AnimalManager.h"
 
 namespace
 {
@@ -14,15 +15,10 @@ CHuman::CHuman(VECTOR3 pos, VECTOR2 areaSize)
     : m_AreaSize(areaSize)
 {
     transform.position = pos;
-    m_pMesh = new CFbxMesh();
-    m_pMesh->Load("data/NewAnimal/Human/Human.mesh");
+    m_pMesh = ObjectManager::FindGameObject<CAnimalManager>()->MeshList("Human");
     m_pAnimator = new Animator();
     m_pAnimator->SetModel(m_pMesh);
-    m_pMesh->LoadAnimation(A_IDEL, "data/NewAnimal/Human/Human_Idle.anmx", false);
-    m_pMesh->LoadAnimation(A_WALK, "data/NewAnimal/Human/Human_Walk.anmx", true);
-    m_pMesh->LoadAnimation(A_SEACH, "data/NewAnimal/Human/Human_Find.anmx", false);
-
-    m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
+    
     m_dwColor = 100;
     angle = 0.0f;
 
@@ -53,14 +49,11 @@ void CHuman::Update()
     m_inSight = vision->SectorCircleCollision(ToVec2XZ(transform.position), transform.rotation.y)
         && ObjectManager::FindGameObject<CPlayer>()->GetIsSuckUp();
 
-    if (m_pCurrentState)
-    {
-        m_pCurrentState->Update();
-    }
+
     if (m_inSight)
     {
         m_dwColor = 255;
-        ChangeState(CBaseState::Type::FIND_PLAYER);
+        SetState(CBaseState::Type::FIND_PLAYER);
     }
     else
     {
@@ -76,13 +69,6 @@ void CHuman::Draw()
     m_pMesh->Render(m_pAnimator, transform.matrix());
     DrawDirectionLine();
     //FanShape();
-}
-
-void CHuman::ChangeState(CBaseState::Type type)
-{
-    m_pCurrentState->Exit();
-    m_pCurrentState = m_cubeStates[type];
-    m_pCurrentState->Enter();
 }
 
 void CHuman::AtkArea() const

@@ -12,7 +12,7 @@ CGameInstance::~CGameInstance() = default;
 
 void CGameInstance::Update()
 {
-    Object3D::Update();
+    
 }
 
 void CGameInstance::PushArry(const std::string& animalName)

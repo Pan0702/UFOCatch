@@ -1,7 +1,8 @@
 #include "CubeState.h"
 
-#include "../../GameInstance.h"
-#include "../Actor/ACube.h"
+#include "../../../GameInstance.h"
+#include "../ACube.h"
+#include "../../System/AnimalManager.h"
 
 
 CCubeBase::CCubeBase(CACube* cube, Type type)
@@ -153,7 +154,7 @@ void CCubeWalkState::Update()
             m_currentRotation = m_targetRotation;
             m_rotation = false;
         }
-        m_pOwner->SetRotationY(m_currentRotation);
+        m_pOwner->SetRotateY(ClampRotateY(m_currentRotation));
     }
     static constexpr float MOVE_SPEED = 1.2f;
     m_pOwner->AddPos(

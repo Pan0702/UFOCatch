@@ -32,6 +32,8 @@ protected:
     ///配列から行動を取り出し、それをセット
     ///
     CBaseState::Type NextStatePop();
+
+    float ClampRotateY(const float& angle);
 private:
     static constexpr int NEXT_STATE_MAX_SIZE = 3;
     std::queue<CBaseState::Type> actionQueue;

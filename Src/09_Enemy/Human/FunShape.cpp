@@ -13,7 +13,4 @@ CFunShape::~CFunShape()
 void CFunShape::Draw()
 {
     Object3D::Draw();
-    ImGui::Begin("FunShape");
-    ImGui::Text("pos: %f,%f", transform.position.x, transform.position.z);
-    ImGui::End();
 }

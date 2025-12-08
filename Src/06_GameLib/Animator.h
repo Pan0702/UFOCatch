@@ -9,7 +9,6 @@ public:
 	void Update();
 	
 	void SetModel(CFbxMesh* mesh);
-
 	void Play(int id, bool force = false);
 	void MergePlay(int id, float time = 0.2f);
 	void SetPlaySpeed(float speed = 1.0f);

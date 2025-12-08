@@ -4,22 +4,16 @@
 #include <queue>
 #include <thread>
 
-#include "AnimalManager.h"
-#include "../SpatialGrid.h"
-#include "../State/BaseState.h"
-#include "../State/CubeState.h"
+#include "../System/AnimalManager.h"
+#include "../Base/StateBase.h"
+#include "State/CubeState.h"
 
 CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos), m_moveAreaSize(moveAreaSize)
 {
-    m_pMesh = new CFbxMesh();
+    m_pMesh = ObjectManager::FindGameObject<CAnimalManager>()->MeshList("Dog");
     m_pAnimator = new Animator();
-    m_pMesh->Load("data/NewAnimal/Dog/Dog.mesh");
     m_pAnimator->SetModel(m_pMesh);
-    m_pMesh->LoadAnimation(AnimationType::A_IDEL, "data/NewAnimal/Dog/Dog_Idle.anmx", false);
-    m_pMesh->LoadAnimation(AnimationType::A_WALK, "data/NewAnimal/Dog/Dog_Walk.anmx", true);
-    m_pMesh->LoadAnimation(AnimationType::A_RUN, "data/NewAnimal/Dog/Dog_Idle.anmx", true);
-
     m_pAnimator->Play(A_WALK);
 
     transform.position = iniPos;
@@ -39,6 +33,7 @@ CACube::~CACube()
     {
         SAFE_DELETE(state.second);
     }
+    
 }
 
 
@@ -54,15 +49,6 @@ void CACube::Update()
     {
         m_pCurrentState->Update();
     }
-}
-
-
-//Stateをここでセット
-void CACube::SetState(CBaseState::Type type)
-{
-    m_pCurrentState->Exit();
-    m_pCurrentState = m_cubeStates[type];
-    m_pCurrentState->Enter();
 }
 
 void CACube::Draw()

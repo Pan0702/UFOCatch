@@ -1,5 +1,4 @@
-#include "BaseState.h"
-#include "../Actor/ACube.h"
+#include "StateBase.h"
 namespace
 {
     constexpr int NEXT_STATE_MAX_SIZE = 3;
@@ -12,6 +11,22 @@ CBaseState::Type CBaseState::NextStatePop()
     Type type = actionQueue.front();
     actionQueue.pop();
     return type;
+}
+
+float CBaseState::ClampRotateY(const float& angle)
+{    float degAngle = angle * RadToDeg;
+    constexpr float HALF_ROTATION_DEG = 180.0f;
+    constexpr float FULL_ROTATION_DEG = 360.0f;
+    while (degAngle > HALF_ROTATION_DEG)
+    {
+        degAngle -= FULL_ROTATION_DEG;
+    }
+    while (degAngle < -HALF_ROTATION_DEG)
+    {
+        degAngle += FULL_ROTATION_DEG;
+    }
+
+    return degAngle * DegToRad;
 }
 
 void CBaseState::SetNextState()

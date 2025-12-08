@@ -1,8 +1,9 @@
 #include "HumanState.h"
-#include "../../06_GameLib/MyMath.h"
-#include "../../06_GameLib/Lerp.h"
-#include "../../08_Player/PHP.h"
-#include "../Actor/Human.h"
+#include "../../../06_GameLib/MyMath.h"
+#include "../../../06_GameLib/Lerp.h"
+#include "../../../08_Player/PHP.h"
+#include "../Human.h"
+#include "../../System/AnimalManager.h"
 namespace
 {
     //////////////////////////////////////////////
@@ -39,7 +40,7 @@ CHumanBase::~CHumanBase()
 
 void CHumanBase::NextState()
 {
-    m_pOwner->ChangeState(NextStatePop());
+    m_pOwner->SetState(NextStatePop());
 }
 CHumanIdleState::CHumanIdleState(CHuman* human)
     : CHumanBase(human, Type::IDLE)
@@ -84,7 +85,7 @@ void CHumanIdleState::LookAround()
     if (m_pOwner->GetAnimator()->Finished())
     {
         m_pOwner->SetAngle(0);
-        m_pOwner->ChangeState(NextStatePop());
+        m_pOwner->SetState(NextStatePop());
     }
 }
 
@@ -139,7 +140,7 @@ void CHumanIdleState::Idle()
 {
     if (m_pOwner->GetAnimator()->Finished())
     {
-        m_pOwner->ChangeState(NextStatePop());
+        m_pOwner->SetState(NextStatePop());
     }
 }
 
@@ -205,7 +206,7 @@ void CHumanWalkState::Update()
             m_currentRotation = m_targetRotation;
             m_isRotation = false;
         }
-        m_pOwner->SetRotationY(m_currentRotation);
+        m_pOwner->SetRotateY(ClampRotateY(m_currentRotation));  
     }
     static constexpr float MOVE_SPEED = 1.2f;    // Humanの移動速度（m/s）
     float moveAmount = MOVE_SPEED * SceneManager::DeltaTime();
@@ -215,7 +216,7 @@ void CHumanWalkState::Update()
 
     if (m_totalPosZMoveAmount > m_moveAmount)
     {
-        m_pOwner->ChangeState(NextStatePop());
+        m_pOwner->SetState(NextStatePop());
     }
 }
 
@@ -235,7 +236,7 @@ void CHumanFindPlayer::Update()
    if (not m_pOwner->GetInSight())
    {
        m_pOwner->SetAngle(0);
-       m_pOwner->ChangeState(Type::WALK);
+       m_pOwner->SetState(Type::WALK);
    }
     
 }
