@@ -153,7 +153,7 @@ void CCubeWalkState::Update()
             m_currentRotation = m_targetRotation;
             m_rotation = false;
         }
-        m_pOwner->SetRotationY(m_currentRotation);
+        ObjectManager::FindGameObject<CAnimalManager>()->SetRotationY(m_currentRotation);
     }
     static constexpr float MOVE_SPEED = 1.2f;
     m_pOwner->AddPos(
