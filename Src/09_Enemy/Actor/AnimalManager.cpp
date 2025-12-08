@@ -14,46 +14,45 @@ namespace
 }
 CAnimalManager::CAnimalManager()
 {
-
+    ObjectManager::DontDestroy(this);		            // 自体は消されない
+    ObjectManager::SetVisible(this, false);		// 自体は表示しない
+    
+    meshstruct ms = {};
+    m_meshList.push_back(ms);
+    m_meshList.back().name = "Dog";
+    m_meshList.back().mesh = new CFbxMesh();
+    m_meshList.back().mesh->Load("data/NewAnimal/Dog/Dog.mesh");;
+    m_meshList.back().mesh->LoadAnimation(A_IDEL, "data/NewAnimal/Dog/Dog_Idle.anmx", false);
+    m_meshList.back().mesh->LoadAnimation(A_RUN, "data/NewAnimal/Dog/Dog_Walk.anmx", true);
+    m_meshList.back().mesh->LoadAnimation(A_WALK, "data/NewAnimal/Dog/Dog_Idle.anmx", true);
+    
+    m_meshList.push_back(ms);
+    m_meshList.back().name = "Human";
+    m_meshList.back().mesh = new CFbxMesh();
+    m_meshList.back().mesh->Load("data/NewAnimal/Human/Human.mesh");
+    m_meshList.back().mesh->LoadAnimation(A_IDEL, "data/NewAnimal/Human/Human_Idle.anmx", false);
+    m_meshList.back().mesh->LoadAnimation(A_WALK, "data/NewAnimal/Human/Human_Walk.anmx", true);
+    m_meshList.back().mesh->LoadAnimation(A_SEACH, "data/NewAnimal/Human/Human_Find.anmx", false);
+    
+    
 } 
 
 
 
 CAnimalManager::~CAnimalManager()
 {
+    for (meshstruct &ms : m_meshList)
+    {
+        SAFE_DELETE(ms.mesh);
+    }
 }
 
 void CAnimalManager::Update()
 {
-    if (GameDevice()->m_pDI->CheckKey(KD_TRG,DIK_0))
-    {
-        new CACube(VECTOR3(0,0,0),VECTOR2(5,5));
-    }
-    if (GameDevice()->m_pDI->CheckKey(KD_TRG,DIK_9))
-    {
-        new CHuman(VECTOR3(0,0,0),VECTOR2(5,5));
-    }
-    
+
 }
 
 
-void CAnimalManager::Draw()
-{
-}
-
-void CAnimalManager::HitCheck()
-{
-    SphereCollider coll;
-    coll.center = VECTOR3(0, 0, 0);
-    coll.radius = 1;
-    MeshCollider::CollInfo info;
-}
-
-void CAnimalManager::EnemySpawn()
-{
-
-    new CHuman(VECTOR3(8, 0, 8), VECTOR2(20, 20));
-}
 
 
 VECTOR3 CAnimalManager::GetObjectSize(MeshCollider* meshColl) const
@@ -74,6 +73,16 @@ void CAnimalManager::SetRotationY(const float& angle)
     }
 
     transform.rotation.y = degAngle * DegToRad;
+}
+
+CFbxMesh* CAnimalManager::MeshList(const std::string& str)
+{
+    for (meshstruct& ms : m_meshList)
+    {
+        if (str == ms.name) return ms.mesh;
+    }
+    MessageBox(nullptr, "EnemyManager::MeshList()", _T("■□■ 指定のメッシュ名のメッシュはメッシュリストにありません ■□■"), MB_OK);
+    return nullptr;
 }
 
 

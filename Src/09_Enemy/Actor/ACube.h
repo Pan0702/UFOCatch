@@ -10,7 +10,7 @@
 
 class CCubeBase;
 
-class CACube : public CAnimalManager
+class CACube : public Object3D
 {
 public:
     CACube(const VECTOR3& iniPos = VECTOR3(0, 0, 0), const VECTOR2& moveAreaSize = VECTOR2(10, 10));
@@ -38,4 +38,5 @@ private:
     bool m_isInConeArea;
     const VECTOR3 m_basePos;
     const VECTOR2 m_moveAreaSize;
+    CPlayer* m_pPlayer;
 };

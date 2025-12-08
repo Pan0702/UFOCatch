@@ -14,13 +14,9 @@ CHuman::CHuman(VECTOR3 pos, VECTOR2 areaSize)
     : m_AreaSize(areaSize)
 {
     transform.position = pos;
-    m_pMesh = new CFbxMesh();
-    m_pMesh->Load("data/NewAnimal/Human/Human.mesh");
+    m_pMesh = ObjectManager::FindGameObject<CAnimalManager>()->MeshList("Human");
     m_pAnimator = new Animator();
     m_pAnimator->SetModel(m_pMesh);
-    m_pMesh->LoadAnimation(A_IDEL, "data/NewAnimal/Human/Human_Idle.anmx", false);
-    m_pMesh->LoadAnimation(A_WALK, "data/NewAnimal/Human/Human_Walk.anmx", true);
-    m_pMesh->LoadAnimation(A_SEACH, "data/NewAnimal/Human/Human_Find.anmx", false);
 
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     m_dwColor = 100;
