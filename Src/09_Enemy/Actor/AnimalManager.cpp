@@ -1,11 +1,11 @@
 #include "AnimalManager.h"
 
-
+#include "ACube.h"
 #include "../../06_GameLib/BBox.h""
 #include "../../08_Player/Player.h"
 #include <thread>
-#include "../Dog/ACube.h"
-#include "../HUman/Human.h"
+
+#include "Human.h"
 
 namespace
 {
@@ -17,9 +17,6 @@ CAnimalManager::CAnimalManager()
     ObjectManager::DontDestroy(this);		            // 自体は消されない
     ObjectManager::SetVisible(this, false);		// 自体は表示しない
     
-    m_pMesh = nullptr;
-    m_pMeshCol = nullptr;
-    
     meshstruct ms = {};
     m_meshList.push_back(ms);
     m_meshList.back().name = "Dog";
@@ -27,7 +24,7 @@ CAnimalManager::CAnimalManager()
     m_meshList.back().mesh->Load("data/NewAnimal/Dog/Dog.mesh");;
     m_meshList.back().mesh->LoadAnimation(A_IDEL, "data/NewAnimal/Dog/Dog_Idle.anmx", false);
     m_meshList.back().mesh->LoadAnimation(A_RUN, "data/NewAnimal/Dog/Dog_Walk.anmx", true);
-    m_meshList.back().mesh->LoadAnimation(A_WALK, "data/NewAnimal/Dog/Dog_Walk.anmx", true);
+    m_meshList.back().mesh->LoadAnimation(A_WALK, "data/NewAnimal/Dog/Dog_Idle.anmx", true);
     
     m_meshList.push_back(ms);
     m_meshList.back().name = "Human";
@@ -56,22 +53,12 @@ void CAnimalManager::Update()
 }
 
 
+
+
 VECTOR3 CAnimalManager::GetObjectSize(MeshCollider* meshColl) const
 {
     return meshColl->bBox.max;
 }
-
-
-CFbxMesh* CAnimalManager::MeshList(const std::string& str)
-{
-    for (meshstruct& ms : m_meshList)
-    {
-        if (str == ms.name) return ms.mesh;
-    }
-    MessageBox(nullptr, "EnemyManager::MeshList()", _T("■□■ 指定のメッシュ名のメッシュはメッシュリストにありません ■□■"), MB_OK);
-    return nullptr;
-}
-
 void CAnimalManager::SetRotationY(const float& angle)
 {
     float degAngle = angle * RadToDeg;
@@ -87,4 +74,15 @@ void CAnimalManager::SetRotationY(const float& angle)
 
     transform.rotation.y = degAngle * DegToRad;
 }
+
+CFbxMesh* CAnimalManager::MeshList(const std::string& str)
+{
+    for (meshstruct& ms : m_meshList)
+    {
+        if (str == ms.name) return ms.mesh;
+    }
+    MessageBox(nullptr, "EnemyManager::MeshList()", _T("■□■ 指定のメッシュ名のメッシュはメッシュリストにありません ■□■"), MB_OK);
+    return nullptr;
+}
+
 

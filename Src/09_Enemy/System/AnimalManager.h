@@ -12,6 +12,7 @@ public:
 
     //各座標の最大値を返却
     VECTOR3 GetObjectSize(MeshCollider* meshColl) const;
+    virtual void  SetRotationY(const float& angle);
     CFbxMesh* MeshList(const std::string& str);
 public:
      CPlayer* m_pPlayer;

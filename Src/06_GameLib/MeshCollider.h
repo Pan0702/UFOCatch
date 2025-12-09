@@ -64,15 +64,15 @@ public:
 	void transformSkinVertices();
 
 	/// <summary>
-	/// �����Ƃ̓����蔻����s��
-	/// �n�_�����ԋ߂��|���S���̓����蔻�����Ԃ��܂�
-	/// �|���S���̕\�ʂ̂ݔ��肵�A���ʂ͔��肵�܂���
+	/// 線分との交差判定を行います。
+	/// 始点から一番近いポリゴンの交差点を返します。
+	/// ポリゴンの表面のみ判定し、裏面は判定しません。
 	/// </summary>
-	/// <param name="trans">���̃R���C�_�[�̈ʒu���</param>
-	/// <param name="from">�����̎n�_</param>
-	/// <param name="to">�����̏I�_</param>
-	/// <param name="info">���������|���S���̏�������ꏊ</param>
-	/// <returns>�������Ă����true</returns>
+	/// <param name="trans">このコライダーの位置情報</param>
+	/// <param name="from">線分の始点</param>
+	/// <param name="to">線分の終点</param>
+	/// <param name="info">交差したポリゴンの情報を格納する場所</param>
+	/// <returns>交差していたらtrue</returns>
 	bool CheckCollisionLine(const MATRIX4X4& trans, const VECTOR3& from, const VECTOR3& to, CollInfo* hitOut = nullptr);
 
 	/// <summary>

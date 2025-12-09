@@ -1,6 +1,7 @@
 #include "ACube.h"
 
 #include "../../08_Player/Player.h"
+#include "../../10_Stage/Ground.h"
 #include <queue>
 #include <thread>
 
@@ -18,6 +19,7 @@ CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
 
     transform.position = iniPos;
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
+    m_pGround = ObjectManager::FindGameObject<CGround>();
 
     m_cubeStates[CBaseState::Type::IDLE] = new CCubeIdleState(this);
     m_cubeStates[CBaseState::Type::WALK] = new CCubeWalkState(this);
@@ -33,7 +35,6 @@ CACube::~CACube()
     {
         SAFE_DELETE(state.second);
     }
-    
 }
 
 
@@ -44,11 +45,10 @@ void CACube::Update()
     {
         m_isInConeArea = m_pPlayer->IsWithSuctionCone(transform.position);
     }
+
+    CEnemyBase::Update();
+
     m_pAnimator->Update();
-    if (m_pCurrentState)
-    {
-        m_pCurrentState->Update();
-    }
 }
 
 void CACube::Draw()
@@ -69,4 +69,13 @@ VECTOR3 CACube::SuctionSpeed() const
 {
     return m_pPlayer->
         CalcSuctionDisplacement(1, transform.position);
+}
+void CACube::DestroyCube()
+{
+    DestroyMe();
+}
+
+bool CACube::ShouldApplyGravity() const
+{
+    return m_pCurrentState != m_cubeStates.at(CBaseState::Type::SUCTION);
 }

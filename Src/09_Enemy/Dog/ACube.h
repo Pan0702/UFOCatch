@@ -22,6 +22,7 @@ public:
     void IsSuctionCheck();
 
     VECTOR3 SuctionSpeed() const;
+    void DestroyCube();
 
     void AddPos(const VECTOR3& pos) { transform.position = transform.position + pos; }
     VECTOR2 GetMoveAreaSize() const { return m_moveAreaSize; }
@@ -30,6 +31,8 @@ public:
 private:
     void Update() override;
     void Draw() override;
+
+    bool ShouldApplyGravity() const override;
 
 private:
     bool m_isInConeArea;

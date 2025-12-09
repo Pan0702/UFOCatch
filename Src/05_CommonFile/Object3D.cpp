@@ -15,14 +15,7 @@ Object3D::~Object3D()
 		delete m_pAnimator;
 		m_pAnimator = nullptr;
 	}
-	if (m_pMesh != nullptr) {
-		delete m_pMesh;
-		m_pMesh = nullptr;
-	}
-	if (m_pMeshCol != nullptr) {
-		delete m_pMeshCol;
-		m_pMeshCol = nullptr;
-	}
+	// mesh と meshCol は各クラスで管理されるため削除しない
 }
 
 void Object3D::Update()

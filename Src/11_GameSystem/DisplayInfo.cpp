@@ -63,18 +63,21 @@ void CDisplayInfo::GiwakuDraw()
     if (pHp->GetFoundFlag())
     {
         //疑惑から確信に変わったときの見た目を描画
-        m_pSprite->Draw(m_expImage, 1192, 588, 240, 0, 97, 73);
+        m_pSprite->Draw(m_expImage, 1192, 588, 0, 0, 97, 73);
     }
 }
 
 void CDisplayInfo::ExpDraw()
 {
     //LvBaseを描画
-    m_pSprite->Draw(m_expImage, 144, 713, 0, 300, 1224, 55);
+    m_pSprite->Draw(m_expImage, 144, 713, 0, 160, 1224, 55);
     CPlayer* pl = ObjectManager::FindGameObject<CPlayer>();
+    if (!pl) return;
+    
     //割合を計算
     float proportion = avoidZero(pl->GetExp() / pl->GetAllExp());
     static constexpr float epsilon = 0.001f;
+    
     //前の割合と今の割合の差に変化があって、lerpが終わってたら
     if (fabs(proportion - m_prevProportion) > epsilon && !m_xpWeightLerp.IsLerping())
     {
@@ -85,5 +88,5 @@ void CDisplayInfo::ExpDraw()
         m_prevProportion = proportion;
     }
     //Lvを描画
-    m_pSprite->Draw(m_expImage, 144, 721, 0, 240, m_currentWidth, 47);
+    m_pSprite->Draw(m_expImage, 144, 721, 0, 100, m_currentWidth, 47);
 }
