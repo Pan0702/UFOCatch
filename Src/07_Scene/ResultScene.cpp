@@ -77,7 +77,7 @@ void CResultScene::DrawScore(const int& score) const
     for (int i = 0; i < strSize; i++)
     {
         m_pSprite->Draw(m_pRankImage,scoreStartX + digitWidth * static_cast<float>(i),200,
-            0 ,0,100 * (str[i] - '0'),100);
+            200 + 100 * (str[i] - '0'),0,100,100);
     }
     
     m_pSprite->Draw(m_pRankImage,270,340,180 * m_rankImageNum,
