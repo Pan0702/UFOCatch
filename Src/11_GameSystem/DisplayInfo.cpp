@@ -87,6 +87,6 @@ void CDisplayInfo::ExpDraw()
         //前の割合を更新
         m_prevProportion = proportion;
     }
-    //Lvを描画
+    //LvBarを描画
     m_pSprite->Draw(m_expImage, 144, 721, 0, 100, m_currentWidth, 47);
 }

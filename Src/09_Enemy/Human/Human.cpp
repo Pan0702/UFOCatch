@@ -15,8 +15,7 @@ CHuman::CHuman(VECTOR3 pos, VECTOR2 areaSize)
     : m_AreaSize(areaSize)
 {
     transform.position = pos;
-    m_pMesh = new CFbxMesh();
-    m_pMesh->Load("data/NewAnimal/Human/Human.mesh");
+    m_pMesh = ObjectManager::FindGameObject<CAnimalManager>()->MeshList("Human");
     m_pAnimator = new Animator();
     m_pAnimator->SetModel(m_pMesh);
     
@@ -70,13 +69,6 @@ void CHuman::Draw()
     m_pMesh->Render(m_pAnimator, transform.matrix());
     DrawDirectionLine();
     //FanShape();
-}
-
-void CHuman::ChangeState(CBaseState::Type type)
-{
-    m_pCurrentState->Exit();
-    m_pCurrentState = m_cubeStates[type];
-    m_pCurrentState->Enter();
 }
 
 void CHuman::AtkArea() const

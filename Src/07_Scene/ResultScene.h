@@ -19,6 +19,5 @@ private:
     int m_maxScore;
     CSprite* m_pSprite;
     CSpriteImage* m_pResultImage;
-    CSpriteImage* m_pNumImage;
     CSpriteImage* m_pRankImage;
 };

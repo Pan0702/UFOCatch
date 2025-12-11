@@ -7,7 +7,6 @@ CResultScene::CResultScene()
 {
     m_pSprite = new CSprite;
     m_pResultImage = new CSpriteImage("data/ScoreBG.jpg");
-    m_pNumImage = new CSpriteImage("data/Vector.png");
     m_pRankImage = new CSpriteImage("data/PlayUIParts.png");
     m_maxScore = 20 * 100;
     CalcRank();
@@ -20,11 +19,6 @@ CResultScene::~CResultScene()
     {
         SAFE_DELETE(m_pResultImage);
         m_pResultImage = nullptr;
-    }
-    if (m_pNumImage != nullptr)
-    {
-        SAFE_DELETE(m_pNumImage);
-        m_pNumImage = nullptr;
     }
     if (m_pRankImage != nullptr)
     {
@@ -80,12 +74,10 @@ void CResultScene::DrawScore(const int& score) const
     const float scoreStartX = 700.0f;
     const float digitWidth  = 80.0f;
     
-    float scoreCenterX = scoreStartX + (static_cast<float>(strSize) * digitWidth) / 2.0f;
-    
     for (int i = 0; i < strSize; i++)
     {
-        m_pSprite->Draw(m_pNumImage,scoreStartX + digitWidth * static_cast<float>(i),260,
-            45 * (str[i] - '0'),0,45,50,80,80);
+        m_pSprite->Draw(m_pRankImage,scoreStartX + digitWidth * static_cast<float>(i),200,
+            0 ,0,100 * (str[i] - '0'),100);
     }
     
     m_pSprite->Draw(m_pRankImage,270,340,180 * m_rankImageNum,
