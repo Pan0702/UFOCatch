@@ -570,7 +570,7 @@
     <ClInclude Include="Src\09_Enemy\Human\FunShape.h" />
     <ClInclude Include="Src\09_Enemy\Human\Human.h" />
     <ClInclude Include="Src\09_Enemy\Human\State\HumanState.h" />
-    <ClInclude Include="Src\09_Enemy\SpatialGrid.h" />
+    <ClInclude Include="Src\09_Enemy\Liner4Tree.h" />
     <ClInclude Include="Src\09_Enemy\System\AnimalFactor.h" />
     <ClInclude Include="Src\09_Enemy\System\AnimalManager.h" />
     <ClInclude Include="Src\10_Stage\Ground.h" />
@@ -2909,7 +2909,7 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="Src\09_Enemy\SpatialGrid.cpp" />
+    <ClCompile Include="Src\09_Enemy\QuadTreeCell.h" />
     <ClCompile Include="Src\09_Enemy\System\AnimalFactor.cpp">
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
