@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "EnemyBase.h"
 #include "../../10_Stage/Ground.h"
 
@@ -41,28 +42,28 @@ void CEnemyBase::ApplyGravity()
     }
     static constexpr float GRAVITY = 9.8f;
 
-    static constexpr float GROUND_SKIN = 0.02f; // ­‚µ‚¾‚¯‚ß‚è‚İ–h~‚Å•‚‚©‚¹‚é //
+    static constexpr float GROUND_SKIN = 0.02f; // ?????????????h?~????????? //
     m_velocityY -= GRAVITY * SceneManager::DeltaTime();
     const float dt = SceneManager::DeltaTime();
-    float nextY = transform.position.y + m_velocityY * dt;
+    const float nextY = transform.position.y + m_velocityY * dt;
 
     if (m_pGround != nullptr)
     {
-        // ƒŒƒC‚ğŒ»İˆÊ’u‚æ‚è­‚µã‚©‚çAˆÚ“®ŒãˆÊ’u‚æ‚è­‚µ‰º‚Ü‚Å”ò‚Î‚µ‚Äƒgƒ“ƒlƒŠƒ“ƒO‚ğ–h~ //
-        float fromY = transform.position.y + GROUND_CHECK_OFFSET;
-        float toY = nextY - GROUND_CHECK_OFFSET;
-        // ~‰º‚Ì‚İ’n–Êƒ`ƒFƒbƒN //
+        // ???C???????u??????ï¿½H??A??????u???????????????g???l?????O??h?~ //
+        const float fromY = transform.position.y + GROUND_CHECK_OFFSET;
+        const float toY = nextY - GROUND_CHECK_OFFSET;
+        // ?~???????n??`?F?b?N //
         if (toY < fromY)
         {
-            VECTOR3 rayStart = VECTOR3(transform.position.x, fromY, transform.position.z);
-            VECTOR3 rayEnd = VECTOR3(transform.position.x, toY, transform.position.z);
+            const VECTOR3 rayStart = VECTOR3(transform.position.x, fromY, transform.position.z);
+            const VECTOR3 rayEnd = VECTOR3(transform.position.x, toY, transform.position.z);
 
             MeshCollider::CollInfo collInfo;
             bool hit = m_pGround->HitLineToMesh(rayStart, rayEnd, &collInfo);
 
             if (hit)
             {
-                // ­‚µ‚¾‚¯•‚‚©‚¹‚ÄÄÕ“Ë‚ğ–h‚® //
+                // ????????????????????h?? //
                 transform.position.y = collInfo.hitPosition.y + GROUND_SKIN;
                 m_velocityY = 0.0f;
                 return;
@@ -82,4 +83,51 @@ bool CEnemyBase::IsGrounded() const
 
     MeshCollider::CollInfo collInfo;
     return m_pGround->HitLineToMesh(rayStart, rayEnd, &collInfo);
+}
+
+bool CEnemyBase::GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const
+{
+    if (m_pMesh == nullptr)
+    {
+        //MeshãŒãªã‘ã‚Œã°çµ‚ã‚ã‚‹//
+        return false;
+    }
+    
+    // XZå¹³é¢ã§ã®4é ‚ç‚¹ã‚’å–å¾—//
+    const VECTOR3 min = m_pMesh->m_vMin;
+    const VECTOR3 max = m_pMesh->m_vMax;
+    
+    VECTOR3 corners[4] = {
+        VECTOR3(min.x, 0, min.z),
+        VECTOR3(max.x, 0, min.z),
+        VECTOR3(min.x, 0, max.z),
+        VECTOR3(max.x, 0, max.z)
+    };
+
+    // å›è»¢è¡Œåˆ—ã‚’å–å¾—//
+    MATRIX4X4 rotY = XMMatrixRotationY(transform.rotation.y);
+    MATRIX4X4 scaleM = XMMatrixScaling(transform.scale.x, transform.scale.y, transform.scale.z);
+    MATRIX4X4 transformMatrix = scaleM * rotY;
+
+    // å¤‰æ›å¾Œã®é ‚ç‚¹ã®æœ€å°ãƒ»æœ€å¤§å€¤ã‚’æ±‚ã‚ã‚‹ //
+    float minX = FLT_MAX, maxX = -FLT_MAX;
+    float minZ = FLT_MAX, maxZ = -FLT_MAX;
+
+    for (const auto& corner : corners)
+    {
+        VECTOR3 transformed = XMVector3TransformCoord(corner, transformMatrix);
+        minX = std::min(minX, transformed.x);
+        maxX = std::max(maxX, transformed.x);
+        minZ = std::min(minZ, transformed.z);
+        maxZ = std::max(maxZ, transformed.z);
+    }
+
+    // ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™ã«å¤‰æ›
+    outPos = VECTOR2(
+        (minX + maxX) * 0.5f + transform.position.x,
+        (minZ + maxZ) * 0.5f + transform.position.z
+    );
+    outSize = VECTOR2(maxX - minX, maxZ - minZ);
+    
+    return true;
 }

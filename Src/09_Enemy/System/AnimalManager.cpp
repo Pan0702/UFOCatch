@@ -1,6 +1,5 @@
 #include "AnimalManager.h"
 
-
 #include "../../06_GameLib/BBox.h""
 #include "../../08_Player/Player.h"
 #include <thread>
@@ -14,8 +13,8 @@ namespace
 }
 CAnimalManager::CAnimalManager()
 {
-    ObjectManager::DontDestroy(this);		            // ©‘Ì‚ÍÁ‚³‚ê‚È‚¢
-    ObjectManager::SetVisible(this, false);		// ©‘Ì‚Í•\¦‚µ‚È‚¢
+    ObjectManager::DontDestroy(this);		            // å‰Šé™¤ã—ãªã„
+    ObjectManager::SetVisible(this, false);		// è¡¨ç¤ºã—ãªã„
     
     m_pMesh = nullptr;
     m_pMeshCol = nullptr;
@@ -24,10 +23,11 @@ CAnimalManager::CAnimalManager()
     m_meshList.push_back(ms);
     m_meshList.back().name = "Dog";
     m_meshList.back().mesh = new CFbxMesh();
-    m_meshList.back().mesh->Load("data/NewAnimal/Dog/Dog.mesh");;
+    m_meshList.back().mesh->Load("data/NewAnimal/Dog/Dog.mesh");
     m_meshList.back().mesh->LoadAnimation(A_IDEL, "data/NewAnimal/Dog/Dog_Idle.anmx", false);
     m_meshList.back().mesh->LoadAnimation(A_RUN, "data/NewAnimal/Dog/Dog_Walk.anmx", true);
     m_meshList.back().mesh->LoadAnimation(A_WALK, "data/NewAnimal/Dog/Dog_Walk.anmx", true);
+    m_meshList.back().center = GetObjectCenter(m_meshList.back().mesh);
     
     m_meshList.push_back(ms);
     m_meshList.back().name = "Human";
@@ -36,29 +36,43 @@ CAnimalManager::CAnimalManager()
     m_meshList.back().mesh->LoadAnimation(A_IDEL, "data/NewAnimal/Human/Human_Idle.anmx", false);
     m_meshList.back().mesh->LoadAnimation(A_WALK, "data/NewAnimal/Human/Human_Walk.anmx", true);
     m_meshList.back().mesh->LoadAnimation(A_SEACH, "data/NewAnimal/Human/Human_Find.anmx", false);
-    
-    
+    m_meshList.back().center = GetObjectCenter(m_meshList.back().mesh);
+
+    // 4åˆ†æœ¨ã®åˆæœŸåŒ–ï¼ˆãƒ¬ãƒ™ãƒ«3ã€ç¯„å›²-20ã€œ20ï¼‰
+    m_pTree = new CLiner4Tree<CEnemyBase>(3, VECTOR4(-20, -20, 20, 20));
 } 
 
 
 
 CAnimalManager::~CAnimalManager()
 {
-    for (meshstruct &ms : m_meshList)
+    for (meshstruct& ms : m_meshList)
     {
         SAFE_DELETE(ms.mesh);
     }
+    SAFE_DELETE(m_pTree);
 }
 
 void CAnimalManager::Update()
 {
+    m_pTree->AllClear();
+    std::list<CEnemyBase*> enemyes = ObjectManager::FindGameObjects<CEnemyBase>();
+    for (auto enemy : enemyes)
+    {
+        VECTOR2 pos, size;
+        if (enemy->GetBounds2D(pos, size))
+        {
+            m_pTree->Register(enemy, pos, size);
+        }
+    }
 
 }
 
 
-VECTOR3 CAnimalManager::GetObjectSize(MeshCollider* meshColl) const
+VECTOR3 CAnimalManager::GetObjectCenter(const CFbxMesh* fbxMesh) const
 {
-    return meshColl->bBox.max;
+    VECTOR3 center = (fbxMesh->m_vMax + fbxMesh->m_vMin) / 2;
+    return center;
 }
 
 
@@ -68,7 +82,7 @@ CFbxMesh* CAnimalManager::MeshList(const std::string& str)
     {
         if (str == ms.name) return ms.mesh;
     }
-    MessageBox(nullptr, "EnemyManager::MeshList()", _T("¡ ¡ w’è‚ÌƒƒbƒVƒ…–¼‚ÌƒƒbƒVƒ…‚ÍƒƒbƒVƒ…ƒŠƒXƒg‚É‚ ‚è‚Ü‚¹‚ñ ¡ ¡"), MB_OK);
+    MessageBox(nullptr, "EnemyManager::MeshList()", _T("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½wï¿½ï¿½Ìƒï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½Ìƒï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½Íƒï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½gï¿½É‚ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"), MB_OK);
     return nullptr;
 }
 

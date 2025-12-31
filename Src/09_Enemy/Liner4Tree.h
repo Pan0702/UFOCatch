@@ -11,14 +11,10 @@ public:
     CLiner4Tree(int level, const VECTOR4& area_)
         : m_area(area_), m_maxLevel(level)
     {
-        // ✅ 修正：4分木の全セル数を正しく計算
-        // level 0～maxLevel までの合計セル数: (4^(level+1) - 1) / 3
-        // level=3 なら (4^4 - 1) / 3 = 255 / 3 = 85
         int size = ((1 << ((level + 1) * 2)) - 1) / 3;
         m_cells.resize(size);
     }
-
-    // ✅ AllClear() メソッドが追加された！（良い修正）
+    
     void AllClear() { for (auto& cell : m_cells) cell.Clear(); }
 
     bool Register(T* obj, const VECTOR2& pos, const VECTOR2& size)
@@ -34,17 +30,12 @@ public:
         return true; // 常にtrueを返すため、戻り値の意味がない
     }
 
-    std::vector<T*> GetCollisionList(T* pObj, const VECTOR2& pos, const VECTOR2& size)
+    std::vector<T*> GetObjectss(T* pObj, const VECTOR2& pos, const VECTOR2& size)
     {
         std::vector<T*> collisionList;
         // オブジェクトの左上と右下のモートン番号
         uint16_t cellIndex = GetMortonNumber(pos, size);
         
-
-
-        // ✅ 修正：自分が属するセルから親セルへと遡ってオブジェクトを収集
-        // 注意: このロジックでは隣接セルのオブジェクトは取得できない
-        // （オブジェクトが複数セルに跨る場合の完全な衝突判定には追加実装が必要）
         int currentLevel = GetLevelFromIndex(cellIndex);
         while (currentLevel >= 0)
         {
