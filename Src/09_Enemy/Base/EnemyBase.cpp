@@ -1,6 +1,7 @@
 #define NOMINMAX
 #include "EnemyBase.h"
 #include "../../10_Stage/Ground.h"
+#include "../System/AnimalManager.h"
 
 namespace 
 {
@@ -128,6 +129,23 @@ bool CEnemyBase::GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const
         (minZ + maxZ) * 0.5f + transform.position.z
     );
     outSize = VECTOR2(maxX - minX, maxZ - minZ);
-    
+
     return true;
+}
+
+std::vector<CEnemyBase*> CEnemyBase::GetNearbyEnemies() const
+{
+    CAnimalManager* manager = ObjectManager::FindGameObject<CAnimalManager>();
+    if (manager == nullptr)
+    {
+        return std::vector<CEnemyBase*>();
+    }
+
+    VECTOR2 pos, size;
+    if (!GetBounds2D(pos, size))
+    {
+        return std::vector<CEnemyBase*>();
+    }
+
+    return manager->GetNearbyEnemies(const_cast<CEnemyBase*>(this), pos, size);
 }

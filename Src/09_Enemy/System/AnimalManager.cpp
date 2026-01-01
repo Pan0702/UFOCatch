@@ -11,14 +11,15 @@ namespace
     constexpr float HALF_ROTATION_DEG = 180.0f;
     constexpr float FULL_ROTATION_DEG = 360.0f;
 }
+
 CAnimalManager::CAnimalManager()
 {
-    ObjectManager::DontDestroy(this);		            // 削除しない
-    ObjectManager::SetVisible(this, false);		// 表示しない
-    
+    ObjectManager::DontDestroy(this); // 削除しない
+    ObjectManager::SetVisible(this, false); // 表示しない
+
     m_pMesh = nullptr;
     m_pMeshCol = nullptr;
-    
+
     meshstruct ms = {};
     m_meshList.push_back(ms);
     m_meshList.back().name = "Dog";
@@ -27,8 +28,6 @@ CAnimalManager::CAnimalManager()
     m_meshList.back().mesh->LoadAnimation(A_IDEL, "data/NewAnimal/Dog/Dog_Idle.anmx", false);
     m_meshList.back().mesh->LoadAnimation(A_RUN, "data/NewAnimal/Dog/Dog_Walk.anmx", true);
     m_meshList.back().mesh->LoadAnimation(A_WALK, "data/NewAnimal/Dog/Dog_Walk.anmx", true);
-    m_meshList.back().center = GetObjectCenter(m_meshList.back().mesh);
-    
     m_meshList.push_back(ms);
     m_meshList.back().name = "Human";
     m_meshList.back().mesh = new CFbxMesh();
@@ -36,12 +35,10 @@ CAnimalManager::CAnimalManager()
     m_meshList.back().mesh->LoadAnimation(A_IDEL, "data/NewAnimal/Human/Human_Idle.anmx", false);
     m_meshList.back().mesh->LoadAnimation(A_WALK, "data/NewAnimal/Human/Human_Walk.anmx", true);
     m_meshList.back().mesh->LoadAnimation(A_SEACH, "data/NewAnimal/Human/Human_Find.anmx", false);
-    m_meshList.back().center = GetObjectCenter(m_meshList.back().mesh);
 
     // 4分木の初期化（レベル3、範囲-20〜20）
     m_pTree = new CLiner4Tree<CEnemyBase>(3, VECTOR4(-20, -20, 20, 20));
-} 
-
+}
 
 
 CAnimalManager::~CAnimalManager()
@@ -65,14 +62,6 @@ void CAnimalManager::Update()
             m_pTree->Register(enemy, pos, size);
         }
     }
-
-}
-
-
-VECTOR3 CAnimalManager::GetObjectCenter(const CFbxMesh* fbxMesh) const
-{
-    VECTOR3 center = (fbxMesh->m_vMax + fbxMesh->m_vMin) / 2;
-    return center;
 }
 
 
@@ -82,7 +71,8 @@ CFbxMesh* CAnimalManager::MeshList(const std::string& str)
     {
         if (str == ms.name) return ms.mesh;
     }
-    MessageBox(nullptr, "EnemyManager::MeshList()", _T("������ �w��̃��b�V�����̃��b�V���̓��b�V�����X�g�ɂ���܂��� ������"), MB_OK);
+    MessageBox(nullptr, "EnemyManager::MeshList()", _T("エラー 指定のメッシュ名のメッシュはメッシュリストにありません エラー"),
+               MB_OK);
     return nullptr;
 }
 
@@ -102,3 +92,11 @@ void CAnimalManager::SetRotationY(const float& angle)
     transform.rotation.y = degAngle * DegToRad;
 }
 
+std::vector<CEnemyBase*> CAnimalManager::GetNearbyEnemies(CEnemyBase* pObj, const VECTOR2& pos, const VECTOR2& size) const
+{
+    if (m_pTree == nullptr)
+    {
+        return std::vector<CEnemyBase*>();
+    }
+    return m_pTree->GetObjects(pObj, pos, size);
+}

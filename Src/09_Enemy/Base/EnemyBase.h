@@ -15,6 +15,10 @@ public:
     ~CEnemyBase();
     void Update() override;
     bool GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const;
+
+    // 周辺のエネミーを取得
+    std::vector<CEnemyBase*> GetNearbyEnemies() const;
+
 protected:
     virtual void ApplyGravity();
     virtual bool IsGrounded() const;

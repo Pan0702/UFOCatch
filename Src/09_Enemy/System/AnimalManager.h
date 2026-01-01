@@ -13,10 +13,13 @@ public:
     CAnimalManager();
     ~CAnimalManager();
 
-    //各座標の最大値を返却
-    VECTOR3 GetObjectCenter(const CFbxMesh* fbxMesh) const;
-    virtual void  SetRotationY(const float& angle);
+    
+    void  SetRotationY(const float& angle);
     CFbxMesh* MeshList(const std::string& str);
+
+    // 四分木から周辺のエネミーを取得
+    std::vector<CEnemyBase*> GetNearbyEnemies(CEnemyBase* pObj, const VECTOR2& pos, const VECTOR2& size) const;
+
 public:
      CPlayer* m_pPlayer;
 
@@ -26,7 +29,6 @@ private:
     struct meshstruct{
         std::string name;
         CFbxMesh* mesh;
-        VECTOR3 center;
     };
     std::list<meshstruct> m_meshList;
     CLiner4Tree<CEnemyBase>* m_pTree;

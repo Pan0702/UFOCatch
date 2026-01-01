@@ -30,7 +30,7 @@ public:
         return true; // 常にtrueを返すため、戻り値の意味がない
     }
 
-    std::vector<T*> GetObjectss(T* pObj, const VECTOR2& pos, const VECTOR2& size)
+    std::vector<T*> GetObjects(T* pObj, const VECTOR2& pos, const VECTOR2& size)
     {
         std::vector<T*> collisionList;
         // オブジェクトの左上と右下のモートン番号

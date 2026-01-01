@@ -20,6 +20,7 @@ public:
     void SetRotateY(float r){transform.rotation.y = r;}
 
 private:
+    void CollisionCheck();
     void Update() override;
     void Draw() override;
     ///範囲を描画
