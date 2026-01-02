@@ -1,8 +1,8 @@
 //=============================================================================
 //
-//  �o�E���f�B���O�{�b�N�X                             ver 3.3      2024.3.23
+//  バウンディングボックス                             ver 3.3      2024.3.23
 //
-//   �|���S���̕\�ʔ����ύX�B������\�Ƃ���
+//   ポリゴンの表面判定を変更。左回り表とする
 //									                                 BBox.h
 //=============================================================================
 
@@ -13,18 +13,18 @@
 #include "../04_FrameWork/Shader.h"
 
 // ---------------------------------------------------------
-// 
-// OBB (�L�����E�{�b�N�X:Oriented Bounding Box)
-// 
+//
+// OBB (オリエント・ボックス:Oriented Bounding Box)
+//
 // ---------------------------------------------------------
 struct BBOX_VERTEX
 {
 	VECTOR3 vPos;
 	VECTOR3 vNorm;
-	VECTOR2 vTex;       // �e�N�X�`�����W(�g�p���Ă��Ȃ�)
+	VECTOR2 vTex;       // テクスチャ座標(使用していない)
 };
 
-// 
+//
 class CDirect3D;
 class CShader;
 class CBBox
@@ -40,19 +40,19 @@ public:
 	VECTOR3    m_vAxisX;
 	VECTOR3    m_vAxisY;
 	VECTOR3    m_vAxisZ;
-	FLOAT      m_fLengthX;  // �{�b�N�X�̔��a�i�ӂ̒�����1/2�j
-	FLOAT      m_fLengthY;  // �{�b�N�X�̔��a�i�ӂ̒�����1/2�j
-	FLOAT      m_fLengthZ;  // �{�b�N�X�̔��a�i�ӂ̒�����1/2�j
+	FLOAT      m_fLengthX;  // ボックスの半径(辺の長さの1/2)
+	FLOAT      m_fLengthY;  // ボックスの半径(辺の長さの1/2)
+	FLOAT      m_fLengthZ;  // ボックスの半径(辺の長さの1/2)
 	MATRIX4X4  m_mWorld;
 
-	VECTOR4    m_vDiffuse;  // �f�B�t���[�Y�J���[  // -- 2020.1.24
+	VECTOR4    m_vDiffuse;  // ディフューズカラー  // -- 2020.1.24
 
-	// ���b�V��
+	// メッシュ
 	ID3D11Buffer*   m_pVertexBuffer;
 	ID3D11Buffer*   m_pIndexBuffer;
 
 public:
-	// 
+	//
 	CBBox();                                                 // -- 2024.3.23
 	CBBox(const VECTOR3& vMin, const VECTOR3& vMax);         // -- 2024.3.23
 	CBBox(CShader* pShader);

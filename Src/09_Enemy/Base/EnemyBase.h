@@ -3,6 +3,8 @@
 
 #include "StateBase.h"
 #include "../../05_CommonFile/Object3D.h"
+#include "../../06_GameLib/BBox.h"
+
 
 class CGround;
 
@@ -18,16 +20,21 @@ public:
 
     // 周辺のエネミーを取得
     std::vector<CEnemyBase*> GetNearbyEnemies() const;
+    
+    CBBox* GetBBox() const { return m_pBBox; }
 
 protected:
-    virtual void ApplyGravity();
-    virtual bool IsGrounded() const;
+    void ApplyGravity();
+    bool IsGrounded() const;
     virtual bool ShouldApplyGravity() const { return true; }
+    void UpdateBBox();
+    CBBox* CreateBBox();
+    
 
     CBaseState* m_pCurrentState;
     std::unordered_map<CBaseState::Type, CBaseState*> m_cubeStates;
-
+    CBBox* m_pBBox;
     CGround* m_pGround;
-    float m_velocityY;
     
+    float m_velocityY;
 };

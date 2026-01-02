@@ -1,8 +1,8 @@
 //=============================================================================
 //
-//  �o�E���f�B���O�{�b�N�X                             ver 3.3      2024.3.23
+//  バウンディングボックス                             ver 3.3      2024.3.23
 //
-//   �|���S���̕\�ʔ����ύX�B�E����\�Ƃ���
+//   ポリゴンの表面判定を変更。右回り表とする
 //									                                 BBox.cpp
 //=============================================================================
 #include "BBox.h"
@@ -11,13 +11,13 @@
 
 
 // -----------------------------------------------------------------------
-// 
-// OBB (�L�����E�{�b�N�X:Oriented Bounding Box)
-// 
+//
+// OBB (オリエント・ボックス:Oriented Bounding Box)
+//
 // -----------------------------------------------------------------------
 //------------------------------------------------------------------------ // -- 2024.3.23
 //
-// �R���X�g���N�^
+// コンストラクタ
 //
 //------------------------------------------------------------------------
 CBBox::CBBox() : CBBox(GameDevice()->m_pShader)
@@ -28,9 +28,9 @@ CBBox::CBBox(const VECTOR3& vMin, const VECTOR3& vMax) : CBBox(GameDevice()->m_p
 }
 //------------------------------------------------------------------------
 //
-// �R���X�g���N�^
+// コンストラクタ
 //
-//  CShader* pShader         �V�F�[�_�[
+//  CShader* pShader         シェーダー
 //
 //------------------------------------------------------------------------
 CBBox::CBBox(CShader* pShader)
@@ -43,18 +43,18 @@ CBBox::CBBox(CShader* pShader)
 	m_vAxisY = VECTOR3(0, 1, 0);
 	m_vAxisZ = VECTOR3(0, 0, 1);
 
-	m_mWorld = XMMatrixIdentity();		// ���[���h�}�g���N�X�̏�����
+	m_mWorld = XMMatrixIdentity();		// ワールドマトリクスの初期化
 
-	m_vDiffuse = VECTOR4(1.0f, 1.0f, 1.0f, 0.5f);    // �f�B�t���[�Y�F   // -- 2021.1.11
+	m_vDiffuse = VECTOR4(1.0f, 1.0f, 1.0f, 0.5f);    // ディフューズ色   // -- 2021.1.11
 
 }
 //------------------------------------------------------------------------
 //
-// �R���X�g���N�^
+// コンストラクタ
 //
-//  CShader* pShader         �V�F�[�_�[
-//  const VECTOR3& vMin      �o�E���f�B���O�{�b�N�X�̍ŏ��l
-//  const VECTOR3& vMax      �o�E���f�B���O�{�b�N�X�̍ő�l
+//  CShader* pShader         シェーダー
+//  const VECTOR3& vMin      バウンディングボックスの最小値
+//  const VECTOR3& vMax      バウンディングボックスの最大値
 //
 //------------------------------------------------------------------------
 CBBox::CBBox(CShader* pShader, const VECTOR3& vMin, const VECTOR3& vMax)
@@ -67,16 +67,16 @@ CBBox::CBBox(CShader* pShader, const VECTOR3& vMin, const VECTOR3& vMax)
 	m_vAxisY = VECTOR3(0, 1, 0);
 	m_vAxisZ = VECTOR3(0, 0, 1);
 
-	m_mWorld = XMMatrixIdentity();		// ���[���h�}�g���N�X�̏�����
+	m_mWorld = XMMatrixIdentity();		// ワールドマトリクスの初期化
 
 	InitBBox(vMin, vMax);
 
-	m_vDiffuse = VECTOR4(1.0f, 1.0f, 1.0f, 0.5f);    // �f�B�t���[�Y�F   // -- 2021.1.11
+	m_vDiffuse = VECTOR4(1.0f, 1.0f, 1.0f, 0.5f);    // ディフューズ色   // -- 2021.1.11
 
 }
 //------------------------------------------------------------------------
 //
-// �f�X�g���N�^
+// デストラクタ
 //
 //------------------------------------------------------------------------
 CBBox::~CBBox()
@@ -87,112 +87,112 @@ CBBox::~CBBox()
 }
 
 //------------------------------------------------------------------------
-//	�o�E���f�B���O�{�b�N�X�̏������Ɛ���
-// 
-//  const VECTOR3& vMin      �o�E���f�B���O�{�b�N�X�̍ŏ��l
-//  const VECTOR3& vMax      �o�E���f�B���O�{�b�N�X�̍ő�l
-// 
-//  �ŏ��l�`�ő�l�̑傫���̃o�E���f�B���O�{�b�N�X���쐬����
-// 
-//  �߂�l�@�Ȃ�
+//	バウンディングボックスの初期化と生成
+//
+//  const VECTOR3& vMin      バウンディングボックスの最小値
+//  const VECTOR3& vMax      バウンディングボックスの最大値
+//
+//  最小値〜最大値の大きさのバウンディングボックスを作成する
+//
+//  戻り値　なし
 //------------------------------------------------------------------------
-//BBox�̏�����
+//BBoxの初期化
 void CBBox::InitBBox(const VECTOR3& vMin, const VECTOR3& vMax)
 {
 
 	m_vMax = vMax;
 	m_vMin = vMin;
 
-	//���x�N�g�� ���̒����i���̏ꍇ�{�b�N�X�̊e���a�j������������
+	//軸ベクトル 軸の中心(軸の場合ボックスの各軸半径)を計算しておく
 	m_fLengthX = (vMax.x - vMin.x) / 2;
 	m_fLengthY = (vMax.y - vMin.y) / 2;
 	m_fLengthZ = (vMax.z - vMin.z) / 2;
 
-	// �\���p�̃{�b�N�X���b�V���̐���
+	// 表示用のボックスメッシュの生成
 	InitMesh();
 
 }
 
 //------------------------------------------------------------------------
-//	�o�E���f�B���O�{�b�N�X�̒��_�ƃC���f�b�N�X�f�[�^���쐬����
-// 
-//  VECTOR3* pVertex      ���_�f�[�^(OUT)�@        VECTOR3�~8
-//  DWORD*   pIndex       �C���f�b�N�X�f�[�^(OUT)�@DWORD�~36
-// 
-//  �߂�l�@�Ȃ�
+//	バウンディングボックスの頂点とインデックスデータを作成する
+//
+//  VECTOR3* pVertex      頂点データ(OUT)　        VECTOR3×8
+//  DWORD*   pIndex       インデックスデータ(OUT)　DWORD×36
+//
+//  戻り値　なし
 //------------------------------------------------------------------------
 void CBBox::MakeVertexIndex(VECTOR3* pVertex, DWORD* pIndex)
 {
-	//�o�[�e�b�N�X�f�[�^�쐬
-	pVertex[0] = VECTOR3(m_vMin.x, m_vMin.y, m_vMin.z);    //���_0  ��ʁ@���O
-	pVertex[1] = VECTOR3(m_vMin.x, m_vMin.y, m_vMax.z);    //���_1  ��ʁ@����
-	pVertex[2] = VECTOR3(m_vMax.x, m_vMin.y, m_vMax.z);    //���_2  ��ʁ@�E��
-	pVertex[3] = VECTOR3(m_vMax.x, m_vMin.y, m_vMin.z);    //���_3  ��ʁ@�E�O
-	pVertex[4] = VECTOR3(m_vMin.x, m_vMax.y, m_vMin.z);    //���_4  ��ʁ@���O
-	pVertex[5] = VECTOR3(m_vMin.x, m_vMax.y, m_vMax.z);    //���_5  ��ʁ@����
-	pVertex[6] = VECTOR3(m_vMax.x, m_vMax.y, m_vMax.z);    //���_6  ��ʁ@�E��
-	pVertex[7] = VECTOR3(m_vMax.x, m_vMax.y, m_vMin.z);    //���_7  ��ʁ@�E�O
+	//バーテックスデータ作成
+	pVertex[0] = VECTOR3(m_vMin.x, m_vMin.y, m_vMin.z);    //頂点0  下面　左前
+	pVertex[1] = VECTOR3(m_vMin.x, m_vMin.y, m_vMax.z);    //頂点1  下面　左奥
+	pVertex[2] = VECTOR3(m_vMax.x, m_vMin.y, m_vMax.z);    //頂点2  下面　右奥
+	pVertex[3] = VECTOR3(m_vMax.x, m_vMin.y, m_vMin.z);    //頂点3  下面　右前
+	pVertex[4] = VECTOR3(m_vMin.x, m_vMax.y, m_vMin.z);    //頂点4  上面　左前
+	pVertex[5] = VECTOR3(m_vMin.x, m_vMax.y, m_vMax.z);    //頂点5  上面　左奥
+	pVertex[6] = VECTOR3(m_vMax.x, m_vMax.y, m_vMax.z);    //頂点6  上面　右奥
+	pVertex[7] = VECTOR3(m_vMax.x, m_vMax.y, m_vMin.z);    //頂点7  上面　右前
 
-	// �C���f�b�N�X�f�[�^�쐬�@3�p�`���X�g�~2�~6
+	// インデックスデータ作成　3角形リスト×2×6
 	DWORD pIndexConst[] = {
 
 
-		//	���_�E����\�ʂƂ���			      // -- 2024.3.23
-		0, 2, 1,   0, 3, 2,       // ���
-		4, 5, 6,   4, 6, 7,       // ���
-		0, 4, 7,   0, 7, 3,       // �O��
-		2, 6, 5,   2, 5, 1,       // �w��
-		1, 5, 4,   1, 4, 0,       // ����
-		3, 7, 6,   3, 6, 2,       // �E��
+		//	頂点・右回り表面とする			      // -- 2024.3.23
+		0, 2, 1,   0, 3, 2,       // 下面
+		4, 5, 6,   4, 6, 7,       // 上面
+		0, 4, 7,   0, 7, 3,       // 前面
+		2, 6, 5,   2, 5, 1,       // 背面
+		1, 5, 4,   1, 4, 0,       // 左面
+		3, 7, 6,   3, 6, 2,       // 右面
 
 	};
 	memcpy_s(pIndex, sizeof(DWORD) * 36, pIndexConst, sizeof(DWORD) * 36);
 
 }
 //------------------------------------------------------------------------
-//	�\���p�̃{�b�N�X���b�V�����쐬����
-// 
-//  �߂�l�@HRESULT	����:S_OK�@�@�ُ�:E_FAIL
+//	表示用のボックスメッシュを作成する
+//
+//  戻り値　HRESULT	正常:S_OK　　異常:E_FAIL
 //------------------------------------------------------------------------
-// �\���p�̃{�b�N�X���b�V�����쐬����
+// 表示用のボックスメッシュを作成する
 HRESULT CBBox::InitMesh()
 {
 
-	// ���_�f�[�^
+	// 頂点データ
 	VECTOR3 pVertexConst[8];
-	// ���_�@���f�[�^
+	// 頂点法線データ
 	VECTOR3 pNormalConst[] =
 	{
-		VECTOR3(0, -1, 0),    //���_0  ��ʁ@���O
-		VECTOR3(0, -1, 0),    //���_1  ��ʁ@����
-		VECTOR3(0, -1, 0),    //���_2  ��ʁ@�E��
-		VECTOR3(0, -1, 0),    //���_3  ��ʁ@�E�O
-		VECTOR3(0,  1, 0),    //���_4  ��ʁ@���O
-		VECTOR3(0,  1, 0),    //���_5  ��ʁ@����
-		VECTOR3(0,  1, 0),    //���_6  ��ʁ@�E��
-		VECTOR3(0,  1, 0),    //���_7  ��ʁ@�E�O
+		VECTOR3(0, -1, 0),    //頂点0  下面　左前
+		VECTOR3(0, -1, 0),    //頂点1  下面　左奥
+		VECTOR3(0, -1, 0),    //頂点2  下面　右奥
+		VECTOR3(0, -1, 0),    //頂点3  下面　右前
+		VECTOR3(0,  1, 0),    //頂点4  上面　左前
+		VECTOR3(0,  1, 0),    //頂点5  上面　左奥
+		VECTOR3(0,  1, 0),    //頂点6  上面　右奥
+		VECTOR3(0,  1, 0),    //頂点7  上面　右前
 	};
 
-	// �e�N�X�`�����W�f�[�^
+	// テクスチャ座標データ
 	VECTOR2 pTexConst[] =
 	{
-		VECTOR2(0, 1),    //���_0  ��ʁ@���O
-		VECTOR2(1, 1),    //���_1  ��ʁ@����
-		VECTOR2(0, 1),    //���_2  ��ʁ@�E��
-		VECTOR2(1, 1),    //���_3  ��ʁ@�E�O
-		VECTOR2(0, 0),    //���_4  ��ʁ@���O
-		VECTOR2(1, 0),    //���_5  ��ʁ@����
-		VECTOR2(0, 0),    //���_6  ��ʁ@�E��
-		VECTOR2(1, 0),    //���_7  ��ʁ@�E�O
+		VECTOR2(0, 1),    //頂点0  下面　左前
+		VECTOR2(1, 1),    //頂点1  下面　左奥
+		VECTOR2(0, 1),    //頂点2  下面　右奥
+		VECTOR2(1, 1),    //頂点3  下面　右前
+		VECTOR2(0, 0),    //頂点4  上面　左前
+		VECTOR2(1, 0),    //頂点5  上面　左奥
+		VECTOR2(0, 0),    //頂点6  上面　右奥
+		VECTOR2(1, 0),    //頂点7  上面　右前
 	};
 
-	// �C���f�b�N�X�f�[�^�@3�p�`���X�g�~2�~6
+	// インデックスデータ　3角形リスト×2×6
 	DWORD pIndex[36];
 
-	// �{�b�N�X�̒��_�ƃC���f�b�N�X�f�[�^���쐬
+	// ボックスの頂点とインデックスデータを作成
 	MakeVertexIndex(pVertexConst, pIndex);
 
-	// �K�v���̒��_�f�[�^���i�[����z����m�ۂ���
+	// 必要分の頂点データを格納する配列を確保する
 	BBOX_VERTEX  pVertices[8];
 	for (DWORD i = 0; i<8; i++)
 	{
@@ -206,10 +206,10 @@ HRESULT CBBox::InitMesh()
 	D3D11_SUBRESOURCE_DATA InitData;
 	D3D11_MAPPED_SUBRESOURCE msr;
 
-	// �o�[�e�b�N�X�o�b�t�@�����łɍ쐬�ς݂��ǂ����`�F�b�N����
+	// バーテックスバッファが既に作成済みかどうかチェックする
 	if (m_pVertexBuffer == nullptr)
 	{
-		//�o�[�e�b�N�X�o�b�t�@�[���쐬
+		//バーテックスバッファーを作成
 		//bd.Usage = D3D11_USAGE_DEFAULT;
 		bd.Usage = D3D11_USAGE_DYNAMIC;
 		bd.ByteWidth = sizeof(BBOX_VERTEX) * 8;
@@ -220,29 +220,29 @@ HRESULT CBBox::InitMesh()
 		InitData.pSysMem = pVertices;
 		if (FAILED(m_pD3D->m_pDevice->CreateBuffer(&bd, &InitData, &m_pVertexBuffer)))
 		{
-			MessageBox(0, _T("�a�a�����@�o�[�e�b�N�X�o�b�t�@ �쐬���s"), nullptr, MB_OK);
+			MessageBox(0, _T("BBerra:false"), nullptr, MB_OK);
 			return E_FAIL;
 		}
 	}
 	else {
-		// ���łɍ쐬�ς݂̂��߁A�o�[�e�b�N�X�o�b�t�@�̏�������������
+		// 既に作成済みのため、バーテックスバッファの書き換えのみ行う
 		if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr)))
 		{
-			memcpy(msr.pData, pVertices, sizeof(BBOX_VERTEX) * 8); // 8���_���R�s�[
+			memcpy(msr.pData, pVertices, sizeof(BBOX_VERTEX) * 8); // 8頂点をコピー
 			m_pD3D->m_pDeviceContext->Unmap(m_pVertexBuffer, 0);
 		}
 		else {
-			MessageBox(0, _T("�a�a�����@�o�[�e�b�N�X�o�b�t�@ �����������s"), nullptr, MB_OK);
+			MessageBox(0, _T("BBerrar:changeFalse"), nullptr, MB_OK);
 			return E_FAIL;
 
 		}
 	}
 
-	// �C���f�b�N�X�o�b�t�@�����łɍ쐬�ς݂��ǂ����`�F�b�N����
-	// ���łɍ쐬�ς݂̂Ƃ��A���������̂̂��߃C���f�b�N�X�o�b�t�@�̏��������͕s�v
+	// インデックスバッファが既に作成済みかどうかチェックする
+	// 既に作成済みの時は、値が変わらないのでインデックスバッファの書き換えは不要
 	if (m_pIndexBuffer == nullptr)
 	{
-		//�C���f�b�N�X�o�b�t�@�[���쐬
+		//インデックスバッファーを作成
 		bd.Usage = D3D11_USAGE_DEFAULT;
 		//bd.Usage = D3D11_USAGE_DYNAMIC;
 		bd.ByteWidth = sizeof(DWORD) * 2 * 3 * 6;
@@ -255,7 +255,7 @@ HRESULT CBBox::InitMesh()
 		InitData.SysMemSlicePitch = 0;
 		if (FAILED(m_pD3D->m_pDevice->CreateBuffer(&bd, &InitData, &m_pIndexBuffer)))
 		{
-			MessageBox(0, _T("�a�a�����@�C���f�b�N�X�o�b�t�@ �쐬���s"), nullptr, MB_OK);
+			MessageBox(0, _T("BBerrar:indexMakeFalse"), nullptr, MB_OK);
 			return E_FAIL;
 		}
 	}
@@ -265,33 +265,33 @@ HRESULT CBBox::InitMesh()
 }
 
 //------------------------------------------------------------------------
-//	�o�E���f�B���O�{�b�N�X�Ƒ���̃o�E���f�B���O�{�b�N�X�Ƃ̐ڐG����
-// 
-//	CBBox* pOtherBBox      ����̃o�E���f�B���O�{�b�N�X(IN/OUT)
-//  VECTOR3* vHit          �q�b�g�����Ƃ��̃q�b�g�ʒu(OUT)
-//  VECTOR3* vNrm          �q�b�g�����Ƃ��̖@�����W(OUT)
-//  
-//  �߂�l�@bool	ret�@  false:�q�b�g���Ȃ��Ƃ��@true:�q�b�g�����Ƃ�
+//	バウンディングボックスと他のバウンディングボックスとの接触判定
+//
+//	CBBox* pOtherBBox      相手のバウンディングボックス(IN/OUT)
+//  VECTOR3* vHit          ヒットしたときのヒット位置(OUT)
+//  VECTOR3* vNrm          ヒットしたときの法線座標(OUT)
+//
+//  戻り値　bool	ret　  false:ヒットしないとき　true:ヒットしたとき
 //------------------------------------------------------------------------
 bool CBBox::OBBCollisionDetection( CBBox* pOtherBBox, VECTOR3* vHit, VECTOR3* vNrm)
 {
 	MATRIX4X4 mOtherWorld = pOtherBBox->m_mWorld;
 
-	//�{�b�N�X�̋����x�N�g���i���S�ƒ��S�����񂾃x�N�g���j�����߂�
-	// ��BBOX(BBoxA)�̒��S�_�܂ł̈ړ��}�g���b�N�X���쐬����
+	//ボックスの距離ベクトル(中心と中心を結んだベクトル)を求める
+	// 自BBOX(BBoxA)の中心点までの移動マトリックスを作成する
 	MATRIX4X4 mWorldCenterA;
 	mWorldCenterA = XMMatrixTranslation( m_fLengthX + m_vMin.x, m_fLengthY + m_vMin.y, m_fLengthZ + m_vMin.z);
-	mWorldCenterA = mWorldCenterA * m_mWorld;		// ���S�_�̃��[���h�}�g���b�N�X�����߂�
-	// ��BBOX(BBoxB)�̒��S�_�܂ł̈ړ��}�g���b�N�X���쐬����
+	mWorldCenterA = mWorldCenterA * m_mWorld;		// 中心点のワールドマトリックスを求める
+	// 他BBOX(BBoxB)の中心点までの移動マトリックスを作成する
 	MATRIX4X4 mWorldCenterB;
-	mWorldCenterB = XMMatrixTranslation( pOtherBBox->m_fLengthX + pOtherBBox->m_vMin.x, 
+	mWorldCenterB = XMMatrixTranslation( pOtherBBox->m_fLengthX + pOtherBBox->m_vMin.x,
 							pOtherBBox->m_fLengthY + pOtherBBox->m_vMin.y, pOtherBBox->m_fLengthZ + pOtherBBox->m_vMin.z);
-	mWorldCenterB = mWorldCenterB * mOtherWorld;	// ���S�_�̃��[���h�}�g���b�N�X�����߂�
-	// �{�b�N�X�̒��S�_�Ԃ̋����x�N�g�������߂�
+	mWorldCenterB = mWorldCenterB * mOtherWorld;	// 中心点のワールドマトリックスを求める
+	// ボックスの中心点間の距離ベクトルを求める
 	VECTOR3 vDistance = VECTOR3(mWorldCenterB._41, mWorldCenterB._42, mWorldCenterB._43)
 	                      - VECTOR3(mWorldCenterA._41, mWorldCenterA._42, mWorldCenterA._43);
 
-	// ��]�s��(�ʒu��r�����A��]�݂̂̍s��)�����߂�
+	// 回転行列(位置を含まず、回転のみの行列)を求める
 	MATRIX4X4 mTrans;
 	mTrans = XMMatrixTranslation(-m_mWorld._41, -m_mWorld._42, -m_mWorld._43);
 	MATRIX4X4 mRot = m_mWorld * mTrans;
@@ -299,9 +299,9 @@ bool CBBox::OBBCollisionDetection( CBBox* pOtherBBox, VECTOR3* vHit, VECTOR3* vN
 	mTrans = XMMatrixTranslation( -mOtherWorld._41, -mOtherWorld._42, -mOtherWorld._43);
 	MATRIX4X4 mOtherRot = mOtherWorld * mTrans;
 
-	//������
+	//分離軸
 	VECTOR3 vSeparate;
-	//���ꂼ��̃��[�J����ꎲ�x�N�g���ɁA���ꂼ��̉�]�𔽉f������
+	//それぞれのローカル座標軸ベクトルに、それぞれの回転を反映させる
 	m_vAxisX = VECTOR3(1, 0, 0);
 	m_vAxisY = VECTOR3(0, 1, 0);
 	m_vAxisZ = VECTOR3(0, 0, 1);
@@ -318,69 +318,69 @@ bool CBBox::OBBCollisionDetection( CBBox* pOtherBBox, VECTOR3* vHit, VECTOR3* vN
 	pOtherBBox->m_vAxisY = XMVector3TransformCoord(pOtherBBox->m_vAxisY, mOtherRot);
 	pOtherBBox->m_vAxisZ = XMVector3TransformCoord(pOtherBBox->m_vAxisZ, mOtherRot);
 
-	//�{�b�N�XA(��BBOX)�̃��[�J����ꎲ����ɂ����A�h�e�h�̎Z�o�i3�p�^�[���j
+	//ボックスA(自BBOX)のローカル座標軸による、影長さの算出(3パターン)
 	{
-		//X���𕪗����Ƃ����ꍇ
+		//X軸を分離軸とした場合
 		if (!CompareLength(this, pOtherBBox, &m_vAxisX, &vDistance)) return false;
-		//Y���𕪗����Ƃ����ꍇ
+		//Y軸を分離軸とした場合
 		if (!CompareLength(this, pOtherBBox, &m_vAxisY, &vDistance)) return false;
-		//Z���𕪗����Ƃ����ꍇ
+		//Z軸を分離軸とした場合
 		if (!CompareLength(this, pOtherBBox, &m_vAxisZ, &vDistance)) return false;
 	}
-	//�{�b�N�XB(��BBOX)�̃��[�J����ꎲ����ɂ����A�h�e�h�̎Z�o�i3�p�^�[���j
+	//ボックスB(他BBOX)のローカル座標軸による、影長さの算出(3パターン)
 	{
-		//X���𕪗����Ƃ����ꍇ
+		//X軸を分離軸とした場合
 		if (!CompareLength(this, pOtherBBox, &pOtherBBox->m_vAxisX, &vDistance)) return false;
-		//Y���𕪗����Ƃ����ꍇ
+		//Y軸を分離軸とした場合
 		if (!CompareLength(this, pOtherBBox, &pOtherBBox->m_vAxisY, &vDistance)) return false;
-		//Z���𕪗����Ƃ����ꍇ
+		//Z軸を分離軸とした場合
 		if (!CompareLength(this, pOtherBBox, &pOtherBBox->m_vAxisZ, &vDistance)) return false;
 	}
-	//���݂��̊�ꎲ���m�̊O�σx�N�g������ɂ����A�h�e�h�̎Z�o�i9�p�^�[���j
+	//互いの座標軸2本の外積ベクトル軸による、影長さの算出(9パターン)
 	{
-		//�{�b�N�XA(��BBOX)��X��
+		//ボックスA(自BBOX)のX軸
 		{
-			//�Ɓ@�{�b�N�XB(��BBOX)��X���Ƃ̊O�σx�N�g���𕪗����Ƃ����ꍇ
+			//と　ボックスB(他BBOX)のX軸との外積ベクトルを分離軸とした場合
 			vSeparate = cross(m_vAxisX, pOtherBBox->m_vAxisX);
 			if (!CompareLength(this, pOtherBBox, &vSeparate, &vDistance)) return false;
-			//�Ɓ@�{�b�N�XB(��BBOX)��Y���Ƃ̊O�σx�N�g���𕪗����Ƃ����ꍇ
+			//と　ボックスB(他BBOX)のY軸との外積ベクトルを分離軸とした場合
 			vSeparate = cross(m_vAxisX, pOtherBBox->m_vAxisY);
 			if (!CompareLength(this, pOtherBBox, &vSeparate, &vDistance)) return false;
-			//�Ɓ@�{�b�N�XB(��BBOX)��Z���Ƃ̊O�σx�N�g���𕪗����Ƃ����ꍇ
+			//と　ボックスB(他BBOX)のZ軸との外積ベクトルを分離軸とした場合
 			vSeparate = cross(m_vAxisX, pOtherBBox->m_vAxisZ);
 			if (!CompareLength(this, pOtherBBox, &vSeparate, &vDistance)) return false;
 		}
-		//�{�b�N�XA(��BBOX)��Y��
+		//ボックスA(自BBOX)のY軸
 		{
-			//�Ɓ@�{�b�N�XB(��BBOX)��X���Ƃ̊O�σx�N�g���𕪗����Ƃ����ꍇ
+			//と　ボックスB(他BBOX)のX軸との外積ベクトルを分離軸とした場合
 			vSeparate = cross( m_vAxisY, pOtherBBox->m_vAxisX);
 			if (!CompareLength(this, pOtherBBox, &vSeparate, &vDistance)) return false;
-			//�Ɓ@�{�b�N�XB(��BBOX)��Y���Ƃ̊O�σx�N�g���𕪗����Ƃ����ꍇ
+			//と　ボックスB(他BBOX)のY軸との外積ベクトルを分離軸とした場合
 			vSeparate = cross( m_vAxisY, pOtherBBox->m_vAxisY);
 			if (!CompareLength(this, pOtherBBox, &vSeparate, &vDistance)) return false;
-			//�Ɓ@�{�b�N�XB(��BBOX)��Z���Ƃ̊O�σx�N�g���𕪗����Ƃ����ꍇ
+			//と　ボックスB(他BBOX)のZ軸との外積ベクトルを分離軸とした場合
 			vSeparate = cross( m_vAxisY, pOtherBBox->m_vAxisZ);
 			if (!CompareLength(this, pOtherBBox, &vSeparate, &vDistance)) return false;
 		}
-		//�{�b�N�XA(��BBOX)��Z��
+		//ボックスA(自BBOX)のZ軸
 		{
-			//�Ɓ@�{�b�N�XB(��BBOX)��X���Ƃ̊O�σx�N�g���𕪗����Ƃ����ꍇ
+			//と　ボックスB(他BBOX)のX軸との外積ベクトルを分離軸とした場合
 			vSeparate = cross( m_vAxisZ, pOtherBBox->m_vAxisX);
 			if (!CompareLength(this, pOtherBBox, &vSeparate, &vDistance)) return false;
-			//�Ɓ@�{�b�N�XB(��BBOX)��Y���Ƃ̊O�σx�N�g���𕪗����Ƃ����ꍇ
+			//と　ボックスB(他BBOX)のY軸との外積ベクトルを分離軸とした場合
 			vSeparate = cross( m_vAxisZ, pOtherBBox->m_vAxisY);
 			if (!CompareLength(this, pOtherBBox, &vSeparate, &vDistance)) return false;
-			//�Ɓ@�{�b�N�XB(��BBOX)��Z���Ƃ̊O�σx�N�g���𕪗����Ƃ����ꍇ
+			//と　ボックスB(他BBOX)のZ軸との外積ベクトルを分離軸とした場合
 			vSeparate = cross( m_vAxisZ, pOtherBBox->m_vAxisZ);
 			if (!CompareLength(this, pOtherBBox, &vSeparate, &vDistance)) return false;
 		}
 	}
 
-	// �q�b�g�����Ƃ�
+	// ヒットしたとき
 	MATRIX4X4 mHitWorld;
-	// BBox���S�_�̍��W���q�b�g�ʒu�Ƃ���
-	mHitWorld = XMMatrixTranslation((pOtherBBox->m_vMax.x + pOtherBBox->m_vMin.x) / 2, 
-									(pOtherBBox->m_vMax.y + pOtherBBox->m_vMin.y) / 2, 
+	// BBox中心点の座標をヒット位置とする
+	mHitWorld = XMMatrixTranslation((pOtherBBox->m_vMax.x + pOtherBBox->m_vMin.x) / 2,
+									(pOtherBBox->m_vMax.y + pOtherBBox->m_vMin.y) / 2,
 									(pOtherBBox->m_vMax.z + pOtherBBox->m_vMin.z) / 2);
 	mHitWorld = mHitWorld * pOtherBBox->m_mWorld;
 	*vHit = GetPositionVector(mHitWorld);
@@ -389,24 +389,24 @@ bool CBBox::OBBCollisionDetection( CBBox* pOtherBBox, VECTOR3* vHit, VECTOR3* vN
 	return true;
 }
 //------------------------------------------------------------------------
-//	�����x�N�g���𕪗�����ɓ��e���A2�̉e������Ă��邩�ǂ������ׂ鏈��
-// 
-//  const CBBox* pBBoxA            �o�E���f�B���O�{�b�N�X�`
-//  const CBBox* pBBoxB            �o�E���f�B���O�{�b�N�X�a
-//  const VECTOR3* pvSeparate      ������
-//  const VECTOR3* pvDistance      �{�b�N�X�̒��S�_�Ԃ̋���
-//  
-//  �߂�l�@bool	ret�@  false:����Ă���Ƃ��@true:�ڐG���Ă���Ƃ�
+//	分離ベクトルを分離軸に投影し、2つの影が重なっているかどうかを調べる処理
+//
+//  const CBBox* pBBoxA            バウンディングボックスＡ
+//  const CBBox* pBBoxB            バウンディングボックスＢ
+//  const VECTOR3* pvSeparate      分離軸
+//  const VECTOR3* pvDistance      ボックスの中心点間の距離
+//
+//  戻り値　bool	ret　  false:離れているとき　true:接触しているとき
 //------------------------------------------------------------------------
 bool CBBox::CompareLength(const CBBox* pBBoxA, const CBBox* pBBoxB, const VECTOR3* pvSeparate, const VECTOR3* pvDistance)
 {
-	//�h��������ł́h�{�b�N�X�`�̒��S����{�b�N�X�a�̒��S�܂ł̋���
+	//分離軸方向で、ボックスＡの中心からボックスＢの中心までの距離
 	FLOAT fDistance = fabsf(dot(*pvDistance, *pvSeparate));
-	//��������Ń{�b�N�XA�̒��S����ł������{�b�N�XA�̒��_�܂ł̋���
+	//分離軸方向でボックスAの中心から最も遠いボックスAの頂点までの距離
 	FLOAT fShadowA = 0;
-	//��������Ń{�b�N�XB�̒��S����ł������{�b�N�XB�̒��_�܂ł̋���
+	//分離軸方向でボックスBの中心から最も遠いボックスBの頂点までの距離
 	FLOAT fShadowB = 0;
-	//���ꂼ��̃{�b�N�X�́h�e�h���Z�o
+	//それぞれのボックスの、影長さを算出
 	fShadowA = fabsf(dot(pBBoxA->m_vAxisX, *pvSeparate) * pBBoxA->m_fLengthX) +
 				fabsf(dot(pBBoxA->m_vAxisY, *pvSeparate) * pBBoxA->m_fLengthY) +
 				fabsf(dot(pBBoxA->m_vAxisZ, *pvSeparate) * pBBoxA->m_fLengthZ);
@@ -422,14 +422,14 @@ bool CBBox::CompareLength(const CBBox* pBBoxA, const CBBox* pBBoxB, const VECTOR
 }
 
 //------------------------------------------------------------------------  // -- 2019.10.8
-//	�o�E���f�B���O�{�b�N�X�ƈړ������i���C�j�Ƃ̐ڐG����
-// 
-//	const MATRIX4X4&  mLay       �����ړ���̃��[���h�}�g���b�N�X
-//  const MATRIX4X4&  mLayOld    �����ړ��O�̃��[���h�}�g���b�N�X
-//  VECTOR3* vHit                �q�b�g�����Ƃ��̃q�b�g�ʒu(OUT)
-//  VECTOR3* vNrm                �q�b�g�����Ƃ��̖@�����W(OUT)
-//  
-//  �߂�l�@bool	ret�@  false:�q�b�g���Ȃ��Ƃ��@true:�q�b�g�����Ƃ�
+//	バウンディングボックスと移動前後点(レイ)との接触判定
+//
+//	const MATRIX4X4&  mLay       点の移動後のワールドマトリックス
+//  const MATRIX4X4&  mLayOld    点の移動前のワールドマトリックス
+//  VECTOR3* vHit                ヒットしたときのヒット位置(OUT)
+//  VECTOR3* vNrm                ヒットしたときの法線座標(OUT)
+//
+//  戻り値　bool	ret　  false:ヒットしないとき　true:ヒットしたとき
 //------------------------------------------------------------------------
 bool CBBox::OBBCollisionLay( const MATRIX4X4& mLay, const MATRIX4X4& mLayOld, VECTOR3* vHit, VECTOR3* vNrm)
 {
@@ -437,14 +437,14 @@ bool CBBox::OBBCollisionLay( const MATRIX4X4& mLay, const MATRIX4X4& mLayOld, VE
 }
 
 //------------------------------------------------------------------------  // -- 2019.10.8
-//	�o�E���f�B���O�{�b�N�X�ƈړ������i���C�j�Ƃ̐ڐG����
-// 
-//	const VECTOR3&  vNow      �����ړ���̍��W
-//  const VECTOR3&  vOld      �����ړ��O�̍��W
-//  VECTOR3* vHit             �q�b�g�����Ƃ��̃q�b�g�ʒu(OUT)
-//  VECTOR3* vNrm             �q�b�g�����Ƃ��̖@�����W(OUT)
-//  
-//  �߂�l�@bool	ret�@  false:�q�b�g���Ȃ��Ƃ��@true:�q�b�g�����Ƃ�
+//	バウンディングボックスと移動前後点(レイ)との接触判定
+//
+//	const VECTOR3&  vNow      点の移動後の座標
+//  const VECTOR3&  vOld      点の移動前の座標
+//  VECTOR3* vHit             ヒットしたときのヒット位置(OUT)
+//  VECTOR3* vNrm             ヒットしたときの法線座標(OUT)
+//
+//  戻り値　bool	ret　  false:ヒットしないとき　true:ヒットしたとき
 //------------------------------------------------------------------------
 bool CBBox::OBBCollisionLay( const VECTOR3&  vNow, const VECTOR3& vOld, VECTOR3* vHit, VECTOR3* vNrm)
 {
@@ -454,21 +454,21 @@ bool CBBox::OBBCollisionLay( const VECTOR3&  vNow, const VECTOR3& vOld, VECTOR3*
 
 	VECTOR3 vFaceNorm;
 	float    fNowDist, fOldDist, fLayDist;
-	float    fLenMin = 9999999.0f;				// ��_�ƈړ��O�_�Ƃ̋����̍ŏ��l
+	float    fLenMin = 9999999.0f;				// 交点と移動前点との距離の最小値
 
-	// �߂�l�̃N�����[
+	// 戻り値のクリアー
 	vHit->x = 0.0f;
 	vHit->y = 0.0f;
 	vHit->z = 0.0f;
 
-	// ���_�f�[�^
+	// 頂点データ
 	VECTOR3 pVertex[8];
-	// �C���f�b�N�X�f�[�^�@3�p�`���X�g�~2�~6
+	// インデックスデータ　3角形リスト×2×6
 	DWORD pIndex[36];
-	// �o�E���f�B���O�{�b�N�X�̒��_�ƃC���f�b�N�X�f�[�^���쐬
+	// バウンディングボックスの頂点とインデックスデータを作成
 	MakeVertexIndex(pVertex, pIndex);
 
-	// ���_�f�[�^�����[���h���W�ɕϊ�����
+	// 頂点データをワールド座標に変換する
 	for (i = 0; i < 8; i++)
 	{
 		MATRIX4X4 mTemp;
@@ -479,43 +479,43 @@ bool CBBox::OBBCollisionLay( const VECTOR3&  vNow, const VECTOR3& vOld, VECTOR3*
 		pVertex[i].z = mTemp._43;
 	}
 
-	// �o�E���f�B���O�{�b�N�X�̂U�ʂP�Q�|���S���ƒ����Ƃ̌���������s��
+	// バウンディングボックスの６面１２ポリゴンと点線との交差判定を行う
 	for (i = 0; i<12; i++)
 	{
 		VECTOR3 vVert[3] = { VECTOR3(0,0,0) };
-		// �R�p�`�|���S���̒��_�̒l�𓾂�
+		// 三角形ポリゴンの頂点の値を得る
 		vVert[0] = pVertex[pIndex[i * 3 + 0]];
 		vVert[1] = pVertex[pIndex[i * 3 + 1]];
 		vVert[2] = pVertex[pIndex[i * 3 + 2]];
-		// �ʖ@�����쐬����
-		vFaceNorm = normalize(cross(vVert[1] - vVert[0], vVert[2] - vVert[0]));   // �E����\�Ƃ���	    // -- 2024.3.23
-		//vFaceNorm = normalize(cross(vVert[2] - vVert[0], vVert[1] - vVert[0]));     // ������\�Ƃ���
+		// 面法線を作成する
+		vFaceNorm = normalize(cross(vVert[1] - vVert[0], vVert[2] - vVert[0]));   // 右回り表とする	    // -- 2024.3.23
+		//vFaceNorm = normalize(cross(vVert[2] - vVert[0], vVert[1] - vVert[0]));     // 左回り表とする
 
-		// �����̂R�p�`�|���S���@�������̋��������߂�
-		float   fFaceDist = dot(vFaceNorm, vVert[0]);		// ���_����O�p�`���ʂ܂ł̋���
-		fNowDist = dot(vFaceNorm, vNow) - fFaceDist;		// �����ړ���_�ƎO�p�`���ʂƂ̋����B���̎��͕\���A���̎��͗���
-		fOldDist = dot(vFaceNorm, vOld) - fFaceDist;		// �����ړ��O�_�ƎO�p�`���ʂƂ̋����B���̎��͕\���A���̎��͗���
-		fLayDist = fOldDist - fNowDist;						// �����ړ��x�N�g��Lay�̖@�������̋���
+		// 現在の三角形ポリゴン　原点からの距離を求める
+		float   fFaceDist = dot(vFaceNorm, vVert[0]);		// 原点から三角形面までの距離
+		fNowDist = dot(vFaceNorm, vNow) - fFaceDist;		// 点の移動後点と三角形面との距離。正の時は表側、負の時は裏側
+		fOldDist = dot(vFaceNorm, vOld) - fFaceDist;		// 点の移動前点と三角形面との距離。正の時は表側、負の時は裏側
+		fLayDist = fOldDist - fNowDist;						// 点の移動ベクトルLayの法線方向の距離
 
-		// �R�p�`�|���S���ƒ����i���C�j�Ƃ̐ڐG������s��
-		if (fNowDist <= 0.0f && fOldDist >= 0.0f)	// �����ړ��O�_���O�p�`���ʂ̕\�ŁA�ړ���_�����ʂ̗����̎��̂ݔ���
+		// 三角形ポリゴンと点線(レイ)との接触判定を行う
+		if (fNowDist <= 0.0f && fOldDist >= 0.0f)	// 点の移動前点が三角形面の表で、移動後点が面の裏側の時のみ判定
 		{
-			if (fLayDist != 0.0f)		// �����ړ��x�N�g���̖@�������̋������O�̂Ƃ��́A�����ƎO�p�`���ʂ����s�Ȃ̂őΏۊO
+			if (fLayDist != 0.0f)		// 点の移動ベクトルが法線方向の距離が０の時は、点線と三角形面が平行なので対象外
 			{
-				// ���ʂƂ̌�_vInsPt�����߂�
-				//   �@�@�ړ��x�N�g���̌�_����ړ���_�܂ł̋����̔䗦�����߂�@�@�@�@�@fNowDist / fLayDist
-				//   �A�@��_����ړ���_�܂ł̈ړ��x�N�g�������߂�@�@�@�@�@�@�@�@�@�@�@(vOld - vNow) * fNowDist / fLayDist
-				//   �B�@��L�A���ړ���_����������Ƃɂ���āA��_�̃x�N�g�������߂�@�@vNow - ( (vOld - vNow) * fNowDist / fLayDist)
+				// 面との交点vInsPtを求める
+				//   １　移動ベクトルの交点から移動後点までの距離の比率を求める　　　　　fNowDist / fLayDist
+				//   ２　交点から移動後点までの移動ベクトルを求める　　　　　　　　　　　(vOld - vNow) * fNowDist / fLayDist
+				//   ３　上記２を移動後点から引くことによって、交点のベクトルを求める　　vNow - ( (vOld - vNow) * fNowDist / fLayDist)
 				VECTOR3 vInsPt = vNow - ((vOld - vNow) * fNowDist / fLayDist);
 
-				// �R�p�`�|���S���ƐڐG���Ă��邩�ǂ����̔���
-				//   ��_�����_�Ƃ����Ƃ��A�R�p�`�|���S���̊e���_�ƌ��_�Ƃ̊p�x�����v����֐�AddAngle�ł���
-				//   ���̊֐��̖߂�l���R�U�O���i�Q�΁j�̎��́A�ڐG�_���R�̂R�c�x�N�g���̒��ɂ���
-				//   �������A�덷���l�����Q�΂ł͂Ȃ�1.99f * �΂Ŕ��f���Ă���B
+				// 三角形ポリゴンと接触しているかどうかの判定
+				//   交点を原点とした時に、三角形ポリゴンの各頂点と交点との角度を合計する関数AddAngleで行う
+				//   この関数の戻り値が３６０度(２π)の時は、接触点が３つの三つ辺ベクトルの中にある
+				//   しかし、誤差が有るので２πではなく1.99f * πで判定している。
 				if (AddAngle(vVert[0] - vInsPt, vVert[1] - vInsPt, vVert[2] - vInsPt) >= 1.99f * XM_PI)
 				{
 					ret = true;
-					if (fLenMin > magnitude(vOld - vInsPt))   // ���߂���_��T��
+					if (fLenMin > magnitude(vOld - vInsPt))   // 一番近い点を探す
 					{
 						fLenMin = magnitude(vOld - vInsPt);
 						*vHit = vInsPt;
@@ -528,147 +528,147 @@ bool CBBox::OBBCollisionLay( const VECTOR3&  vNow, const VECTOR3& vOld, VECTOR3*
 	return ret;
 }
 //------------------------------------------------------------------------  // -- 2019.10.7
-//	�o�E���f�B���O�{�b�N�X�ƎO�p�`�Ƃ̐ڐG����
-// 
-//	const VECTOR3* pTri      ����̎O�p�`
-//  const MATRIX4X4& mWorld  ����̎O�p�`�̃��[���h�}�g���b�N�X
-//  VECTOR3* vHit            �q�b�g�����Ƃ��̃q�b�g�ʒu(OUT)
-//  
-//  �߂�l�@bool	ret�@  false:�q�b�g���Ȃ��Ƃ��@true:�q�b�g�����Ƃ�
+//	バウンディングボックスと三角形との接触判定
+//
+//	const VECTOR3* pTri      相手の三角形
+//  const MATRIX4X4& mWorld  相手の三角形のワールドマトリックス
+//  VECTOR3* vHit            ヒットしたときのヒット位置(OUT)
+//
+//  戻り値　bool	ret　  false:ヒットしないとき　true:ヒットしたとき
 //------------------------------------------------------------------------
 bool CBBox::OBBCollisionTri(const VECTOR3* pTri, const MATRIX4X4& mWorld, VECTOR3* vhit)
 {
 	VECTOR3 vTri[3] = { VECTOR3(0,0,0) };
 
-	// �O�p�`�̒��_�����[���h���W�ϊ�����
+	// 三角形の頂点をワールド座標変換する
 	vTri[0] = XMVector3TransformCoord(*(pTri + 0), mWorld);
 	vTri[1] = XMVector3TransformCoord(*(pTri + 1), mWorld);
 	vTri[2] = XMVector3TransformCoord(*(pTri + 2), mWorld);
 
-	//	�o�E���f�B���O�{�b�N�X�ƎO�p�`�Ƃ̐ڐG����
+	//	バウンディングボックスと三角形との接触判定
 	return OBBCollisionTri(vTri, vhit);
 }
 //------------------------------------------------------------------------  // -- 2019.10.7
-//	�o�E���f�B���O�{�b�N�X�ƎO�p�`�Ƃ̐ڐG����
-// 
-//	const VECTOR3* pTri      ����̎O�p�`
-//  VECTOR3* vHit            �q�b�g�����Ƃ��̃q�b�g�ʒu(OUT)
-//  
-//  �߂�l�@bool	ret�@  false:�q�b�g���Ȃ��Ƃ��@true:�q�b�g�����Ƃ�
+//	バウンディングボックスと三角形との接触判定
+//
+//	const VECTOR3* pTri      相手の三角形
+//  VECTOR3* vHit            ヒットしたときのヒット位置(OUT)
+//
+//  戻り値　bool	ret　  false:ヒットしないとき　true:ヒットしたとき
 //------------------------------------------------------------------------
 bool CBBox::OBBCollisionTri(const VECTOR3* pTri, VECTOR3* vhit)
 {
 	float  p0, p1, p2, r;
 
-	// �n�a�a�e�����̒����i���a�j�x�N�g�������߂�
+	// 自ＢＢＸ各軸の中心(半径)ベクトルを求める
 	VECTOR3 AeX = VECTOR3(m_fLengthX, 0, 0);
 	VECTOR3 AeY = VECTOR3(0, m_fLengthY, 0);
 	VECTOR3 AeZ = VECTOR3(0, 0, m_fLengthZ);
 
-	// �n�a�a�e�����̒����i���a�j�����߂�
+	// 自ＢＢＸ各軸の中心(半径)を求める
 	float eX = m_fLengthX;
 	float eY = m_fLengthY;
 	float eZ = m_fLengthZ;
 
-	// OBB�̃��[���h�}�g���b�N�X�̋t�s������߂�
-	// �i���̒i�K�ŁA�n�a�a�͂��̃��[�J�����W�����[���h���W�n�ƈ�v����`�`�a�a�Ɠ��l�ɂȂ�j
+	// OBBのワールドマトリックスの逆行列を求める
+	// (次の段階で、自ＢＢＸはそのローカル座標がワールド座標系と一致する＝＝ＢＢＸと同値になる)
 	MATRIX4X4 mWorldInv = XMMatrixInverse(nullptr, m_mWorld);
 
-	// �O�p�`��OBB�̃��[���h�}�g���b�N�X�̋t�s����|�����킹�AOBB�̃��[�J�����W�n�ɕϊ�����
+	// 三角形にOBBのワールドマトリックスの逆行列を掛け合わせ、OBBのローカル座標系に変換する
 	VECTOR3 vT[3] = { VECTOR3(0,0,0) };
 	vT[0] = XMVector3TransformCoord(*(pTri + 0), mWorldInv);
 	vT[1] = XMVector3TransformCoord(*(pTri + 1), mWorldInv);
 	vT[2] = XMVector3TransformCoord(*(pTri + 2), mWorldInv);
 
-	// �O�p�`���n�a�a�̒��S�ʒu�����_�Ƃ�����W�n�Ɉړ�����
+	// 三角形を自ＢＢＸの中心位置を原点とした座標系に移動する
 	VECTOR3 vOffset = VECTOR3(m_fLengthX + m_vMin.x, m_fLengthY + m_vMin.y, m_fLengthZ + m_vMin.z);
 	vT[0] -= vOffset;
 	vT[1] -= vOffset;
 	vT[2] -= vOffset;
 
-	// �O�p�`�ɑ΂��ĕӂ̃x�N�g�����v�Z
+	// 三角形に対して辺のベクトルを計算
 	VECTOR3  f0 = vT[1] - vT[0];
 	VECTOR3  f1 = vT[2] - vT[1];
 	VECTOR3  f2 = vT[0] - vT[2];
 
-	// �n�a�a�̊e�ӂƎO�p�`�̊e�ӂ̑g�ݍ��킹�ɑ΂��Đ��������O�ς𕪗����Ƃ��Ĕ��肷��
-	// �i�������A�n�a�a�͌��_�ɂ����ă��[���h���W���Ɉ�v����`�`�a�a�ƂȂ��Ă��邽�߁A�v�Z���ȗ����ł���j
+	// 自ＢＢＸの各辺と三角形の各辺の組み合わせに対して分離平面の外積を分離軸として判定する
+	// (ところが、自ＢＢＸは原点において、ワールド座標系に一致する＝＝ＢＢＸとなっているため、計算が簡略化できる)
 
-	// �n�a�a�̂w���i���[���h���W�̂w���j�ƎO�p�`�̒��_�O�|���_�Q���Ő��������O�ς𕪗����Ƃ��锻��ia00�j
+	// 自ＢＢＸのｚ軸(ワールド座標のｚ軸)と三角形の頂点０〜頂点２辺で分離平面の外積を分離軸とする判定(a00)
 	p0 = vT[0].z * vT[1].y - vT[0].y * vT[1].z;
 	p2 = vT[2].z * (vT[1].y - vT[0].y) - vT[2].y * (vT[1].z - vT[0].z);
 	r = eY * fabsf(f0.z) + eZ * fabsf(f0.y);
 	if (max(-max(p0, p2), min(p0, p2)) > r)
 		return  false;
 
-	// �n�a�a�̂w���i���[���h���W�̂w���j�ƎO�p�`�̒��_�O�|���_�P���Ő��������O�ς𕪗����Ƃ��锻��ia01�j
+	// 自ＢＢＸのｚ軸(ワールド座標のｚ軸)と三角形の頂点０〜頂点１辺で分離平面の外積を分離軸とする判定(a01)
 	p0 = vT[0].z * (vT[2].y - vT[1].y) - vT[0].y * (vT[2].z - vT[1].z);
 	p1 = vT[1].z * vT[2].y - vT[1].y * vT[2].z;
 	r = eY * fabsf(f1.z) + eZ * fabsf(f1.y);
 	if (max(-max(p0, p1), min(p0, p1)) > r)
 		return  false;
 
-	// �n�a�a�̂w���i���[���h���W�̂w���j�ƎO�p�`�̒��_�P�|���_�Q���Ő��������O�ς𕪗����Ƃ��锻��ia02�j
+	// 自ＢＢＸのｚ軸(ワールド座標のｚ軸)と三角形の頂点１〜頂点２辺で分離平面の外積を分離軸とする判定(a02)
 	p1 = vT[1].z * (vT[0].y - vT[2].y) - vT[1].y * (vT[0].z - vT[2].z);
 	p2 = vT[2].z * vT[0].y - vT[2].y * vT[0].z;
 	r = eY * fabsf(f2.z) + eZ * fabsf(f2.y);
 	if (max(-max(p1, p2), min(p1, p2)) > r)
 		return  false;
 
-	// �n�a�a�̂x���i���[���h���W�̂x���j�ƎO�p�`�̒��_�O�|���_�Q���Ő��������O�ς𕪗����Ƃ��锻��ia10�j
+	// 自ＢＢＸのｘ軸(ワールド座標のｘ軸)と三角形の頂点０〜頂点２辺で分離平面の外積を分離軸とする判定(a10)
 	p0 = vT[0].x * vT[1].z - vT[0].z * vT[1].x;
 	p2 = vT[2].x * (vT[1].z - vT[0].z) - vT[2].z * (vT[1].x - vT[0].x);
 	r = eZ * fabsf(f0.x) + eX * fabsf(f0.z);
 	if (max(-max(p0, p2), min(p0, p2)) > r)
 		return  false;
 
-	// �n�a�a�̂x���i���[���h���W�̂x���j�ƎO�p�`�̒��_�O�|���_�P���Ő��������O�ς𕪗����Ƃ��锻��ia11�j
+	// 自ＢＢＸのｘ軸(ワールド座標のｘ軸)と三角形の頂点０〜頂点１辺で分離平面の外積を分離軸とする判定(a11)
 	p0 = vT[0].x * (vT[2].z - vT[1].z) - vT[0].z * (vT[2].x - vT[1].x);
 	p1 = vT[1].x * vT[2].z - vT[1].z * vT[2].x;
 	r = eZ * fabsf(f1.x) + eX * fabsf(f1.z);
 	if (max(-max(p0, p1), min(p0, p1)) > r)
 		return  false;
 
-	// �n�a�a�̂x���i���[���h���W�̂x���j�ƎO�p�`�̒��_�P�|���_�Q���Ő��������O�ς𕪗����Ƃ��锻��ia12�j
+	// 自ＢＢＸのｘ軸(ワールド座標のｘ軸)と三角形の頂点１〜頂点２辺で分離平面の外積を分離軸とする判定(a12)
 	p1 = vT[1].x * (vT[0].z - vT[2].z) - vT[1].z * (vT[0].x - vT[2].x);
 	p2 = vT[2].x * vT[0].z - vT[2].z * vT[0].x;
 	r = eZ * fabsf(f2.x) + eX * fabsf(f2.z);
 	if (max(-max(p1, p2), min(p1, p2)) > r)
 		return  false;
 
-	// �n�a�a�̂y���i���[���h���W�̂y���j�ƎO�p�`�̒��_�O�|���_�Q���Ő��������O�ς𕪗����Ƃ��锻��ia20�j
+	// 自ＢＢＸのｙ軸(ワールド座標のｙ軸)と三角形の頂点０〜頂点２辺で分離平面の外積を分離軸とする判定(a20)
 	p0 = vT[0].y * vT[1].x - vT[0].x * vT[1].y;
 	p2 = vT[2].y * (vT[1].x - vT[0].x) - vT[2].x * (vT[1].y - vT[0].y);
 	r = eX * fabsf(f0.y) + eY * fabsf(f0.x);
 	if (max(-max(p0, p2), min(p0, p2)) > r)
 		return  false;
 
-	// �n�a�a�̂y���i���[���h���W�̂y���j�ƎO�p�`�̒��_�O�|���_�P���Ő��������O�ς𕪗����Ƃ��锻��ia21�j
+	// 自ＢＢＸのｙ軸(ワールド座標のｙ軸)と三角形の頂点０〜頂点１辺で分離平面の外積を分離軸とする判定(a21)
 	p0 = vT[0].y * (vT[2].x - vT[1].x) - vT[0].x * (vT[2].y - vT[1].y);
 	p1 = vT[1].y * vT[2].x - vT[1].x * vT[2].y;
 	r = eX * fabsf(f1.y) + eY * fabsf(f1.x);
 	if (max(-max(p0, p1), min(p0, p1)) > r)
 		return  false;
 
-	// �n�a�a�̂y���i���[���h���W�̂y���j�ƎO�p�`�̒��_�P�|���_�Q���Ő��������O�ς𕪗����Ƃ��锻��ia22�j
+	// 自ＢＢＸのｙ軸(ワールド座標のｙ軸)と三角形の頂点１〜頂点２辺で分離平面の外積を分離軸とする判定(a22)
 	p1 = vT[1].y * (vT[0].x - vT[2].x) - vT[1].x * (vT[0].y - vT[2].y);
 	p2 = vT[2].y * vT[0].x - vT[2].x * vT[0].y;
 	r = eX * fabsf(f2.y) + eY * fabsf(f2.x);
 	if (max(-max(p1, p2), min(p1, p2)) > r)
 		return  false;
 
-	// �n�a�a�̖ʖ@���Ɉ�v���镪�����̔���
-	// �w��
+	// 自ＢＢＸの面法線に一致する分離軸の判定
+	// ｚ軸
 	if (max(vT[0].x, max(vT[1].x, vT[2].x)) < -eX || min(vT[0].x, min(vT[1].x, vT[2].x)) > eX)
 		return  false;
-	// �x��
+	// ｘ軸
 	if (max(vT[0].y, max(vT[1].y, vT[2].y)) < -eY || min(vT[0].y, min(vT[1].y, vT[2].y)) > eY)
 		return  false;
-	// �y��
+	// ｙ軸
 	if (max(vT[0].z, max(vT[1].z, vT[2].z)) < -eZ || min(vT[0].z, min(vT[1].z, vT[2].z)) > eZ)
 		return  false;
 
-	// �O�p�`�̖ʂ̖@���Ɉ�v���镪�����̔���	
+	// 三角形の面の法線に一致する分離軸の判定
 	VECTOR3 vNormal;
 	vNormal = cross(f0, f1);
 
@@ -678,28 +678,28 @@ bool CBBox::OBBCollisionTri(const VECTOR3* pTri, VECTOR3* vhit)
 	if (r > p0)
 		return  false;
 
-	// �������ʂ����݂��Ȃ��̂Łu�Փ˂��Ă���v
+	// 分離平面が見つからないので「衝突している」
 
-	// �Փˍ��W�̐ݒ�@�O�p�`�̒��S���q�b�g�ʒu�Ƃ���
+	// 衝突座標の設定　三角形の中心をヒット位置とする
 	*vhit = (*(pTri + 0) + *(pTri + 1) + *(pTri + 2)) / 3;
 
-	// �Փˍ��W�̐ݒ�@�O�p�`�̒��S�Ƃn�a�a���S�̒��_���q�b�g�ʒu�Ƃ���
+	// 衝突座標の設定　三角形の中心と自ＢＢＸ中心の中点をヒット位置とする
 	//*vhit = ( GetPositionVector(m_mWorld) + ( *(pTri+0) + *(pTri+1) + *(pTri+2) ) / 3 ) / 2;
 
 	return true;
 }
 
 //------------------------------------------------------------------------
-// �������ɓ��e���ꂽ���������瓊�e���������Z�o����
-// �i3�̓��ς̐�Βl�̘a�œ��e���������v�Z�j
-// �i������Sep�͕W��������Ă��邱�Ɓj
-// 
-// VECTOR3 *Sep : ������
-// VECTOR3 *e1  : �����P
-// VECTOR3 *e2  : �����Q 
-// VECTOR3 *e3  : �����R 
-// 
-// �߂�l�@float ���e������
+// 分離軸に投影された軸成分から投影線分長を算出する
+// (3つの軸成分の絶対値の和で投影線分長を計算)
+// (分離軸Sepは標準化されていること)
+//
+// VECTOR3 *Sep : 分離軸
+// VECTOR3 *e1  : 成分１
+// VECTOR3 *e2  : 成分２
+// VECTOR3 *e3  : 成分３
+//
+// 戻り値　float 投影線分長
 //------------------------------------------------------------------------
 float CBBox::LenSegOnSeparateAxis(const VECTOR3 *Sep, const VECTOR3 *e1, const VECTOR3 *e2, const VECTOR3 *e3)
 {
@@ -710,109 +710,107 @@ float CBBox::LenSegOnSeparateAxis(const VECTOR3 *Sep, const VECTOR3 *e1, const V
 }
 
 //------------------------------------------------------------------------  // -- 2021.2.4
-// �\���p�̃o�E���f�B���O�{�b�N�X�������_�����O����
-// 
-// �߂�l�@�Ȃ�
+// 表示用のバウンディングボックスをレンダリングする
+//
+// 戻り値　なし
 //------------------------------------------------------------------------
 void CBBox::Render()
 {
 	Render(m_mWorld, GameDevice()->m_mView, GameDevice()->m_mProj, GameDevice()->m_vLightDir, GameDevice()->m_vEyePt);
 }
 //------------------------------------------------------------------------  // -- 2021.2.4
-// �\���p�̃o�E���f�B���O�{�b�N�X�������_�����O����
-// 
-// (Simple.hlsli�̃V�F�[�_�[���g�p����)
-// 
-// const MATRIX4X4& mView    �r���[�}�g���b�N�X
-// const MATRIX4X4& mProj    �v���W�F�N�V�����}�g���b�N�X
-// const VECTOR3& vLight     ���C�g�̕���
-// const VECTOR3& vEye       ���_�ʒu
-// 
-// �߂�l�@�Ȃ�
+// 表示用のバウンディングボックスをレンダリングする
+//
+// (Simple.hlsliのシェーダーを使用する)
+//
+// const MATRIX4X4& mView    ビューマトリックス
+// const MATRIX4X4& mProj    プロジェクションマトリックス
+// const VECTOR3& vLight     ライトの方向
+// const VECTOR3& vEye       視点位置
+//
+// 戻り値　なし
 //------------------------------------------------------------------------
 void CBBox::Render(const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye)
 {
 	Render(m_mWorld, mView, mProj, vLight, vEye);
 }
 //------------------------------------------------------------------------  // -- 2021.2.4
-// �\���p�̃o�E���f�B���O�{�b�N�X�������_�����O����
-// 
-// (Simple.hlsli�̃V�F�[�_�[���g�p����)
-// 
-// const MATRIX4X4& mWorld   ���[���h�}�g���b�N�X
-// const MATRIX4X4& mView    �r���[�}�g���b�N�X
-// const MATRIX4X4& mProj    �v���W�F�N�V�����}�g���b�N�X
-// const VECTOR3& vLight     ���C�g�̕���
-// const VECTOR3& vEye       ���_�ʒu
-// 
-// �߂�l�@�Ȃ�
+// 表示用のバウンディングボックスをレンダリングする
+//
+// (Simple.hlsliのシェーダーを使用する)
+//
+// const MATRIX4X4& mWorld   ワールドマトリックス
+// const MATRIX4X4& mView    ビューマトリックス
+// const MATRIX4X4& mProj    プロジェクションマトリックス
+// const VECTOR3& vLight     ライトの方向
+// const VECTOR3& vEye       視点位置
+//
+// 戻り値　なし
 //------------------------------------------------------------------------
 void CBBox::Render(const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vLight, const VECTOR3& vEye)
 {
 
-	// �g�p����V�F�[�_�[�̓o�^	
+	// 使用するシェーダーの登録
 	m_pD3D->m_pDeviceContext->VSSetShader(m_pShader->m_pSimple_VS, nullptr, 0);
 	m_pD3D->m_pDeviceContext->PSSetShader(m_pShader->m_pSimple_PS, nullptr, 0);
 
-	// �V�F�[�_�[�̃R���X�^���g�o�b�t�@�[�Ɋe��f�[�^��n��	
+	// シェーダーのコンスタントバッファーに各種データを渡す
 	D3D11_MAPPED_SUBRESOURCE pData;
 	CONSTANT_BUFFER_WVLED cb;
 	if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferWVLED, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
 	{
-		// ���[���h�s���n��
+		// ワールド行列を渡す
 		cb.mW = XMMatrixTranspose(mWorld);                        // -- 2021.2.4
 
-		// ���[���h�A�J�����A�ˉe�s���n��
+		// ワールド、カメラ、射影行列を渡す
 		cb.mWVP = XMMatrixTranspose(mWorld * mView * mProj);      // -- 2021.2.4
 
-		//���C�g������n��
+		//ライト方向を渡す
 		cb.vLightDir = VECTOR4(vLight.x, vLight.y, vLight.z, 0);
 
-		// ���_��n��
+		// 視点を渡す
 		cb.vEyePos = VECTOR4(vEye.x, vEye.y, vEye.z, 1);
 
-		//�J���[��n��
+		//カラーを渡す
 		cb.vDiffuse = m_vDiffuse;
 
-		// �e�����n���B(�g���Ă��Ȃ�)    // -- 2020.12.15
+		// 各種情報を渡す。(使っていない)    // -- 2020.12.15
 		cb.vDrawInfo = VECTOR4(0, 0, 0, 0);
 
 		memcpy_s(pData.pData, pData.RowPitch, (void*)(&cb), sizeof(cb));
 		m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferWVLED, 0);
 	}
 
-	// ���̃R���X�^���g�o�b�t�@�[���g���V�F�[�_�[�̓o�^
+	// このコンスタントバッファーを使うシェーダーの登録
 	m_pD3D->m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferWVLED);
 	m_pD3D->m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferWVLED);
 
 
-	//�v���~�e�B�u�E�g�|���W�[���Z�b�g
+	//プリミティブ・トポロジーをセット
 	m_pD3D->m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 
-	// �o�[�e�b�N�X�o�b�t�@�[���Z�b�g
+	// バーテックスバッファーをセット
 	UINT stride = sizeof(BBOX_VERTEX);
 	UINT offset = 0;
 	m_pD3D->m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
 
-	// �C���f�b�N�X�o�b�t�@�[���Z�b�g
+	// インデックスバッファーをセット
 	m_pD3D->m_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 
-	// ���_�C���v�b�g���C�A�E�g���Z�b�g
+	// 頂点インプットレイアウトをセット
 	m_pD3D->m_pDeviceContext->IASetInputLayout(m_pShader->m_pSimple_VertexLayout);
 
 
-	// �e�N�X�`���[�T���v���[���V�F�[�_�[�ɓn��
+	// テクスチャーサンプラーをシェーダーに渡す
 	m_pD3D->m_pDeviceContext->PSSetSamplers(0, 1, &m_pD3D->m_pSampleLinear);
 
-	// �e�N�X�`���[�Ȃ�
+	// テクスチャーなし
 	ID3D11ShaderResourceView* Nothing[1] = { 0 };
 	m_pD3D->m_pDeviceContext->PSSetShaderResources(0, 1, Nothing);
 
-	// �v���~�e�B�u�������_�����O
+	// プリミティブをレンダリング
 	m_pD3D->m_pDeviceContext->DrawIndexed(2 * 3 * 6, 0, 0);
-
-
 }
 

@@ -11,7 +11,18 @@ CEnemyBase::CEnemyBase()
     : m_velocityY(0.0f), m_pGround(nullptr)
 {
     m_pCurrentState = nullptr;
+    m_pBBox = nullptr;
 }
+
+CBBox* CEnemyBase::CreateBBox()
+{
+    if (m_pBBox == nullptr && m_pMesh != nullptr)
+    {
+        m_pBBox = new CBBox(m_pMesh->m_vMin, m_pMesh->m_vMax);
+    }
+    return m_pBBox;
+}
+
 
 void CEnemyBase::SetState(CBaseState::Type type)
 {
@@ -22,6 +33,7 @@ void CEnemyBase::SetState(CBaseState::Type type)
 
 CEnemyBase::~CEnemyBase()
 {
+    SAFE_DELETE(m_pBBox);
 }
 
 void CEnemyBase::Update()
@@ -149,3 +161,12 @@ std::vector<CEnemyBase*> CEnemyBase::GetNearbyEnemies() const
 
     return manager->GetNearbyEnemies(const_cast<CEnemyBase*>(this), pos, size);
 }
+
+void CEnemyBase::UpdateBBox()
+{
+    if (m_pBBox != nullptr)
+    {
+        m_pBBox->m_mWorld = transform.matrix();
+    }
+}
+
