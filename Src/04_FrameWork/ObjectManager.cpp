@@ -57,13 +57,19 @@ void ObjectManager::Update()
 		if (node.active) {
 			obj->Update();
 		}
-		if (node.destroyMe) {
-			deleteDrawObject(obj);
-			delete obj;
-			it = updateObjects.erase(it);
-			continue;
-		}
 		it++;
+	}
+
+	for (auto it = updateObjects.begin(); it != updateObjects.end(); ) {
+		UpdateObject& node = *it;
+		if (node.destroyMe) {
+			deleteDrawObject(node.object);
+			delete node.object;
+			it = updateObjects.erase(it);
+		}
+		else {
+			it++;
+		}
 	}
 }
 

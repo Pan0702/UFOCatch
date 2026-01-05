@@ -38,6 +38,11 @@ CEnemyBase::~CEnemyBase()
 
 void CEnemyBase::Update()
 {
+    if (m_pCurrentState != nullptr && m_pCurrentState == m_cubeStates[CBaseState::Type::DESTROY])
+    {
+        return;
+    }
+
     ApplyGravity();
 
     if (m_pCurrentState)
@@ -167,6 +172,67 @@ void CEnemyBase::UpdateBBox()
     if (m_pBBox != nullptr)
     {
         m_pBBox->m_mWorld = transform.matrix();
+    }
+}
+
+void CEnemyBase::ResolveOBBCollisions()
+{
+    if (m_pBBox == nullptr) return;
+
+    // 四分木から周辺のエネミーを効率的に取得//
+    std::vector<CEnemyBase*> nearbyEnemies = GetNearbyEnemies();
+
+    // 周辺エネミーと当たり判定//
+    for (auto* enemy : nearbyEnemies)
+    {
+        if (enemy == this) continue;  // 自分自身はスキップ//
+        if (enemy->GetBBox() == nullptr) continue;
+
+        VECTOR3 hitPos, hitNormal;
+        if (m_pBBox->OBBCollisionDetection(enemy->GetBBox(), &hitPos, &hitNormal))
+        {
+            // 衝突した場合、押し戻し処理を実行//
+            CalculateAndApplyPushback(enemy);
+        }
+    }
+}
+
+void CEnemyBase::CalculateAndApplyPushback(CEnemyBase* other)
+{
+    if (m_pBBox == nullptr || other == nullptr || other->GetBBox() == nullptr) return;
+
+    // 自分と相手のOBB中心座標を計算//
+    MATRIX4X4 myCenterMat = XMMatrixTranslation(
+        m_pBBox->m_fLengthX + m_pBBox->m_vMin.x,
+        m_pBBox->m_fLengthY + m_pBBox->m_vMin.y,
+        m_pBBox->m_fLengthZ + m_pBBox->m_vMin.z
+    );
+    myCenterMat = myCenterMat * m_pBBox->m_mWorld;
+    VECTOR3 myCenter = VECTOR3(myCenterMat._41, myCenterMat._42, myCenterMat._43);
+
+    CBBox* otherBBox = other->GetBBox();
+    MATRIX4X4 otherCenterMat = XMMatrixTranslation(
+        otherBBox->m_fLengthX + otherBBox->m_vMin.x,
+        otherBBox->m_fLengthY + otherBBox->m_vMin.y,
+        otherBBox->m_fLengthZ + otherBBox->m_vMin.z
+    );
+    otherCenterMat = otherCenterMat * otherBBox->m_mWorld;
+    VECTOR3 otherCenter = VECTOR3(otherCenterMat._41, otherCenterMat._42, otherCenterMat._43);
+
+    // 押し戻しベクトルを計算）//
+    VECTOR3 pushDirection = myCenter - otherCenter;
+    pushDirection.y = 0.0f;  // Y成分を無視してXZ平面のみで押し戻す//
+    float distance = magnitude(pushDirection);
+
+    if (distance > 0.001f)  // normalize()内でのゼロ除算を避ける//
+    {
+        pushDirection = normalize(pushDirection);
+
+        // 押し戻し距離//
+        float pushDistance = 0.1f * SceneManager::DeltaTime() * 60.0f;
+
+        // 位置を更新//
+        transform.position += pushDirection * pushDistance;
     }
 }
 

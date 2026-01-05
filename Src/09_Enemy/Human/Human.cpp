@@ -44,59 +44,16 @@ CHuman::~CHuman()
     m_cubeStates.clear();
 }
 
-void CHuman::CollisionCheck()
-{
-    // 四分木から周辺のエネミーを効率的に取得
-    std::vector<CEnemyBase*> nearbyEnemies = GetNearbyEnemies();
-    // 周辺エネミーと当たり判定
-    for (auto* enemy : nearbyEnemies)
-    {
-        if (enemy == this) continue;  // 自分自身はスキップ
-        if (enemy->GetBBox() == nullptr) continue;
-
-        VECTOR3 hitPos, hitNormal;
-        if (m_pBBox->OBBCollisionDetection(enemy->GetBBox(), &hitPos, &hitNormal))
-        {
-            // 衝突した！
-            // 自分と相手のOBB中心座標を計算
-            MATRIX4X4 myCenterMat = XMMatrixTranslation(
-                m_pBBox->m_fLengthX + m_pBBox->m_vMin.x,
-                m_pBBox->m_fLengthY + m_pBBox->m_vMin.y,
-                m_pBBox->m_fLengthZ + m_pBBox->m_vMin.z
-            );
-            myCenterMat = myCenterMat * m_pBBox->m_mWorld;
-            VECTOR3 myCenter = VECTOR3(myCenterMat._41, myCenterMat._42, myCenterMat._43);
-
-            CBBox* enemyBBox = enemy->GetBBox();
-            MATRIX4X4 enemyCenterMat = XMMatrixTranslation(
-                enemyBBox->m_fLengthX + enemyBBox->m_vMin.x,
-                enemyBBox->m_fLengthY + enemyBBox->m_vMin.y,
-                enemyBBox->m_fLengthZ + enemyBBox->m_vMin.z
-            );
-            enemyCenterMat = enemyCenterMat * enemyBBox->m_mWorld;
-            VECTOR3 enemyCenter = VECTOR3(enemyCenterMat._41, enemyCenterMat._42, enemyCenterMat._43);
-
-            // 押し戻しベクトルを計算（自分から相手への方向の逆）
-            VECTOR3 pushDirection = myCenter - enemyCenter;
-            pushDirection.y = 0.0f;  // Y成分を無視してXZ平面のみで押し戻す
-            float distance = magnitude(pushDirection);
-
-            if (distance > 0.001f)  // normalize()内でのゼロ除算を避ける
-            {
-                pushDirection = normalize(pushDirection);
-
-                // 押し戻し距離（フレーム毎に少しずつ押し戻す）
-                float pushDistance = 0.1f * SceneManager::DeltaTime() * 60.0f;
-
-                // 位置を更新
-                transform.position += pushDirection * pushDistance;
-            }
-        }
-    }
-}
-
 void CHuman::Update()
 {
+    CEnemyBase::Update();
+
+    // 削除フラグが立っている場合は、これ以上の処理を行わない
+    if (m_pCurrentState != nullptr && m_pCurrentState == m_cubeStates[CBaseState::Type::DESTROY])
+    {
+        return;
+    }
+
     m_pAnimator->Update();
     CVisionSystem*vision = ObjectManager::FindGameObject<CVisionSystem>();
     m_inSight = vision->SectorCircleCollision(ToVec2XZ(transform.position), transform.rotation.y)
@@ -114,7 +71,7 @@ void CHuman::Update()
         ObjectManager::FindGameObject<CPlayerHP>()->ResetFlag();
     }
     AtkArea();
-    CollisionCheck();
+    ResolveOBBCollisions();
     UpdateBBox();
 }
 
