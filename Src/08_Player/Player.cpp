@@ -238,41 +238,49 @@ void CPlayer::DrawCircle(const VECTOR3& center, float radius, DWORD color)
 
 void CPlayer::DrawSuctionCircle()
 {
+    // 吸い込み円描画の定数 //
+    static constexpr float GROUND_OFFSET = 0.01f;        // 地面から少し浮かせる高さ（Zファイティング回避用） //
+    static constexpr float CIRCLE_DIAMETER_SCALE = 2.0f; // 半径から直径への変換倍率 //
+    static constexpr float CIRCLE_DEPTH = 1.0f;          // 円の奥行き（Z軸方向のスケール） //
+    static constexpr float GROUND_ROTATION = -XM_PI / 2.0f; // 地面に平行にするための回転角度（-90度） //
+    static constexpr float CIRCLE_ALPHA = 0.5f;          // 円の透明度（半透明） //
+    static constexpr float SPRITE_SIZE = 1.0f;           // スプライトのベースサイズ（ワールド行列でスケールするため） //
+
     CSprite spr;
 
-    // 地面（Y=0）のUFO真下に配置する位置
-    VECTOR3 groundPos = VECTOR3(transform.position.x, 0.01f, transform.position.z);
+    // 地面（Y=0）のUFO真下に配置する位置 //
+    VECTOR3 groundPos = VECTOR3(transform.position.x, GROUND_OFFSET, transform.position.z);
 
-    // ワールドマトリックスを作成
-    // 1. スケール：吸い込み半径に合わせる
-    MATRIX4X4 mScale = XMMatrixScaling(m_coneRadius * 2.0f, m_coneRadius * 2.0f, 1.0f);
-
-    // 2. 回転：X軸周りに-90度回転して地面に平行にする
-    MATRIX4X4 mRotation = XMMatrixRotationX(-XM_PI / 2.0f);
-
-    // 3. 平行移動：地面のUFO真下へ
+    // ワールドマトリックスを作成 //
+    // スケール：吸い込み半径に合わせる //
+    MATRIX4X4 mScale = XMMatrixScaling(
+        m_coneRadius * CIRCLE_DIAMETER_SCALE,
+        m_coneRadius * CIRCLE_DIAMETER_SCALE,
+        CIRCLE_DEPTH
+    );
+    // 回転：X軸周りに-90度回転して地面に平行にする //
+    MATRIX4X4 mRotation = XMMatrixRotationX(GROUND_ROTATION);
+    // 平行移動：地面のUFO真下へ //
     MATRIX4X4 mTranslation = XMMatrixTranslation(groundPos.x, groundPos.y, groundPos.z);
-
-    // ワールドマトリックスを合成（スケール → 回転 → 平行移動）
+    // ワールドマトリックスを合成（スケール → 回転 → 平行移動） //
     MATRIX4X4 mWorld = mScale * mRotation * mTranslation;
-
-    // カメラのビュー・プロジェクションマトリックスを取得
+    // カメラのビュー・プロジェクションマトリックスを取得 //
     MATRIX4X4 mView = GameDevice()->m_mView;
     MATRIX4X4 mProj = GameDevice()->m_mProj;
 
-    // テクスチャのサイズを取得
+    // テクスチャのサイズを取得 //
     DWORD texWidth = m_pCircleImage->m_dwImageWidth;
     DWORD texHeight = m_pCircleImage->m_dwImageHeight;
 
-    // 円形スプライトを描画（アルファは0.5で半透明に）
+    // 円形スプライトを描画 //
     spr.Draw3DWithWorldMatrix(
         m_pCircleImage,
         mWorld,
         mView,
         mProj,
-        VECTOR2(1.0f, 1.0f),                          // サイズ（ワールドマトリックスでスケールするので1.0）
-        VECTOR2(0, 0),                                // テクスチャ座標（左上）
-        VECTOR2((float)texWidth, (float)texHeight),   // テクスチャサイズ（全体を使用）
-        0.5f                                          // アルファ（半透明）
+        VECTOR2(SPRITE_SIZE, SPRITE_SIZE),            // サイズ（ワールドマトリックスでスケールするので1.0） //
+        VECTOR2(0, 0),                                // テクスチャ座標（左上） //
+        VECTOR2((float)texWidth, (float)texHeight),   // テクスチャサイズ（全体を使用） //
+        CIRCLE_ALPHA                                  // アルファ（半透明） //
     );
 }
