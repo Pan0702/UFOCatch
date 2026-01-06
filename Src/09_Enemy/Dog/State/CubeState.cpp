@@ -36,7 +36,7 @@ CCubeIdleState::CCubeIdleState(CACube* cube)
 void CCubeIdleState::Enter()
 {
     stateIdle = static_cast<int>(round(Randomf(0, 1)));
-    if (stateIdle)
+    if (stateIdle == 1)
     {
         m_pOwner->GetAnimator()->MergePlay(A_IDEL);
         m_pOwner->GetAnimator()->SetPlaySpeed(1.0f);
@@ -113,7 +113,7 @@ void CCubeWalkState::Enter()
         m_turnAmount = Randomf(-TURN_ANGLE, TURN_ANGLE) * DegToRad;
         m_moveAmount = Randomf(MIN_MOVE_AMOUNT, MAX_MOVE_AMOUNT);
         m_position = m_pOwner->GetTransform().position;
-        if (BoundaryCheck(m_pOwner->GetMoveAreaSize()))
+        if (BoundaryCheck(m_pOwner->GetAreaSize()))
         {
             boundaryFlag = true;
         }

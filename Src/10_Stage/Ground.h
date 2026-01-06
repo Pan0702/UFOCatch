@@ -3,11 +3,11 @@
 class CGround : public Object3D
 {
 public:
-    CGround();
+    CGround(const char* mesh);
+
 private:
     ~CGround();
     void Update();
     void Draw() override;
-    VECTOR3 max;
-    VECTOR3 min;
+   // bool Init(const char* filePath);
 };

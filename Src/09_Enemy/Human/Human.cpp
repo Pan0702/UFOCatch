@@ -6,6 +6,7 @@
 #include "State/HumanState.h"
 #include "../System/AnimalManager.h"
 #include "../../06_GameLib/BBox.h"
+#include "../../10_Stage/Ground.h"
 
 namespace
 {
@@ -30,6 +31,7 @@ CHuman::CHuman(VECTOR3 pos, VECTOR2 areaSize)
     m_pCurrentState->Enter();
     m_pCurrentState->SetNextState();
     m_pFunShape = new CFunShape();
+    m_pGround = ObjectManager::FindGameObject<CGround>();
     m_pBBox = CreateBBox();
 }
 

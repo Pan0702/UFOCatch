@@ -37,10 +37,6 @@ void CDisplayInfo::Update()
             m_prevProportion = 0;
         }
     }
-
-    ImGui::Begin("DisplayInfo");
-    ImGui::SliderFloat("tst",&tmp,0,XM_2PI);
-    ImGui::End();
 }
 
 void CDisplayInfo::Draw()

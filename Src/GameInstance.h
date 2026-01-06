@@ -12,8 +12,8 @@ public:
     int GetMaxScore(){return m_maxScore;}
     int GetDiscovery(){return m_discovery;}
     int GetSaw(){return m_saw;}
-    void AddDiscovery(){m_discovery++;}
-    void AddSaw(){m_saw++;}
+    void AddDiscovery(int dis){m_discovery += dis;}
+    void AddSaw(int saw){m_saw += saw;}
 
 private:
     int m_score;

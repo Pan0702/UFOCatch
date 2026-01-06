@@ -25,7 +25,7 @@ public:
     void DestroyCube();
 
     void AddPos(const VECTOR3& pos) { transform.position = transform.position + pos; }
-    VECTOR2 GetMoveAreaSize() const { return m_moveAreaSize; }
+    VECTOR2 GetAreaSize() const { return m_areaSize; }
     void SetRotateY(float r){transform.rotation.y = r;}
 
 private:
@@ -38,6 +38,6 @@ private:
 private:
     bool m_isInConeArea;
     const VECTOR3 m_basePos;
-    const VECTOR2 m_moveAreaSize;
+    const VECTOR2 m_areaSize;
     CPlayer* m_pPlayer;
 };

@@ -13,10 +13,9 @@
 
 PlayScene::PlayScene()
 {
-    
+    new CGround("data/Ground/tesg20x20m.mesh");
     Instantiate<CPlayerCamera>();
     SingleInstantiate<CAnimalManager>();
-   Instantiate<CGround>();
     //new CTimeLimit(30);
     Instantiate<CAnimalFactor>();
     Instantiate<CPlayer>();

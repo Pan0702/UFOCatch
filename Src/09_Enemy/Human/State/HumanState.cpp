@@ -52,7 +52,7 @@ void CHumanIdleState::Enter()
     frameCount = 0;
     currentAngle = 0;
     animationTime = 0;
-    stateIdle = static_cast<int>(round(Randomf(0, 1)));
+    stateIdle = static_cast<int>(std::round(Randomf(0, 1)));
     if (stateIdle)
     {
         m_pOwner->GetAnimator()->MergePlay(A_IDEL);

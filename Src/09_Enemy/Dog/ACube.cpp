@@ -11,7 +11,7 @@
 #include "../../06_GameLib/BBox.h"
 
 CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
-    : m_basePos(iniPos), m_moveAreaSize(moveAreaSize)
+    : m_basePos(iniPos), m_areaSize(moveAreaSize)
 {
     m_pMesh = ObjectManager::FindGameObject<CAnimalManager>()->MeshList("Dog");
     m_pAnimator = new Animator();
@@ -26,7 +26,7 @@ CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     m_cubeStates[CBaseState::Type::WALK] = new CCubeWalkState(this);
     m_cubeStates[CBaseState::Type::SUCTION] = new CCubeSuction(this);
     m_cubeStates[CBaseState::Type::DESTROY] = new CCubeDestroy(this);
-    m_pCurrentState = m_cubeStates[CBaseState::Type::IDLE];
+    m_pCurrentState = m_cubeStates[CBaseState::Type::WALK];
     m_pCurrentState->Enter();
     m_pBBox = CreateBBox();
 }

@@ -26,6 +26,7 @@ void CPlayerHP::SubHP()
     {
         if (not m_found)
         {
+            ObjectManager::FindGameObject<CGameInstance>()->AddSaw(1);
             m_seemToFind = true;
         }
     }
@@ -44,7 +45,7 @@ void CPlayerHP::Update()
             m_invincible = 0;
             m_found = true;
             m_seemToFind = false;
-            pGI->AddDiscovery();
+            pGI->AddDiscovery(1);
         }
     }
     //見つかったか
