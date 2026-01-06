@@ -31,13 +31,16 @@ public:
     bool GetIsSuckUp() const { return m_SuctionActive; }
 
 private:
-    
+
     void Update() override;
     void Draw() override;
-    
+
     //判定円の描画
     ///Debug///
     void DrawCircle(const VECTOR3& center, float radius, DWORD color);
+
+    //吸い込み円の描画（地面投影）
+    void DrawSuctionCircle();
     
     void HandleMovementInput();
     
@@ -66,7 +69,10 @@ private:
     // Lerp用の変数
     LerpValue m_heightLerp;
     LerpValue m_radiusLerp;
-    
+
+    // 吸い込み円描画用
+    CSpriteImage* m_pCircleImage;
+
 };
 
 

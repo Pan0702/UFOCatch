@@ -7,6 +7,7 @@
 #include "PHP.h"
 #include "../06_GameLib/Lerp.h"
 #include "../11_GameSystem/VisionSystem.h"
+#include "../06_GameLib/Sprite3D.h"
 
 CPlayer::CPlayer()
 {
@@ -24,6 +25,9 @@ CPlayer::CPlayer()
     transform.scale = VECTOR3(0.5f, 0.5f, 0.5f);
     m_SuctionActive = false;
     m_draw = true;
+
+    // 吸い込み円用のテクスチャを読み込み
+    m_pCircleImage = new CSpriteImage(TEXT("data/Circle.png"));
 }
 
 CPlayer::~CPlayer() = default;
@@ -195,9 +199,11 @@ void CPlayer::Draw()
     {
         Object3D::Draw();
     }
-    //DrawCircle(VECTOR3(transform.position.x, 0, transform.position.z), m_coneRadius, RGB(0, 255, 0));
-    // シェーダーを使った円の描画（薄い灰色、影のような感じ）
-    DrawCircleShader(VECTOR3(transform.position.x, 0, transform.position.z), m_coneRadius, VECTOR4(0.3f, 0.3f, 0.3f, 0.5f));
+
+    // 吸い込み円を描画
+    DrawSuctionCircle();
+
+    DrawCircle(VECTOR3(transform.position.x, 0, transform.position.z), m_coneRadius, RGB(0, 255, 0));
 }
 
 ///Debug///
@@ -228,4 +234,45 @@ void CPlayer::DrawCircle(const VECTOR3& center, float radius, DWORD color)
     spr.DrawLine3D(transform.position, VECTOR3(center.x - m_coneRadius, center.y, center.z), color);
     spr.DrawLine3D(transform.position, VECTOR3(center.x, center.y, center.z + m_coneRadius), color);
     spr.DrawLine3D(transform.position, VECTOR3(center.x, center.y, center.z - m_coneRadius), color);
+}
+
+void CPlayer::DrawSuctionCircle()
+{
+    CSprite spr;
+
+    // 地面（Y=0）のUFO真下に配置する位置
+    VECTOR3 groundPos = VECTOR3(transform.position.x, 0.01f, transform.position.z);
+
+    // ワールドマトリックスを作成
+    // 1. スケール：吸い込み半径に合わせる
+    MATRIX4X4 mScale = XMMatrixScaling(m_coneRadius * 2.0f, m_coneRadius * 2.0f, 1.0f);
+
+    // 2. 回転：X軸周りに-90度回転して地面に平行にする
+    MATRIX4X4 mRotation = XMMatrixRotationX(-XM_PI / 2.0f);
+
+    // 3. 平行移動：地面のUFO真下へ
+    MATRIX4X4 mTranslation = XMMatrixTranslation(groundPos.x, groundPos.y, groundPos.z);
+
+    // ワールドマトリックスを合成（スケール → 回転 → 平行移動）
+    MATRIX4X4 mWorld = mScale * mRotation * mTranslation;
+
+    // カメラのビュー・プロジェクションマトリックスを取得
+    MATRIX4X4 mView = GameDevice()->m_mView;
+    MATRIX4X4 mProj = GameDevice()->m_mProj;
+
+    // テクスチャのサイズを取得
+    DWORD texWidth = m_pCircleImage->m_dwImageWidth;
+    DWORD texHeight = m_pCircleImage->m_dwImageHeight;
+
+    // 円形スプライトを描画（アルファは0.5で半透明に）
+    spr.Draw3DWithWorldMatrix(
+        m_pCircleImage,
+        mWorld,
+        mView,
+        mProj,
+        VECTOR2(1.0f, 1.0f),                          // サイズ（ワールドマトリックスでスケールするので1.0）
+        VECTOR2(0, 0),                                // テクスチャ座標（左上）
+        VECTOR2((float)texWidth, (float)texHeight),   // テクスチャサイズ（全体を使用）
+        0.5f                                          // アルファ（半透明）
+    );
 }
