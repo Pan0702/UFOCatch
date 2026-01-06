@@ -8,7 +8,6 @@ CResultScene::CResultScene()
     m_pSprite = new CSprite;
     m_pResultImage = new CSpriteImage("data/ScoreBG.jpg");
     m_pRankImage = new CSpriteImage("data/PlayUIParts.png");
-    m_maxScore = 20 * 100;
     CalcRank();
 
 }
@@ -49,8 +48,9 @@ void CResultScene::Draw()
 
 void CResultScene::CalcRank()
 {
-    m_score = ObjectManager::FindGameObject<CGameInstance>()->GetScore();
-    float ratio = avoidZero(static_cast<float>(m_score) / static_cast<float>(m_maxScore));
+    CGameInstance* pGI = ObjectManager::FindGameObject<CGameInstance>();
+    m_score = pGI->GetScore(); - (pGI->GetDiscovery() * 3) - (pGI->GetSaw());
+    float ratio = avoidZero(static_cast<float>(m_score) / static_cast<float>(pGI->GetMaxScore()));
     if (ratio < 0.25f)
     {
         m_rankImageNum = 3;

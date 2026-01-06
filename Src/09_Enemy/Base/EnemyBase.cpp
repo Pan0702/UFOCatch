@@ -60,17 +60,17 @@ void CEnemyBase::ApplyGravity()
     }
     static constexpr float GRAVITY = 9.8f;
 
-    static constexpr float GROUND_SKIN = 0.02f; // ?????????????h?~????????? //
+    static constexpr float GROUND_SKIN = 0.02f; // 地面との接触時のめり込み防止用のスキン値 //
     m_velocityY -= GRAVITY * SceneManager::DeltaTime();
     const float dt = SceneManager::DeltaTime();
     const float nextY = transform.position.y + m_velocityY * dt;
 
     if (m_pGround != nullptr)
     {
-        // ???C???????u??????�H??A??????u???????????????g???l?????O??h?~ //
+        // 現在の位置と次の位置を使って、オフセットを考慮したレイキャストの範囲を決定 //
         const float fromY = transform.position.y + GROUND_CHECK_OFFSET;
         const float toY = nextY - GROUND_CHECK_OFFSET;
-        // ?~???????n??`?F?b?N //
+        // 下向きの地面チェック //
         if (toY < fromY)
         {
             const VECTOR3 rayStart = VECTOR3(transform.position.x, fromY, transform.position.z);
@@ -81,7 +81,7 @@ void CEnemyBase::ApplyGravity()
 
             if (hit)
             {
-                // ????????????????????h?? //
+                // 衝突した場合、地面の位置にスキン値を加えて位置を調整 //
                 transform.position.y = collInfo.hitPosition.y + GROUND_SKIN;
                 m_velocityY = 0.0f;
                 return;
@@ -90,17 +90,6 @@ void CEnemyBase::ApplyGravity()
     }
 
     transform.position.y = nextY;
-}
-
-bool CEnemyBase::IsGrounded() const
-{
-    if (m_pGround == nullptr) return false;
-
-    VECTOR3 rayStart = transform.position + VECTOR3(0, GROUND_CHECK_OFFSET, 0);
-    VECTOR3 rayEnd = transform.position + VECTOR3(0, -GROUND_CHECK_OFFSET, 0);
-
-    MeshCollider::CollInfo collInfo;
-    return m_pGround->HitLineToMesh(rayStart, rayEnd, &collInfo);
 }
 
 bool CEnemyBase::GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const
@@ -152,18 +141,21 @@ bool CEnemyBase::GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const
 
 std::vector<CEnemyBase*> CEnemyBase::GetNearbyEnemies() const
 {
+    // AnimalManagerを取得 //
     CAnimalManager* manager = ObjectManager::FindGameObject<CAnimalManager>();
     if (manager == nullptr)
     {
         return std::vector<CEnemyBase*>();
     }
 
+    // 自分の2D境界ボックス（XZ平面での位置とサイズ）を取得 //
     VECTOR2 pos, size;
     if (!GetBounds2D(pos, size))
     {
         return std::vector<CEnemyBase*>();
     }
 
+    // マネージャーの四分木を使って、周辺のエネミーを効率的に取得 //
     return manager->GetNearbyEnemies(const_cast<CEnemyBase*>(this), pos, size);
 }
 
@@ -192,44 +184,51 @@ void CEnemyBase::ResolveOBBCollisions()
         if (m_pBBox->OBBCollisionDetection(enemy->GetBBox(), &hitPos, &hitNormal))
         {
             // 衝突した場合、押し戻し処理を実行//
-            CalculateAndApplyPushback(enemy);
+            CalcApplyPushback(enemy);
         }
     }
 }
 
-void CEnemyBase::CalculateAndApplyPushback(CEnemyBase* other)
+void CEnemyBase::CalcApplyPushback(CEnemyBase* other)
 {
     if (m_pBBox == nullptr || other == nullptr || other->GetBBox() == nullptr) return;
-
+    
     // 自分と相手のOBB中心座標を計算//
     MATRIX4X4 myCenterMat = XMMatrixTranslation(
         m_pBBox->m_fLengthX + m_pBBox->m_vMin.x,
         m_pBBox->m_fLengthY + m_pBBox->m_vMin.y,
         m_pBBox->m_fLengthZ + m_pBBox->m_vMin.z
     );
+    // ワールド空間に変換//
     myCenterMat = myCenterMat * m_pBBox->m_mWorld;
-    VECTOR3 myCenter = VECTOR3(myCenterMat._41, myCenterMat._42, myCenterMat._43);
+    // 行列から位置成分を抽出して自分の中心座標を取得//
+    VECTOR3 myCenter =GetPositionVector(myCenterMat);
 
+    // 相手のOBB中心座標を計算//
     CBBox* otherBBox = other->GetBBox();
     MATRIX4X4 otherCenterMat = XMMatrixTranslation(
         otherBBox->m_fLengthX + otherBBox->m_vMin.x,
         otherBBox->m_fLengthY + otherBBox->m_vMin.y,
         otherBBox->m_fLengthZ + otherBBox->m_vMin.z
     );
+    // ワールド空間に変換//
     otherCenterMat = otherCenterMat * otherBBox->m_mWorld;
-    VECTOR3 otherCenter = VECTOR3(otherCenterMat._41, otherCenterMat._42, otherCenterMat._43);
+    // 行列から位置成分を抽出して相手の中心座標を取得//
+    VECTOR3 otherCenter =  GetPositionVector(otherCenterMat);
 
-    // 押し戻しベクトルを計算）//
+    // 押し戻しベクトルを計算//
     VECTOR3 pushDirection = myCenter - otherCenter;
     pushDirection.y = 0.0f;  // Y成分を無視してXZ平面のみで押し戻す//
     float distance = magnitude(pushDirection);
 
-    if (distance > 0.001f)  // normalize()内でのゼロ除算を避ける//
+    if (distance > 0.001f)  // 0除算をnormで起こさないために値がい小さい場合はスキップ//
     {
         pushDirection = normalize(pushDirection);
 
+        static constexpr float PUSHBACK_SPEED = 6.0f;  // 1秒あたりの押し戻し速度
+
         // 押し戻し距離//
-        float pushDistance = 0.1f * SceneManager::DeltaTime() * 60.0f;
+        float pushDistance = PUSHBACK_SPEED * SceneManager::DeltaTime();
 
         // 位置を更新//
         transform.position += pushDirection * pushDistance;

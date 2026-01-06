@@ -3,6 +3,7 @@
 #include <iso646.h>
 
 #include "Player.h"
+#include "../GameInstance.h"
 #include "../07_Scene/PlayScene.h"
 
 CPlayerHP::CPlayerHP(const int& hp)
@@ -32,6 +33,7 @@ void CPlayerHP::SubHP()
 
 void CPlayerHP::Update()
 {
+    CGameInstance* pGI = ObjectManager::FindGameObject<CGameInstance>();
     //疑惑でみつかったか
     if (m_seemToFind)
     {
@@ -42,6 +44,7 @@ void CPlayerHP::Update()
             m_invincible = 0;
             m_found = true;
             m_seemToFind = false;
+            pGI->AddDiscovery();
         }
     }
     //見つかったか

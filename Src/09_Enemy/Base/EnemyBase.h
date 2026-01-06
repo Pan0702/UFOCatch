@@ -26,8 +26,7 @@ public:
 protected:
     // 物理演算
     void ApplyGravity();  // 重力を適用し、地面との衝突判定を行う
-    bool IsGrounded() const;  // エネミーが地面に接地しているかを判定
-    virtual bool ShouldApplyGravity() const { return true; }  // 重力を適用すべきかを判定（サブクラスでカスタマイズ可能）
+    virtual bool ShouldApplyGravity() const { return true; }  // 重力を適用すべきかを判定
 
     // バウンディングボックス管理
     void UpdateBBox();  // バウンディングボックスのワールド行列を更新
@@ -35,7 +34,7 @@ protected:
 
     // OBB衝突判定と押し戻し処理
     void ResolveOBBCollisions();  // 周辺エネミーとのOBB衝突を検出し、押し戻し処理を実行
-    virtual void CalculateAndApplyPushback(CEnemyBase* other);  // 衝突相手との押し戻しベクトルを計算して適用（サブクラスでカスタマイズ可能）
+    virtual void CalcApplyPushback(CEnemyBase* other);  // 衝突相手との押し戻しベクトルを計算して適用
     
 
     CBaseState* m_pCurrentState;

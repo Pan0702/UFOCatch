@@ -3,6 +3,7 @@
 #include "PCamera.h"
 #include <iostream>
 #include <algorithm>
+#include <vector>
 #include "PHP.h"
 #include "../06_GameLib/Lerp.h"
 #include "../11_GameSystem/VisionSystem.h"
@@ -29,16 +30,17 @@ CPlayer::~CPlayer() = default;
 
 void CPlayer::Update()
 {
-    if (not m_SuctionActive)
+    if (!m_SuctionActive)
     {
         HandleMovementInput();
     }
     //吸い込みキーの状態を取得
 
-    if (not ObjectManager::FindGameObject<CPlayerHP>()->GetFoundFlag())
+    if (!ObjectManager::FindGameObject<CPlayerHP>()->GetFoundFlag())
     {
         m_SuctionActive = GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_J);
-    }else
+    }
+    else
     {
         m_SuctionActive = false;
     }
@@ -193,7 +195,9 @@ void CPlayer::Draw()
     {
         Object3D::Draw();
     }
-    DrawCircle(VECTOR3(transform.position.x, 0, transform.position.z), m_coneRadius, RGB(0, 255, 0));
+    //DrawCircle(VECTOR3(transform.position.x, 0, transform.position.z), m_coneRadius, RGB(0, 255, 0));
+    // シェーダーを使った円の描画（薄い灰色、影のような感じ）
+    DrawCircleShader(VECTOR3(transform.position.x, 0, transform.position.z), m_coneRadius, VECTOR4(0.3f, 0.3f, 0.3f, 0.5f));
 }
 
 ///Debug///
