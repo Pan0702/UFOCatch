@@ -8,7 +8,8 @@ public:
     ~CPlayerHP();
     void SubHP();
     void ResetFlag();
-    
+    int GetHP() const { return m_currentHp; }
+    int GetMaxHP() const { return m_maxHp; }
     bool GetFoundFlag() const { return m_found; }
     float GetFindCount() const { return m_findCount; }
     float GetMaxFindCount() const { return m_findMaxCount; }

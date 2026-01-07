@@ -4,9 +4,7 @@
 #include "StateBase.h"
 #include "../../05_CommonFile/Object3D.h"
 #include "../../06_GameLib/BBox.h"
-
-
-class CGround;
+#include "../../10_Stage/Ground.h"
 
 class CEnemyBase : public Object3D
 {

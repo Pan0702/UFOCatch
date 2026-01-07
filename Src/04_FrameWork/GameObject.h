@@ -1,6 +1,6 @@
 #pragma once
 /// <summary>
-/// �Q�[���I�u�W�F�N�g�̊��N���X
+/// ゲームオブジェクトの基底クラス
 /// </summary>
 /// <author>N.Hanai</author>
 
@@ -16,85 +16,85 @@ public:
 	virtual ~GameObject() {}
 
 	/// <summary>
-	/// �I�u�W�F�N�g�𐶐���A�ŏ���Update()�̑O�ɌĂ΂�܂�
+	/// オブジェクトを生成し、最初のUpdate()の前に呼ばれます
 	/// </summary>
 	virtual void Start() {}
 
 	/// <summary>
-	/// ���t���[���̍X�V�����̂��߂ɌĂ΂�܂�
+	/// 毎フレームの更新処理のために呼ばれます
 	/// </summary>
 	virtual void Update() {}
 
 	/// <summary>
-	/// ���t���[���̕`�揈���̂��߂ɌĂ΂�܂�
+	/// 毎フレームの描画処理のために呼ばれます
 	/// </summary>
 	virtual void Draw() {}
 
 	/// <summary>
-	/// �����̃C���X�^���X���폜���鎞�ɌĂяo���Ă�������
-	/// �����Update�̑O�ɍ폜����܂�
+	/// 自分のインスタンスを削除する時に呼び出してください
+	/// 次のUpdateの前に削除されます
 	/// </summary>
 	virtual void DestroyMe() {
 		ObjectManager::Destroy(this);
 	}
 
 	/// <summary>
-	/// �V�[�����ς��Ƃ��ɍ폜���Ȃ��悤�ɂ��܂�
+	/// シーンが変わっても削除されないようにします
 	/// </summary>
 	void DontDestroyMe() {
 		ObjectManager::DontDestroy(this);
 	}
 
 	/// <summary>
-	/// �����̗D�揇�ʂ��w�肵�܂�
-	/// ���l���������Ɏ��s����܂�
-	/// �����w�肵�Ȃ���΁A�O�ł�
+	/// 更新の優先度を指定します
+	/// 値が大きいほど後に実行されます
+	/// 何も指定しなければ、0です
 	/// </summary>
-	/// <param name="pri">�D�揇��</param>
+	/// <param name="pri">優先度</param>
 	void SetPriority(int pri) {
 		ObjectManager::SetPriority(this, pri);
 	}
 
 	/// <summary>
-	/// �`��̗D�揇�ʂ��w�肵�܂�
-	/// ���l�������قǁA�ォ��`�悳���̂ŁA
-	/// 2D�ł���΁A��O�ɕ\������܂�
-	/// �����w�肵�Ȃ���΂O�ł�
+	/// 描画の優先度を指定します
+	/// 値が大きいほど、後から描画されるので、
+	/// 2Dであれば、手前に表示されます
+	/// 何も指定しなければ0です
 	/// </summary>
-	/// <param name="odr">�`�揇��</param>
+	/// <param name="odr">描画順序</param>
 	void SetDrawOrder(int odr) {
 		ObjectManager::SetDrawOrder(this, odr);
 	}
 
 	/// <summary>
-	/// �^�O������
-	/// �^�O�͂P�����t���邱�Ƃ��ł��܂�
+	/// タグを設定
+	/// タグは1つだけ付けることができます
 	/// </summary>
-	/// <param name="_tag">�^�O</param>
+	/// <param name="_tag">タグ</param>
 	void SetTag(std::string _tag) { tag = _tag; }
 
 	/// <summary>
-	/// �w�肳�ꂽ�^�O�Ɠ�������Ԃ�
+	/// 指定されたタグと同じか返す
 	/// </summary>
-	/// <param name="_tag">�^�O</param>
-	/// <returns>�����ł����true</returns>
+	/// <param name="_tag">タグ</param>
+	/// <returns>同じであればtrue</returns>
 	bool IsTag(std::string _tag) const { return tag == _tag; }
 
 	/// <summary>
-	/// �e�̃I�u�W�F�N�g��Ԃ�
+	/// 親のオブジェクトを返す
 	/// </summary>
-	/// <returns>�e�I�u�W�F�N�g�̃|�C���^�[</returns>
+	/// <returns>親オブジェクトのポインター</returns>
 	GameObject* Parent() const { return pParent; }
 
 	/// <summary>
-	/// �e�̃I�u�W�F�N�g��ݒ肷��
+	/// 親のオブジェクトを設定する
 	/// </summary>
-	/// <returns>�e�I�u�W�F�N�g�̃|�C���^�[</returns>
+	/// <returns>親オブジェクトのポインター</returns>
 	void SetParent(GameObject* _parent) { pParent = _parent; }
 
 private:
-	GameObject* pParent; // �e�̃I�u�W�F�N�g
-	std::string tag;     // �^�O
+	GameObject* pParent; // 親のオブジェクト
+	std::string tag;     // タグ
 };
 
 template <class C> C* Instantiate()

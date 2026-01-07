@@ -7,6 +7,8 @@
 #include "../07_Scene/TitleScene.h"
 #include "../07_Scene/PlayScene.h"
 #include "../07_Scene/ResultScene.h"
+#include "../07_Scene/TutorialScene.h"
+#include "../12_Tutorial/Tutorial.h"
 
 SceneBase* SceneFactory::CreateFirst()
 {
@@ -16,7 +18,7 @@ SceneBase* SceneFactory::CreateFirst()
 	return nullptr;
 }
 
-SceneBase * SceneFactory::Create(const std::string & name)
+SceneBase* SceneFactory::Create(const std::string& name)
 {
 
 	if (name == "TitleScene") {
@@ -33,7 +35,10 @@ SceneBase * SceneFactory::Create(const std::string & name)
 	{
 		return new CResultScene();
 	}
-	
+	if (name == "TutorialScene")
+	{
+		return new CTutorialScene();
+	}
 	assert(false);
 	return nullptr;
 }

@@ -1,8 +1,9 @@
-#include "TimeLimit.h"
+#include "Timer.h"
 
 #include "../07_Scene/PlayScene.h"
 
-CTimeLimit::CTimeLimit(const float maxTimeSec)
+
+CTimer::CTimer(const float maxTimeSec)
     : m_CurrentTime(maxTimeSec), m_maxTime(maxTimeSec)
 {
     m_pSprite = new CSprite();
@@ -10,9 +11,10 @@ CTimeLimit::CTimeLimit(const float maxTimeSec)
     m_pSpriteImage->Load("data/Vector.png");
 }
 
-CTimeLimit::~CTimeLimit() = default;
 
-void CTimeLimit::Update()
+CTimer::~CTimer() = default;
+
+void CTimer::Update()
 {
     m_CurrentTime -= SceneManager::DeltaTime();
     // if (m_CurrentTime <= 0)
@@ -21,12 +23,12 @@ void CTimeLimit::Update()
     // }
 }
 
-void CTimeLimit::TimeOut()
+void CTimer::TimeOut()
 {
-    ObjectManager::FindGameObject<PlayScene>()->ChangeResultScene();
+    SceneManager::ChangeScene("ResultScene");
 }
 
-void CTimeLimit::Draw()
+void CTimer::Draw()
 {
     int num = static_cast<int>(m_CurrentTime);
     DrawTime(1000, 20, num / 10);
@@ -34,7 +36,7 @@ void CTimeLimit::Draw()
     
 }
 
-void CTimeLimit::DrawTime(const float& posX, const float& posY,const float& num) const
+void CTimer::DrawTime(const float& posX, const float& posY,const float& num) const
 {
    m_pSprite->Draw(m_pSpriteImage,posX,posY,45 * num,0 ,45 , 50);
 }

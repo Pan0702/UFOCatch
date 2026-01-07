@@ -33,6 +33,16 @@ struct LerpValue
         return Lerp(start, target, t);
     }
     
+    /// 値を強制的に設定し、Lerpを停止させる
+    void ForceSetValue(float val)
+    {
+        start = val;
+        target = val;
+        timer = 0;
+        duration = 0;
+        isLerping = false;
+    }
+    
     bool IsLerping() const { return isLerping; }
 private:
     float start;      // 開始値 //

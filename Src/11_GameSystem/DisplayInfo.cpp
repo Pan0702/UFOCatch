@@ -18,6 +18,8 @@ CDisplayInfo::CDisplayInfo()
     m_prevGiwakuProportion = 0;
     m_currentAngle = 0;
     tmp = 0;
+    
+    SetDrawOrder(-100);
 }
 
 CDisplayInfo::~CDisplayInfo()
@@ -28,13 +30,20 @@ CDisplayInfo::~CDisplayInfo()
 
 void CDisplayInfo::Update()
 {
-    if (m_xpWeightLerp.IsLerping())
+    // Lerp更新
+    float nextWidth = m_xpWeightLerp.Update(SceneManager::DeltaTime());
+
+    // Lerp中、または値が更新された場合
+    if (m_xpWeightLerp.IsLerping() || nextWidth != m_currentWidth)
     {
-        m_currentWidth += (m_xpWeightLerp.Update(SceneManager::DeltaTime()) - m_currentWidth);
+        m_currentWidth = nextWidth;
+
+        // 満タンに達したかチェック（レベルアップ演出完了時）
         if (m_currentWidth >= 1224.0f)
         {
-            m_currentWidth = m_currentWidth - 1224;
-            m_prevProportion = 0;
+            m_currentWidth -= 1224.0f;
+            m_prevProportion = 0; // 次のExpDrawで0から余剰分へのLerpを開始させる
+            m_xpWeightLerp.ForceSetValue(m_currentWidth);
         }
     }
 }
@@ -72,17 +81,28 @@ void CDisplayInfo::ExpDraw()
     
     //割合を計算
     float proportion = avoidZero(pl->GetExp() / pl->GetAllExp());
+    
     static constexpr float epsilon = 0.001f;
     
-    //前の割合と今の割合の差に変化があって、lerpが終わってたら
-    if (fabs(proportion - m_prevProportion) > epsilon && !m_xpWeightLerp.IsLerping())
+    // Lerpが終わっていたら新しい目標を設定
+    if (!m_xpWeightLerp.IsLerping())
     {
-        float targetWidth = 1224 * (proportion < m_prevProportion ? 1.0f : proportion);
-        //Lerpスタート
-        m_xpWeightLerp.Start(m_currentWidth, targetWidth, 0.5f);
-        //前の割合を更新
-        m_prevProportion = proportion;
+        // レベルアップしたかどうか（割合が減少したか、または1.0を超えたか）
+        if (proportion < m_prevProportion - epsilon || proportion >= 1.0f)
+        {
+            // 満タンまでLerpさせる
+            m_xpWeightLerp.Start(m_currentWidth, 1224.0f, 0.5f);
+            // m_prevProportionはUpdateのリセット処理で0になるのを待つ
+        }
+        // 通常の経験値増加
+        else if (fabs(proportion - m_prevProportion) > epsilon)
+        {
+            float targetWidth = 1224.0f * proportion;
+            m_xpWeightLerp.Start(m_currentWidth, targetWidth, 0.5f);
+            m_prevProportion = proportion;
+        }
     }
+
     //LvBarを描画
     m_pSprite->Draw(m_expImage, 144, 721, 0, 100, m_currentWidth, 47);
 }

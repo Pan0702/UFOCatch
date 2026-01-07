@@ -1,11 +1,11 @@
 #pragma once
 #include "../05_CommonFile/Object3D.h"
 
-class CTimeLimit : public Object3D
+class CTimer : public Object3D
 {
 public:
-    CTimeLimit(const float maxTimeSec);
-    ~CTimeLimit();
+    CTimer(float maxTimeSec);
+    ~CTimer();
 
 private:
     void Update() override;

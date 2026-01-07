@@ -40,8 +40,9 @@ void CPlayer::Update()
     }
     //吸い込みキーの状態を取得
 
-    ImGui::Begin("p");
-    ImGui::Text("%lf", transform.position.z);
+    ImGui::Begin("pa");
+    ImGui::Text("%lf", m_exp);
+    ImGui::Text("%lf", m_allExp);
     ImGui::End();
     if (!ObjectManager::FindGameObject<CPlayerHP>()->GetFoundFlag())
     {

@@ -34,6 +34,10 @@ void CEnemyBase::SetState(CBaseState::Type type)
 CEnemyBase::~CEnemyBase()
 {
     SAFE_DELETE(m_pBBox);
+    for (auto& state : m_cubeStates)
+    {
+        SAFE_DELETE(state.second);
+    }
 }
 
 void CEnemyBase::Update()

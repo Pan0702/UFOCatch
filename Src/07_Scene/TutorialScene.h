@@ -1,18 +1,11 @@
 #pragma once
+#include "../04_FrameWork/SceneBase.h"
 
-class CTutorialScene
+class CTutorialScene : public SceneBase
 {
 public:
     CTutorialScene();
 private:
     ~CTutorialScene();
-    
-    void ChangeStatate(const char* tutorialName);
-    enum TutorialState
-    {
-        eMove = 0,
-        eSuction,
-        eDiscovery,
-        eTimeUp
-    };
+
 };
