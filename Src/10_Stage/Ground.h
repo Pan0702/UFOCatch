@@ -3,9 +3,12 @@
 class CGround : public Object3D
 {
 public:
-    CGround(const char* mesh);
+    //.meshのPathとmeshの大きさを渡す//
+    //　初期状態は１０×１０,中心点は5,0,5//
+    CGround(const char* mesh, const VECTOR3& scale = VECTOR3(1.0f, 1.0f, 1.0f));
 
 private:
+    
     ~CGround();
     void Update();
     void Draw() override;

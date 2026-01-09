@@ -5,7 +5,9 @@
 class CPlayer:public Object3D
 {
 public:
-    CPlayer();
+    // 原点から移動できる距離
+    // 例えば-20~20なら20と入力//
+    CPlayer(float moveRange);
     ~CPlayer();
     VECTOR3 GetPos(){return transform.position;}
     ///
@@ -65,6 +67,7 @@ private:
     bool m_zoomUp;
     float m_coneTopPos;
     bool m_draw;
+    float m_moveRange;
 
     // Lerp用の変数
     LerpValue m_heightLerp;

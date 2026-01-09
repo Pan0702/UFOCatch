@@ -9,7 +9,8 @@
 #include "../11_GameSystem/VisionSystem.h"
 #include "../06_GameLib/Sprite3D.h"
 
-CPlayer::CPlayer()
+CPlayer::CPlayer(float moveRange)
+    : m_moveRange(moveRange)
 {
     transform.position = VECTOR3(0, 5, 0);
     m_pMesh = new CFbxMesh();
@@ -39,11 +40,6 @@ void CPlayer::Update()
         HandleMovementInput();
     }
     //吸い込みキーの状態を取得
-
-    ImGui::Begin("pa");
-    ImGui::Text("%lf", m_exp);
-    ImGui::Text("%lf", m_allExp);
-    ImGui::End();
     if (!ObjectManager::FindGameObject<CPlayerHP>()->GetFoundFlag())
     {
         m_SuctionActive = GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_J);
@@ -69,11 +65,9 @@ void CPlayer::Update()
 
 void CPlayer::HandleMovementInput()
 {
-    // 位置を-50.0f ~ 50.0fの範囲内に制限//
-    constexpr float maxPos = 200.0f;
     //移動制限//
-    transform.position.x = std::max(-maxPos, std::min(maxPos, transform.position.x));
-    transform.position.z = std::max(-maxPos, std::min(maxPos, transform.position.z));
+    transform.position.x = std::max(-m_moveRange, std::min(m_moveRange, transform.position.x));
+    transform.position.z = std::max(-m_moveRange, std::min(m_moveRange, transform.position.z));
 
     constexpr float moveSpeed = 5.0f; // 秒間5ユニットの移動速度//
     const float moveAmount = moveSpeed * SceneManager::DeltaTime();

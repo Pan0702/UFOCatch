@@ -3,7 +3,7 @@
 #include <Windows.h>
 #include "../06_GameLib/CsvReader.h"
 
-CGround::CGround(const char* mesh)
+CGround::CGround(const char* mesh,const VECTOR3& scale)
 {
     m_pMesh = new CFbxMesh();
     m_pMeshCol = new MeshCollider();
@@ -11,7 +11,7 @@ CGround::CGround(const char* mesh)
     m_pMesh->Load(mesh);
     m_pMeshCol->MakeFromMesh(m_pMesh);
     transform.position = VECTOR3(0, 0, 0);
-   // transform.scale = VECTOR3(1000, 10, 1000);
+   transform.scale = scale;
 
 }
 // bool CGround::Init(const char* filePath)
