@@ -12,9 +12,9 @@ public:
     void ZoomOut(const VECTOR3& pos);
 private:
     void Update() override;
-    void UpdateCameraLerp();
+    void UpdateCameraBezier();
 
-    
+
     VECTOR3 m_camPos;
     VECTOR3 m_camLook;
     LerpValueVec3 m_camPosLerp;

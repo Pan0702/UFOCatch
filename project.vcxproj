@@ -535,6 +535,7 @@
     <ClInclude Include="Src\06_GameLib\LerpValue.h" />
     <ClInclude Include="Src\07_Scene\LevelSelectionScene.h" />
     <ClInclude Include="Src\07_Scene\ResultScene.h" />
+    <ClInclude Include="Src\07_Scene\TutorialScene.h" />
     <ClInclude Include="Src\08_Player\PHP.h" />
     <ClInclude Include="Src\04_FrameWork\GameObject.h" />
     <ClInclude Include="Src\04_FrameWork\ObjectManager.h" />
@@ -575,8 +576,13 @@
     <ClInclude Include="Src\09_Enemy\System\AnimalManager.h" />
     <ClInclude Include="Src\10_Stage\Ground.h" />
     <ClInclude Include="Src\11_GameSystem\DisplayInfo.h" />
-    <ClInclude Include="Src\11_GameSystem\TimeLimit.h" />
+    <ClInclude Include="Src\11_GameSystem\Timer.h" />
+    <ClInclude Include="Src\11_GameSystem\Timer.h" />
     <ClInclude Include="Src\11_GameSystem\VisionSystem.h" />
+    <ClInclude Include="Src\12_Tutorial\Tutorial.h" />
+    <ClInclude Include="Src\12_Tutorial\TutorialAnimal.h" />
+    <ClInclude Include="Src\12_Tutorial\TutorialHuman.h" />
+    <ClInclude Include="Src\12_Tutorial\TutorialState.h" />
     <ClInclude Include="Src\GameInstance.h" />
     <ClInclude Include="Src\01_WinMain\Main.h" />
     <ClInclude Include="Src\01_WinMain\MainControl.h" />
@@ -822,6 +828,7 @@
     </ClCompile>
     <ClCompile Include="Src\07_Scene\LevelSelectionScene.cpp" />
     <ClCompile Include="Src\07_Scene\ResultScene.cpp" />
+    <ClCompile Include="Src\07_Scene\TutorialScene.cpp" />
     <ClCompile Include="Src\08_Player\PHP.cpp" />
     <ClCompile Include="Src\04_FrameWork\ObjectManager.cpp">
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -3068,8 +3075,13 @@
     </ClCompile>
     <ClCompile Include="Src\10_Stage\Ground.cpp" />
     <ClCompile Include="Src\11_GameSystem\DisplayInfo.cpp" />
-    <ClCompile Include="Src\11_GameSystem\TimeLimit.cpp" />
+    <ClCompile Include="Src\11_GameSystem\Timer.cpp" />
+    <ClCompile Include="Src\11_GameSystem\Timer.cpp" />
     <ClCompile Include="Src\11_GameSystem\VisionSystem.cpp" />
+    <ClCompile Include="Src\12_Tutorial\Tutorial.cpp" />
+    <ClCompile Include="Src\12_Tutorial\TutorialAnimal.cpp" />
+    <ClCompile Include="Src\12_Tutorial\TutorialHuman.cpp" />
+    <ClCompile Include="Src\12_Tutorial\TutorialState.cpp" />
     <ClCompile Include="Src\GameInstance.cpp" />
     <ClCompile Include="Src\01_WinMain\Main.cpp">
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>

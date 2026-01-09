@@ -1,5 +1,4 @@
 #include "PCamera.h"
-
 #include "Player.h"
 
 namespace
@@ -8,7 +7,7 @@ namespace
     const VECTOR3 INIT_CAM_POS = VECTOR3(0, 8, -4);
     const VECTOR3 INIT_CAM_LOOK = VECTOR3(0, 1, -1.5);
     const VECTOR3 INIT_SUCTION_CAM_POS = VECTOR3(0, 4, -7);
-    constexpr float REFERENCE_HEIGHT = 5.0f; // 基準高さ//
+    constexpr float REFERENCE_HEIGHT = 5.0f; // 基準高さ
 }
 
 CPlayerCamera::CPlayerCamera()
@@ -22,13 +21,13 @@ CPlayerCamera::~CPlayerCamera()
 }
 
 void CPlayerCamera::Update()
-{                          
-    UpdateCameraLerp();
+{
+    UpdateCameraBezier();
     GameDevice()->m_mView = XMMatrixLookAtLH(
         m_camPos, m_camLook, INIT_UP_DIR);
 }
 
-void CPlayerCamera::UpdateCameraLerp()
+void CPlayerCamera::UpdateCameraBezier()
 {
         if (m_camPosLerp.IsLerping())
         {
@@ -42,13 +41,10 @@ void CPlayerCamera::UpdateCameraLerp()
 
 void CPlayerCamera::PosSet(const VECTOR3& pos, const float& coneHeight)
 {
-    // コーンの高さに応じてカメラ距離をスケーリング//
+    // コーンの高さに応じてカメラ距離をスケーリング
     float scale = coneHeight / REFERENCE_HEIGHT;
-
-    // カメラオフセットをスケーリング//
     VECTOR3 scaledCamOffset = INIT_CAM_POS * scale;
 
-    //m_camPos = pos + BASE_CAM_OFFSET;
     m_camPos = pos + scaledCamOffset;
     m_camLook = pos + INIT_CAM_LOOK;
 }

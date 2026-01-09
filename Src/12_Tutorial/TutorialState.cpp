@@ -102,7 +102,7 @@ CPlayState::CPlayState(CTutorial* pT)
 
 void CPlayState::Enter()
 {
-    ObjectManager::FindGameObject<CTutorial>()->
+    ObjectManager::FindGameObject<CTutorial>()->Lesson();
 }
 
 void CPlayState::Update()
