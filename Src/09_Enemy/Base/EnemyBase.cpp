@@ -1,6 +1,7 @@
 #define NOMINMAX
 #include "EnemyBase.h"
 #include "../../10_Stage/Ground.h"
+#include "../../10_Stage/CStageObject.h"
 #include "../System/AnimalManager.h"
 
 namespace 
@@ -196,7 +197,7 @@ void CEnemyBase::ResolveOBBCollisions()
 void CEnemyBase::CalcApplyPushback(CEnemyBase* other)
 {
     if (m_pBBox == nullptr || other == nullptr || other->GetBBox() == nullptr) return;
-    
+
     // 自分と相手のOBB中心座標を計算//
     MATRIX4X4 myCenterMat = XMMatrixTranslation(
         m_pBBox->m_fLengthX + m_pBBox->m_vMin.x,
@@ -236,6 +237,24 @@ void CEnemyBase::CalcApplyPushback(CEnemyBase* other)
 
         // 位置を更新//
         transform.position += pushDirection * pushDistance;
+    }
+}
+
+//------------------------------------------------------------------------
+// ステージオブジェクトとの衝突判定と押し戻し処理
+//------------------------------------------------------------------------
+void CEnemyBase::ResolveStageCollisions()
+{
+    if (m_pBBox == nullptr) return;
+
+    // シーン内の全てのCStageObjectを取得
+    std::list<CStageObject*> stageObjects = ObjectManager::FindGameObjects<CStageObject>();
+
+    // 各ステージオブジェクトと衝突判定
+    for (CStageObject* stage : stageObjects)
+    {
+        if (stage == nullptr) continue;
+        stage->ResolveEnemyCollision(this);
     }
 }
 

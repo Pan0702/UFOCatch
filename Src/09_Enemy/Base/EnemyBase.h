@@ -1,10 +1,12 @@
 #pragma once
 #include <unordered_map>
+#include <vector>
 
 #include "StateBase.h"
 #include "../../05_CommonFile/Object3D.h"
 #include "../../06_GameLib/BBox.h"
 #include "../../10_Stage/Ground.h"
+#include "../../10_Stage/StageObject.h"
 
 class CEnemyBase : public Object3D
 {
@@ -20,6 +22,9 @@ public:
     std::vector<CEnemyBase*> GetNearbyEnemies() const;
     
     CBBox* GetBBox() const { return m_pBBox; }
+    
+    // ステージなどからの強制的な位置更新用
+    void AddPosition(const VECTOR3& addPos) { transform.position += addPos; }
 
 protected:
     // 物理演算
@@ -33,6 +38,9 @@ protected:
     // OBB衝突判定と押し戻し処理
     void ResolveOBBCollisions();  // 周辺エネミーとのOBB衝突を検出し、押し戻し処理を実行
     virtual void CalcApplyPushback(CEnemyBase* other);  // 衝突相手との押し戻しベクトルを計算して適用
+
+    // ステージオブジェクトとの衝突判定と押し戻し処理
+    void ResolveStageCollisions();  // ステージオブジェクトとのOBB衝突を検出し、押し戻し処理を実行
     
 
     CBaseState* m_pCurrentState;

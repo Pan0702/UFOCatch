@@ -574,6 +574,9 @@
     <ClInclude Include="Src\09_Enemy\Liner4Tree.h" />
     <ClInclude Include="Src\09_Enemy\System\AnimalFactor.h" />
     <ClInclude Include="Src\09_Enemy\System\AnimalManager.h" />
+    <ClInclude Include="Src\10_Stage\StageFactor.h" />
+    <ClInclude Include="Src\10_Stage\StageObject.h" />
+    <ClInclude Include="Src\10_Stage\CubeBox.h" />
     <ClInclude Include="Src\10_Stage\Ground.h" />
     <ClInclude Include="Src\11_GameSystem\DisplayInfo.h" />
     <ClInclude Include="Src\11_GameSystem\Timer.h" />
@@ -3073,6 +3076,9 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Src\10_Stage\StageFactor.cpp" />
+    <ClCompile Include="Src\10_Stage\StageObject.cpp" />
+    <ClCompile Include="Src\10_Stage\CubeBox.cpp" />
     <ClCompile Include="Src\10_Stage\Ground.cpp" />
     <ClCompile Include="Src\11_GameSystem\DisplayInfo.cpp" />
     <ClCompile Include="Src\11_GameSystem\Timer.cpp" />

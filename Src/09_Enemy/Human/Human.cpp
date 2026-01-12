@@ -75,6 +75,9 @@ void CHuman::Update()
     AtkArea();
     ResolveOBBCollisions();
     UpdateBBox();
+
+    // ステージオブジェクトとの衝突判定と押し戻し（最後に実行）
+    ResolveStageCollisions();
 }
 
 

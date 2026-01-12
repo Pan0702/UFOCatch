@@ -60,6 +60,9 @@ void CACube::Update()
     m_pAnimator->Update();
     ResolveOBBCollisions();
     UpdateBBox();
+
+    // ステージオブジェクトとの衝突判定と押し戻し（最後に実行）
+    ResolveStageCollisions();
 }
 
 void CACube::Draw()
