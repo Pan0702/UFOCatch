@@ -70,8 +70,8 @@ void CPlayerCamera::ZoomIn(const VECTOR3& pos)
     float distance = (targetPos - m_camPos).Length();
     float heightOffset = distance * 0.3f;
 
-    m_camPosBezier.Start(m_camPos, targetPos, 0.05f, heightOffset);
-    m_camLookBezier.Start(m_camLook, targetLook, 0.05f, heightOffset * 0.5f);
+    m_camPosBezier.Start(m_camPos, targetPos, 0.5f, heightOffset);
+    m_camLookBezier.Start(m_camLook, targetLook, 0.5f, heightOffset * 0.5f);
 }
 
 ////////////////////
@@ -92,6 +92,6 @@ void CPlayerCamera::ZoomOut(const VECTOR3& pos)
     float heightOffset = distance * 0.3f;
 
     // 現在位置から通常位置へ戻る
-    m_camPosBezier.Start(m_camPos, targetPos, 0.04f, heightOffset);
-    m_camLookBezier.Start(m_camLook, targetLook, 0.04f, heightOffset * 0.5f);
+    m_camPosBezier.Start(m_camPos, targetPos, 0.5f, heightOffset);
+    m_camLookBezier.Start(m_camLook, targetLook, 0.5f, heightOffset * 0.5f);
 }

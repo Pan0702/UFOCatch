@@ -43,7 +43,7 @@ inline void GenerateArcBezierControlPoints(const VECTOR3& start, const VECTOR3& 
 	VECTOR3 mid = (start + end) * 0.5f;
 	mid.y += heightOffset;
 
-	// 制御点を始点寄りと終点寄りに配置
+	// 制御点を始点寄りと終点寄りの中間位置に配置して滑らかな弧を作る
 	outP1 = start + (mid - start) * 0.67f;
 	outP2 = end + (mid - end) * 0.67f;
 }
