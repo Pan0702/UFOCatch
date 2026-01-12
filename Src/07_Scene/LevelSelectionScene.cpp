@@ -6,14 +6,16 @@ namespace
     constexpr float ANIMATION_SPEED = 0.2f;
     constexpr float ANIMATION_SPACING = 200.0f;
 }
+////////////////////
+// ãƒ¬ãƒ™ãƒ«é¸æŠç”»åƒã‚’åˆæœŸåŒ–ã™ã‚‹ //
+////////////////////
 void CLevelSelectionScene::InitImage()
 {
-    // ÀÛ‚Ìƒ{ƒ^ƒ“‰æ‘œ‚ğ•Û‚·‚é”z—ñ
+    // å®Ÿéš›ã®ãƒœã‚¿ãƒ³ç”»åƒã‚’ä¿æŒã™ã‚‹é…åˆ— //
     m_pLevelImages.reserve(3);
     m_pLevelImages.emplace_back(new CSpriteImage("data/Button1.png"));
     m_pLevelImages.emplace_back(new CSpriteImage("data/Button2.png"));
     m_pLevelImages.emplace_back(new CSpriteImage("data/Button3.png"));
-    
 }
 
 CLevelSelectionScene::CLevelSelectionScene()
@@ -41,16 +43,15 @@ void CLevelSelectionScene::Update()
     if (pDI->CheckKey(KD_TRG, DIK_W) || pDI->CheckKey(KD_TRG,DIK_UP))
     {
         m_selectedIndex = (m_selectedIndex - 1 + m_pLevelImages.size()) % m_pLevelImages.size();
-        m_targetOffset = m_selectedIndex * ANIMATION_SPACING; // ƒAƒjƒ[ƒVƒ‡ƒ“–Ú•W’lXV
+        m_targetOffset = m_selectedIndex * ANIMATION_SPACING; // ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ç›®æ¨™å€¤æ›´æ–° //
     }
     if (pDI->CheckKey(KD_TRG, DIK_S) || pDI->CheckKey(KD_TRG, DIK_DOWN))
     {
         m_selectedIndex = (m_selectedIndex + 1) % m_pLevelImages.size();
-        m_targetOffset = m_selectedIndex * ANIMATION_SPACING; // ƒAƒjƒ[ƒVƒ‡ƒ“–Ú•W’lXV
+        m_targetOffset = m_selectedIndex * ANIMATION_SPACING; // ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ç›®æ¨™å€¤æ›´æ–° //
     }
-    
-    // ŠŠ‚ç‚©‚ÈƒAƒjƒ[ƒVƒ‡ƒ“
-    
+
+    // æ»‘ã‚‰ã‹ãªã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ //
     m_animationOffset += (m_targetOffset - m_animationOffset) * ANIMATION_SPEED;
     
     if (pDI->CheckKey(KD_TRG, DIK_RETURN))
@@ -74,19 +75,19 @@ void CLevelSelectionScene::Draw()
     {
         if (m_pLevelImages[i] != nullptr)
         {
-            // ƒAƒjƒ[ƒVƒ‡ƒ“ƒIƒtƒZƒbƒg‚ğl—¶‚µ‚½ˆÊ’uŒvZ
+            // ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚ªãƒ•ã‚»ãƒƒãƒˆã‚’åŠ å‘³ã—ãŸæç”»ä½ç½®è¨ˆç®— //
             float relativePos = i - (m_animationOffset / ITEM_SPACING);
             const int yPos = CEENTER_Y + static_cast<int>(relativePos * ITEM_SPACING);
-            
+
             if (yPos > -100 && yPos < 1'400)
             {
-                // ’†‰›‚É‹ß‚¢ƒAƒCƒeƒ€‚Ù‚Ç‘å‚«‚­•\¦
+                // ä¸­å¿ƒã«è¿‘ã„ã‚¢ã‚¤ãƒ†ãƒ ã»ã©å¤§ããè¡¨ç¤º //
                 float distanceFromCenter = abs(relativePos);
                 float scale = max(0.7f, 1.0f - distanceFromCenter * 0.3f);
-                
+
                 int width = static_cast<int>(IMAGE_SIZE.x * scale);
-                const int xPos = 400 - width / 2; // ’†‰›‘µ‚¦
-                
+                const int xPos = 400 - width / 2; // ä¸­å¤®æƒãˆ //
+
                 spr.Draw(m_pLevelImages[i], xPos, yPos, 0, 0, IMAGE_SIZE.x, IMAGE_SIZE.y,IMAGE_SIZE.x,IMAGE_SIZE.y);
             }
         }

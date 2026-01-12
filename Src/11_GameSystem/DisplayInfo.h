@@ -3,6 +3,7 @@
 #include "../06_GameLib/Sprite3D.h"
 #include "../06_GameLib/LerpValue.h"
 
+// ゲーム中のUIを表示するクラス //
 class CDisplayInfo : public Object3D
 {
 public:
@@ -14,6 +15,8 @@ private:
     void Draw() override;
     void GiwakuDraw();
     void ExpDraw();
+    void TimeDraw();
+    void HPDraw();
 
     CSprite* m_pSprite;
     CSpriteImage* m_playUIImage;
@@ -29,5 +32,8 @@ private:
     LerpValue m_giwakuAngleLerp;
     float m_prevGiwakuProportion;
     float m_currentAngle;
+    
     float tmp;
+    float tmp2;
+    VECTOR2 tmp3;
 };

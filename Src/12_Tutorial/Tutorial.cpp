@@ -35,6 +35,10 @@ void CTutorial::Update()
     }
 }
 
+////////////////////
+// チュートリアルのステートを変更する
+// @param state 変更先のステート //
+////////////////////
 void CTutorial::SetState(CTutorialState::State state)
 {
     m_pCurrentState->Exit();
@@ -42,6 +46,9 @@ void CTutorial::SetState(CTutorialState::State state)
     m_pCurrentState->Enter();
 }
 
+////////////////////
+// チュートリアル用の動物を複数体生成する //
+////////////////////
 void CTutorial::SpawnAnimal()
 {
     for (int i = 0; i < 8; i++)
@@ -52,12 +59,18 @@ void CTutorial::SpawnAnimal()
     }
 }
 
+////////////////////
+// チュートリアル用の人間と動物を生成する //
+////////////////////
 void CTutorial::SpawnHuman()
 {
     new CTutorialHuman(VECTOR3(0,0,6.0f));
     new CTutorialAnimal(VECTOR3(0.0f,0,5.0f));
 }
 
+////////////////////
+// 実践形式のレッスンを開始する //
+////////////////////
 void CTutorial::Lesson()
 {
     new CAnimalManager();
@@ -71,5 +84,5 @@ void CTutorial::Lesson()
         randomZ = Randomf(-10.0f, 10.0f);
         new CTutorialAnimal(VECTOR3(randomX,0,randomZ));
     }
-    
+
 }

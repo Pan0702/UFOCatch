@@ -2,13 +2,14 @@
 #include "../09_Enemy/Base/EnemyBase.h"
 #include "../04_FrameWork/ResourceManager.h"
 
-//------------------------------------------------------------------------
+////////////////////
 // コンストラクタ
-//
-//  const char* meshPath   メッシュファイルのパス
-//  bool useOBB            OBBを使用するか
-//------------------------------------------------------------------------
-CStageObject::CStageObject(const char* meshPath, const VECTOR3& pos, bool useOBB)
+// @param meshPath メッシュファイルのパス
+// @param pos オブジェクトの位置
+// @param scale オブジェクトのサイズ
+// @param useOBB OBBを使用するか //
+////////////////////
+CStageObject::CStageObject(const char* meshPath, const VECTOR3& pos,float scale, bool useOBB)
 {
     m_bUseOBB = useOBB;
     m_pOBB = nullptr;
@@ -28,9 +29,8 @@ CStageObject::CStageObject(const char* meshPath, const VECTOR3& pos, bool useOBB
     }
 
     // 初期位置
-    transform.position = VECTOR3(0, 0, 0);
-    transform.rotation = VECTOR3(0, 0, 0);
-    transform.scale = VECTOR3(1, 1, 1);
+    transform.position = pos;
+    transform.scale = VECTOR3(1.0f, 1.0f, 1.0f) * scale;
 }
 
 //------------------------------------------------------------------------
@@ -68,23 +68,21 @@ void CStageObject::Draw()
     {
         m_pMesh->Render(m_pAnimator, transform.matrix());
     }
-
-    // デバッグ用: OBBを描画（必要に応じてコメントアウト）
-    if (m_pOBB)
-    {
-        m_pOBB->Render();
-    }
+    
+    // // デバッグ用: OBBを描画（必要に応じてコメントアウト）
+    // if (m_pOBB)
+    // {
+    //     m_pOBB->Render();
+    // }
 }
 
-//------------------------------------------------------------------------
-// OBBとの衝突判定
-//
-//  CBBox* other           相手のOBB
-//  VECTOR3* vHit          衝突位置（Out）
-//  VECTOR3* vNormal       衝突法線（Out）※XZ平面のみ（Y成分は0）
-//
-//  戻り値: 衝突していたらtrue
-//------------------------------------------------------------------------
+////////////////////
+// OBBとの衝突判定を行う
+// @param other 相手のOBB
+// @param vHit 衝突位置（Out）
+// @param vNormal 衝突法線（Out）※XZ平面のみ（Y成分は0）
+// @return 衝突していたらtrue //
+////////////////////
 bool CStageObject::HitOBB(CBBox* other, VECTOR3* vHit, VECTOR3* vNormal)
 {
     if (!m_pOBB || !other || !m_bUseOBB)
@@ -111,9 +109,10 @@ bool CStageObject::HitOBB(CBBox* other, VECTOR3* vHit, VECTOR3* vNormal)
     return bHit;
 }
 
-//------------------------------------------------------------------------
+////////////////////
 // エネミーとの衝突を解消する
-//------------------------------------------------------------------------
+// @param pEnemy 判定対象のエネミー //
+////////////////////
 void CStageObject::ResolveEnemyCollision(CEnemyBase* pEnemy)
 {
     if (!m_pOBB || !pEnemy || !pEnemy->GetBBox()) return;

@@ -1,6 +1,7 @@
 #pragma once
 #include "../04_FrameWork/SceneBase.h"
 
+// ゲーム起動時のタイトルシーン //
 class TitleScene : public SceneBase
 {
 public:
@@ -12,6 +13,7 @@ private:
 	std::vector<std::string> m_text;
 	int m_selectedIndex;
 
+	// タイトル画面で表示する画像の情報 //
 	struct ImageInfo
 	{
 		VECTOR2 pos;

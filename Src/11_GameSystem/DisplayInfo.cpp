@@ -1,5 +1,6 @@
 #include "DisplayInfo.h"
 
+#include "Timer.h"
 #include "../08_Player/PHP.h"
 #include "../08_Player/Player.h"
 
@@ -17,7 +18,6 @@ CDisplayInfo::CDisplayInfo()
     // 疑惑ゲージ初期化
     m_prevGiwakuProportion = 0;
     m_currentAngle = 0;
-    tmp = 0;
     
     SetDrawOrder(-100);
 }
@@ -54,9 +54,13 @@ void CDisplayInfo::Draw()
     //BaseUIを描画
     m_pSprite->Draw(m_playUIImage, 0, 0, 0, 0, 1366, 768);
     GiwakuDraw();
+    TimeDraw();
 }
 
 
+////////////////////
+// 疑惑ゲージを描画する //
+////////////////////
 void CDisplayInfo::GiwakuDraw()
 {
     CPlayerHP* pHp = ObjectManager::FindGameObject<CPlayerHP>();
@@ -72,18 +76,21 @@ void CDisplayInfo::GiwakuDraw()
     }
 }
 
+////////////////////
+// 経験値ゲージを描画する //
+////////////////////
 void CDisplayInfo::ExpDraw()
 {
     //LvBaseを描画
     m_pSprite->Draw(m_expImage, 144, 713, 0, 160, 1224, 55);
     CPlayer* pl = ObjectManager::FindGameObject<CPlayer>();
     if (!pl) return;
-    
+
     //割合を計算
     float proportion = avoidZero(pl->GetExp() / pl->GetAllExp());
-    
+
     static constexpr float epsilon = 0.001f;
-    
+
     // Lerpが終わっていたら新しい目標を設定
     if (!m_xpWeightLerp.IsLerping())
     {
@@ -105,4 +112,38 @@ void CDisplayInfo::ExpDraw()
 
     //LvBarを描画
     m_pSprite->Draw(m_expImage, 144, 721, 0, 100, m_currentWidth, 47);
+}
+
+////////////////////
+// タイマーを描画する //
+////////////////////
+void CDisplayInfo::TimeDraw()
+{
+    CTimer* pTimer = ObjectManager::FindGameObject<CTimer>();
+    if (!pTimer) return;
+
+    int time = static_cast<int>(pTimer->GetTime());
+
+    // 桁数を計算
+    int count = 0;
+    int tmp = time;
+    while (tmp > 0)
+    {
+        tmp /= 10;
+        count++;
+    }
+    if (count < 2) count = 2;
+
+    // 各桁を左から順に描画
+    for (int i = 0; i < count; i++)
+    {
+        int divisor = static_cast<int>(Pow(10, count - 1 - i));
+        int num = (time / divisor) % 10;
+        m_pSprite->Draw(m_expImage, 230 + i * 58, 640, 68 * num, 540, 68, 103, 55, 67);
+    }
+
+}
+
+void CDisplayInfo::HPDraw()
+{
 }

@@ -6,6 +6,10 @@
 #include "../GameInstance.h"
 #include "../07_Scene/PlayScene.h"
 
+////////////////////
+// HPの初期値を指定してインスタンスを生成する
+// @param hp 初期HP //
+////////////////////
 CPlayerHP::CPlayerHP(const int& hp)
     : m_maxHp(hp)
 {
@@ -20,6 +24,9 @@ CPlayerHP::~CPlayerHP()
 {
 }
 
+////////////////////
+// HPを減らす処理と目撃カウントを増やす //
+////////////////////
 void CPlayerHP::SubHP()
 {
     if (not m_seemToFind)

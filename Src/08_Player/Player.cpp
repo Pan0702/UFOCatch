@@ -9,6 +9,11 @@
 #include "../11_GameSystem/VisionSystem.h"
 #include "../06_GameLib/Sprite3D.h"
 
+////////////////////
+// 原点から移動できる距離
+// 例えば-20~20なら20と入力
+// @param moveRange 移動可能範囲 //
+////////////////////
 CPlayer::CPlayer(float moveRange)
     : m_moveRange(moveRange)
 {
@@ -28,7 +33,7 @@ CPlayer::CPlayer(float moveRange)
     m_draw = true;
 
     // 吸い込み円用のテクスチャを読み込み
-    m_pCircleImage = new CSpriteImage(TEXT("data/Circle.png"));
+    m_pCircleImage = new CSpriteImage(TEXT("data/CircleSuction.png"));
 }
 
 CPlayer::~CPlayer() = default;
@@ -39,6 +44,7 @@ void CPlayer::Update()
     {
         HandleMovementInput();
     }
+    
     //吸い込みキーの状態を取得
     if (!ObjectManager::FindGameObject<CPlayerHP>()->GetFoundFlag())
     {
@@ -57,12 +63,14 @@ void CPlayer::Update()
     // カメラ位置を更新//
     UpdateCameraPos();
 
-    ObjectManager::FindGameObject<CVisionSystem>()->
-        SetCircleCenter(transform.position);
-    ObjectManager::FindGameObject<CVisionSystem>()->
-        SetCircleRadius(m_coneRadius);
+    CVisionSystem* pVision = ObjectManager::FindGameObject<CVisionSystem>();
+    pVision->GetCircleInfo().SetCenter(transform.position);
+    pVision->GetSectorInfo().SetRadius(m_coneRadius);
 }
 
+////////////////////
+// プレイヤーの移動入力を処理する //
+////////////////////
 void CPlayer::HandleMovementInput()
 {
     //移動制限//
@@ -90,6 +98,9 @@ void CPlayer::CheckLevel()
     }
 }
 
+////////////////////
+// 吸い込みコーンの高さを増加させる //
+////////////////////
 void CPlayer::IncreaseSuctionConeHeight()
 {
     //吸い込むコーンの大きさを変更
@@ -142,8 +153,13 @@ void CPlayer::UpdateCameraPos()
 }
 
 
-//吸い込むスピードを計算
-//高さの差が大きいほど遅く、近いほど速く吸い込む//
+////////////////////
+// 引き寄せるための移動量を計算する
+// 高さの差が大きいほど遅く、近いほど速く吸い込む
+// @param moveTimeSecond 移動にかける時間
+// @param animalPos 動物の位置
+// @return 1回当たりの移動量 //
+////////////////////
 VECTOR3 CPlayer::CalcSuctionDisplacement(const float& moveTimeSecond, const VECTOR3& animalPos) const
 {
     float heightDiff = m_coneTopPos - animalPos.y;
@@ -168,8 +184,11 @@ VECTOR3 CPlayer::CalcSuctionDisplacement(const float& moveTimeSecond, const VECT
     return suctionDisplacementPerFrame * SceneManager::DeltaTime();
 }
 
-//エリア内にいるかチェック
-//
+////////////////////
+// オブジェクトがコーンの範囲内にいるかチェックする
+// @param targetPos 対象の位置
+// @return 範囲内ならtrue //
+////////////////////
 bool CPlayer::IsWithSuctionCone(const VECTOR3& targetPos) const
 {
     const float distanceAnimalFromPlayer = m_coneTopPos - targetPos.y;
@@ -201,7 +220,7 @@ void CPlayer::Draw()
     // 吸い込み円を描画
     DrawSuctionCircle();
 
-    DrawCircle(VECTOR3(transform.position.x, 0, transform.position.z), m_coneRadius, RGB(0, 255, 0));
+    //DrawCircle(VECTOR3(transform.position.x, 0, transform.position.z), m_coneRadius, RGB(0, 255, 0));
 }
 
 ///Debug///
@@ -234,6 +253,9 @@ void CPlayer::DrawCircle(const VECTOR3& center, float radius, DWORD color)
     spr.DrawLine3D(transform.position, VECTOR3(center.x, center.y, center.z - m_coneRadius), color);
 }
 
+////////////////////
+// 地面に吸い込み範囲の円を描画する //
+////////////////////
 void CPlayer::DrawSuctionCircle()
 {
     // 吸い込み円描画の定数 //

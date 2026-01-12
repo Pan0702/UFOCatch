@@ -2,6 +2,7 @@
 #include "../05_CommonFile/Object3D.h"
 #include "../06_GameLib/LerpValue.h"
 
+// プレイヤーのUFOを制御するクラス //
 class CPlayer:public Object3D
 {
 public:

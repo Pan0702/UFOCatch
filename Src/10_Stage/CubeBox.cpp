@@ -1,5 +1,9 @@
 #include "CubeBox.h"
 
+////////////////////
+// メッシュファイルのパスを指定してインスタンスを生成する
+// @param meshPath メッシュファイルのパス //
+////////////////////
 CCubeBox::CCubeBox(const char* meshPath)
 {
     m_pMesh = new CFbxMesh();

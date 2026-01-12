@@ -8,8 +8,7 @@ CResultScene::CResultScene()
     m_pSprite = new CSprite;
     m_pResultImage = new CSpriteImage("data/ScoreBG.jpg");
     m_pRankImage = new CSpriteImage("data/PlayUIParts.png");
-    CalcRank();
-
+    m_pGI = ObjectManager::FindGameObject<CGameInstance>();
 }
 
 CResultScene::~CResultScene()
@@ -36,50 +35,73 @@ void CResultScene::Update()
     {
         SceneManager::ChangeScene("TitleScene");
     }
+   // CalcRank();
 }
 
 
 void CResultScene::Draw()
 {
-    m_pSprite->Draw(m_pResultImage, 0, 0, 0, 0, 1366, 768);
-    DrawScore(m_score);
+    m_pSprite->Draw(m_pResultImage, 0, 0, 0, 0, 1366, 768);  // 画面サイズ全体に背景を描画 //
+
+    DrawRank();
+    DrawResultNum(m_pGI->GetDiscovery(),69);    // 発見数のY座標 //
+    DrawResultNum(m_pGI->GetSaw(),226);         // 目撃数のY座標 //
+    DrawResultNum(m_pGI->GetCapture(),396);     // 捕獲数のY座標 //
 }
 
-
+////////////////////
+// スコアに基づいてランクを計算する //
+////////////////////
 void CResultScene::CalcRank()
 {
-    CGameInstance* pGI = ObjectManager::FindGameObject<CGameInstance>();
-    m_score = pGI->GetScore(); - (pGI->GetDiscovery() * 3) - (pGI->GetSaw());
-    float ratio = avoidZero(static_cast<float>(m_score) / static_cast<float>(pGI->GetMaxScore()));
-    if (ratio < 0.25f)
+    m_score = m_pGI->GetScore()  - (m_pGI->GetDiscovery() * 3) - (m_pGI->GetSaw());  // ペナルティを差し引いた最終スコア //
+    float ratio = avoidZero(static_cast<float>(m_score) / static_cast<float>(m_pGI->GetMaxScore()));
+    if (ratio < 0.25f)  // 25%未満でランクD //
     {
         m_rankImageNum = 3;
-    }else if (ratio < 0.5f)
+    }else if (ratio < 0.5f)  // 50%未満でランクC //
     {
         m_rankImageNum = 2;
-    }else if (ratio < 0.75f)
+    }else if (ratio < 0.75f)  // 75%未満でランクB //
     {
         m_rankImageNum = 1;
-    }else if (ratio <= 1.0f)
+    }else if (ratio <= 1.0f)  // 75%以上でランクA //
     {
         m_rankImageNum = 0;
     }
-    
+
 }
 
-void CResultScene::DrawScore(const int& score) const
+////////////////////
+// ランク画像を描画する //
+////////////////////
+void CResultScene::DrawRank() const
 {
-    std::string str = std::to_string(score);
-    int strSize = static_cast<int>(str.size());
-    const float scoreStartX = 700.0f;
-    const float digitWidth  = 80.0f;
-    
-    for (int i = 0; i < strSize; i++)
-    {
-        m_pSprite->Draw(m_pRankImage,scoreStartX + digitWidth * static_cast<float>(i),200,
-            200 + 100 * (str[i] - '0'),0,100,100);
-    }
-    
-    m_pSprite->Draw(m_pRankImage,270,340,180 * m_rankImageNum,
+    m_pSprite->Draw(m_pRankImage,270,340,180 * m_rankImageNum,  // ランクごとに横にずらした画像を描画 //
         230,179,308);
+}
+
+////////////////////
+// リザルト数値を描画する
+// @param result 表示する数値
+// @param srcY 描画するY座標 //
+////////////////////
+void CResultScene::DrawResultNum(int result,int srcY)
+{
+    // 桁数を計算 //
+    int count = 0;
+    int tmp = result;
+    while (tmp > 0)
+    {
+        tmp /= 10;
+        count++;
+    }
+    if (count == 0) count = 1;  // 0の場合は1桁として扱う //
+
+    // 各桁を描画 //
+    for (int i = 0; i < count; i++)
+    {
+        int num = result / (10 * Pow(10, count - (i + 1)));
+        m_pSprite->Draw(m_pRankImage,1000 + i * 73,srcY, 68 * i,540,68,91);  // 数字画像を横に並べて描画 //
+    }
 }

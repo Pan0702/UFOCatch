@@ -1,5 +1,6 @@
 #pragma once
 #include "Lerp.h"
+#include "Bezier.h"
 
 /// 単一の値をLerpするための汎用構造体
 struct LerpValue
@@ -77,11 +78,70 @@ struct LerpValueVec3 {
                y.IsLerping() &&
                z.IsLerping();
     }
-    
+
 private:
     VECTOR3 start;
     VECTOR3 target;
     LerpValue x;
     LerpValue y;
     LerpValue z;
+};
+
+/// 3次ベジエ曲線でVECTOR3を補間するための構造体
+struct BezierValueVec3 {
+    BezierValueVec3() : p0(VECTOR3(0, 0, 0)), p1(VECTOR3(0, 0, 0)),
+                        p2(VECTOR3(0, 0, 0)), p3(VECTOR3(0, 0, 0)),
+                        timer(0), duration(0), isAnimating(false) {}
+
+    /// ベジエ曲線アニメーションを開始
+    /// @param from 始点
+    /// @param to 終点
+    /// @param dur アニメーション時間
+    /// @param heightOffset 弧の高さオフセット（中間点を上に持ち上げる量）
+    void Start(const VECTOR3& from, const VECTOR3& to, float dur, float heightOffset) {
+        p0 = from;
+        p3 = to;
+        duration = dur;
+        timer = 0.0f;
+        isAnimating = true;
+
+        // 制御点を自動生成して弧を作る
+        GenerateArcBezierControlPoints(from, to, heightOffset, p1, p2);
+    }
+
+    /// 毎フレーム更新して現在の位置を返す
+    VECTOR3 Update(float deltaTime) {
+        if (!isAnimating) return p3;
+
+        timer += deltaTime;
+        float t = timer / duration;
+
+        if (t >= 1.0f) {
+            isAnimating = false;
+            return p3;
+        }
+
+        return CubicBezier(p0, p1, p2, p3, t);
+    }
+
+    /// アニメーション中かどうか
+    bool IsAnimating() const { return isAnimating; }
+
+    /// 値を強制的に設定し、アニメーションを停止
+    void ForceSetValue(const VECTOR3& val) {
+        p0 = val;
+        p3 = val;
+        timer = 0;
+        duration = 0;
+        isAnimating = false;
+    }
+
+private:
+    VECTOR3 p0;         // 始点
+    VECTOR3 p1;         // 制御点1
+    VECTOR3 p2;         // 制御点2
+    VECTOR3 p3;         // 終点
+    float timer;        // 経過時間
+    float duration;     // アニメーション時間
+    bool isAnimating;   // アニメーション中かどうか
 };

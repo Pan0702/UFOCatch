@@ -4,6 +4,7 @@
 #include "TutorialState.h"
 #include "../05_CommonFile/Object3D.h"
 
+// チュートリアルの進行を管理するクラス //
 class CTutorial : public Object3D
 {
 public:

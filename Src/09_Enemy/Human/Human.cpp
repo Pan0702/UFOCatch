@@ -84,7 +84,7 @@ void CHuman::Update()
 void CHuman::Draw()
 {
     m_pMesh->Render(m_pAnimator, transform.matrix());
-    DrawDirectionLine();
+    //DrawDirectionLine();
     //FanShape();
 }
 

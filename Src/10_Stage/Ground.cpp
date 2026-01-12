@@ -3,6 +3,12 @@
 #include <Windows.h>
 #include "../06_GameLib/CsvReader.h"
 
+////////////////////
+// .meshのPathとmeshの大きさを渡す
+// 初期状態は10×10、中心点は5,0,5
+// @param mesh メッシュファイルのパス
+// @param scale メッシュのスケール //
+////////////////////
 CGround::CGround(const char* mesh,const VECTOR3& scale)
 {
     m_pMesh = new CFbxMesh();

@@ -14,10 +14,9 @@ public:
     /// </summary>
     /// <param name="meshPath">メッシュファイルのパス</param>
     /// <param name="pos">オブジェクトの位置</param>
+    /// <param name="scale">オブジェクトのサイズ</param>
     /// <param name="useOBB">OBBを使用するか（デフォルト: true）</param>
-    CStageObject(const char* meshPath, const VECTOR3& pos = VECTOR3(0,0,0), bool useOBB = true);
-
-
+    CStageObject(const char* meshPath, const VECTOR3& pos = VECTOR3(0,0,0), float scale = 1.0f, bool useOBB = true);
     virtual ~CStageObject();
 
     void Update() override;

@@ -433,6 +433,16 @@ inline float Pow2(const float& n)
 	return n * n;
 }
 
+inline float Pow(float base, int exp)
+{
+	float result = 1.0f;
+	for (int i = 0; i < exp; i++)
+	{
+		result *= base; 
+	}
+	return result;
+}
+
 /**
  * 与えられた2つの3D点のx座標とy座標によって形成される直角三角形の斜辺を計算します。
  *

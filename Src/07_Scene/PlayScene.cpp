@@ -8,13 +8,14 @@
 #include "../11_GameSystem/DisplayInfo.h"
 #include "../11_GameSystem/VisionSystem.h"
 #include "../10_Stage/StageFactor.h"
+#include "../11_GameSystem/Timer.h"
 
 PlayScene::PlayScene()
 {
     Instantiate<CStageFactor>();
     Instantiate<CPlayerCamera>();
     SingleInstantiate<CAnimalManager>();
-    //new CTimeLimit(30);
+    new CTimer(30);
     Instantiate<CAnimalFactor>();
     new CPlayer(10);
     Instantiate<CVisionSystem>();
@@ -46,6 +47,9 @@ void PlayScene::Draw()
         20, 20, "PlayScene", 16, RGB(255, 255, 0));
 }
 
+////////////////////
+// リザルトシーンへ遷移する //
+////////////////////
 void PlayScene::ChangeResultScene()
 {
     SceneManager::ChangeScene("ResultScene");

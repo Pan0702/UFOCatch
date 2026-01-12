@@ -1,6 +1,7 @@
 #pragma once
 #include "../04_FrameWork/SceneBase.h"
 
+// ステージ選択シーン //
 class CLevelSelectionScene : public SceneBase
 {
 public:
@@ -15,7 +16,7 @@ private:
 private:
     std::vector<CSpriteImage*> m_pLevelImages;
     int m_selectedIndex;
-    float m_animationOffset; // �A�j���[�V�����p�I�t�Z�b�g
+    float m_animationOffset; // アニメーション用オフセット //
     float m_targetOffset;
 
 };
