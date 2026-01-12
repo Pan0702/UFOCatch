@@ -1,7 +1,7 @@
 #define NOMINMAX
 #include "EnemyBase.h"
 #include "../../10_Stage/Ground.h"
-#include "../../10_Stage/CStageObject.h"
+#include "../../10_Stage/StageObject.h"
 #include "../System/AnimalManager.h"
 
 namespace 
@@ -247,10 +247,10 @@ void CEnemyBase::ResolveStageCollisions()
 {
     if (m_pBBox == nullptr) return;
 
-    // シーン内の全てのCStageObjectを取得
+    // シーン内の全てのCStageObjectを取得//s
     std::list<CStageObject*> stageObjects = ObjectManager::FindGameObjects<CStageObject>();
 
-    // 各ステージオブジェクトと衝突判定
+    // 各ステージオブジェクトと衝突判定//
     for (CStageObject* stage : stageObjects)
     {
         if (stage == nullptr) continue;

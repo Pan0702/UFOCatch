@@ -22,12 +22,4 @@ CGround::CGround(const char* mesh,const VECTOR3& scale)
 
 CGround::~CGround() = default;
 
-void CGround::Update()
-{
-    Object3D::Update();
-}
-void CGround::Draw()
-{
-    m_pMesh->Render(m_pAnimator, transform.matrix());
-}
 

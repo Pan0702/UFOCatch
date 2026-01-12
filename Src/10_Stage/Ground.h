@@ -8,9 +8,6 @@ public:
     CGround(const char* mesh, const VECTOR3& scale = VECTOR3(1.0f, 1.0f, 1.0f));
 
 private:
-    
     ~CGround();
-    void Update();
-    void Draw() override;
    // bool Init(const char* filePath);
 };
