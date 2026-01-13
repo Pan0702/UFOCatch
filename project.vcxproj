@@ -532,6 +532,7 @@
     <ClInclude Include="Src\02_DirectX\DInput.h" />
     <ClInclude Include="Src\02_DirectX\Direct3D.h" />
     <ClInclude Include="Src\02_DirectX\XAudio.h" />
+    <ClInclude Include="Src\06_GameLib\Bezier.h" />
     <ClInclude Include="Src\06_GameLib\LerpValue.h" />
     <ClInclude Include="Src\07_Scene\LevelSelectionScene.h" />
     <ClInclude Include="Src\07_Scene\ResultScene.h" />
@@ -584,6 +585,7 @@
     <ClInclude Include="Src\11_GameSystem\VisionSystem.h" />
     <ClInclude Include="Src\12_Tutorial\Tutorial.h" />
     <ClInclude Include="Src\12_Tutorial\TutorialAnimal.h" />
+    <ClInclude Include="Src\12_Tutorial\TutorialDisplayInfo.h" />
     <ClInclude Include="Src\12_Tutorial\TutorialHuman.h" />
     <ClInclude Include="Src\12_Tutorial\TutorialState.h" />
     <ClInclude Include="Src\GameInstance.h" />
@@ -3086,6 +3088,7 @@
     <ClCompile Include="Src\11_GameSystem\VisionSystem.cpp" />
     <ClCompile Include="Src\12_Tutorial\Tutorial.cpp" />
     <ClCompile Include="Src\12_Tutorial\TutorialAnimal.cpp" />
+    <ClCompile Include="Src\12_Tutorial\TutorialDisplayInfo.cpp" />
     <ClCompile Include="Src\12_Tutorial\TutorialHuman.cpp" />
     <ClCompile Include="Src\12_Tutorial\TutorialState.cpp" />
     <ClCompile Include="Src\GameInstance.cpp" />

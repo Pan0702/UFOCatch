@@ -7,8 +7,6 @@
 CVisionSystem::CVisionSystem() = default;
 CVisionSystem::~CVisionSystem() = default;
 
-
-
 bool CVisionSystem::IsAngleInSector(const float& angle) 
 {
     
@@ -60,12 +58,7 @@ bool CVisionSystem::SectorCircleCollision(const VECTOR2& humanPos, float humanAn
     {
         damageFlag = pHP->GetFoundFlag();
     }
-
-    ImGui::Begin("VisionSystem Debug");
-    ImGui::Text("CPlayerHP: %s", pHP ? "Valid" : "NULL");
-    ImGui::Text("m_damage: %s", damageFlag ? "true" : "false");
-    ImGui::End();
-
+    
     // m_damageがtrueの時（無敵時間中）は範囲外として扱う
     if (pHP && damageFlag)
     {

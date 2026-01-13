@@ -112,7 +112,7 @@ public:
 	/// ���b�V���̃A�h���X��Ԃ�
 	/// </summary>
 	/// <returns>���b�V���̃A�h���X</returns>
-	CFbxMesh* Mesh() { return m_pMesh; }
+	CFbxMesh* GetMesh() { return m_pMesh; }
 
 	/// <summary>
 	/// �R���W�������b�V���̃A�h���X��Ԃ�

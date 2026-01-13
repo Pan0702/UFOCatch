@@ -11,6 +11,7 @@ public:
     ~CTimer();
 
     float GetTime() {return m_currentTime;}
+    void SetStareFlag(bool flag) {m_stareFlag = flag;}
 
 private:
     void Update() override;
@@ -24,6 +25,5 @@ private:
 private:
     float m_currentTime;
     float m_maxTime;
-    CSprite* m_pSprite;
-    CSpriteImage* m_pSpriteImage;
+    bool m_stareFlag;
 };

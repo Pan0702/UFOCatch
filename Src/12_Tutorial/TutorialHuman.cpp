@@ -28,8 +28,12 @@ CTutorialHuman::~CTutorialHuman()
 void CTutorialHuman::Update()
 {
     CVisionSystem* vision = ObjectManager::FindGameObject<CVisionSystem>();
+    CPlayer* player = ObjectManager::FindGameObject<CPlayer>();
+
+    vision->GetCircleInfo().SetCenter(player->GetPos());
+    // 扇形の視界内にプレイヤーがいて、かつ吸い込みボタンが押されているかチェック
     m_inSight = vision->SectorCircleCollision(ToVec2XZ(transform.position), transform.rotation.y)
-        && ObjectManager::FindGameObject<CPlayer>()->GetIsSuckUp();
+        && player->GetIsSuckUp();
 
     if (m_inSight)
     {

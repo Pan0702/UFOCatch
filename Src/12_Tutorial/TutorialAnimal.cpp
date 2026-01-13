@@ -28,10 +28,6 @@ void CTutorialAnimal::Update()
     {
         transform.position += pPl->CalcSuctionDisplacement(1, transform.position);
     }
-    ImGui::Begin("TutorialAnimal");
-    ImGui::Text("Score:%lf", transform.position.y);
-    ImGui::End();
-    
 }
 
 void CTutorialAnimal::Destroy()

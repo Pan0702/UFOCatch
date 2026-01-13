@@ -3,7 +3,7 @@
 CFunShape::CFunShape()
 {
     m_pMesh = new CFbxMesh();
-    m_pMesh->Load("data/NewAnimal/Human/FunShape.mesh");
+    m_pMesh->Load("data/NewAnimal/Human/AtkArea.mesh");
     transform.scale = VECTOR3(0.07f, 0.1f, 0.07f);
 }
 

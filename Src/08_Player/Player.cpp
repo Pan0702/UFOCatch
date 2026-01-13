@@ -64,8 +64,8 @@ void CPlayer::Update()
     UpdateCameraPos();
 
     CVisionSystem* pVision = ObjectManager::FindGameObject<CVisionSystem>();
-    pVision->GetCircleInfo().SetCenter(transform.position);
-    pVision->GetSectorInfo().SetRadius(m_coneRadius);
+    pVision->SetCircleCenter(transform.position);
+    pVision->SetCircleRadius(m_coneRadius);
 }
 
 ////////////////////

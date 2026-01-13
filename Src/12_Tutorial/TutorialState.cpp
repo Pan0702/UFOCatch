@@ -48,7 +48,7 @@ void CSuctionState::Update()
 {
     CPlayer* pPl = ObjectManager::FindGameObject<CPlayer>();
     CTutorialAnimal* pTA = ObjectManager::FindGameObject<CTutorialAnimal>();
-    if (pPl->GetTransform().position.y - 0.25f <= pTA->GetTransform().position.y)
+    if (pPl->GetTransform().position.y <= pTA->GetTransform().position.y + pTA->GetMesh()->m_vMax.y)
     {
         pTA->Destroy();
         m_pTutorial->SetState(State::Expands);
