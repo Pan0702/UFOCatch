@@ -20,12 +20,13 @@ CPlayer::CPlayer(float moveRange)
     transform.position = VECTOR3(0, 5, 0);
     m_pMesh = new CFbxMesh();
     m_pMesh->Load("data/Player/UFO.mesh");
-    new CPlayerHP(1000);
+    new CPlayerHP(3);
     m_coneDegree = 7;
     //半径の計算//
     m_coneRadius = transform.position.y * tan(DegToRad * m_coneDegree);
     m_allExp = 1;
-    m_exp = 0.01;
+    m_exp = 0.001;
+    m_lv = 1;
     m_zoomUp = false;
     m_coneTopPos = transform.position.y;
     transform.scale = VECTOR3(0.5f, 0.5f, 0.5f);
@@ -66,6 +67,7 @@ void CPlayer::Update()
     CVisionSystem* pVision = ObjectManager::FindGameObject<CVisionSystem>();
     pVision->SetCircleCenter(transform.position);
     pVision->SetCircleRadius(m_coneRadius);
+
 }
 
 ////////////////////
@@ -94,6 +96,7 @@ void CPlayer::CheckLevel()
         float tmp = m_exp - m_allExp;
         m_allExp *= 1.3f;
         m_exp = tmp;
+        m_lv++;
         IncreaseSuctionConeHeight();
     }
 }

@@ -12,6 +12,6 @@ public:
 
 private:
     void Update() override;
-    
-    bool m_inSight;
+
+    bool m_inSight;  // プレイヤーが視界内にいるかどうか //
 };

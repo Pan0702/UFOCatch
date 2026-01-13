@@ -41,6 +41,9 @@ void CPlayerHP::SubHP()
 
 void CPlayerHP::Update()
 {
+    ImGui::Begin("HP");
+    ImGui::Text("HP:%d/%d", m_currentHp, m_maxHp);
+    ImGui::End();
     CGameInstance* pGI = ObjectManager::FindGameObject<CGameInstance>();
     //疑惑でみつかったか
     if (m_seemToFind)
@@ -52,6 +55,7 @@ void CPlayerHP::Update()
             m_invincible = 0;
             m_found = true;
             m_seemToFind = false;
+            m_currentHp -= 1;
             pGI->AddDiscovery(1);
         }
     }

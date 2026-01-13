@@ -6,7 +6,7 @@ class CGameInstance : public Object3D
 {
 public:
     CGameInstance();
-    
+    void Update() override;
     void Init(int max);
     //Get関数
     int GetMaxScore() const { return m_maxScore; }

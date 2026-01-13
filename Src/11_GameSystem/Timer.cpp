@@ -21,11 +21,11 @@ void CTimer::Update()
     {
         m_currentTime -= SceneManager::DeltaTime();
     }
-    // if (m_currentTime <= 0)
-    // {
-    //m_currentTime =0;
-    //     TimeOut();
-    // }
+     if (m_currentTime <= 0)
+     {
+    m_currentTime =0;
+         TimeOut();
+     }
 }
 
 ////////////////////

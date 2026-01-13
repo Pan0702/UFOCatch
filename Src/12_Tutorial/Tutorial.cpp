@@ -8,15 +8,26 @@
 #include "../09_Enemy/System/AnimalManager.h"
 #include "../11_GameSystem/Timer.h"
 
+namespace
+{
+    // 動物のスポーン範囲 //
+    constexpr float SPAWN_RANGE_MIN = -10.0f;
+    constexpr float SPAWN_RANGE_MAX = 10.0f;
+}
+
 CTutorial::CTutorial()
 {
+    // 各ステートを生成してマップに登録 //
     m_states[CTutorialState::State::Move] = new CMoveState(this);
     m_states[CTutorialState::State::Expands] = new CExpands(this);
     m_states[CTutorialState::State::Discovery] = new CDiscoveryState(this);
     m_states[CTutorialState::State::Suction] = new CSuctionState(this);
+    m_states[CTutorialState::State::Play] = new CPlayState(this);
     m_pCurrentState = m_states[CTutorialState::State::Move];
-    
-    new CTutorialAnimal(VECTOR3(0,0,5.0f));
+
+    // 最初のチュートリアル用動物を生成 //
+    static constexpr float INITIAL_ANIMAL_Z = 5.0f;
+    new CTutorialAnimal(VECTOR3(0, 0, INITIAL_ANIMAL_Z));
 }
 
 CTutorial::~CTutorial()
@@ -51,11 +62,12 @@ void CTutorial::SetState(CTutorialState::State state)
 ////////////////////
 void CTutorial::SpawnAnimal()
 {
-    for (int i = 0; i < 8; i++)
+    static constexpr int SPAWN_COUNT = 4;
+    for (int i = 0; i < SPAWN_COUNT; i++)
     {
-        int randomX = Randomf(-10.0f,10.0f);
-        int randomZ = Randomf(-10.0f, 10.0f);
-        new CTutorialAnimal(VECTOR3(randomX,0,randomZ));
+        float randomX = Randomf(SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
+        float randomZ = Randomf(SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
+        new CTutorialAnimal(VECTOR3(randomX, 0, randomZ));
     }
 }
 
@@ -64,8 +76,10 @@ void CTutorial::SpawnAnimal()
 ////////////////////
 void CTutorial::SpawnHuman()
 {
-    new CTutorialHuman(VECTOR3(0,0,6.0f));
-    new CTutorialAnimal(VECTOR3(0.0f,0,5.0f));
+    static constexpr float HUMAN_SPAWN_Z = 6.0f;
+    static constexpr float ANIMAL_SPAWN_Z = 5.0f;
+    new CTutorialHuman(VECTOR3(0, 0, HUMAN_SPAWN_Z));
+    new CTutorialAnimal(VECTOR3(0, 0, ANIMAL_SPAWN_Z));
 }
 
 ////////////////////
@@ -73,16 +87,22 @@ void CTutorial::SpawnHuman()
 ////////////////////
 void CTutorial::Lesson()
 {
-    new CAnimalManager();
-    new CTimer(30);
-    int randomX = Randomf(-10.0f,10.0f);
-    int randomZ = Randomf(-10.0f, 10.0f);
-    new CHuman(VECTOR3(randomX,0,randomZ));
-    for (int i = 0; i < 6; i++)
-    {
-        randomX = Randomf(-10.0f,10.0f);
-        randomZ = Randomf(-10.0f, 10.0f);
-        new CTutorialAnimal(VECTOR3(randomX,0,randomZ));
-    }
+    static constexpr int LESSON_TIME_SECONDS = 30;
+    static constexpr int LESSON_ANIMAL_COUNT = 5;
 
+    new CAnimalManager();
+    new CTimer(LESSON_TIME_SECONDS);
+
+    // 人間を1体生成 //
+    float randomX = Randomf(SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
+    float randomZ = Randomf(SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
+    new CHuman(VECTOR3(randomX, 0, randomZ));
+
+    // 動物を複数体生成 //
+    for (int i = 0; i < LESSON_ANIMAL_COUNT; i++)
+    {
+        randomX = Randomf(SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
+        randomZ = Randomf(SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
+        new CTutorialAnimal(VECTOR3(randomX, 0, randomZ));
+    }
 }

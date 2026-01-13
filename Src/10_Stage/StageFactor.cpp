@@ -13,4 +13,12 @@ CStageFactor::CStageFactor()
 
 void CStageFactor::SpawnObjects()
 {
+    constexpr float SPAWN_RANGE_MIN = -20.0f;
+    constexpr float SPAWN_RANGE_MAX = 20.0f;
+    for (int i = 0; i < 10; ++i)
+    {
+       int  randomX = Randomf(SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
+        int randomZ = Randomf(SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
+        new CStageObject("data/Ground/Prefabs/Tree1a.mesh",VECTOR3(randomX,0.0f,randomZ),2);
+    }
 }

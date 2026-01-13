@@ -7,6 +7,7 @@
 #include "../07_Scene/TitleScene.h"
 #include "../07_Scene/PlayScene.h"
 #include "../07_Scene/ResultScene.h"
+#include "../07_Scene/SelectionScene.h"
 #include "../07_Scene/TutorialScene.h"
 #include "../12_Tutorial/Tutorial.h"
 
@@ -29,7 +30,7 @@ SceneBase* SceneFactory::Create(const std::string& name)
 	}
 	if (name == "SelectScene")
 	{
-		return new CLevelSelectionScene();
+		return new CSelectionScene();
 	}
 	if (name == "ResultScene")
 	{
@@ -39,6 +40,7 @@ SceneBase* SceneFactory::Create(const std::string& name)
 	{
 		return new CTutorialScene();
 	}
+	
 	assert(false);
 	return nullptr;
 }

@@ -1,5 +1,7 @@
 #include "PlayScene.h"
 #include <cassert>
+
+#include "../GameInstance.h"
 #include "../09_Enemy/System//AnimalManager.h"
 #include "../08_Player/PCamera.h"
 #include "../08_Player/Player.h"
@@ -17,9 +19,10 @@ PlayScene::PlayScene()
     SingleInstantiate<CAnimalManager>();
     new CTimer(30);
     Instantiate<CAnimalFactor>();
-    new CPlayer(10);
+    new CPlayer(20);
     Instantiate<CVisionSystem>();
     Instantiate<CDisplayInfo>();
+    ObjectManager::FindGameObject<CGameInstance>()->Init(1000);
 
 }
 

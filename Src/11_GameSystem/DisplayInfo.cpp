@@ -1,5 +1,7 @@
 #include "DisplayInfo.h"
 
+#include <algorithm>
+
 #include "Timer.h"
 #include "../08_Player/PHP.h"
 #include "../08_Player/Player.h"
@@ -18,7 +20,7 @@ CDisplayInfo::CDisplayInfo()
     // 疑惑ゲージ初期化
     m_prevGiwakuProportion = 0;
     m_currentAngle = 0;
-    
+
     SetDrawOrder(-100);
 }
 
@@ -55,6 +57,8 @@ void CDisplayInfo::Draw()
     m_pSprite->Draw(m_playUIImage, 0, 0, 0, 0, 1366, 768);
     GiwakuDraw();
     TimeDraw();
+    HPDraw();
+    LvDraw();
 }
 
 
@@ -67,7 +71,7 @@ void CDisplayInfo::GiwakuDraw()
     //割合を計算
     float proportion = avoidZero(pHp->GetFindCount() / pHp->GetMaxFindCount());
     //疑惑ゲージを描画
-    m_pSprite->DrawCircle(m_giwakuImage, 1122, 469, 0, 0, 230, 230,0.0f, proportion * XM_2PI);
+    m_pSprite->DrawCircle(m_giwakuImage, 1122, 469, 0, 0, 230, 230, 0.0f, proportion * XM_2PI);
 
     if (pHp->GetFoundFlag())
     {
@@ -132,7 +136,7 @@ void CDisplayInfo::TimeDraw()
         tmp /= 10;
         count++;
     }
-    if (count < 2) count = 2;
+    count = (std::max)(count, 2);
 
     // 各桁を左から順に描画
     for (int i = 0; i < count; i++)
@@ -141,9 +145,40 @@ void CDisplayInfo::TimeDraw()
         int num = (time / divisor) % 10;
         m_pSprite->Draw(m_expImage, 230 + i * 58, 640, 68 * num, 540, 68, 103, 55, 67);
     }
-
 }
 
 void CDisplayInfo::HPDraw()
 {
+    CPlayerHP* pHp = ObjectManager::FindGameObject<CPlayerHP>();
+    int currentHp = pHp->GetHP();
+    int maxHp = pHp->GetMaxHP();
+    m_pSprite->Draw(m_expImage, 1195, 530, 68 * currentHp, 540, 68, 103, 32, 54);
+    m_pSprite->Draw(m_expImage, 1247, 530, 68 * maxHp, 540, 68, 103, 32, 54);
+}
+
+void CDisplayInfo::LvDraw()
+{ 
+
+    CPlayer* pl = ObjectManager::FindGameObject<CPlayer>();
+    int lv = pl->GetLv();
+    
+    // 桁数を計算
+    int count = 0;
+    int tmp = lv;
+    while (tmp > 0)
+    {
+        tmp /= 10;
+        count++;
+    }
+    count = (std::max)(count, 1);
+
+    static constexpr float centerX = 50;
+    float halfWidth = count * 33;  
+    
+    for (int i = 0; i < count; i++)
+    {
+        int divisor = static_cast<int>(Pow(10, count - 1 - i));
+        int num = (lv / divisor) % 10;
+        m_pSprite->Draw(m_expImage, (83 - halfWidth) + i * 64, 666, 68 * num, 540, 68, 103, 64, 80);                                                                               
+    }
 }

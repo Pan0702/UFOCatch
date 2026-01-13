@@ -42,11 +42,11 @@ void CResultScene::Update()
 void CResultScene::Draw()
 {
     m_pSprite->Draw(m_pResultImage, 0, 0, 0, 0, 1366, 768);  // 画面サイズ全体に背景を描画 //
-
+    CalcRank();
     DrawRank();
-    DrawResultNum(m_pGI->GetDiscovery(),69);    // 発見数のY座標 //
-    DrawResultNum(m_pGI->GetSaw(),226);         // 目撃数のY座標 //
-    DrawResultNum(m_pGI->GetCapture(),396);     // 捕獲数のY座標 //
+    DrawResultNum(m_pGI->GetDiscovery(),60);    // 発見数のY座標 //
+    DrawResultNum(m_pGI->GetSaw(),217);         // 目撃数のY座標 //
+    DrawResultNum(m_pGI->GetCapture(),387);     // 捕獲数のY座標 //
 }
 
 ////////////////////
@@ -101,7 +101,8 @@ void CResultScene::DrawResultNum(int result,int srcY)
     // 各桁を描画 //
     for (int i = 0; i < count; i++)
     {
-        int num = result / (10 * Pow(10, count - (i + 1)));
-        m_pSprite->Draw(m_pRankImage,1000 + i * 73,srcY, 68 * i,540,68,91);  // 数字画像を横に並べて描画 //
+        int divisor = static_cast<int>(Pow(10, count - 1 - i));
+        int num = (result / divisor) % 10;
+        m_pSprite->Draw(m_pRankImage,1000 + i * 73,srcY, 68 * num,540,68,103);  // 数字画像を横に並べて描画 //
     }
 }

@@ -5,6 +5,12 @@
 #include "../06_GameLib/Animator.h"
 #include "../09_Enemy/System/AnimalManager.h"
 
+namespace
+{
+    // 初期回転角度（度） //
+    constexpr float INITIAL_ROTATION_DEG = 180.0f;
+}
+
 CTutorialHuman::CTutorialHuman(const VECTOR3& pos)
 {
     transform.position = pos;
@@ -17,7 +23,7 @@ CTutorialHuman::CTutorialHuman(const VECTOR3& pos)
     m_pAnimator->Play(A_IDEL);
 
     m_inSight = false;
-    transform.rotation.y = 180 * DegToRad;
+    transform.rotation.y = INITIAL_ROTATION_DEG * DegToRad;
 }
 
 
@@ -31,17 +37,18 @@ void CTutorialHuman::Update()
     CPlayer* player = ObjectManager::FindGameObject<CPlayer>();
 
     vision->GetCircleInfo().SetCenter(player->GetPos());
-    // 扇形の視界内にプレイヤーがいて、かつ吸い込みボタンが押されているかチェック
+    // 扇形の視界内にプレイヤーがいて、かつ吸い込みボタンが押されているかチェック //
     m_inSight = vision->SectorCircleCollision(ToVec2XZ(transform.position), transform.rotation.y)
         && player->GetIsSuckUp();
 
     if (m_inSight)
     {
+        // 視界内で吸い込み中ならHPを減らす //
         ObjectManager::FindGameObject<CPlayerHP>()->SubHP();
-        
     }
     else
     {
+        // 視界外ならフラグをリセット //
         ObjectManager::FindGameObject<CPlayerHP>()->ResetFlag();
     }
 }

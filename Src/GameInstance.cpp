@@ -11,6 +11,11 @@ CGameInstance::CGameInstance() : m_score(0)
     m_capture = 0;
 }
 
+void CGameInstance::Update()
+{
+
+}
+
 void CGameInstance::Init(int max)
 {
     m_maxScore = max;

@@ -34,29 +34,31 @@ TitleScene::~TitleScene()
 
 void TitleScene::Update()
 {
-    m_selectedIndex = GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_UP) ? (m_selectedIndex - 1 + 2) % 2 : m_selectedIndex;
-    m_selectedIndex = GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_DOWN) ? (m_selectedIndex + 1) % 2 : m_selectedIndex;
+    m_selectedIndex = GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_W) ? (m_selectedIndex - 1 + 2) % 2 : m_selectedIndex;
+    m_selectedIndex = GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_S) ? (m_selectedIndex + 1) % 2 : m_selectedIndex;
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_RETURN))
     {
         SceneManager::ChangeScene(m_text[m_selectedIndex].c_str());
     }
     if (GameDevice()->m_pDI->
-                      CheckKey(KD_TRG, DIK_P))
-    {
-        SceneManager::ChangeScene("PlayScene");
-    }
-    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_1))
-    {
-        SceneManager::ChangeScene("ResultScene");
-    }
-    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_2))
+                      CheckKey(KD_TRG, DIK_RETURN))
     {
         SceneManager::ChangeScene("SelectScene");
     }
-    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_3))
-    {
-        SceneManager::ChangeScene("TutorialScene");
-    }
+    //     SceneManager::ChangeScene("PlayScene");
+    // }
+    // if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_1))
+    // {
+    //     SceneManager::ChangeScene("ResultScene");
+    // }
+    // if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_2))
+    // {
+    //     SceneManager::ChangeScene("SelectScene");
+    // }
+    // if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_3))
+    // {
+    //     SceneManager::ChangeScene("TutorialScene");
+    // }
 }
 
 void TitleScene::Draw()

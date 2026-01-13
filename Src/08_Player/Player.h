@@ -30,7 +30,7 @@ public:
     void AddExp(float exp){ m_exp += exp; }
     float GetExp()const {return m_exp;}
     float GetAllExp()const {return m_allExp;}
-    
+    int GetLv()const {return m_lv;}
     bool GetIsSuckUp() const { return m_SuctionActive; }
 
 private:
@@ -52,9 +52,6 @@ private:
     ///プレイヤーの高さを増加 ///
     void IncreaseSuctionConeHeight();
 
-    ///カメラの場所を更新 ///
-    void UpdateCameraPos() const;
-
     ///高さと半径のLerp処理 ///
     void UpdateHeightAndRadiusLerp();
     void UpdateCameraPos();
@@ -63,6 +60,7 @@ private:
     float m_coneDegree;
     float m_allExp;
     float m_exp;
+    int m_lv;
     //吸い込み状態
     bool m_SuctionActive;
     bool m_zoomUp;

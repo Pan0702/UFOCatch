@@ -17,6 +17,7 @@ private:
     void ExpDraw();
     void TimeDraw();
     void HPDraw();
+    void LvDraw();
 
     CSprite* m_pSprite;
     CSpriteImage* m_playUIImage;
@@ -33,7 +34,5 @@ private:
     float m_prevGiwakuProportion;
     float m_currentAngle;
     
-    float tmp;
-    float tmp2;
-    VECTOR2 tmp3;
+    VECTOR2 tmp_;
 };
