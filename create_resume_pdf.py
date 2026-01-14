@@ -131,7 +131,7 @@ def create_technical_resume_pdf():
 
     # 技術アピールポイント
     story.append(PageBreak())
-    story.append(Paragraph("5 Key Technical Achievements", heading1_style))
+    story.append(Paragraph("4 Key Technical Achievements", heading1_style))
     story.append(Spacer(1, 10*mm))
 
     # 1. 空間分割アルゴリズム
@@ -258,58 +258,13 @@ std::unordered_map<StateType, std::unique_ptr<State>> states;"""
     story.append(Preformatted(code3, code_style))
     story.append(Spacer(1, 10*mm))
 
-    # 4. DirectX HLSL
+    # 4. ゲームシステムアーキテクチャ
     story.append(PageBreak())
-    story.append(Paragraph("4. DirectX HLSL Shader Programming", heading2_style))
-    story.append(Paragraph("<b>Location:</b> Hlsl/DisplaceSkinMesh.hlsli", body_style))
-    story.append(Spacer(1, 3*mm))
-
-    tech4_desc = """
-    <b>Implementation:</b><br/>
-    - Displacement mapping for advanced surface detail<br/>
-    - Skinned mesh animation supporting up to 255 bones<br/>
-    - Normal mapping, specular mapping for realistic rendering<br/>
-    <br/>
-    <b>Technical Highlights:</b><br/>
-    - Hull and Domain shaders for tessellation<br/>
-    - Vertex skinning with bone weight blending<br/>
-    - Tangent space calculations for normal mapping<br/>
-    - Optimized constant buffer usage
-    """
-    story.append(Paragraph(tech4_desc, body_style))
-    story.append(Spacer(1, 3*mm))
-
-    code4 = """// Skinning vertex shader
-struct VS_IN {
-    float3 Pos : POSITION;
-    float3 Normal : NORMAL;
-    float2 Tex : TEXCOORD;
-    uint4 Bones : BONE_INDEX;
-    float4 Weights : BONE_WEIGHT;
-};
-
-Skin SkinVertex(VS_IN input) {
-    Skin output = (Skin)0;
-
-    for (int i = 0; i < 4; i++) {
-        matrix boneMat = BoneFramePose[input.Bones[i]];
-        float weight = input.Weights[i];
-
-        output.Pos4 += weight * mul(float4(input.Pos, 1), boneMat);
-        output.Normal += weight * mul(input.Normal, (float3x3)boneMat);
-    }
-    return output;
-}"""
-    story.append(Preformatted(code4, code_style))
-    story.append(Spacer(1, 10*mm))
-
-    # 5. ゲームシステムアーキテクチャ
-    story.append(PageBreak())
-    story.append(Paragraph("5. Game System Architecture Design", heading2_style))
+    story.append(Paragraph("4. Game System Architecture Design", heading2_style))
     story.append(Paragraph("<b>Location:</b> Src/07_Scene/, Src/08_Player/, Src/11_GameSystem/", body_style))
     story.append(Spacer(1, 3*mm))
 
-    tech5_desc = """
+    tech4_desc = """
     <b>Implementation:</b><br/>
     - Scene management system with lifecycle control<br/>
     - Object manager for game entity lifecycle<br/>
@@ -321,10 +276,10 @@ Skin SkinVertex(VS_IN input) {
     - Height-based suction speed using easing curves<br/>
     - Internal division ratio for ground-plane projection
     """
-    story.append(Paragraph(tech5_desc, body_style))
+    story.append(Paragraph(tech4_desc, body_style))
     story.append(Spacer(1, 3*mm))
 
-    code5 = """// Suction displacement calculation
+    code4 = """// Suction displacement calculation
 VECTOR3 CalcSuctionDisplacement(float moveTime,
                                 const VECTOR3& animalPos) const {
     // Calculate speed multiplier based on height
@@ -345,7 +300,7 @@ VECTOR3 CalcSuctionDisplacement(float moveTime,
     VECTOR3 pullVector = transform.position - groundPoint;
     return pullVector / moveTime * speedMultiplier * DeltaTime();
 }"""
-    story.append(Preformatted(code5, code_style))
+    story.append(Preformatted(code4, code_style))
     story.append(Spacer(1, 10*mm))
 
     # まとめ
