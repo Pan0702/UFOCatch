@@ -103,52 +103,52 @@ def create_technical_resume_pdf():
 
     # タイトルページ
     story.append(Spacer(1, 40*mm))
-    story.append(Paragraph("UFOCatch Game Project", title_style))
+    story.append(Paragraph("UFOCatch ゲームプロジェクト", title_style))
     story.append(Spacer(1, 10*mm))
-    story.append(Paragraph("Technical Skills Portfolio", heading1_style))
+    story.append(Paragraph("技術アピール資料", heading1_style))
     story.append(Spacer(1, 5*mm))
-    story.append(Paragraph("DirectX & C++ Game Development", body_style))
+    story.append(Paragraph("DirectX & C++ ゲーム開発", body_style))
     story.append(PageBreak())
 
     # プロジェクト概要
-    story.append(Paragraph("Project Overview", heading1_style))
+    story.append(Paragraph("プロジェクト概要", heading1_style))
     story.append(Spacer(1, 5*mm))
 
     overview_text = """
-    <b>Game Concept:</b> Stealth action game where a UFO abducts animals while avoiding detection by humans.<br/>
+    <b>ゲームコンセプト:</b> UFOを操作して人間に見つからないように動物を吸い込むステルスアクションゲーム<br/>
     <br/>
-    <b>Technology Stack:</b><br/>
-    - Language: C++<br/>
-    - Graphics API: DirectX 11<br/>
-    - Architecture: Component-based game engine<br/>
-    - Design Patterns: State Pattern, Object Pool, Singleton<br/>
+    <b>使用技術:</b><br/>
+    - 開発言語: C++<br/>
+    - グラフィックスAPI: DirectX 11<br/>
+    - アーキテクチャ: コンポーネントベースのゲームエンジン<br/>
+    - デザインパターン: State Pattern, Object Pool, Singleton<br/>
     <br/>
-    <b>Development Period:</b> Personal project<br/>
-    <b>Lines of Code:</b> ~10,000+ lines of custom code
+    <b>開発形態:</b> 個人開発<br/>
+    <b>実装規模:</b> 約10,000行以上の独自実装コード
     """
     story.append(Paragraph(overview_text, body_style))
     story.append(Spacer(1, 10*mm))
 
     # 技術アピールポイント
     story.append(PageBreak())
-    story.append(Paragraph("4 Key Technical Achievements", heading1_style))
+    story.append(Paragraph("4つの主要技術実装", heading1_style))
     story.append(Spacer(1, 10*mm))
 
     # 1. 空間分割アルゴリズム
-    story.append(Paragraph("1. Spatial Partitioning Algorithm (Linear Quadtree + Morton Order)", heading2_style))
-    story.append(Paragraph("<b>Location:</b> Src/09_Enemy/Liner4Tree.h", body_style))
+    story.append(Paragraph("1. 空間分割アルゴリズム（線形4分木 + モートン順序）", heading2_style))
+    story.append(Paragraph("<b>実装箇所:</b> Src/09_Enemy/Liner4Tree.h", body_style))
     story.append(Spacer(1, 3*mm))
 
     tech1_desc = """
-    <b>Implementation:</b><br/>
-    - Quadtree-based collision detection optimization<br/>
-    - Morton curve (Z-order curve) for efficient spatial indexing using bit operations<br/>
-    - Reduces collision check complexity from O(n²) to O(n log n)<br/>
+    <b>実装内容:</b><br/>
+    - 4分木による効率的な衝突判定の最適化<br/>
+    - モートン曲線（Z曲線）を使ったビット演算による空間インデックス<br/>
+    - 衝突判定の計算量を O(n²) から O(n log n) に削減<br/>
     <br/>
-    <b>Technical Highlights:</b><br/>
-    - Implemented bit separation algorithm for Morton encoding<br/>
-    - Hierarchical cell traversal for spatial queries<br/>
-    - Template-based generic container for any game object type
+    <b>技術的なポイント:</b><br/>
+    - ビット分離アルゴリズムによるモートン符号化<br/>
+    - 階層的なセル探索による空間クエリ<br/>
+    - テンプレートによる汎用的なゲームオブジェクトコンテナ
     """
     story.append(Paragraph(tech1_desc, body_style))
     story.append(Spacer(1, 3*mm))
@@ -172,20 +172,20 @@ uint16_t Get2DMortonNumber(float worldX, float worldY) {
 
     # 2. 幾何学的衝突判定
     story.append(PageBreak())
-    story.append(Paragraph("2. Geometric Collision Detection System", heading2_style))
-    story.append(Paragraph("<b>Location:</b> Src/11_GameSystem/VisionSystem.h/cpp", body_style))
+    story.append(Paragraph("2. 幾何学的衝突判定システム", heading2_style))
+    story.append(Paragraph("<b>実装箇所:</b> Src/11_GameSystem/VisionSystem.h/cpp", body_style))
     story.append(Spacer(1, 3*mm))
 
     tech2_desc = """
-    <b>Implementation:</b><br/>
-    - Advanced sector-circle collision detection for AI vision system<br/>
-    - Line segment-circle intersection using quadratic equation discriminant<br/>
-    - Applied to enemy AI detection mechanics<br/>
+    <b>実装内容:</b><br/>
+    - AI視界システムのための扇形と円の高度な衝突判定<br/>
+    - 2次方程式の判別式を使った線分と円の交差判定<br/>
+    - 敵AIの発見メカニクスへの応用<br/>
     <br/>
-    <b>Technical Highlights:</b><br/>
-    - Mathematical approach using dot products and vector normalization<br/>
-    - Optimized with early rejection tests to minimize calculations<br/>
-    - Handles edge cases including sector boundaries and arc intersections
+    <b>技術的なポイント:</b><br/>
+    - 内積とベクトル正規化を用いた数学的アプローチ<br/>
+    - 早期リジェクションテストによる計算の最小化<br/>
+    - 扇形の境界や円弧の交差などのエッジケースに対応
     """
     story.append(Paragraph(tech2_desc, body_style))
     story.append(Spacer(1, 3*mm))
@@ -215,21 +215,21 @@ bool LineSegmentCircleIntersection(
 
     # 3. ステートパターン
     story.append(PageBreak())
-    story.append(Paragraph("3. Design Pattern Implementation (State Pattern)", heading2_style))
-    story.append(Paragraph("<b>Location:</b> Src/12_Tutorial/TutorialState.h, Src/09_Enemy/Human/State/", body_style))
+    story.append(Paragraph("3. デザインパターンの実装（State Pattern）", heading2_style))
+    story.append(Paragraph("<b>実装箇所:</b> Src/12_Tutorial/TutorialState.h, Src/09_Enemy/Human/State/", body_style))
     story.append(Spacer(1, 3*mm))
 
     tech3_desc = """
-    <b>Implementation:</b><br/>
-    - State machine for complex behavior management<br/>
-    - Tutorial progression: Move → Suction → Expand → Discovery → Play<br/>
-    - Enemy AI states: Idle → Walk → FindPlayer<br/>
+    <b>実装内容:</b><br/>
+    - 複雑な振る舞い管理のためのステートマシン<br/>
+    - チュートリアル進行: Move → Suction → Expand → Discovery → Play<br/>
+    - 敵AIの状態遷移: Idle → Walk → FindPlayer<br/>
     <br/>
-    <b>Technical Highlights:</b><br/>
-    - Separation of concerns: Actor and State classes<br/>
-    - std::unordered_map for O(1) state lookup<br/>
-    - Pre-allocated states to eliminate runtime allocations<br/>
-    - Prevents frame rate drops during state transitions
+    <b>技術的なポイント:</b><br/>
+    - 関心の分離: ActorクラスとStateクラスの分離<br/>
+    - std::unordered_map による O(1) の状態検索<br/>
+    - 事前割り当てによる実行時のメモリ確保の排除<br/>
+    - 状態遷移時のフレームレート低下を防止
     """
     story.append(Paragraph(tech3_desc, body_style))
     story.append(Spacer(1, 3*mm))
@@ -260,21 +260,21 @@ std::unordered_map<StateType, std::unique_ptr<State>> states;"""
 
     # 4. ゲームシステムアーキテクチャ
     story.append(PageBreak())
-    story.append(Paragraph("4. Game System Architecture Design", heading2_style))
-    story.append(Paragraph("<b>Location:</b> Src/07_Scene/, Src/08_Player/, Src/11_GameSystem/", body_style))
+    story.append(Paragraph("4. ゲームシステムアーキテクチャ設計", heading2_style))
+    story.append(Paragraph("<b>実装箇所:</b> Src/07_Scene/, Src/08_Player/, Src/11_GameSystem/", body_style))
     story.append(Spacer(1, 3*mm))
 
     tech4_desc = """
-    <b>Implementation:</b><br/>
-    - Scene management system with lifecycle control<br/>
-    - Object manager for game entity lifecycle<br/>
-    - Game mechanics: Conical suction, experience system, Lerp interpolation<br/>
+    <b>実装内容:</b><br/>
+    - ライフサイクル制御を持つシーン管理システム<br/>
+    - ゲームエンティティのライフサイクルを管理するオブジェクトマネージャ<br/>
+    - ゲームメカニクス: 円錐形吸引、経験値システム、Lerp補間<br/>
     <br/>
-    <b>Technical Highlights:</b><br/>
-    - Frame-rate independent physics using DeltaTime<br/>
-    - Conical volume calculation for suction range<br/>
-    - Height-based suction speed using easing curves<br/>
-    - Internal division ratio for ground-plane projection
+    <b>技術的なポイント:</b><br/>
+    - DeltaTimeを使用したフレームレート非依存の物理演算<br/>
+    - 吸引範囲の円錐体積計算<br/>
+    - イージングカーブを使った高さベースの吸引速度<br/>
+    - 内分比による地面平面への投影計算
     """
     story.append(Paragraph(tech4_desc, body_style))
     story.append(Spacer(1, 3*mm))
@@ -305,33 +305,33 @@ VECTOR3 CalcSuctionDisplacement(float moveTime,
 
     # まとめ
     story.append(PageBreak())
-    story.append(Paragraph("Summary & Impact", heading1_style))
+    story.append(Paragraph("まとめと成果", heading1_style))
     story.append(Spacer(1, 5*mm))
 
     summary_text = """
-    <b>Code Quality:</b><br/>
-    - Used 'lizard' tool to measure cyclomatic complexity<br/>
-    - Maintained low complexity scores through small, focused functions<br/>
-    - Improved code readability, testability, and maintainability<br/>
+    <b>コード品質:</b><br/>
+    - 「lizard」ツールを使用して循環的複雑度を測定<br/>
+    - 小さく焦点を絞った関数で低い複雑度スコアを維持<br/>
+    - コードの可読性、テスト容易性、保守性を向上<br/>
     <br/>
-    <b>Performance Optimization:</b><br/>
-    - Spatial partitioning reduced collision checks by ~90%<br/>
-    - State pre-allocation eliminated frame drops during transitions<br/>
-    - Frame-rate independent physics ensures consistent gameplay<br/>
+    <b>パフォーマンス最適化:</b><br/>
+    - 空間分割により衝突判定を約90%削減<br/>
+    - 状態の事前割り当てにより遷移時のフレーム落ちを排除<br/>
+    - フレームレート非依存の物理演算で一貫したゲームプレイを実現<br/>
     <br/>
-    <b>Software Engineering Principles:</b><br/>
-    - Single Responsibility Principle in state design<br/>
-    - DRY (Don't Repeat Yourself) with template programming<br/>
-    - SOLID principles throughout architecture<br/>
+    <b>ソフトウェアエンジニアリング原則:</b><br/>
+    - ステート設計における単一責任の原則<br/>
+    - テンプレートプログラミングによるDRY原則<br/>
+    - アーキテクチャ全体でSOLID原則を適用<br/>
     <br/>
-    <b>Key Takeaways:</b><br/>
-    These implementations demonstrate proficiency in:<br/>
-    • Advanced C++ programming (templates, STL, modern C++11/14 features)<br/>
-    • Algorithm design and optimization<br/>
-    • Graphics programming (DirectX, HLSL)<br/>
-    • Software architecture and design patterns<br/>
-    • Performance-conscious development<br/>
-    • Mathematical problem-solving for game mechanics
+    <b>習得技術:</b><br/>
+    これらの実装により以下の技術を実証:<br/>
+    • 高度なC++プログラミング（テンプレート、STL、モダンC++11/14機能）<br/>
+    • アルゴリズム設計と最適化<br/>
+    • グラフィックスプログラミング（DirectX）<br/>
+    • ソフトウェアアーキテクチャとデザインパターン<br/>
+    • パフォーマンスを意識した開発<br/>
+    • ゲームメカニクスのための数学的問題解決
     """
     story.append(Paragraph(summary_text, body_style))
 
