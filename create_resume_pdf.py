@@ -29,22 +29,15 @@ def create_technical_resume_pdf():
         bottomMargin=20*mm
     )
 
-    # 日本語フォントの登録を試みる
-    font_registered = False
-    japanese_fonts = [
-        '/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc',
-        '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc',
-        '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
-    ]
-
-    for font_path in japanese_fonts:
-        if os.path.exists(font_path):
-            try:
-                pdfmetrics.registerFont(TTFont('Japanese', font_path))
-                font_registered = True
-                break
-            except:
-                continue
+    # 日本語フォントの登録
+    try:
+        font_path = '/usr/share/fonts/opentype/ipafont-gothic/ipag.ttf'
+        pdfmetrics.registerFont(TTFont('IPAGothic', font_path))
+        japanese_font = 'IPAGothic'
+        print(f"✓ 日本語フォント登録成功: IPAGothic")
+    except Exception as e:
+        print(f"✗ フォント登録失敗: {e}")
+        japanese_font = 'Helvetica'
 
     # スタイル定義
     styles = getSampleStyleSheet()
@@ -57,7 +50,8 @@ def create_technical_resume_pdf():
         textColor=HexColor('#1a237e'),
         spaceAfter=30,
         alignment=TA_CENTER,
-        fontName='Japanese' if font_registered else 'Helvetica-Bold'
+        fontName=japanese_font,
+        wordWrap='CJK'
     )
 
     heading1_style = ParagraphStyle(
@@ -67,7 +61,8 @@ def create_technical_resume_pdf():
         textColor=HexColor('#283593'),
         spaceAfter=12,
         spaceBefore=20,
-        fontName='Japanese' if font_registered else 'Helvetica-Bold'
+        fontName=japanese_font,
+        wordWrap='CJK'
     )
 
     heading2_style = ParagraphStyle(
@@ -77,7 +72,8 @@ def create_technical_resume_pdf():
         textColor=HexColor('#3949ab'),
         spaceAfter=10,
         spaceBefore=15,
-        fontName='Japanese' if font_registered else 'Helvetica-Bold'
+        fontName=japanese_font,
+        wordWrap='CJK'
     )
 
     body_style = ParagraphStyle(
@@ -85,7 +81,8 @@ def create_technical_resume_pdf():
         parent=styles['Normal'],
         fontSize=10,
         leading=16,
-        fontName='Japanese' if font_registered else 'Helvetica'
+        fontName=japanese_font,
+        wordWrap='CJK'
     )
 
     code_style = ParagraphStyle(
