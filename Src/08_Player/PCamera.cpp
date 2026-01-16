@@ -135,11 +135,9 @@ void CPlayerCamera::ZoomIn(const VECTOR3& pos)
     m_debugTargetLook = targetLook;
 
     // 制御点はプレイヤー位置を基準にオフセット
-    VECTOR3 controlPoint1 = pos + m_zoomInCtrl1;
-    VECTOR3 controlPoint2 = pos + m_zoomInCtrl2;
-
-    VECTOR3 controlPointLook1 = pos + m_zoomInLookCtrl1;
-    VECTOR3 controlPointLook2 = pos + m_zoomInLookCtrl2;
+    VECTOR3 controlPoint1 = startLook + m_zoomInCtrl1;
+    VECTOR3 controlPoint2 = targetLook + m_zoomInCtrl2;
+    
 
     m_camPosBezier.StartWithControlPoints(startPos, controlPoint1, controlPoint2, targetPos, 1.0f);
     m_camLookBezier.Start(startLook, targetLook, 1.0f);
@@ -171,9 +169,6 @@ void CPlayerCamera::ZoomOut(const VECTOR3& pos)
     // 制御点はプレイヤー位置を基準にオフセット
     VECTOR3 controlPoint1 = pos + m_zoomOutCtrl1;
     VECTOR3 controlPoint2 = pos + m_zoomOutCtrl2;
-
-    VECTOR3 controlPointLook1 = pos + m_zoomOutLookCtrl1;
-    VECTOR3 controlPointLook2 = pos + m_zoomOutLookCtrl2;
 
     m_camPosBezier.StartWithControlPoints(startPos, controlPoint1, controlPoint2, targetPos, 0.5f);
     m_camLookBezier.Start(startLook, targetLook, 0.5f);
