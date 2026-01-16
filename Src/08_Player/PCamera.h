@@ -25,6 +25,8 @@ private:
 
     VECTOR3 m_camPos;
     VECTOR3 m_camLook;
+    VECTOR3 t1;
+    VECTOR3 t2;
     BezierValueVec3 m_camPosBezier;
     BezierValueVec3 m_camLookBezier;
     
