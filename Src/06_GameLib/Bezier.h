@@ -40,10 +40,15 @@ inline VECTOR3 CubicBezier(const VECTOR3& p0, const VECTOR3& p1, const VECTOR3& 
 inline void GenerateArcBezierControlPoints(const VECTOR3& start, const VECTOR3& end, float heightOffset,
                                            VECTOR3& outP1, VECTOR3& outP2)
 {
+	// 始点と終点の中間点を計算
 	VECTOR3 mid = (start + end) * 0.5f;
-	mid.y += heightOffset;
 
-	// 制御点を始点寄りと終点寄りの中間位置に配置して滑らかな弧を作る
-	outP1 = start + (mid - start) * 0.67f;
-	outP2 = end + (mid - end) * 0.67f;
+	// 上方向に持ち上げた中間点を作る
+	VECTOR3 arcTop = mid;
+	arcTop.y += heightOffset;
+
+	// 制御点を始点と終点から弧の頂点に向けて配置
+	// 係数を0.5に近づけると弧が急になり、1.0に近づけると緩やかになる
+	outP1 = start + (arcTop - start) * 0.5f;
+	outP2 = end + (arcTop - end) * 0.5f;
 }
