@@ -14,6 +14,7 @@ CPlayerCamera::CPlayerCamera()
 {
     m_camLook = INIT_CAM_LOOK;
     m_camPos = INIT_CAM_POS;
+    state = 1;
 }
 
 CPlayerCamera::~CPlayerCamera()
@@ -22,6 +23,53 @@ CPlayerCamera::~CPlayerCamera()
 
 void CPlayerCamera::Update()
 {
+    ImGui::Begin("Camera Bezier Control");
+
+    // === ZoomIn 制御点 ===
+    if (ImGui::CollapsingHeader("ZoomIn Control Points", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        ImGui::Text("Camera Position Control Points:");
+        ImGui::SliderFloat3("Ctrl1 (Pos)", &m_zoomInCtrl1.x, -20.0f, 20.0f);
+        ImGui::SliderFloat3("Ctrl2 (Pos)", &m_zoomInCtrl2.x, -20.0f, 20.0f);
+
+        ImGui::Separator();
+        ImGui::Text("Look At Control Points:");
+        ImGui::SliderFloat3("Ctrl1 (Look)", &m_zoomInLookCtrl1.x, -20.0f, 20.0f);
+        ImGui::SliderFloat3("Ctrl2 (Look)", &m_zoomInLookCtrl2.x, -20.0f, 20.0f);
+    }
+
+    // === ZoomOut 制御点 ===
+    if (ImGui::CollapsingHeader("ZoomOut Control Points"))
+    {
+        ImGui::Text("Camera Position Control Points:");
+        ImGui::SliderFloat3("Ctrl1 (Pos)##Out", &m_zoomOutCtrl1.x, -20.0f, 20.0f);
+        ImGui::SliderFloat3("Ctrl2 (Pos)##Out", &m_zoomOutCtrl2.x, -20.0f, 20.0f);
+
+        ImGui::Separator();
+        ImGui::Text("Look At Control Points:");
+        ImGui::SliderFloat3("Ctrl1 (Look)##Out", &m_zoomOutLookCtrl1.x, -20.0f, 20.0f);
+        ImGui::SliderFloat3("Ctrl2 (Look)##Out", &m_zoomOutLookCtrl2.x, -20.0f, 20.0f);
+    }
+
+    // === 現在のカメラ情報 ===
+    ImGui::Separator();
+    ImGui::Text("Current Camera Pos: %.2f, %.2f, %.2f", m_camPos.x, m_camPos.y, m_camPos.z);
+    ImGui::Text("Current Camera Look: %.2f, %.2f, %.2f", m_camLook.x, m_camLook.y, m_camLook.z);
+
+    // === デバッグ：始点・終点 ===
+    ImGui::Separator();
+    ImGui::Text("DEBUG - Look Animation:");
+    ImGui::Text("  Start:  %.2f, %.2f, %.2f", m_debugStartLook.x, m_debugStartLook.y, m_debugStartLook.z);
+    ImGui::Text("  Target: %.2f, %.2f, %.2f", m_debugTargetLook.x, m_debugTargetLook.y, m_debugTargetLook.z);
+    ImGui::Text("  Animating: %s", m_camLookBezier.IsLerping() ? "Yes" : "No");
+
+    if (ImGui::Button("Reset1"))
+    {
+        m_zoomInCtrl1 = VECTOR3(0, 0, -0);
+        m_zoomInCtrl2 = VECTOR3(0, 0, 0);
+    }
+    ImGui::End();
+
     UpdateCameraBezier();
     GameDevice()->m_mView = XMMatrixLookAtLH(
         m_camPos, m_camLook, INIT_UP_DIR);
@@ -32,14 +80,15 @@ void CPlayerCamera::Update()
 ////////////////////
 void CPlayerCamera::UpdateCameraBezier()
 {
-        if (m_camPosBezier.IsAnimating())
-        {
-            m_camPos = m_camPosBezier.Update(SceneManager::DeltaTime());
-        }
-        if (m_camLookBezier.IsAnimating())
-        {
-             m_camLook = m_camLookBezier.Update(SceneManager::DeltaTime());
-        }
+    if (m_camPosBezier.IsAnimating())
+    {
+        m_camPos = m_camPosBezier.Update(SceneManager::DeltaTime());
+    }
+    if (m_camLookBezier.IsLerping())
+    {
+        m_camLook = m_camLookBezier.Update(SceneManager::DeltaTime());
+    }
+    
 }
 
 ////////////////////
@@ -49,6 +98,12 @@ void CPlayerCamera::UpdateCameraBezier()
 ////////////////////
 void CPlayerCamera::PosSet(const VECTOR3& pos, const float& coneHeight)
 {
+    // ベジエアニメーション中は上書きしない
+    if (m_camPosBezier.IsAnimating() || m_camLookBezier.IsLerping())
+    {
+        return;
+    }
+
     // コーンの高さに応じてカメラ距離をスケーリング
     float scale = coneHeight / REFERENCE_HEIGHT;
     VECTOR3 scaledCamOffset = INIT_CAM_POS * scale;
@@ -63,15 +118,32 @@ void CPlayerCamera::PosSet(const VECTOR3& pos, const float& coneHeight)
 ////////////////////
 void CPlayerCamera::ZoomIn(const VECTOR3& pos)
 {
+    // 既にアニメーション中なら何もしない（毎フレーム呼ばれるため）
+    if (m_camPosBezier.IsAnimating() || m_camLookBezier.IsLerping())
+    {
+        return;
+    }
+    if (state == 0) return;
+    VECTOR3 startPos = m_camPos;
     VECTOR3 targetPos = pos + INIT_SUCTION_CAM_POS;
-    VECTOR3 targetLook = pos + VECTOR3(0, -pos.y / 2, 0);
 
-    // 弧の高さを移動距離に応じて設定（30%くらいの高さ）
-    float distance = (targetPos - m_camPos).Length();
-    float heightOffset = distance * 0.3f;
+    VECTOR3 startLook = m_camLook;
+    VECTOR3 targetLook = pos + VECTOR3(0, -(pos.y / 2), 0);
 
-    m_camPosBezier.Start(m_camPos, targetPos, 0.5f, heightOffset);
-    m_camLookBezier.Start(m_camLook, targetLook, 0.5f, heightOffset * 0.5f);
+    // デバッグ用に保存
+    m_debugStartLook = startLook;
+    m_debugTargetLook = targetLook;
+
+    // 制御点はプレイヤー位置を基準にオフセット
+    VECTOR3 controlPoint1 = pos + m_zoomInCtrl1;
+    VECTOR3 controlPoint2 = pos + m_zoomInCtrl2;
+
+    VECTOR3 controlPointLook1 = pos + m_zoomInLookCtrl1;
+    VECTOR3 controlPointLook2 = pos + m_zoomInLookCtrl2;
+
+    m_camPosBezier.StartWithControlPoints(startPos, controlPoint1, controlPoint2, targetPos, 1.0f);
+    m_camLookBezier.Start(startLook, targetLook, 1.0f);
+    state = 0;
 }
 
 ////////////////////
@@ -80,18 +152,30 @@ void CPlayerCamera::ZoomIn(const VECTOR3& pos)
 ////////////////////
 void CPlayerCamera::ZoomOut(const VECTOR3& pos)
 {
+    // 既にアニメーション中なら何もしない
+    if (m_camPosBezier.IsAnimating() || m_camLookBezier.IsLerping())
+    {
+        return;
+    }
+    if (state == 1) return;
     // カメラオフセットをスケーリング
     float scale = pos.y / REFERENCE_HEIGHT;
     VECTOR3 scaledCamOffset = INIT_CAM_POS * scale;
 
+    VECTOR3 startPos = m_camPos;
     VECTOR3 targetPos = pos + scaledCamOffset;
+
+    VECTOR3 startLook = m_camLook;
     VECTOR3 targetLook = pos + INIT_CAM_LOOK;
 
-    // 弧の高さを移動距離に応じて設定（ZoomInと同じ弧を描く）
-    float distance = (targetPos - m_camPos).Length();
-    float heightOffset = distance * 0.3f;
+    // 制御点はプレイヤー位置を基準にオフセット
+    VECTOR3 controlPoint1 = pos + m_zoomOutCtrl1;
+    VECTOR3 controlPoint2 = pos + m_zoomOutCtrl2;
 
-    // 現在位置から通常位置へ戻る
-    m_camPosBezier.Start(m_camPos, targetPos, 0.5f, heightOffset);
-    m_camLookBezier.Start(m_camLook, targetLook, 0.5f, heightOffset * 0.5f);
+    VECTOR3 controlPointLook1 = pos + m_zoomOutLookCtrl1;
+    VECTOR3 controlPointLook2 = pos + m_zoomOutLookCtrl2;
+
+    m_camPosBezier.StartWithControlPoints(startPos, controlPoint1, controlPoint2, targetPos, 0.5f);
+    m_camLookBezier.Start(startLook, targetLook, 0.5f);
+    state = 1;
 }

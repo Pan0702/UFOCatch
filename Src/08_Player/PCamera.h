@@ -25,7 +25,32 @@ private:
 
     VECTOR3 m_camPos;
     VECTOR3 m_camLook;
+
+    // ZoomIn用の制御点（直接指定）
+    VECTOR3 m_zoomInCtrl1 = VECTOR3(0, 5, -5);   // カメラ位置の制御点1
+    VECTOR3 m_zoomInCtrl2 = VECTOR3(0, 3, -6);   // カメラ位置の制御点2
+    VECTOR3 m_zoomInLookCtrl1 = VECTOR3(0, 1, 0); // 注視点の制御点1
+    VECTOR3 m_zoomInLookCtrl2 = VECTOR3(0, 0, 0); // 注視点の制御点2
+
+    // ZoomOut用の制御点（直接指定）
+    VECTOR3 m_zoomOutCtrl1 = VECTOR3(0, 5, -5);
+    VECTOR3 m_zoomOutCtrl2 = VECTOR3(0, 6, -4);
+    VECTOR3 m_zoomOutLookCtrl1 = VECTOR3(0, 1, 0);
+    VECTOR3 m_zoomOutLookCtrl2 = VECTOR3(0, 1, -1);
+
+    // デバッグ用：始点・終点の記録
+    VECTOR3 m_debugStartLook = VECTOR3(0, 0, 0);
+    VECTOR3 m_debugTargetLook = VECTOR3(0, 0, 0);
+
     BezierValueVec3 m_camPosBezier;
-    BezierValueVec3 m_camLookBezier;
     
+    LerpValueVec3 m_camLookBezier;
+    
+    int state;
+    
+    enum
+    {
+        zoomIn = 0,
+        zoomOut = 1,
+    };
 };
