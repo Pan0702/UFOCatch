@@ -2,8 +2,6 @@
 #include "Lerp.h"
 #include "Bezier.h"
 
-class CPlayer;
-
 /// 単一の値をLerpするための汎用構造体
 struct LerpValue
 {
@@ -46,7 +44,7 @@ struct LerpValue
         isLerping = false;
     }
     
-    bool IsLerping() const { return isLerping; }
+    bool IsAnimating() const { return isLerping; }
 private:
     float start;      // 開始値 //
     float target;     // 目標値 //
@@ -75,10 +73,10 @@ struct LerpValueVec3 {
                        z.Update(deltaTime));
     }
 
-    bool IsLerping() const {
-        return x.IsLerping() &&
-               y.IsLerping() &&
-               z.IsLerping();
+    bool IsAnimating() const {
+        return x.IsAnimating() &&
+               y.IsAnimating() &&
+               z.IsAnimating();
     }
 
 private:

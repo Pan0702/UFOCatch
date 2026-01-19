@@ -10,7 +10,7 @@
 #include "../11_GameSystem/VisionSystem.h"
 #include "../12_Tutorial/Tutorial.h"
 #include "../12_Tutorial/TutorialDisplayInfo.h"
-#include "../GameInstance.h"
+#include "../11_GameSystem/GameInstance.h"
 
 CTutorialScene::CTutorialScene()
 {

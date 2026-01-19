@@ -1,6 +1,6 @@
 #include "ResultScene.h"
 
-#include "../GameInstance.h"
+#include "../11_GameSystem/GameInstance.h""
 #include "../04_FrameWork/ObjectManager.h"
 
 CResultScene::CResultScene()

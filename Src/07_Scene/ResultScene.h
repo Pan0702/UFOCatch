@@ -1,6 +1,6 @@
 #pragma once
 #include "../04_FrameWork/SceneBase.h"
-#include "../GameInstance.h"
+#include "../11_GameSystem/GameInstance.h"
 
 // ゲーム終了後のリザルトを表示するシーン //
 class CResultScene : public SceneBase

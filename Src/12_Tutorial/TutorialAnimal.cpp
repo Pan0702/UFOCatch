@@ -1,6 +1,6 @@
 #include "TutorialAnimal.h"
 
-#include "../GameInstance.h"
+#include "../11_GameSystem/GameInstance.h""
 #include "../08_Player/Player.h"
 #include "../06_GameLib/Animator.h"
 #include "../09_Enemy/System/AnimalManager.h"

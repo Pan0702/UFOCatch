@@ -8,6 +8,8 @@ namespace
     const VECTOR3 INIT_CAM_LOOK = VECTOR3(0, 1, -1.5);
     const VECTOR3 INIT_SUCTION_CAM_POS = VECTOR3(0, 4, -7);
     constexpr float REFERENCE_HEIGHT = 5.0f; // 基準高さ
+    const VECTOR3 name1 = VECTOR3(0, 17.1f, -10.3f);
+    const VECTOR3 name2 = VECTOR3(0, 2.3f, -10.3f);
 }
 
 CPlayerCamera::CPlayerCamera()
@@ -23,7 +25,108 @@ CPlayerCamera::~CPlayerCamera()
 
 void CPlayerCamera::Update()
 {
-    ImGui::Begin("Camera Bezier Control");
+   // DebugImGui();
+    UpdateCameraBezier();
+    GameDevice()->m_mView = XMMatrixLookAtLH(
+        m_camPos, m_camLook, INIT_UP_DIR);
+}
+
+////////////////////
+// ベジェ曲線でカメラを更新する //
+////////////////////
+void CPlayerCamera::UpdateCameraBezier()
+{
+    if (m_camPosBezier.IsAnimating())
+    {
+        m_camPos = m_camPosBezier.Update(SceneManager::DeltaTime());
+    }
+    if (m_camLookBezier.IsAnimating())
+    {
+        m_camLook = m_camLookBezier.Update(SceneManager::DeltaTime());
+    }
+    
+}
+
+////////////////////
+// カメラ位置を設定する
+// @param pos プレイヤーの位置
+// @param coneHeight コーンの高さ //
+////////////////////
+void CPlayerCamera::PosSet(const VECTOR3& pos, const float& coneHeight)
+{
+    // ベジエアニメーション中は上書きしない//
+    if (m_camPosBezier.IsAnimating() || m_camLookBezier.IsAnimating())
+    {
+        return;
+    }
+
+    // コーンの高さに応じてカメラ距離をスケーリング//
+    float scale = coneHeight / REFERENCE_HEIGHT;
+    VECTOR3 scaledCamOffset = INIT_CAM_POS * scale;
+
+    m_camPos = pos + scaledCamOffset;
+    m_camLook = pos + INIT_CAM_LOOK;
+}
+
+////////////////////
+// カメラをズームインさせる
+// @param pos プレイヤーの位置 //
+////////////////////
+void CPlayerCamera::ZoomIn(const VECTOR3& pos)
+{
+    if (state == zoomIn) return;
+    VECTOR3 startPos = m_camPos;
+    VECTOR3 targetPos = pos + INIT_SUCTION_CAM_POS;
+
+    VECTOR3 startLook = m_camLook;
+    VECTOR3 targetLook = pos + VECTOR3(0, -(pos.y / 2), 0);
+
+    // // デバッグ用に保存//
+    // m_debugStartLook = startLook;
+    // m_debugTargetLook = targetLook;
+
+    // 制御点はプレイヤー位置を基準にオフセット//
+    VECTOR3 controlPoint1 = startLook  + name1;
+    VECTOR3 controlPoint2 = targetLook + name2;
+    
+
+    m_camPosBezier.StartWithControlPoints(startPos, controlPoint1, controlPoint2, targetPos, 1.0f);
+    m_camLookBezier.Start(startLook, targetLook, 1.0f);
+    state = 0;
+}
+
+////////////////////
+// カメラをズームアウトさせる
+// @param pos プレイヤーの位置 //
+////////////////////
+void CPlayerCamera::ZoomOut(const VECTOR3& pos)
+{
+    if (state == zoomOut) return;
+    // カメラオフセットをスケーリング
+    float scale = pos.y / REFERENCE_HEIGHT;
+    VECTOR3 scaledCamOffset = INIT_CAM_POS * scale;
+
+    VECTOR3 startPos = m_camPos;
+    VECTOR3 targetPos = pos + scaledCamOffset;
+
+    VECTOR3 startLook = m_camLook;
+    VECTOR3 targetLook = pos + INIT_CAM_LOOK;
+
+    // 制御点はプレイヤー位置を基準にオフセット//
+    VECTOR3 controlPoint1 = pos + name2 ;
+    VECTOR3 controlPoint2 = pos + name1;
+
+    m_camPosBezier.StartWithControlPoints(startPos, controlPoint1, controlPoint2, targetPos, 1.0f);
+    m_camLookBezier.Start(startLook, targetLook, 1.0f);
+    state = 1;
+}
+
+#if 0
+
+// 制御点Debug用 //
+void CPlayerCamera::DebugImGui()
+{
+        ImGui::Begin("Camera Bezier Control");
 
     // === ZoomIn 制御点 ===
     if (ImGui::CollapsingHeader("ZoomIn Control Points", ImGuiTreeNodeFlags_DefaultOpen))
@@ -61,116 +164,15 @@ void CPlayerCamera::Update()
     ImGui::Text("DEBUG - Look Animation:");
     ImGui::Text("  Start:  %.2f, %.2f, %.2f", m_debugStartLook.x, m_debugStartLook.y, m_debugStartLook.z);
     ImGui::Text("  Target: %.2f, %.2f, %.2f", m_debugTargetLook.x, m_debugTargetLook.y, m_debugTargetLook.z);
-    ImGui::Text("  Animating: %s", m_camLookBezier.IsLerping() ? "Yes" : "No");
+    ImGui::Text("  Animating: %s", m_camLookBezier.IsAnimating() ? "Yes" : "No");
 
     if (ImGui::Button("Reset1"))
     {
-        m_zoomInCtrl1 = VECTOR3(0, 0, -0);
+        m_zoomInCtrl1 = VECTOR3(0, 0, 0);
         m_zoomInCtrl2 = VECTOR3(0, 0, 0);
+        m_zoomOutCtrl2 = VECTOR3(0, 0, 0);
+        m_zoomOutCtrl1 = VECTOR3(0, 0, 0);
     }
     ImGui::End();
-
-    UpdateCameraBezier();
-    GameDevice()->m_mView = XMMatrixLookAtLH(
-        m_camPos, m_camLook, INIT_UP_DIR);
 }
-
-////////////////////
-// ベジェ曲線でカメラを更新する //
-////////////////////
-void CPlayerCamera::UpdateCameraBezier()
-{
-    if (m_camPosBezier.IsAnimating())
-    {
-        m_camPos = m_camPosBezier.Update(SceneManager::DeltaTime());
-    }
-    if (m_camLookBezier.IsLerping())
-    {
-        m_camLook = m_camLookBezier.Update(SceneManager::DeltaTime());
-    }
-    
-}
-
-////////////////////
-// カメラ位置を設定する
-// @param pos プレイヤーの位置
-// @param coneHeight コーンの高さ //
-////////////////////
-void CPlayerCamera::PosSet(const VECTOR3& pos, const float& coneHeight)
-{
-    // ベジエアニメーション中は上書きしない
-    if (m_camPosBezier.IsAnimating() || m_camLookBezier.IsLerping())
-    {
-        return;
-    }
-
-    // コーンの高さに応じてカメラ距離をスケーリング
-    float scale = coneHeight / REFERENCE_HEIGHT;
-    VECTOR3 scaledCamOffset = INIT_CAM_POS * scale;
-
-    m_camPos = pos + scaledCamOffset;
-    m_camLook = pos + INIT_CAM_LOOK;
-}
-
-////////////////////
-// カメラをズームインさせる
-// @param pos プレイヤーの位置 //
-////////////////////
-void CPlayerCamera::ZoomIn(const VECTOR3& pos)
-{
-    // 既にアニメーション中なら何もしない（毎フレーム呼ばれるため）
-    if (m_camPosBezier.IsAnimating() || m_camLookBezier.IsLerping())
-    {
-        return;
-    }
-    if (state == 0) return;
-    VECTOR3 startPos = m_camPos;
-    VECTOR3 targetPos = pos + INIT_SUCTION_CAM_POS;
-
-    VECTOR3 startLook = m_camLook;
-    VECTOR3 targetLook = pos + VECTOR3(0, -(pos.y / 2), 0);
-
-    // デバッグ用に保存
-    m_debugStartLook = startLook;
-    m_debugTargetLook = targetLook;
-
-    // 制御点はプレイヤー位置を基準にオフセット
-    VECTOR3 controlPoint1 = startLook + m_zoomInCtrl1;
-    VECTOR3 controlPoint2 = targetLook + m_zoomInCtrl2;
-    
-
-    m_camPosBezier.StartWithControlPoints(startPos, controlPoint1, controlPoint2, targetPos, 1.0f);
-    m_camLookBezier.Start(startLook, targetLook, 1.0f);
-    state = 0;
-}
-
-////////////////////
-// カメラをズームアウトさせる
-// @param pos プレイヤーの位置 //
-////////////////////
-void CPlayerCamera::ZoomOut(const VECTOR3& pos)
-{
-    // 既にアニメーション中なら何もしない
-    if (m_camPosBezier.IsAnimating() || m_camLookBezier.IsLerping())
-    {
-        return;
-    }
-    if (state == 1) return;
-    // カメラオフセットをスケーリング
-    float scale = pos.y / REFERENCE_HEIGHT;
-    VECTOR3 scaledCamOffset = INIT_CAM_POS * scale;
-
-    VECTOR3 startPos = m_camPos;
-    VECTOR3 targetPos = pos + scaledCamOffset;
-
-    VECTOR3 startLook = m_camLook;
-    VECTOR3 targetLook = pos + INIT_CAM_LOOK;
-
-    // 制御点はプレイヤー位置を基準にオフセット
-    VECTOR3 controlPoint1 = pos + m_zoomOutCtrl1;
-    VECTOR3 controlPoint2 = pos + m_zoomOutCtrl2;
-
-    m_camPosBezier.StartWithControlPoints(startPos, controlPoint1, controlPoint2, targetPos, 0.5f);
-    m_camLookBezier.Start(startLook, targetLook, 0.5f);
-    state = 1;
-}
+#endif

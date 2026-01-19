@@ -36,7 +36,7 @@ void CDisplayInfo::Update()
     float nextWidth = m_xpWeightLerp.Update(SceneManager::DeltaTime());
 
     // Lerp中、または値が更新された場合
-    if (m_xpWeightLerp.IsLerping() || nextWidth != m_currentWidth)
+    if (m_xpWeightLerp.IsAnimating() || nextWidth != m_currentWidth)
     {
         m_currentWidth = nextWidth;
 
@@ -96,7 +96,7 @@ void CDisplayInfo::ExpDraw()
     static constexpr float epsilon = 0.001f;
 
     // Lerpが終わっていたら新しい目標を設定
-    if (!m_xpWeightLerp.IsLerping())
+    if (!m_xpWeightLerp.IsAnimating())
     {
         // レベルアップしたかどうか（割合が減少したか、または1.0を超えたか）
         if (proportion < m_prevProportion - epsilon || proportion >= 1.0f)

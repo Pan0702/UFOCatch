@@ -1,7 +1,7 @@
 #include "PlayScene.h"
 #include <cassert>
 
-#include "../GameInstance.h"
+#include "../11_GameSystem/GameInstance.h"
 #include "../09_Enemy/System//AnimalManager.h"
 #include "../08_Player/PCamera.h"
 #include "../08_Player/Player.h"

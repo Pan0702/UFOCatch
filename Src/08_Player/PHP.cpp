@@ -1,9 +1,6 @@
 #include "PHP.h"
-
-#include <iso646.h>
-
 #include "Player.h"
-#include "../GameInstance.h"
+#include "../11_GameSystem/GameInstance.h""
 #include "../07_Scene/PlayScene.h"
 
 ////////////////////

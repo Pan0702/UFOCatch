@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <assert.h>
 
-#include "../GameInstance.h"
+#include "../11_GameSystem/GameInstance.h"
 #include "../07_Scene/LevelSelectionScene.h"
 #include "../07_Scene/TitleScene.h"
 #include "../07_Scene/PlayScene.h"
