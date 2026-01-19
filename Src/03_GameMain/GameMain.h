@@ -54,6 +54,7 @@ public:
 	MATRIX4X4       m_mView;
 	MATRIX4X4       m_mProj;
 	VECTOR3         m_vLightDir;	//�f�B���N�V���i�����C�g�̕���
+	VECTOR4         m_vLightIntensity;	//���C�g�̋��x(RGB) + Alpha
 public:
 	// ���\�b�h
 	CGameMain(CMain* pMain);
@@ -68,6 +69,11 @@ public:
 	HRESULT ChangeScreenMode(int nMode=-1);    // -- 2020.1.15
 
 	void SetWindowName(const char* name);
+
+	// ���C�g�̋��x��ݒ�/�擾
+	void    SetLightIntensity(float r, float g, float b, float a = 1.0f);
+	void    SetLightIntensity(VECTOR4 intensity);
+	VECTOR4 GetLightIntensity() const { return m_vLightIntensity; }
 };
 
 CGameMain* GameDevice();

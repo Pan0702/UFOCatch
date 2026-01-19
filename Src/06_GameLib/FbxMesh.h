@@ -356,6 +356,11 @@ public:
 	// シェーダー関連
 	void    SetShaderTexture(const TCHAR ProfileName[], int SlotNo, ID3D11ShaderResourceView** ppTexture);
 	void    SetShaderMatColor(const TCHAR ProfileName[], int SlotNo, int i);      // -- 2020.12.15
+
+	// ライトの強度を設定/取得
+	void    SetLightIntensity(float r, float g, float b, float a = 1.0f) { m_vDiffuse = VECTOR4(r, g, b, a); }
+	void    SetLightIntensity(const VECTOR4& intensity) { m_vDiffuse = intensity; }
+	VECTOR4 GetLightIntensity() const { return m_vDiffuse; }
 };
 
 //

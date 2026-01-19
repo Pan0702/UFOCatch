@@ -16,7 +16,7 @@ PlayScene::PlayScene()
 {
     Instantiate<CStageFactor>();
     Instantiate<CPlayerCamera>();
-    SingleInstantiate<CAnimalManager>();
+    new CAnimalManager(2);
     new CTimer(30);
     Instantiate<CAnimalFactor>();
     new CPlayer(20);

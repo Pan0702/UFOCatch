@@ -43,6 +43,7 @@ CGameMain::CGameMain(CMain*	pMain)
 	m_mView = XMMatrixIdentity();	// �r���[�}�g���b�N�X
 	m_mProj = XMMatrixIdentity();	// �v���W�F�N�V�����}�g���b�N�X
 	m_vLightDir = VECTOR3(0,0,0);	// �f�B���N�V���i�����C�g�̕���
+	m_vLightIntensity = VECTOR4(1,1,1,1);	// ���C�g�̋��x(�f�t�H���g�͒���)
 }
 //------------------------------------------------------------------------
 //
@@ -251,6 +252,26 @@ HRESULT CGameMain::ChangeScreenMode(int nMode)
 void CGameMain::SetWindowName(const char* name)
 {
 	SetWindowText(m_pMain->m_hWnd, name);
+}
+
+//------------------------------------------------------------------------
+//
+//	���C�g�̋��x��ݒ肷��(RGB + Alpha)
+//
+//  ����	float r, g, b, a  ���C�g�̋��x (0.0f�`1.0f)
+//          0.0f = ���S�Ɉň�, 1.0f = �ʏ�̖���
+//
+//	�߂�l �Ȃ�
+//
+//------------------------------------------------------------------------
+void CGameMain::SetLightIntensity(float r, float g, float b, float a)
+{
+	m_vLightIntensity = VECTOR4(r, g, b, a);
+}
+
+void CGameMain::SetLightIntensity(VECTOR4 intensity)
+{
+	m_vLightIntensity = intensity;
 }
 
 CGameMain* GameDevice()

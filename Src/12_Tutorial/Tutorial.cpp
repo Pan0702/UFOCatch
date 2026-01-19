@@ -90,7 +90,7 @@ void CTutorial::Lesson()
     static constexpr int LESSON_TIME_SECONDS = 30;
     static constexpr int LESSON_ANIMAL_COUNT = 5;
 
-    new CAnimalManager();
+    new CAnimalManager(0);
     new CTimer(LESSON_TIME_SECONDS);
 
     // 人間を1体生成 //

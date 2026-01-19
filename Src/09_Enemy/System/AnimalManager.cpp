@@ -12,7 +12,7 @@ namespace
     constexpr float FULL_ROTATION_DEG = 360.0f;
 }
 
-CAnimalManager::CAnimalManager()
+CAnimalManager::CAnimalManager(int time)
 {
     ObjectManager::DontDestroy(this); // 削除しない
     ObjectManager::SetVisible(this, false); // 表示しない
@@ -28,6 +28,7 @@ CAnimalManager::CAnimalManager()
     m_meshList.back().mesh->LoadAnimation(A_IDEL, "data/NewAnimal/Dog/Dog_Idle.anmx", false);
     m_meshList.back().mesh->LoadAnimation(A_RUN, "data/NewAnimal/Dog/Dog_Walk.anmx", true);
     m_meshList.back().mesh->LoadAnimation(A_WALK, "data/NewAnimal/Dog/Dog_Walk.anmx", true);
+    m_meshList.back().mesh->SetLightIntensity(TimeColor(2));
     m_meshList.push_back(ms);
     m_meshList.back().name = "Human";
     m_meshList.back().mesh = new CFbxMesh();
@@ -64,6 +65,19 @@ void CAnimalManager::Update()
     }
 }
 
+VECTOR4 CAnimalManager::TimeColor(int time)
+{
+    switch (time)
+    {
+    case 0: return VECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
+    case 1: return VECTOR4(0.5f, 0.5f, 0.5f, 1.0f);
+    case 2: return VECTOR4(1.0f, 0.7f, 0.5f, 1.0f);
+    default: assert("想定外の入力：AnimalManager：75Lines");
+        break;
+    }
+    return VECTOR4(1.0f, 1.0f, 1.0f, 1.0f);;
+}
+
 
 CFbxMesh* CAnimalManager::MeshList(const std::string& str)
 {
@@ -92,7 +106,8 @@ void CAnimalManager::SetRotationY(const float& angle)
     transform.rotation.y = degAngle * DegToRad;
 }
 
-std::vector<CEnemyBase*> CAnimalManager::GetNearbyEnemies(CEnemyBase* pObj, const VECTOR2& pos, const VECTOR2& size) const
+std::vector<CEnemyBase*> CAnimalManager::GetNearbyEnemies(CEnemyBase* pObj, const VECTOR2& pos,
+                                                          const VECTOR2& size) const
 {
     if (m_pTree == nullptr)
     {
