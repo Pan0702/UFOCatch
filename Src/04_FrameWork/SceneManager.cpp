@@ -63,17 +63,18 @@ void SceneManager::Start()
 
 void SceneManager::Update()
 {
-	if (nextName != currentName) { // シーン切り替えの指示があったので 
-		if (currentScene != nullptr) { //今までのシーンを削除 
+	timeUpdate();
+	if (nextName != currentName) { // シーン切り替えの指示があったので
+		if (currentScene != nullptr) { //今までのシーンを削除
 			delete currentScene;
 			currentScene = nullptr;
 		}
 		currentName = nextName;
-		currentScene = factory->Create(nextName); //新しいシーンを作成 
+		currentScene = factory->Create(nextName); //新しいシーンを作成
 	}
 	if (currentScene != nullptr)
 		currentScene->Update();
-	
+
 }
 
 void SceneManager::Draw()

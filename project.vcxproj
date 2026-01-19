@@ -534,6 +534,7 @@
     <ClInclude Include="Src\02_DirectX\XAudio.h" />
     <ClInclude Include="Src\06_GameLib\Bezier.h" />
     <ClInclude Include="Src\06_GameLib\LerpValue.h" />
+    <ClInclude Include="Src\07_Scene\DebugScene.h" />
     <ClInclude Include="Src\07_Scene\LevelSelectionScene.h" />
     <ClInclude Include="Src\07_Scene\ResultScene.h" />
     <ClInclude Include="Src\07_Scene\SelectionScene.h" />
@@ -566,7 +567,7 @@
     <ClInclude Include="Src\08_Player\Player.h" />
     <ClInclude Include="Src\07_Scene\PlayScene.h" />
     <ClInclude Include="Src\07_Scene\TitleScene.h" />
-    <ClInclude Include="Src\09_Enemy\AnimalChicken\AnimalChicken.h" />
+    <ClInclude Include="Src\09_Enemy\AnimalChicken\AChicken.h" />
     <ClInclude Include="Src\09_Enemy\AnimalChicken\State\ChickenState.h" />
     <ClInclude Include="Src\09_Enemy\Base\EnemyBase.h" />
     <ClInclude Include="Src\09_Enemy\Base\StateBase.h" />
@@ -816,6 +817,7 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Src\07_Scene\DebugScene.cpp" />
     <ClCompile Include="Src\07_Scene\LevelSelectionScene.cpp" />
     <ClCompile Include="Src\07_Scene\ResultScene.cpp" />
     <ClCompile Include="Src\07_Scene\SelectionScene.cpp" />
@@ -2312,7 +2314,7 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="Src\09_Enemy\AnimalChicken\AnimalChicken.cpp" />
+    <ClCompile Include="Src\09_Enemy\AnimalChicken\AChicken.cpp" />
     <ClCompile Include="Src\09_Enemy\AnimalChicken\State\ChickenState.cpp" />
     <ClCompile Include="Src\09_Enemy\Base\EnemyBase.cpp" />
     <ClCompile Include="Src\09_Enemy\Base\StateBase.cpp">

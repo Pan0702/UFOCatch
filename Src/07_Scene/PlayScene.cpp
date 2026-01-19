@@ -42,6 +42,10 @@ void PlayScene::Update()
     {
         SceneManager::ChangeScene("SelectScene");
     }
+    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_0))
+    {
+        SceneManager::ChangeScene("Debug");
+    }
 }
 
 void PlayScene::Draw()
