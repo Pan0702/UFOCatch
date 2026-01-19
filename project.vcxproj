@@ -566,10 +566,12 @@
     <ClInclude Include="Src\08_Player\Player.h" />
     <ClInclude Include="Src\07_Scene\PlayScene.h" />
     <ClInclude Include="Src\07_Scene\TitleScene.h" />
+    <ClInclude Include="Src\09_Enemy\AnimalChicken\AnimalChicken.h" />
+    <ClInclude Include="Src\09_Enemy\AnimalChicken\State\ChickenState.h" />
     <ClInclude Include="Src\09_Enemy\Base\EnemyBase.h" />
     <ClInclude Include="Src\09_Enemy\Base\StateBase.h" />
-    <ClInclude Include="Src\09_Enemy\Dog\ACube.h" />
-    <ClInclude Include="Src\09_Enemy\Dog\State\CubeState.h" />
+    <ClInclude Include="Src\09_Enemy\AnimalDog\ACube.h" />
+    <ClInclude Include="Src\09_Enemy\AnimalDog\State\CubeState.h" />
     <ClInclude Include="Src\09_Enemy\Human\FunShape.h" />
     <ClInclude Include="Src\09_Enemy\Human\Human.h" />
     <ClInclude Include="Src\09_Enemy\Human\State\HumanState.h" />
@@ -2310,6 +2312,8 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Src\09_Enemy\AnimalChicken\AnimalChicken.cpp" />
+    <ClCompile Include="Src\09_Enemy\AnimalChicken\State\ChickenState.cpp" />
     <ClCompile Include="Src\09_Enemy\Base\EnemyBase.cpp" />
     <ClCompile Include="Src\09_Enemy\Base\StateBase.cpp">
       <AssemblerOutput>NoListing</AssemblerOutput>
@@ -2383,7 +2387,7 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="Src\09_Enemy\Dog\ACube.cpp">
+    <ClCompile Include="Src\09_Enemy\AnimalDog\ACube.cpp">
       <AssemblerOutput>NoListing</AssemblerOutput>
       <AssemblerListingLocation>project\x64\Debug\</AssemblerListingLocation>
       <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
@@ -2455,7 +2459,7 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="Src\09_Enemy\Dog\State\CubeState.cpp">
+    <ClCompile Include="Src\09_Enemy\AnimalDog\State\CubeState.cpp">
       <AssemblerOutput>NoListing</AssemblerOutput>
       <AssemblerListingLocation>project\x64\Debug\</AssemblerListingLocation>
       <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>

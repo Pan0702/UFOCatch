@@ -1,7 +1,7 @@
 #include "AnimalFactor.h"
 
 #include "../../10_Stage/StageFactor.h"
-#include "../Dog/ACube.h"
+#include "../AnimalDog/ACube.h"
 #include "../Human/Human.h"
 
 CAnimalFactor::CAnimalFactor()

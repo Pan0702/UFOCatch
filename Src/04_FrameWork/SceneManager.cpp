@@ -78,8 +78,6 @@ void SceneManager::Update()
 
 void SceneManager::Draw()
 {
-	timeUpdate();
-
 	if (currentScene != nullptr)
 		currentScene->Draw();
 }

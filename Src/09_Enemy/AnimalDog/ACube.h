@@ -31,8 +31,6 @@ public:
 private:
     void Update() override;
     void Draw() override;
-    void CollisionCheck();
-
     bool ShouldApplyGravity() const override;
 
 private:
