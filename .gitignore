@@ -1,0 +1,37 @@
+# Visual Studio
+.vs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]rm/
+[Aa]rm64/
+*.sln.docstates
+*.user
+*.suo
+*.filters
+*.aps
+
+# Rider / IntelliJ
+.idea/
+*.sln.DotSettings.user
+
+# MSBuild / Visual C++
+project/x64/
+project/Debug/
+project/Release/
+*.obj
+*.pdb
+*.exe
+*.recipe
+*.ilk
+*.tlog
+*.lastbuildstate
+*.idb
+*.res
+*.cso
+*.log
+
+# Windows
+Thumbs.db
+Desktop.ini
