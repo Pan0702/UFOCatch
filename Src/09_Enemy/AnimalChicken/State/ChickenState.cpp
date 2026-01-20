@@ -1,16 +1,16 @@
-#include "CubeState.h"
+#include "ChickenState.h"
 
 #include "../../../11_GameSystem/GameInstance.h"
-#include "../ACube.h"
+#include "../AnimalChicken.h"
 #include "../../System/AnimalManager.h"
 
 
-CCubeBase::CCubeBase(CACube* cube, Type type)
-    : m_pOwner(cube), m_kType(type)
+CChickenBase::CChickenBase(CAnimalChicken* chicken, Type type)
+    : m_pOwner(chicken), m_kType(type)
 {
 }
 
-CCubeBase::~CCubeBase()
+CChickenBase::~CChickenBase()
 {
     if (m_pOwner != nullptr)
     {
@@ -18,7 +18,7 @@ CCubeBase::~CCubeBase()
     }
 }
 
-void CCubeBase::NextState()
+void CChickenBase::NextState()
 {
     m_pOwner->SetState(NextStatePop());
 }
@@ -26,14 +26,14 @@ void CCubeBase::NextState()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///Idle
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-CCubeIdleState::CCubeIdleState(CACube* cube)
-    : CCubeBase(cube, Type::IDLE)
+CChickenIdleState::CChickenIdleState(CAnimalChicken* chicken)
+    : CChickenBase(chicken, Type::IDLE)
       , timerCount(0)
       , stateIdle(0)
 {
 }
 
-void CCubeIdleState::Enter()
+void CChickenIdleState::Enter()
 {
     stateIdle = static_cast<int>(round(Randomf(0, 1)));
     if (stateIdle == 1)
@@ -48,7 +48,7 @@ void CCubeIdleState::Enter()
     timerCount = 0;
 }
 
-void CCubeIdleState::Update()
+void CChickenIdleState::Update()
 {
     switch (stateIdle)
     {
@@ -60,13 +60,13 @@ void CCubeIdleState::Update()
         IdleAnim();
         break;
     default:
-        assert("error:cubeState");
+        assert("error:chickenState");
         break;
     }
     m_pOwner->IsSuctionCheck();
 }
 
-void CCubeIdleState::Idle()
+void CChickenIdleState::Idle()
 {
     timerCount += SceneManager::DeltaTime();
     if (timerCount > 1)
@@ -75,7 +75,7 @@ void CCubeIdleState::Idle()
     }
 }
 
-void CCubeIdleState::IdleAnim()
+void CChickenIdleState::IdleAnim()
 {
     if (AnimationFinish())
     {
@@ -83,7 +83,7 @@ void CCubeIdleState::IdleAnim()
     }
 }
 
-bool CCubeIdleState::AnimationFinish() const
+bool CChickenIdleState::AnimationFinish() const
 {
     if (m_pOwner->GetAnimator()->CurrentFrame() >= 570.0f)
     {
@@ -93,13 +93,13 @@ bool CCubeIdleState::AnimationFinish() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-CCubeWalkState::CCubeWalkState(CACube* cube)
-    : CCubeBase(cube, Type::WALK)
+CChickenWalkState::CChickenWalkState(CAnimalChicken* chicken)
+    : CChickenBase(chicken, Type::WALK)
       , BASE_POS(0, 0, 0)
 {
 }
 
-void CCubeWalkState::Enter()
+void CChickenWalkState::Enter()
 {
     bool boundaryFlag = false;
     int retryCount = 0;
@@ -132,7 +132,7 @@ void CCubeWalkState::Enter()
     m_pOwner->GetAnimator()->SetPlaySpeed(1.0f);
 }
 
-bool CCubeWalkState::BoundaryCheck(const VECTOR2& areaSize) const
+bool CChickenWalkState::BoundaryCheck(const VECTOR2& areaSize) const
 {
     VECTOR3 tmpPos = m_position + VECTOR3(0, 0, m_moveAmount) * XMMatrixRotationY(m_turnAmount);
     if (tmpPos.x <= areaSize.x && tmpPos.x >= -areaSize.x && tmpPos.z <= areaSize.y && tmpPos.z >= -areaSize.y)
@@ -142,7 +142,7 @@ bool CCubeWalkState::BoundaryCheck(const VECTOR2& areaSize) const
     return false;
 }
 
-void CCubeWalkState::Update()
+void CChickenWalkState::Update()
 {
     if (m_rotation)
     {
@@ -169,13 +169,13 @@ void CCubeWalkState::Update()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-CCubeSuction::CCubeSuction(CACube* cube)
-    : CCubeBase(cube, Type::SUCTION)
+CChickenSuction::CChickenSuction(CAnimalChicken* chicken)
+    : CChickenBase(chicken, Type::SUCTION)
       , m_distanceFromObjectToUFO(VECTOR3(0, 0, 0))
 {
 }
 
-void CCubeSuction::Update()
+void CChickenSuction::Update()
 {
     m_distanceFromObjectToUFO = m_pOwner->SuctionSpeed();
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
@@ -199,15 +199,15 @@ void CCubeSuction::Update()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-CCubeDestroy::CCubeDestroy(CACube* cube)
-    : CCubeBase(cube, Type::DESTROY)
+CChickenDestroy::CChickenDestroy(CAnimalChicken* chicken)
+    : CChickenBase(chicken, Type::DESTROY)
 {
 }
 
-void CCubeDestroy::Enter()
+void CChickenDestroy::Enter()
 {
     ObjectManager::FindGameObject<CGameInstance>()->AddScore(100);
     ObjectManager::FindGameObject<CGameInstance>()->AddCapture(1);
     ObjectManager::FindGameObject<CPlayer>()->AddExp(1);
-    m_pOwner->DestroyCube();
+    m_pOwner->DestroyMe();
 }

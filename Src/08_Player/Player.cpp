@@ -117,7 +117,7 @@ void CPlayer::IncreaseSuctionConeHeight()
 
 void CPlayer::UpdateHeightAndRadiusLerp()
 {
-    //Lero中かどうか
+    //Lerp中かどうか
     if (m_heightLerp.IsAnimating())
     {
         m_coneTopPos = m_heightLerp.Update(SceneManager::DeltaTime());

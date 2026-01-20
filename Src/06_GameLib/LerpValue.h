@@ -100,7 +100,7 @@ struct BezierValueVec3 {
     /// @param controlPoint2 制御点2
     /// @param to 終点
     /// @param dur アニメーション時間
-    void StartWithControlPoints(const VECTOR3& from, const VECTOR3& controlPoint1,
+    void Start(const VECTOR3& from, const VECTOR3& controlPoint1,
                                 const VECTOR3& controlPoint2, const VECTOR3& to, float dur) {
         p0 = from;
         p1 = controlPoint1;
@@ -116,10 +116,7 @@ struct BezierValueVec3 {
 
         timer += deltaTime;
         float t = timer / duration;
-
-        ImGui::Begin("test");
-        ImGui::Text("t = %f", t);
-        ImGui::End();
+        
         // tを0.0~1.0にクランプして、確実に終点に到達させる
         if (t >= 1.0f) {
             t = 1.0f;
