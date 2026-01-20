@@ -31,6 +31,9 @@ private:
     BezierValueVec3 m_camPosBezier;
     LerpValueVec3 m_camLookBezier;
     int state;
+
+    VECTOR3 m_animStartPlayerPos;  // アニメーション開始時のプレイヤー位置
+    VECTOR3 m_playerOffset;        // プレイヤー移動による差分
     enum
     {
         zoomIn = 0,

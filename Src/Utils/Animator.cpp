@@ -19,6 +19,7 @@ Animator::Animator()
 
 Animator::~Animator()
 {
+	GameDevice()->
 }
 
 void Animator::Update()

@@ -17,6 +17,8 @@ CPlayerCamera::CPlayerCamera()
     m_camLook = INIT_CAM_LOOK;
     m_camPos = INIT_CAM_POS;
     state = 1;
+    m_animStartPlayerPos = VECTOR3(0, 0, 0);
+    m_playerOffset = VECTOR3(0, 0, 0);
 }
 
 CPlayerCamera::~CPlayerCamera()
@@ -28,6 +30,7 @@ void CPlayerCamera::Update()
    // DebugImGui();
     UpdateCameraBezier();
     GameDevice()->m_vEyePt = m_camPos;  // カメラ位置を更新
+    GameDevice()->m_vLookatPt = m_camLook;
     GameDevice()->m_mView = XMMatrixLookAtLH(
         m_camPos, m_camLook, INIT_UP_DIR);
 }
@@ -39,13 +42,17 @@ void CPlayerCamera::UpdateCameraBezier()
 {
     if (m_camPosBezier.IsAnimating())
     {
-        m_camPos = m_camPosBezier.Update(SceneManager::DeltaTime());
+        m_camPos = m_camPosBezier.Update(SceneManager::DeltaTime()) + m_playerOffset;
     }
     if (m_camLookBezier.IsAnimating())
     {
-        m_camLook = m_camLookBezier.Update(SceneManager::DeltaTime());
+        m_camLook = m_camLookBezier.Update(SceneManager::DeltaTime()) + m_playerOffset;
     }
-    
+    else
+    {
+        // アニメーション終了時にオフセットをリセット
+        m_playerOffset = VECTOR3(0, 0, 0);
+    }
 }
 
 ////////////////////
@@ -55,9 +62,10 @@ void CPlayerCamera::UpdateCameraBezier()
 ////////////////////
 void CPlayerCamera::PosSet(const VECTOR3& pos, const float& coneHeight)
 {
-    // ベジエアニメーション中は上書きしない//
+    // ベジエアニメーション中は差分で追従
     if (m_camPosBezier.IsAnimating() || m_camLookBezier.IsAnimating())
     {
+        m_playerOffset = pos - m_animStartPlayerPos;
         return;
     }
 
@@ -76,6 +84,9 @@ void CPlayerCamera::PosSet(const VECTOR3& pos, const float& coneHeight)
 void CPlayerCamera::ZoomIn(const VECTOR3& pos)
 {
     if (state == zoomIn) return;
+    m_animStartPlayerPos = pos;  // アニメーション開始時のプレイヤー位置を記録
+    m_playerOffset = VECTOR3(0, 0, 0);
+
     VECTOR3 startPos = m_camPos;
     VECTOR3 targetPos = pos + INIT_SUCTION_CAM_POS;
 
@@ -103,6 +114,9 @@ void CPlayerCamera::ZoomIn(const VECTOR3& pos)
 void CPlayerCamera::ZoomOut(const VECTOR3& pos)
 {
     if (state == zoomOut) return;
+    m_animStartPlayerPos = pos;  // アニメーション開始時のプレイヤー位置を記録
+    m_playerOffset = VECTOR3(0, 0, 0);
+
     // カメラオフセットをスケーリング
     float scale = pos.y / REFERENCE_HEIGHT;
     VECTOR3 scaledCamOffset = INIT_CAM_POS * scale;

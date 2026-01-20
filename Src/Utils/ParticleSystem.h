@@ -23,11 +23,11 @@ public:
     void SetConeShape(float radius, float height);  
 
 private:
-    std::vector<Particle> particles;
-    CSpriteImage* texture;  // キラキラテクスチャ
+    std::vector<Particle> m_pParticles;
+    CSpriteImage* m_pTexture;  // キラキラテクスチャ
     
-    bool isActive;
-    float coneRadius;   // 円錐の底面半径
-    float coneHeight;   // ：円錐の高さ
+    bool m_isActive;
+    float m_coneRadius;   // 円錐の底面半径
+    float m_coneHeight;   // ：円錐の高さ
 
 };

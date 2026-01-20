@@ -6,11 +6,11 @@
 //------------------------------------------------------------------------
 CParticleEmitter::CParticleEmitter(CSpriteImage* tex)
 {
-    texture = nullptr;
-    texture = tex;
-    isActive = false;
-    coneRadius = 4.0f;  // デフォルト値
-    coneHeight = 8.0f;
+    m_pTexture = nullptr;
+    m_pTexture = tex;
+    m_isActive = false;
+    m_coneRadius = 4.0f;  // デフォルト値
+    m_coneHeight = 8.0f;
 }
 
 //------------------------------------------------------------------------
@@ -18,7 +18,7 @@ CParticleEmitter::CParticleEmitter(CSpriteImage* tex)
 //------------------------------------------------------------------------
 CParticleEmitter::~CParticleEmitter()
 {
-    particles.clear();
+    m_pParticles.clear();
 }
 
 /////////////////////////
@@ -26,7 +26,7 @@ CParticleEmitter::~CParticleEmitter()
 /////////////////////////
 void CParticleEmitter::SetTexture(CSpriteImage* tex)
 {
-    texture = tex;
+    m_pTexture = tex;
 }
 
 /////////////////////////
@@ -42,7 +42,7 @@ void CParticleEmitter::Emit(const VECTOR3& pos, int count)
         float heightRatio = (rand() % 100) / 100.0f;
         
         // その高さでの半径（下に行くほど広がる）
-        float currentRadius = coneRadius * heightRatio;
+        float currentRadius = m_coneRadius * heightRatio;
         
         // ランダムな角度
         float angle = (rand() % 360) * 3.14159f / 180.0f;
@@ -52,7 +52,7 @@ void CParticleEmitter::Emit(const VECTOR3& pos, int count)
         
         // 位置を計算
         p.position.x = pos.x + cos(angle) * distance;
-        p.position.y = pos.y - heightRatio * coneHeight;
+        p.position.y = pos.y - heightRatio * m_coneHeight;
         p.position.z = pos.z + sin(angle) * distance;
         
         // 速度：基本は上向きだが、少しランダムに揺らぐ
@@ -68,19 +68,23 @@ void CParticleEmitter::Emit(const VECTOR3& pos, int count)
         p.life = 1.0f + (rand() % 100) / 100.0f;  // 1.0~2.0秒
         p.color = VECTOR4(1, 1, 1, 1);
         
-        particles.push_back(p);
+        m_pParticles.push_back(p);
     }
 }
 
 void CParticleEmitter::SetActive(bool active)
 {
-    isActive = active;
+    m_isActive = active;
+    if (!active)
+    {
+        m_pParticles.clear();
+    }
 }
 
 void CParticleEmitter::SetConeShape(float radius, float height)
 {
-    coneRadius = radius;
-    coneHeight = height;
+    m_coneRadius = radius;
+    m_coneHeight = height;
 }
 
 /////////////////////////
@@ -89,20 +93,20 @@ void CParticleEmitter::SetConeShape(float radius, float height)
 void CParticleEmitter::Update(float deltaTime,const VECTOR3& emitPos)
 {
     // アクティブな時だけ生成
-    if(isActive)
+    if(m_isActive)
     {
         Emit(emitPos, 5);  // 毎フレーム5個
     }
     
     // パーティクルの更新は常に行う（消えるまで）
-    for(auto it = particles.begin(); it != particles.end(); )
+    for(auto it = m_pParticles.begin(); it != m_pParticles.end(); )
     {
         it->position += it->velocity * deltaTime;
         it->life -= deltaTime;
         
         if(it->life <= 0)
         {
-            it = particles.erase(it);
+            it = m_pParticles.erase(it);
         }
         else
         {
@@ -115,17 +119,16 @@ void CParticleEmitter::Update(float deltaTime,const VECTOR3& emitPos)
 /////////////////////////
 void CParticleEmitter::Render()
 {
-    if(!texture) return;
-    
+    if(!m_pTexture) return;
     CSprite sprite;
-    sprite.SetImage(texture);
+    sprite.SetImage(m_pTexture);
     sprite.m_nBlend = 2;  // 加算合成
     
-    for(auto& p : particles)
+    for(auto& p : m_pParticles)
     {
         sprite.SetSrc3D(p.size, p.size, 0, 0, 
-                       texture->m_dwImageWidth, 
-                       texture->m_dwImageHeight);
+                       m_pTexture->m_dwImageWidth, 
+                       m_pTexture->m_dwImageHeight);
         sprite.Draw3D(p.position);
     }
 }
