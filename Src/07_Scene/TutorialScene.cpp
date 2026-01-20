@@ -2,7 +2,7 @@
 #include "../09_Enemy/System//AnimalManager.h"
 #include "../08_Player/PCamera.h"
 #include "../08_Player/Player.h"
-#include "../09_Enemy/Dog//ACube.h"
+#include "../09_Enemy/AnimalDog//ACube.h"
 #include "../10_Stage/Ground.h"
 #include "../10_Stage/StageFactor.h"
 #include "../11_GameSystem/DisplayInfo.h"

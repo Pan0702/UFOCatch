@@ -84,10 +84,6 @@ VECTOR3 CACube::SuctionSpeed() const
     return m_pPlayer->
         CalcSuctionDisplacement(1, transform.position);
 }
-void CACube::DestroyCube()
-{
-    DestroyMe();
-}
 
 bool CACube::ShouldApplyGravity() const
 {

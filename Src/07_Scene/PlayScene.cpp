@@ -5,7 +5,7 @@
 #include "../09_Enemy/System//AnimalManager.h"
 #include "../08_Player/PCamera.h"
 #include "../08_Player/Player.h"
-#include "../09_Enemy/Dog//ACube.h"
+#include "../09_Enemy/AnimalDog//ACube.h"
 #include "../09_Enemy/System//AnimalFactor.h"
 #include "../11_GameSystem/DisplayInfo.h"
 #include "../11_GameSystem/VisionSystem.h"
@@ -41,6 +41,10 @@ void PlayScene::Update()
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_2))
     {
         SceneManager::ChangeScene("SelectScene");
+    }
+    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_0))
+    {
+        SceneManager::ChangeScene("Debug");
     }
 }
 

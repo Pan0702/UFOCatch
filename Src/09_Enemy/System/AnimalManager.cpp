@@ -1,9 +1,8 @@
 #include "AnimalManager.h"
 
 #include "../../06_GameLib/BBox.h""
-#include "../../08_Player/Player.h"
 #include <thread>
-#include "../Dog/ACube.h"
+#include "../AnimalDog/ACube.h"
 #include "../HUman/Human.h"
 
 namespace
@@ -36,7 +35,13 @@ CAnimalManager::CAnimalManager(int time)
     m_meshList.back().mesh->LoadAnimation(A_IDEL, "data/NewAnimal/Human/Human_Idle.anmx", false);
     m_meshList.back().mesh->LoadAnimation(A_WALK, "data/NewAnimal/Human/Human_Walk.anmx", true);
     m_meshList.back().mesh->LoadAnimation(A_SEACH, "data/NewAnimal/Human/Human_Find.anmx", false);
-
+    m_meshList.push_back(ms);
+    m_meshList.back().name = "Chicken";
+    m_meshList.back().mesh = new CFbxMesh();
+    m_meshList.back().mesh->Load("data/NewAnimal/Chicken/Chicken.mesh");
+    m_meshList.back().mesh->LoadAnimation(A_IDEL, "data/NewAnimal/Chicken/Chicken_Idle.anmx", false);
+    m_meshList.back().mesh->LoadAnimation(A_WALK, "data/NewAnimal/Chicken/Chicken_Walk.anmx", true);
+    m_meshList.back().mesh->LoadAnimation(A_RUN, "data/NewAnimal/Chicken/Chicken_Run.anmx", false);
     // 4分木の初期化（レベル3、範囲-20〜20）
     m_pTree = new CLiner4Tree<CEnemyBase>(3, VECTOR4(-20, -20, 20, 20));
 }
