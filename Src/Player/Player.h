@@ -1,6 +1,7 @@
 #pragma once
 #include "../Common/Object3D.h"
 #include "../Utils/LerpValue.h"
+#include "../Utils/ParticleSystem.h"
 
 // プレイヤーのUFOを制御するクラス //
 class CPlayer:public Object3D
@@ -74,6 +75,9 @@ private:
 
     // 吸い込み円描画用
     CSpriteImage* m_pCircleImage;
+    
+    CSpriteImage* m_pParticleImage;
+    CParticleEmitter* m_pEmitter;
 
 };
 

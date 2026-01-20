@@ -546,7 +546,6 @@
     <ClInclude Include="Src\System\DisplayInfo.h" />
     <ClInclude Include="Src\System\GameInstance.h" />
     <ClInclude Include="Src\System\Timer.h" />
-    <ClInclude Include="Src\System\Timer.h" />
     <ClInclude Include="Src\System\VisionSystem.h" />
     <ClInclude Include="Src\Tutorial\Tutorial.h" />
     <ClInclude Include="Src\Tutorial\TutorialAnimal.h" />
@@ -570,7 +569,7 @@
     <ClInclude Include="Src\Framework\SceneManager.h" />
     <ClInclude Include="Src\Framework\Shader.h" />
     <ClInclude Include="Src\Player\PCamera.h" />
-    <ClInclude Include="Src\Player\PHP.h" />
+    <ClInclude Include="Src\Player\PolayerHP.h" />
     <ClInclude Include="Src\Player\Player.h" />
     <ClInclude Include="Src\Scene\DebugScene.h" />
     <ClInclude Include="Src\Scene\LevelSelectionScene.h" />
@@ -592,6 +591,7 @@
     <ClInclude Include="Src\Utils\MeshCollider.h" />
     <ClInclude Include="Src\Utils\MyImgui.h" />
     <ClInclude Include="Src\Utils\MyMath.h" />
+    <ClInclude Include="Src\Utils\ParticleSystem.h" />
     <ClInclude Include="Src\Utils\resource.h" />
     <ClInclude Include="Src\Utils\SphereCollider.h" />
     <ClInclude Include="Src\Utils\Sprite3D.h" />
@@ -1266,7 +1266,6 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="Src\System\Timer.cpp" />
     <ClCompile Include="Src\System\Timer.cpp" />
     <ClCompile Include="Src\System\VisionSystem.cpp" />
     <ClCompile Include="Src\Tutorial\Tutorial.cpp" />
@@ -2366,7 +2365,7 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="Src\Player\PHP.cpp">
+    <ClCompile Include="Src\Player\PolayerHP.cpp">
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
@@ -3770,6 +3769,7 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Src\Utils\ParticleSystem.cpp" />
     <ClCompile Include="Src\Utils\Sprite3D.cpp">
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>

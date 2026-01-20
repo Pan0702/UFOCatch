@@ -27,6 +27,7 @@ void CPlayerCamera::Update()
 {
    // DebugImGui();
     UpdateCameraBezier();
+    GameDevice()->m_vEyePt = m_camPos;  // カメラ位置を更新
     GameDevice()->m_mView = XMMatrixLookAtLH(
         m_camPos, m_camLook, INIT_UP_DIR);
 }

@@ -4,7 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
-#include "PHP.h"
+#include "PolayerHP.h"
 #include "../Utils/Lerp.h"
 #include "../System/VisionSystem.h"
 #include "../Utils/Sprite3D.h"
@@ -35,9 +35,19 @@ CPlayer::CPlayer(float moveRange)
 
     // 吸い込み円用のテクスチャを読み込み
     m_pCircleImage = new CSpriteImage(TEXT("data/CircleSuction.png"));
+    
+    m_pParticleImage = new CSpriteImage(_T("data/particle.png"));
+    m_pEmitter = new CParticleEmitter(m_pParticleImage);
+    m_pEmitter->SetConeShape(m_coneRadius,m_coneTopPos);
 }
 
-CPlayer::~CPlayer() = default;
+CPlayer::~CPlayer()
+{
+    SAFE_DELETE(m_pMesh);
+    SAFE_DELETE(m_pCircleImage);
+    SAFE_DELETE(m_pParticleImage);
+    SAFE_DELETE(m_pEmitter);
+}
 
 void CPlayer::Update()
 {
@@ -64,10 +74,13 @@ void CPlayer::Update()
     // カメラ位置を更新//
     UpdateCameraPos();
 
+    m_pEmitter->SetConeShape(m_coneRadius,m_coneTopPos);
     CVisionSystem* pVision = ObjectManager::FindGameObject<CVisionSystem>();
     pVision->SetCircleCenter(transform.position);
     pVision->SetCircleRadius(m_coneRadius);
 
+    m_pEmitter->SetActive(m_SuctionActive);  // 吸い込み中だけ生成
+    m_pEmitter->Update(SceneManager::DeltaTime(), this->transform.position);  // UFOの位置で生成
 }
 
 ////////////////////
@@ -223,37 +236,8 @@ void CPlayer::Draw()
     // 吸い込み円を描画
     DrawSuctionCircle();
 
+    m_pEmitter->Render();
     //DrawCircle(VECTOR3(transform.position.x, 0, transform.position.z), m_coneRadius, RGB(0, 255, 0));
-}
-
-///Debug///
-void CPlayer::DrawCircle(const VECTOR3& center, float radius, DWORD color)
-{
-    CSprite spr;
-    constexpr int segments = 32; // 円を構成する線分の数
-    const float angleStep = 2.0f * 3.14159f / segments; // 各線分の角度
-
-    for (int i = 0; i < segments; ++i)
-    {
-        // 現在の点
-        float angle1 = static_cast<float>(i) * angleStep;
-        VECTOR3 point1 = center;
-        point1.x += radius * cos(angle1);
-        point1.z += radius * sin(angle1);
-
-        // 次の点
-        float angle2 = (i + 1) % segments * angleStep;
-        VECTOR3 point2 = center;
-        point2.x += radius * cos(angle2);
-        point2.z += radius * sin(angle2);
-
-        // 線を描画
-        spr.DrawLine3D(point1, point2, color);
-    }
-    spr.DrawLine3D(transform.position, VECTOR3(center.x + m_coneRadius, center.y, center.z), color);
-    spr.DrawLine3D(transform.position, VECTOR3(center.x - m_coneRadius, center.y, center.z), color);
-    spr.DrawLine3D(transform.position, VECTOR3(center.x, center.y, center.z + m_coneRadius), color);
-    spr.DrawLine3D(transform.position, VECTOR3(center.x, center.y, center.z - m_coneRadius), color);
 }
 
 ////////////////////
@@ -307,3 +291,36 @@ void CPlayer::DrawSuctionCircle()
         CIRCLE_ALPHA                                  // アルファ（半透明） //
     );
 }
+
+#if 0
+///Debug///
+void CPlayer::DrawCircle(const VECTOR3& center, float radius, DWORD color)
+{
+    CSprite spr;
+    constexpr int segments = 32; // 円を構成する線分の数
+    const float angleStep = 2.0f * 3.14159f / segments; // 各線分の角度
+
+    for (int i = 0; i < segments; ++i)
+    {
+        // 現在の点
+        float angle1 = static_cast<float>(i) * angleStep;
+        VECTOR3 point1 = center;
+        point1.x += radius * cos(angle1);
+        point1.z += radius * sin(angle1);
+
+        // 次の点
+        float angle2 = (i + 1) % segments * angleStep;
+        VECTOR3 point2 = center;
+        point2.x += radius * cos(angle2);
+        point2.z += radius * sin(angle2);
+
+        // 線を描画
+        spr.DrawLine3D(point1, point2, color);
+    }
+    spr.DrawLine3D(transform.position, VECTOR3(center.x + m_coneRadius, center.y, center.z), color);
+    spr.DrawLine3D(transform.position, VECTOR3(center.x - m_coneRadius, center.y, center.z), color);
+    spr.DrawLine3D(transform.position, VECTOR3(center.x, center.y, center.z + m_coneRadius), color);
+    spr.DrawLine3D(transform.position, VECTOR3(center.x, center.y, center.z - m_coneRadius), color);
+}
+#endif
+

@@ -1,7 +1,7 @@
 #include "Human.h"
 
 #include "FunShape.h"
-#include "../../Player/PHP.h"
+#include "../../Player/PolayerHP.h"
 #include "../../System/VisionSystem.h"
 #include "State/HumanState.h"
 #include "../System/AnimalManager.h"
