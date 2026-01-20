@@ -6,7 +6,7 @@
 //									                                 BBox.cpp
 //=============================================================================
 #include "BBox.h"
-#include "../03_GameMain/GameMain.h"
+#include "../Core/Game/GameMain.h"
 #pragma warning(disable : 6387)
 
 

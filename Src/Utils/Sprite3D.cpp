@@ -9,7 +9,7 @@
 // ========================================================================================
 
 #include "Sprite3D.h"
-#include "../03_GameMain/GameMain.h"
+#include "../Core/Game/GameMain.h"
 #pragma warning(disable : 6387)
 
 CSpriteImage::CSpriteImage() : CSpriteImage(GameDevice()->m_pShader)

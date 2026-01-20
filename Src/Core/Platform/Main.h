@@ -13,7 +13,6 @@
 #include <thread>
 #include <windows.h>
 
-#include "../06_GameLib/resource.h"
 //#include "GameMain.h"
 
  // #define WINDOW_WIDTH   1920 //横幅

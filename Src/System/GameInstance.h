@@ -1,6 +1,6 @@
 #pragma once
 #include <unordered_map>
-#include "../05_CommonFile/Object3D.h"
+#include "../Common/Object3D.h"
 
 class CGameInstance : public Object3D
 {

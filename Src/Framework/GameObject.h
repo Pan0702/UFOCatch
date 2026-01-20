@@ -7,7 +7,7 @@
 #include <string>
 #include "SceneBase.h"
 #include "ObjectManager.h"
-#include "../03_GameMain/GameMain.h"
+#include "../Core/Game/GameMain.h"
 
 class GameObject {
 public:

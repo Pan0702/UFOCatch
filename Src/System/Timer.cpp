@@ -1,6 +1,6 @@
 #include "Timer.h"
 
-#include "../07_Scene/PlayScene.h"
+#include "../Scene/PlayScene.h"
 
 
 ////////////////////

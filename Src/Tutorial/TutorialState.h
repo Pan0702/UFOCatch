@@ -1,5 +1,4 @@
 #pragma once
-#include "../05_CommonFile/Object3D.h"
 
 class CTutorial;
 

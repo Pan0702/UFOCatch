@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "../06_GameLib/MyMath.h"
+#include "../Utils/MyMath.h"
 
 #include "QuadTreeCell.h"
 

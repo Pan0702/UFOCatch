@@ -1,6 +1,6 @@
 #include "Animator.h"
 #include <fstream>
-#include "../05_CommonFile/Object3D.h"
+#include "../Common/Object3D.h"
 
 Animator::Animator()
 {

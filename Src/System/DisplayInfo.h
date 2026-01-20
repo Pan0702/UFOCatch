@@ -1,7 +1,7 @@
 #pragma once
-#include "../05_CommonFile/Object3D.h"
-#include "../06_GameLib/Sprite3D.h"
-#include "../06_GameLib/LerpValue.h"
+#include "../Common/Object3D.h"
+#include "../Utils/Sprite3D.h"
+#include "../Utils/LerpValue.h"
 
 // ゲーム中のUIを表示するクラス //
 class CDisplayInfo : public Object3D

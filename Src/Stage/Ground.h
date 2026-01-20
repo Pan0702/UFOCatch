@@ -1,5 +1,5 @@
 #pragma once
-#include "../05_CommonFile/Object3D.h"
+#include "../Common/Object3D.h"
 
 // 地面のメッシュとコリジョンを管理するクラス //
 class CGround : public Object3D

@@ -1,5 +1,6 @@
 #pragma once
 #include "../../Base/StateBase.h"
+#include "../../../Common/Object3D.h"
 class CHuman;
 
 class CHumanBase : public CBaseState

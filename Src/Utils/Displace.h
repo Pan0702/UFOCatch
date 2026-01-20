@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include "../02_DirectX/Direct3D.h"
-#include "../03_GameMain/GameMain.h"
+#include "../Core/Graphics/Direct3D.h"
+#include "../Core/Game/GameMain.h"
 //
 // ���_�̍\����
 //

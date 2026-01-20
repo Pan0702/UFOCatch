@@ -1,6 +1,6 @@
 #include "AnimalFactor.h"
 
-#include "../../10_Stage/StageFactor.h"
+#include "../../Stage/StageFactor.h"
 #include "../AnimalDog/ACube.h"
 #include "../Human/Human.h"
 

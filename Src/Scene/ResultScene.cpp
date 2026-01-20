@@ -1,7 +1,7 @@
 #include "ResultScene.h"
 
-#include "../11_GameSystem/GameInstance.h""
-#include "../04_FrameWork/ObjectManager.h"
+#include "../System/GameInstance.h"
+#include "../Framework/ObjectManager.h"
 
 CResultScene::CResultScene()
 {

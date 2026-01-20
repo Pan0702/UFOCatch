@@ -1,7 +1,7 @@
 #include "VisionSystem.h"
 
-#include "../08_Player/PHP.h"
-#include "../08_Player/Player.h"
+#include "../Player/PHP.h"
+#include "../Player/Player.h"
 
 
 CVisionSystem::CVisionSystem() = default;

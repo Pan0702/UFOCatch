@@ -23,7 +23,7 @@
 #include "../../libs/Imgui/imgui_impl_win32.h"
 #include "../../libs/Imgui/imgui_impl_dx11.h"
 
-#include "../02_DirectX/Direct3D.h"
+#include "../Core/Graphics/Direct3D.h"
 
 // ============================================================================
 // ��ʊ֐�

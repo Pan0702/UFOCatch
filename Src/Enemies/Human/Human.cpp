@@ -1,12 +1,12 @@
 #include "Human.h"
 
 #include "FunShape.h"
-#include "../../08_Player/PHP.h"
-#include "../../11_GameSystem/VisionSystem.h"
+#include "../../Player/PHP.h"
+#include "../../System/VisionSystem.h"
 #include "State/HumanState.h"
 #include "../System/AnimalManager.h"
-#include "../../06_GameLib/BBox.h"
-#include "../../10_Stage/Ground.h"
+#include "../../Utils/BBox.h"
+#include "../../Stage/Ground.h"
 
 namespace
 {

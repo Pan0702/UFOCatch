@@ -1,9 +1,9 @@
 #include "TutorialHuman.h"
-#include "../11_GameSystem/VisionSystem.h"
-#include "../08_Player/Player.h"
-#include "../08_Player/PHP.h"
-#include "../06_GameLib/Animator.h"
-#include "../09_Enemy/System/AnimalManager.h"
+#include "../System/VisionSystem.h"
+#include "../Player/Player.h"
+#include "../Player/PHP.h"
+#include "../Utils/Animator.h"
+#include "../Enemies/System/AnimalManager.h"
 
 namespace
 {

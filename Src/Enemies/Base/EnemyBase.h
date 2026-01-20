@@ -3,10 +3,9 @@
 #include <vector>
 
 #include "StateBase.h"
-#include "../../05_CommonFile/Object3D.h"
-#include "../../06_GameLib/BBox.h"
-#include "../../10_Stage/Ground.h"
-#include "../../10_Stage/StageObject.h"
+#include "../../Common/Object3D.h"
+#include "../../Utils//BBox.h"
+#include "../../Stage/Ground.h"
 
 class CEnemyBase : public Object3D
 {

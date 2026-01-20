@@ -2,15 +2,15 @@
 #include <windows.h>
 #include <assert.h>
 
-#include "../11_GameSystem/GameInstance.h"
-#include "../07_Scene/LevelSelectionScene.h"
-#include "../07_Scene/TitleScene.h"
-#include "../07_Scene/PlayScene.h"
-#include "../07_Scene/ResultScene.h"
-#include "../07_Scene/SelectionScene.h"
-#include "../07_Scene/TutorialScene.h"
-#include "../09_Enemy/AnimalChicken/AChicken.h"
-#include "../07_Scene/DebugScene.h"
+#include "../System/GameInstance.h"
+#include "../Scene/LevelSelectionScene.h"
+#include "../Scene/TitleScene.h"
+#include "../Scene/PlayScene.h"
+#include "../Scene/ResultScene.h"
+#include "../Scene/SelectionScene.h"
+#include "../Scene/TutorialScene.h"
+#include "../Enemies/AnimalChicken/AChicken.h"
+#include "../Scene/DebugScene.h"
 
 SceneBase* SceneFactory::CreateFirst()
 {

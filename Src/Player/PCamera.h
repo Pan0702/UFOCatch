@@ -1,6 +1,6 @@
 #pragma once
-#include "../05_CommonFile/Object3D.h"
-#include "../06_GameLib/LerpValue.h"
+#include "../Common/Object3D.h"
+#include "../Utils/LerpValue.h"
 
 // プレイヤーを追従するカメラクラス //
 class CPlayerCamera:public Object3D

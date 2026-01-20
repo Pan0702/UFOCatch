@@ -7,7 +7,7 @@
 
 #include <list>
 #include "sceneManager.h"
-#include "../03_GameMain/GameMain.h"
+#include "../Core/Game/GameMain.h"
 
 class SceneBase {
 public:

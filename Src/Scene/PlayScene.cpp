@@ -1,16 +1,16 @@
 #include "PlayScene.h"
 #include <cassert>
 
-#include "../11_GameSystem/GameInstance.h"
-#include "../09_Enemy/System//AnimalManager.h"
-#include "../08_Player/PCamera.h"
-#include "../08_Player/Player.h"
-#include "../09_Enemy/AnimalDog//ACube.h"
-#include "../09_Enemy/System//AnimalFactor.h"
-#include "../11_GameSystem/DisplayInfo.h"
-#include "../11_GameSystem/VisionSystem.h"
-#include "../10_Stage/StageFactor.h"
-#include "../11_GameSystem/Timer.h"
+#include "../System/GameInstance.h"
+#include "../Enemies/System/AnimalManager.h"
+#include "../Player/PCamera.h"
+#include "../Player/Player.h"
+#include "../Enemies/AnimalDog/ACube.h"
+#include "../Enemies/System/AnimalFactor.h"
+#include "../System/DisplayInfo.h"
+#include "../System/VisionSystem.h"
+#include "../Stage/StageFactor.h"
+#include "../System/Timer.h"
 
 PlayScene::PlayScene()
 {

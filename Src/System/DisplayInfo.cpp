@@ -3,8 +3,8 @@
 #include <algorithm>
 
 #include "Timer.h"
-#include "../08_Player/PHP.h"
-#include "../08_Player/Player.h"
+#include "../Player/PHP.h"
+#include "../Player/Player.h"
 
 CDisplayInfo::CDisplayInfo()
 {

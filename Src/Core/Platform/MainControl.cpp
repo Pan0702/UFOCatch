@@ -1,7 +1,7 @@
 #include "MainControl.h"
 #include <assert.h>
 #include <string>
-#include "../03_GameMain/GameMain.h"
+#include "../Game/GameMain.h"
 
 namespace {
     float refreshTimer = 0.0f;

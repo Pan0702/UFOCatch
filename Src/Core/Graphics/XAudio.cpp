@@ -6,7 +6,7 @@
 
 //�w�b�_�[�t�@�C���̃C���N���[�h
 #include "XAudio.h"
-#include "../03_GameMain/GameMain.h"
+#include "../Game/GameMain.h"
 
 
 //------------------------------------------------------------------------

@@ -1,8 +1,8 @@
 #pragma once
 #include <chrono>
 #include "../Base/StateBase.h"
-#include "../../05_CommonFile/Object3D.h"
-#include "../../08_Player/Player.h"
+#include "../../Common/Object3D.h"
+#include "../../Player/Player.h"
 #include "../Liner4Tree.h"
 
 class CEnemyBase;

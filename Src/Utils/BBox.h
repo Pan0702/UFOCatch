@@ -9,8 +9,8 @@
 #pragma once
 
 #include "MyMath.h"
-#include "../02_DirectX/Direct3D.h"
-#include "../04_FrameWork/Shader.h"
+#include "../Core/Graphics/Direct3D.h"
+#include "../Framework/Shader.h"
 
 // ---------------------------------------------------------
 //

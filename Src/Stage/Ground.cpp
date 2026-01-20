@@ -1,7 +1,7 @@
 #include "Ground.h"
 #define NOMINMAX
 #include <Windows.h>
-#include "../06_GameLib/CsvReader.h"
+#include "../Utils/CsvReader.h"
 
 ////////////////////
 // .meshのPathとmeshの大きさを渡す

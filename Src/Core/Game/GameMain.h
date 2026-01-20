@@ -12,17 +12,17 @@
 #include <windows.h>
 #include <vector>
 
-#include "../01_WinMain/Main.h"
-#include "../02_DirectX/Direct3D.h"
-#include "../04_FrameWork/Shader.h"
-#include "../06_GameLib/FbxMesh.h""
-#include "../02_DirectX/XAudio.h"
-#include "../02_DirectX/DInput.h"
-#include "../06_GameLib/Sprite3D.h"
-#include "../06_GameLib/MyImGui.h""
+#include "../Platform/Main.h"
+#include "../Graphics/Direct3D.h"
+#include "../../Framework/Shader.h"
+#include "../../Utils/FbxMesh.h"
+#include "../Graphics/XAudio.h"
+#include "../Graphics/DInput.h"
+#include "../../Utils/Sprite3D.h"
+#include "../../Utils/MyImGui.h"
 #include "Macro.h"
 
-#include "../01_WinMain/MainControl.h"
+#include "../Platform/MainControl.h"
 
 // --------------------------------------------
 class CMain;

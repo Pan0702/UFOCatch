@@ -5,9 +5,9 @@
 #include <algorithm>
 #include <vector>
 #include "PHP.h"
-#include "../06_GameLib/Lerp.h"
-#include "../11_GameSystem/VisionSystem.h"
-#include "../06_GameLib/Sprite3D.h"
+#include "../Utils/Lerp.h"
+#include "../System/VisionSystem.h"
+#include "../Utils/Sprite3D.h"
 
 ////////////////////
 // 原点から移動できる距離

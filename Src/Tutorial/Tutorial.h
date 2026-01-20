@@ -2,7 +2,7 @@
 #include <unordered_map>
 
 #include "TutorialState.h"
-#include "../05_CommonFile/Object3D.h"
+#include "../Common/Object3D.h"
 
 // チュートリアルの進行を管理するクラス //
 class CTutorial : public Object3D

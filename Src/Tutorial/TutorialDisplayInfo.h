@@ -1,5 +1,5 @@
 #pragma once
-#include "../05_CommonFile/Object3D.h"
+#include "../Common/Object3D.h"
 
 // チュートリアルのUI表示を管理するクラス //
 class CTutorialDisplayInfo : public Object3D

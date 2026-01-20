@@ -1,7 +1,7 @@
 #define NOMINMAX
 #include "EnemyBase.h"
-#include "../../10_Stage/Ground.h"
-#include "../../10_Stage/StageObject.h"
+#include "../../Stage/Ground.h"
+#include "../../Stage/StageObject.h"
 #include "../System/AnimalManager.h"
 
 namespace 

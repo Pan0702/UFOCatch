@@ -1,5 +1,5 @@
 #pragma once
-#include "../05_CommonFile/Object3D.h"
+#include "../Common/Object3D.h"
 
 // 視界判定システムクラス（扇形と円の衝突判定を管理） //
 class CVisionSystem : public Object3D

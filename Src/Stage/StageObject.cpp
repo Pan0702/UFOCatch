@@ -1,6 +1,6 @@
 #include "StageObject.h"
-#include "../09_Enemy/Base/EnemyBase.h"
-#include "../04_FrameWork/ResourceManager.h"
+#include "../Enemies/Base/EnemyBase.h"
+#include "../Framework/ResourceManager.h"
 
 ////////////////////
 // コンストラクタ

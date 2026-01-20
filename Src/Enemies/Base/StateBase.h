@@ -1,7 +1,6 @@
 #pragma once
 #include <queue>
 
-#include "../../08_Player/Player.h"
 class CBaseState
 {
 public:

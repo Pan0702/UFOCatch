@@ -23,8 +23,8 @@
 #include <stdio.h>
 #include <windows.h>
 
-#include "../01_WinMain/Main.h"
-#include "../02_DirectX/Direct3D.h"
+#include "../Core/Platform/Main.h"
+#include "../Core/Graphics/Direct3D.h"
 
 //�V�F�[�_�[�̃o�b�t�@�\���̒�`
 

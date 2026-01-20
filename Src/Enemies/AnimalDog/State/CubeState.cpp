@@ -1,6 +1,6 @@
 #include "CubeState.h"
 
-#include "../../../11_GameSystem/GameInstance.h"
+#include "../../../System/GameInstance.h"
 #include "../ACube.h"
 #include "../../System/AnimalManager.h"
 

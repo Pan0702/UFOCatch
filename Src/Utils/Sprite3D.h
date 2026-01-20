@@ -14,8 +14,8 @@
 #include <stdio.h>
 #include <windows.h>
 
-#include "../02_DirectX/Direct3D.h"
-#include "../04_FrameWork/Shader.h"
+#include "../Core/Graphics/Direct3D.h"
+#include "../Framework/Shader.h"
 
 //
 // �}�N����`

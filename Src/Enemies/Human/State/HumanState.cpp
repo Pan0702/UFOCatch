@@ -1,7 +1,7 @@
 #include "HumanState.h"
-#include "../../../06_GameLib/MyMath.h"
-#include "../../../06_GameLib/Lerp.h"
-#include "../../../08_Player/PHP.h"
+#include "../../../Utils/MyMath.h"
+#include "../../../Utils/Lerp.h"
+#include "../../../Player/PHP.h"
 #include "../Human.h"
 #include "../../System/AnimalManager.h"
 namespace

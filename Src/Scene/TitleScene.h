@@ -1,5 +1,5 @@
 #pragma once
-#include "../04_FrameWork/SceneBase.h"
+#include "../Framework/SceneBase.h"
 
 // ゲーム起動時のタイトルシーン //
 class TitleScene : public SceneBase

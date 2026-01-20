@@ -5,9 +5,9 @@
 //																GameMain.cpp
 //=============================================================================
 #include "GameMain.h"
-#include "../04_FrameWork/SceneManager.h"
-#include "../04_FrameWork/objectManager.h""
-#include "../04_FrameWork/ResourceManager.h""
+#include "../../Framework/SceneManager.h"
+#include "../../Framework/objectManager.h"
+#include "../../Framework/ResourceManager.h"
 
 namespace {
 	CGameMain* gameMainInstance;

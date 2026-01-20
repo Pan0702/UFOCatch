@@ -1,6 +1,6 @@
 #include "Object3D.h"
-#include "../06_GameLib/MeshCollider.h"
-#include "../06_GameLib/Animator.h"
+#include "../Utils/MeshCollider.h"
+#include "../Utils/Animator.h"
 
 Object3D::Object3D()
 {

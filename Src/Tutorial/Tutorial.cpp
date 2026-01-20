@@ -2,11 +2,10 @@
 
 #include "TutorialAnimal.h"
 #include "TutorialHuman.h"
-#include "../11_GameSystem/GameInstance.h""
-#include "../08_Player/Player.h"
-#include "../09_Enemy/Human/Human.h"
-#include "../09_Enemy/System/AnimalManager.h"
-#include "../11_GameSystem/Timer.h"
+#include "../System/GameInstance.h""
+#include "../Enemies/Human/Human.h"
+#include "../Enemies/System/AnimalManager.h"
+#include "../System/Timer.h"
 
 namespace
 {

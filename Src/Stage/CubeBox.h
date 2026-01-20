@@ -1,5 +1,5 @@
 #pragma once
-#include "../05_CommonFile/Object3D.h"
+#include "../Common/Object3D.h"
 
 // スカイボックスを表示するクラス //
 class CCubeBox : public Object3D

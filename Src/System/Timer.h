@@ -1,5 +1,5 @@
 #pragma once
-#include "../05_CommonFile/Object3D.h"
+#include "../Common/Object3D.h"
 
 // ゲーム内のタイマーを管理するクラス //
 class CTimer : public Object3D

@@ -2,8 +2,8 @@
 #include <chrono>
 #include <iostream>
 #include <unordered_map>
-
-#include "../../05_CommonFile/Object3D.h"
+#include "../../Player/Player.h"
+#include "../../Common/Object3D.h"
 #include "../Base/EnemyBase.h"
 #include "../Base/StateBase.h"
 

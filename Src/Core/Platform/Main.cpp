@@ -10,7 +10,8 @@
 #include "MainControl.h"
 #pragma warning(disable : 28251)
 
-#include "../03_GameMain/GameMain.h"
+#include "../Game/GameMain.h"
+#include "../../Utils/resource.h"
 
 
 //�O���[�o���ϐ�(�R�[���o�b�N�֐��̂��ߕK�v)

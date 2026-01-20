@@ -1,5 +1,5 @@
 #include "MeshCollider.h"
-#include "../04_FrameWork/ResourceManager.h"
+#include "../Framework/ResourceManager.h"
 
 namespace {
     // �X�L�����b�V����ό`������Ƃ��̃t���[���|�[�Y�ϊ����~�b�g

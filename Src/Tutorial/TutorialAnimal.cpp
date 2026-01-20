@@ -1,10 +1,10 @@
 #include "TutorialAnimal.h"
 
-#include "../11_GameSystem/GameInstance.h""
-#include "../08_Player/Player.h"
-#include "../06_GameLib/Animator.h"
-#include "../09_Enemy/System/AnimalManager.h"
-#include "../10_Stage/Ground.h"
+#include "../System/GameInstance.h""
+#include "../Player/Player.h"
+#include "../Utils/Animator.h"
+#include "../Enemies/System/AnimalManager.h"
+#include "../Stage/Ground.h"
 
 namespace
 {

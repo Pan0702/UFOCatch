@@ -1,6 +1,6 @@
 #pragma once
-#include "../05_CommonFile/Object3D.h"
-#include "../06_GameLib/BBox.h"
+#include "../Common/Object3D.h"
+#include "../Utils/BBox.h"
 
 /// <summary>
 /// ステージオブジェクト（静的な障害物、壁など）

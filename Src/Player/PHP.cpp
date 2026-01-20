@@ -1,7 +1,7 @@
 #include "PHP.h"
 #include "Player.h"
-#include "../11_GameSystem/GameInstance.h""
-#include "../07_Scene/PlayScene.h"
+#include "../System/GameInstance.h"
+#include "../Scene/PlayScene.h"
 
 ////////////////////
 // HPの初期値を指定してインスタンスを生成する

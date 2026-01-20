@@ -1,4 +1,5 @@
 #include "StateBase.h"
+#include "../../Utils/MyMath.h"
 namespace
 {
     constexpr int NEXT_STATE_MAX_SIZE = 3;

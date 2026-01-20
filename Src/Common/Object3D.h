@@ -1,8 +1,8 @@
 #pragma once
-#include "../04_FrameWork/GameObject.h"
-#include "../06_GameLib/FbxMesh.h"
-#include "../06_GameLib/MeshCollider.h"
-#include "../06_GameLib/Animator.h"
+#include "../Framework/GameObject.h"
+#include "../Utils/FbxMesh.h"
+#include "../Utils/MeshCollider.h"
+#include "../Utils/Animator.h"
 
 class Transform {
 public:

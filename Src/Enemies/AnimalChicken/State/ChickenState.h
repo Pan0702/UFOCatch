@@ -1,5 +1,6 @@
 #include "../../Base/StateBase.h"
-
+#include "../../../Common/Object3D.h"
+#include "../../../Player/Player.h"
 class CAnimalChicken;
 
 class CChickenBase : public CBaseState

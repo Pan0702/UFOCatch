@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "../06_GameLib/FbxMesh.h"
+#include "../Utils/FbxMesh.h"
 
 namespace ResourceManager {
 	void Init();

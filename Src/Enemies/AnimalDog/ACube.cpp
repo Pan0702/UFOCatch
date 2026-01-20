@@ -1,14 +1,14 @@
 #include "ACube.h"
 
-#include "../../08_Player/Player.h"
-#include "../../10_Stage/Ground.h"
+#include "../../Player/Player.h"
+#include "../../Stage/Ground.h"
 #include <queue>
 #include <thread>
 
 #include "../System/AnimalManager.h"
 #include "../Base/StateBase.h"
 #include "State/CubeState.h"
-#include "../../06_GameLib/BBox.h"
+#include "../../Utils/BBox.h"
 
 CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos), m_areaSize(moveAreaSize)

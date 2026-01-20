@@ -23,8 +23,8 @@
 #include <d2d1.h>
 #include <wincodec.h>
 
-#include "../03_GameMain/Macro.h"
-#include "../06_GameLib/MyMath.h"
+#include "../Game/Macro.h"
+#include "../../Utils/MyMath.h"
 
 //�K�v�ȃ��C�u�����t�@�C���̃��[�h
 #pragma comment(lib,"winmm.lib")

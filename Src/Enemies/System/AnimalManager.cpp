@@ -1,6 +1,6 @@
 #include "AnimalManager.h"
 
-#include "../../06_GameLib/BBox.h""
+#include "../../Utils/BBox.h""
 #include <thread>
 #include "../AnimalDog/ACube.h"
 #include "../HUman/Human.h"

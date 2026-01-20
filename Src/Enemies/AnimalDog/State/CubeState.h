@@ -1,5 +1,7 @@
+#pragma once
 #include "../../Base/StateBase.h"
-
+#include "./../../../Common/Object3D.h"
+#include "./../../../Player/Player.h"
 class CACube;
 
 class CCubeBase : public CBaseState
