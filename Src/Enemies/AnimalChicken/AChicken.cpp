@@ -5,7 +5,7 @@
 #include <queue>
 #include <thread>
 
-#include "../System/AnimalManager.h"
+#include "../System/EnemyRegistr.h"
 #include "../Base/StateBase.h"
 #include "State/ChickenState.h"
 #include "../../Utils/BBox.h"

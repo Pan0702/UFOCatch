@@ -4,7 +4,7 @@
 #include "../../Player/PlayerHP.h"
 #include "../../System/VisionSystem.h"
 #include "State/HumanState.h"
-#include "../System/AnimalManager.h"
+#include "../System/EnemyRegistr.h"
 #include "../../Utils/BBox.h"
 #include "../../Stage/Ground.h"
 

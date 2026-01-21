@@ -1,4 +1,4 @@
-#include "AnimalManager.h"
+#include "EnemyRegistr.h"
 
 #include "../../Utils/BBox.h""
 #include <thread>

@@ -2,7 +2,7 @@
 
 #include "../../../System/GameInstance.h"
 #include "../AnimalChicken.h"
-#include "../../System/AnimalManager.h"
+#include "../../System/EnemyRegistr.h"
 
 
 CChickenBase::CChickenBase(CAnimalChicken* chicken, Type type)

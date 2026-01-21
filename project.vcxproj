@@ -538,7 +538,7 @@
     <ClInclude Include="Src\Enemies\Human\State\HumanState.h" />
     <ClInclude Include="Src\Enemies\Liner4Tree.h" />
     <ClInclude Include="Src\Enemies\System\AnimalFactor.h" />
-    <ClInclude Include="Src\Enemies\System\AnimalManager.h" />
+    <ClInclude Include="Src\Enemies\System\EnemyRegistr.h" />
     <ClInclude Include="Src\Player\PlayerHP.h" />
     <ClInclude Include="Src\Stage\StageFactor.h" />
     <ClInclude Include="Src\Stage\StageObject.h" />
@@ -1111,7 +1111,7 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="Src\Enemies\System\AnimalManager.cpp">
+    <ClCompile Include="Src\Enemies\System\EnemyRegistr.cpp">
       <AssemblerOutput>NoListing</AssemblerOutput>
       <AssemblerListingLocation>project\x64\Debug\</AssemblerListingLocation>
       <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>

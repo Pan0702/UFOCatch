@@ -3,7 +3,7 @@
 #include "../../../Utils/Lerp.h"
 #include "../../../Player/PlayerHP.h"
 #include "../Human.h"
-#include "../../System/AnimalManager.h"
+#include "../../System/EnemyRegistr.h"
 namespace
 {
     //////////////////////////////////////////////
