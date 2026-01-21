@@ -47,7 +47,7 @@ void CTutorial::Update()
 
 ////////////////////
 // チュートリアルのステートを変更する
-// @param state 変更先のステート //
+// @param state 変更先のステート 
 ////////////////////
 void CTutorial::SetState(CTutorialState::State state)
 {
@@ -57,7 +57,7 @@ void CTutorial::SetState(CTutorialState::State state)
 }
 
 ////////////////////
-// チュートリアル用の動物を複数体生成する //
+// チュートリアル用の動物を複数体生成する 
 ////////////////////
 void CTutorial::SpawnAnimal()
 {
@@ -71,7 +71,7 @@ void CTutorial::SpawnAnimal()
 }
 
 ////////////////////
-// チュートリアル用の人間と動物を生成する //
+// チュートリアル用の人間と動物を生成する 
 ////////////////////
 void CTutorial::SpawnHuman()
 {
@@ -82,7 +82,7 @@ void CTutorial::SpawnHuman()
 }
 
 ////////////////////
-// 実践形式のレッスンを開始する //
+// 実践形式のレッスンを開始する 
 ////////////////////
 void CTutorial::Lesson()
 {

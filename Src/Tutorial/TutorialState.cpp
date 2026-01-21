@@ -6,7 +6,7 @@
 #include "TutorialHuman.h"
 #include "../System/GameInstance.h""
 #include "../Player/Player.h"
-#include "../Player/PolayerHP.h"
+#include "../Player/PlayerHP.h"
 #include "../System/Timer.h"
 
 namespace
@@ -31,7 +31,7 @@ CTutorialState::CTutorialState(CTutorial* pT)
 }
 
 ////////////////////
-// プレイヤーに捕獲された動物を削除する //
+// プレイヤーに捕獲された動物を削除する 
 ////////////////////
 void CTutorialState::RemoveCaughtAnimals()
 {

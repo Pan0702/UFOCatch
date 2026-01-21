@@ -3,8 +3,7 @@
 #include "PCamera.h"
 #include <iostream>
 #include <algorithm>
-#include <vector>
-#include "PolayerHP.h"
+#include "PlayerHP.h"
 #include "../Utils/Lerp.h"
 #include "../System/VisionSystem.h"
 #include "../Utils/Sprite3D.h"
@@ -74,7 +73,7 @@ void CPlayer::Update()
     // カメラ位置を更新//
     UpdateCameraPos();
 
-    m_pEmitter->SetConeShape(m_coneRadius,m_coneTopPos);
+    m_pEmitter->SetConeShape(m_coneRadius,transform.position.y);
     CVisionSystem* pVision = ObjectManager::FindGameObject<CVisionSystem>();
     pVision->SetCircleCenter(transform.position);
     pVision->SetCircleRadius(m_coneRadius);

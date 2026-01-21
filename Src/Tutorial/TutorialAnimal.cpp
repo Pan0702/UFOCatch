@@ -50,7 +50,7 @@ void CTutorialAnimal::Update()
 }
 
 ////////////////////
-// Scoreを足してオブジェクトをDestroy //
+// Scoreを足してオブジェクトをDestroy 
 ////////////////////
 void CTutorialAnimal::Destroy()
 {
@@ -63,7 +63,7 @@ void CTutorialAnimal::Destroy()
 CTutorialAnimal::~CTutorialAnimal() = default;
 
 ////////////////////
-// 重力を適用する //
+// 重力を適用する 
 ////////////////////
 void CTutorialAnimal::ApplyGravity()
 {

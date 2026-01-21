@@ -48,7 +48,7 @@ void CTutorialDisplayInfo::Draw()
 }
 
 ////////////////////
-// 操作説明UIを描画する //
+// 操作説明UIを描画する 
 ////////////////////
 void CTutorialDisplayInfo::OperationDraw() const
 {
@@ -66,7 +66,7 @@ void CTutorialDisplayInfo::OperationDraw() const
 }
 
 ////////////////////
-// 目標表示UIを描画する //
+// 目標表示UIを描画する 
 ////////////////////
 void CTutorialDisplayInfo::TargetDraw()
 {

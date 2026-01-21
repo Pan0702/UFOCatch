@@ -3,7 +3,7 @@
 #include <algorithm>
 
 #include "Timer.h"
-#include "../Player/PolayerHP.h"
+#include "../Player/PlayerHP.h"
 #include "../Player/Player.h"
 
 CDisplayInfo::CDisplayInfo()

@@ -1,7 +1,7 @@
 #include "HumanState.h"
 #include "../../../Utils/MyMath.h"
 #include "../../../Utils/Lerp.h"
-#include "../../../Player/PolayerHP.h"
+#include "../../../Player/PlayerHP.h"
 #include "../Human.h"
 #include "../../System/AnimalManager.h"
 namespace
