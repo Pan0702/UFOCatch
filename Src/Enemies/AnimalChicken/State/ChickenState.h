@@ -55,6 +55,7 @@ class CChickenSuction : public CChickenBase
 {
 public:
     CChickenSuction(CAnimalChicken* chicken);
+    void Enter() override;
     void Update() override;
 
 private:

@@ -18,11 +18,13 @@ private:
     void TimeDraw();
     void HPDraw();
     void LvDraw();
+    void CutIn(int num);
 
     CSprite* m_pSprite;
     CSpriteImage* m_playUIImage;
     CSpriteImage* m_expImage;
     CSpriteImage* m_giwakuImage;
+    CSpriteImage* m_pLogo;
 
     // 経験値ゲージ用
     LerpValue m_xpWeightLerp;
@@ -34,5 +36,6 @@ private:
     float m_prevGiwakuProportion;
     float m_currentAngle;
     
-    VECTOR2 tmp_;
+    int m_cutInCnt;
+    bool m_isCutInDraw;
 };

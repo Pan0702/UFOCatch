@@ -4,6 +4,7 @@
 #include "../Chicken.h"
 #include "../../../Framework/AudioManager.h"
 #include "../../System/EnemyRegistr.h"
+#include "../../Human/Human.h"
 
 
 CChickenBase::CChickenBase(CAnimalChicken* chicken, Type type)
@@ -36,7 +37,7 @@ CChickenIdleState::CChickenIdleState(CAnimalChicken* chicken)
 
 void CChickenIdleState::Enter()
 {
-    stateIdle = static_cast<int>(round(Randomf(0, 1)));
+    stateIdle = static_cast<int>(std::round(Randomf(0, 1)));
     if (stateIdle == 1)
     {
         
@@ -55,7 +56,6 @@ void CChickenIdleState::Update()
     switch (stateIdle)
     {
     case 0:
-
         Idle();
         break;
     case 1:
@@ -123,7 +123,6 @@ void CChickenWalkState::Enter()
     m_rotation = true;
     m_pOwner->GetAnimator()->MergePlay(A_WALK);
     m_pOwner->GetAnimator()->SetPlaySpeed(1.0f);
-    AudioManager::Play("Chichen");
 }
 
 bool CChickenWalkState::BoundaryCheck(const VECTOR2& areaSize) const
@@ -169,6 +168,26 @@ CChickenSuction::CChickenSuction(CAnimalChicken* chicken)
 {
 }
 
+void CChickenSuction::Enter()
+{
+   m_pOwner->GetAudio()->Play();
+
+   // 距離が5以下のHumanをチキンの方に向かせる
+   VECTOR3 chickenPos = m_pOwner->GetTransform().position;
+   auto humans = ObjectManager::FindGameObjects<CHuman>();
+   for (auto* human : humans)
+   {
+       VECTOR3 humanPos = human->GetTransform().position;
+       VECTOR3 dir = chickenPos - humanPos;
+       float distance = sqrtf(dir.x * dir.x + dir.y * dir.y + dir.z * dir.z);
+       if (distance <= 5.0f)
+       {
+           float angle = atan2f(dir.x, dir.z);
+           human->SetRotateY(angle);
+       }
+   }
+}
+
 void CChickenSuction::Update()
 {
     m_distanceFromObjectToUFO = m_pOwner->SuctionSpeed();
@@ -200,8 +219,8 @@ CChickenDestroy::CChickenDestroy(CAnimalChicken* chicken)
 
 void CChickenDestroy::Enter()
 {
-    ObjectManager::FindGameObject<CGameInstance>()->AddScore(100);
+    ObjectManager::FindGameObject<CGameInstance>()->AddScore(150);
     ObjectManager::FindGameObject<CGameInstance>()->AddCapture(1);
-    ObjectManager::FindGameObject<CPlayer>()->AddExp(1);
+    ObjectManager::FindGameObject<CPlayer>()->AddExp(1.5f);
     m_pOwner->DestroyMe();
 }

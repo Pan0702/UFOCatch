@@ -7,6 +7,7 @@
 #include "../Utils/Lerp.h"
 #include "../System/VisionSystem.h"
 #include "../Utils/Sprite3D.h"
+#include "../System/Timer.h"
 
 ////////////////////
 // 原点から移動できる距離
@@ -34,10 +35,10 @@ CPlayer::CPlayer(float moveRange)
 
     // 吸い込み円用のテクスチャを読み込み
     m_pCircleImage = new CSpriteImage(TEXT("data/CircleSuction.png"));
-    
+
     m_pParticleImage = new CSpriteImage(_T("data/particle.png"));
     m_pEmitter = new CParticleEmitter(m_pParticleImage);
-    m_pEmitter->SetConeShape(m_coneRadius,m_coneTopPos);
+    m_pEmitter->SetConeShape(m_coneRadius, m_coneTopPos);
 }
 
 CPlayer::~CPlayer()
@@ -50,11 +51,21 @@ CPlayer::~CPlayer()
 
 void CPlayer::Update()
 {
+    // カメラ位置を更新//
+    UpdateCameraPos();
+
+    // ゲーム開始前は操作を受け付けない
+    CTimer* pTimer = ObjectManager::FindGameObject<CTimer>();
+    if (pTimer && !pTimer->IsGameStarted())
+    {
+        return;
+    }
+
     if (!m_SuctionActive)
     {
         HandleMovementInput();
     }
-    
+
     //吸い込みキーの状態を取得
     if (!ObjectManager::FindGameObject<CPlayerHP>()->GetFoundFlag())
     {
@@ -64,22 +75,20 @@ void CPlayer::Update()
     {
         m_SuctionActive = false;
     }
-    
+
     CheckLevel();
 
     // Lerp処理//
     UpdateHeightAndRadiusLerp();
 
-    // カメラ位置を更新//
-    UpdateCameraPos();
 
-    m_pEmitter->SetConeShape(m_coneRadius,transform.position.y);
+    m_pEmitter->SetConeShape(m_coneRadius, transform.position.y);
     CVisionSystem* pVision = ObjectManager::FindGameObject<CVisionSystem>();
     pVision->SetCircleCenter(transform.position);
     pVision->SetCircleRadius(m_coneRadius);
 
-    m_pEmitter->SetActive(m_SuctionActive);  // 吸い込み中だけ生成
-    m_pEmitter->Update(SceneManager::DeltaTime(), this->transform.position);  // UFOの位置で生成
+    m_pEmitter->SetActive(m_SuctionActive); // 吸い込み中だけ生成
+    m_pEmitter->Update(SceneManager::DeltaTime(), this->transform.position); // UFOの位置で生成
 }
 
 ////////////////////
@@ -245,12 +254,12 @@ void CPlayer::Draw()
 void CPlayer::DrawSuctionCircle()
 {
     // 吸い込み円描画の定数 //
-    static constexpr float GROUND_OFFSET = 0.01f;        // 地面から少し浮かせる高さ（Zファイティング回避用） //
+    static constexpr float GROUND_OFFSET = 0.01f; // 地面から少し浮かせる高さ（Zファイティング回避用） //
     static constexpr float CIRCLE_DIAMETER_SCALE = 2.0f; // 半径から直径への変換倍率 //
-    static constexpr float CIRCLE_DEPTH = 1.0f;          // 円の奥行き（Z軸方向のスケール） //
+    static constexpr float CIRCLE_DEPTH = 1.0f; // 円の奥行き（Z軸方向のスケール） //
     static constexpr float GROUND_ROTATION = -XM_PI / 2.0f; // 地面に平行にするための回転角度（-90度） //
-    static constexpr float CIRCLE_ALPHA = 0.5f;          // 円の透明度（半透明） //
-    static constexpr float SPRITE_SIZE = 1.0f;           // スプライトのベースサイズ（ワールド行列でスケールするため） //
+    static constexpr float CIRCLE_ALPHA = 0.5f; // 円の透明度（半透明） //
+    static constexpr float SPRITE_SIZE = 1.0f; // スプライトのベースサイズ（ワールド行列でスケールするため） //
 
     CSprite spr;
 
@@ -284,10 +293,10 @@ void CPlayer::DrawSuctionCircle()
         mWorld,
         mView,
         mProj,
-        VECTOR2(SPRITE_SIZE, SPRITE_SIZE),            // サイズ（ワールドマトリックスでスケールするので1.0） //
-        VECTOR2(0, 0),                                // テクスチャ座標（左上） //
-        VECTOR2((float)texWidth, (float)texHeight),   // テクスチャサイズ（全体を使用） //
-        CIRCLE_ALPHA                                  // アルファ（半透明） //
+        VECTOR2(SPRITE_SIZE, SPRITE_SIZE), // サイズ（ワールドマトリックスでスケールするので1.0） //
+        VECTOR2(0, 0), // テクスチャ座標（左上） //
+        VECTOR2((float)texWidth, (float)texHeight), // テクスチャサイズ（全体を使用） //
+        CIRCLE_ALPHA // アルファ（半透明） //
     );
 }
 
@@ -322,4 +331,3 @@ void CPlayer::DrawCircle(const VECTOR3& center, float radius, DWORD color)
     spr.DrawLine3D(transform.position, VECTOR3(center.x, center.y, center.z - m_coneRadius), color);
 }
 #endif
-

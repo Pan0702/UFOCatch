@@ -20,11 +20,13 @@ CDebugScene::CDebugScene()
     new CAnimalManager(0);
     new CTimer(30);
     Instantiate<CAnimalFactor>();
+    new CAnimalChicken();
     new CPlayer(20);
     Instantiate<CVisionSystem>();
     Instantiate<CDisplayInfo>();
+    
     ObjectManager::FindGameObject<CGameInstance>()->Init(1000);
-    new CAnimalChicken();
+
 }
 
 CDebugScene::~CDebugScene()

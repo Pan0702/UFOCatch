@@ -31,6 +31,7 @@ CAnimalChicken::CAnimalChicken(const VECTOR3& iniPos, const VECTOR2& moveAreaSiz
     m_pCurrentState = m_cubeStates[CBaseState::Type::WALK];
     m_pCurrentState->Enter();
     m_pBBox = CreateBBox();
+    m_pCry = new CXAudioSource(_T("data/Sound/ChickenCry.wav"));
 }
 
 CAnimalChicken::~CAnimalChicken()
@@ -39,6 +40,7 @@ CAnimalChicken::~CAnimalChicken()
     {
         SAFE_DELETE(state.second);
     }
+    SAFE_DELETE(m_pCry);
 }
 
 void CAnimalChicken::Update()
@@ -55,8 +57,6 @@ void CAnimalChicken::Update()
     {
         return;
     }
-    std::cout << m_pAnimator->CurrentFrame() << std::endl;
-    std::cout << m_pAnimator << std::endl;
     if (m_pAnimator != nullptr) // アニメーターが存在するかチェック
     {
         m_pAnimator->Update();

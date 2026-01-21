@@ -1,6 +1,10 @@
 #pragma once
 #include <string>
+#include <tchar.h>
 #include "../Core/Graphics/XAudio.h"
+
+// TCHAR対応のstring型
+using tstring = std::basic_string<TCHAR>;
 
 namespace AudioManager {
     void Init();
@@ -10,17 +14,17 @@ namespace AudioManager {
     // @param name 登録名（再生時に使う名前）
     // @param filepath ファイルパス
     // @param sourceNum 同時再生数（効果音の重ね再生用、デフォルト1）
-    CXAudioSource* Load(const std::string& name, const std::string& filepath, DWORD sourceNum = 1);
+    CXAudioSource* Load(const tstring& name, const tstring& filepath, DWORD sourceNum = 1);
 
     // 再生
-    void Play(const std::string& name, bool loop = false);
+    void Play(const tstring& name, bool loop = false);
 
     // 停止
-    void Stop(const std::string& name);
+    void Stop(const tstring& name);
 
     // 全て停止
     void StopAll();
 
     // ボリューム設定（1.0fが標準）
-    void SetVolume(const std::string& name, float volume);
+    void SetVolume(const tstring& name, float volume);
 };

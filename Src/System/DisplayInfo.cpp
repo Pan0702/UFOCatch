@@ -12,7 +12,7 @@ CDisplayInfo::CDisplayInfo()
     m_playUIImage = new CSpriteImage("data/PlayUI.png");
     m_expImage = new CSpriteImage("data/PlayUIParts.png");
     m_giwakuImage = new CSpriteImage("data/Circle.png");
-
+    m_pLogo = new CSpriteImage("data/Logo.png");
     // 経験値ゲージ初期化
     m_prevProportion = 0;
     m_currentWidth = 0;
@@ -20,7 +20,8 @@ CDisplayInfo::CDisplayInfo()
     // 疑惑ゲージ初期化
     m_prevGiwakuProportion = 0;
     m_currentAngle = 0;
-
+    m_isCutInDraw = false;
+    m_cutInCnt = 0;
     SetDrawOrder(-100);
 }
 
@@ -28,6 +29,9 @@ CDisplayInfo::~CDisplayInfo()
 {
     SAFE_DELETE(m_pSprite);
     SAFE_DELETE(m_playUIImage);
+    SAFE_DELETE(m_expImage);
+    SAFE_DELETE(m_giwakuImage);
+    SAFE_DELETE(m_pLogo);
 }
 
 void CDisplayInfo::Update()
@@ -59,6 +63,13 @@ void CDisplayInfo::Draw()
     TimeDraw();
     HPDraw();
     LvDraw();
+
+    // タイマーからカットイン情報を取得して描画
+    CTimer* pTimer = ObjectManager::FindGameObject<CTimer>();
+    if (pTimer && pTimer->IsCutInVisible())
+    {
+        CutIn(pTimer->GetCutInNum());
+    }
 }
 
 
@@ -181,4 +192,9 @@ void CDisplayInfo::LvDraw()
         int num = (lv / divisor) % 10;
         m_pSprite->Draw(m_expImage, (83 - halfWidth) + i * 64, 666, 68 * num, 540, 68, 103, 64, 80);                                                                               
     }
+}
+
+void CDisplayInfo::CutIn(int num)
+{
+    m_pSprite->Draw(m_pLogo, 400, 185, 0, 141 * num, 605, 141);
 }

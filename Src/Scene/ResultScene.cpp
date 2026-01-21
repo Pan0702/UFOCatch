@@ -56,16 +56,16 @@ void CResultScene::CalcRank()
 {
     m_score = m_pGI->GetScore()  - (m_pGI->GetDiscovery() * 3) - (m_pGI->GetSaw());  // ペナルティを差し引いた最終スコア //
     float ratio = avoidZero(static_cast<float>(m_score) / static_cast<float>(m_pGI->GetMaxScore()));
-    if (ratio < 0.25f)  // 25%未満でランクD //
+    if (ratio < 0.30f)  // 30%未満でランクD //
     {
         m_rankImageNum = 3;
-    }else if (ratio < 0.5f)  // 50%未満でランクC //
+    }else if (ratio < 0.60f)  // 30%未満でランクC //
     {
         m_rankImageNum = 2;
-    }else if (ratio < 0.75f)  // 75%未満でランクB //
+    }else if (ratio < 0.90f)  // 90%未満でランクB //
     {
         m_rankImageNum = 1;
-    }else if (ratio <= 1.0f)  // 75%以上でランクA //
+    }else if (ratio <= 1.0f)  // 90%以上でランクA //
     {
         m_rankImageNum = 0;
     }

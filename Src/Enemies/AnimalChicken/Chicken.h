@@ -21,6 +21,7 @@ public:
     void AddPos(const VECTOR3& pos) { transform.position = transform.position + pos; }
     VECTOR2 GetAreaSize() const { return m_areaSize; }
     void SetRotateY(float r){transform.rotation.y = r;}
+    CXAudioSource* GetAudio() const { return m_pCry; }
 
 private:
     void Update() override;
@@ -32,4 +33,5 @@ private:
     const VECTOR3 m_basePos;
     const VECTOR2 m_areaSize;
     CPlayer* m_pPlayer;
+    CXAudioSource* m_pCry ;
 };

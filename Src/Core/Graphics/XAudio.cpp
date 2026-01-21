@@ -68,7 +68,7 @@ HRESULT CXAudio::InitAudio(HWND hWnd)
 
 	if (FAILED(m_pXAudio2->CreateMasteringVoice(&m_pMasteringVoice)))
 	{
-		MessageBox(0, _T("XAudio2 �}�X�^�[�{�C�X�쐬���s"), 0, MB_OK);
+		MessageBox(0, _T("XAudio2 falseMasterVoice"), 0, MB_OK);
 		return E_FAIL;
 	}
 	return S_OK;
@@ -217,7 +217,7 @@ HRESULT CXAudioSource::LoadAudioSub(const TCHAR* szFileName, DWORD dwIndex)
 	hMmio = mmioOpen(FName, &mmioInfo, MMIO_ALLOCBUF | MMIO_READ);	// -- 2024.4.20
 	if ( hMmio == nullptr )
 	{
-		MessageBox(0, _T("XAudio2 �T�E���h�f�[�^�@�ǂݍ��ݎ��s"), nullptr, MB_OK);
+		MessageBox(0, _T("XAudio2 falseLoad"), nullptr, MB_OK);
 		return E_FAIL;
 	}
 
@@ -246,7 +246,7 @@ HRESULT CXAudioSource::LoadAudioSub(const TCHAR* szFileName, DWORD dwIndex)
 	//�\�[�X�{�C�X�Ƀf�[�^������	
 	if (FAILED(m_pXAudio->XAudio2()->CreateSourceVoice(&m_pSourceVoice[dwIndex], pwfex)))
 	{
-		MessageBox(0, _T("XAudio2 �\�[�X�{�C�X�쐬���s"), 0, MB_OK);
+		MessageBox(0, _T("XAudio2 falseVoiceMake"), 0, MB_OK);
 		return E_FAIL;
 	}
 	m_dwWavSize[dwIndex] = dwWavSize;
@@ -355,7 +355,7 @@ void  CXAudioSource::PlayAudio(int loop)
 
 	if (FAILED(m_pSourceVoice[m_dwSourceIndex]->SubmitSourceBuffer(&buffer)))
 	{
-		MessageBox(0,_T("XAudio2 �\�[�X�{�C�X�ɃT�u�~�b�g���s"), 0, MB_OK);
+		MessageBox(0,_T("XAudio2 falseSubmit"), 0, MB_OK);
 		return;
 	}
 	m_pSourceVoice[m_dwSourceIndex]->Start(0, XAUDIO2_COMMIT_NOW);

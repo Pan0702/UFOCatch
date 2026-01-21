@@ -4,7 +4,7 @@
 #include <thread>
 #include "../AnimalDog/Dog.h"
 #include "../HUman/Human.h"
-#include "../../Framework/AudioManager.h"
+#include "../../Core/Graphics/XAudio.h"
 namespace
 {
     constexpr float HALF_ROTATION_DEG = 180.0f;
@@ -16,7 +16,6 @@ CAnimalManager::CAnimalManager(int time)
     ObjectManager::DontDestroy(this); // 削除しない
     ObjectManager::SetVisible(this, false); // 表示しない
     
-    AudioManager::Init();  
     m_pMesh = nullptr;
     m_pMeshCol = nullptr;
     
@@ -45,7 +44,6 @@ CAnimalManager::CAnimalManager(int time)
     m_meshList.back().mesh->LoadAnimation(A_RUN, "data/NewAnimal/Chicken/Chicken_Run.anmx", false);
     // 4分木の初期化（レベル3、範囲-20〜20）
     m_pTree = new CLiner4Tree<CEnemyBase>(3, VECTOR4(-20, -20, 20, 20));
-    AudioManager::Load("Chicken","Chicken""data/Sound/ChickenCry.wav");
 }
 
 

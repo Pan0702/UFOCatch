@@ -2,7 +2,7 @@
 #include <unordered_map>
 
 namespace {
-    std::unordered_map<std::string, CXAudioSource*> audioFiles;
+    std::unordered_map<tstring, CXAudioSource*> audioFiles;
 }
 
 void AudioManager::Init()
@@ -18,7 +18,7 @@ void AudioManager::Reset()
     audioFiles.clear();
 }
 
-CXAudioSource* AudioManager::Load(const std::string& name, const std::string& filepath, DWORD sourceNum)
+CXAudioSource* AudioManager::Load(const tstring& name, const tstring& filepath, DWORD sourceNum)
 {
     if (audioFiles.find(name) == audioFiles.end()) {
         CXAudioSource* audio = new CXAudioSource();
@@ -28,7 +28,7 @@ CXAudioSource* AudioManager::Load(const std::string& name, const std::string& fi
     return audioFiles[name];
 }
 
-void AudioManager::Play(const std::string& name, bool loop)
+void AudioManager::Play(const tstring& name, bool loop)
 {
     auto it = audioFiles.find(name);
     if (it != audioFiles.end()) {
@@ -36,7 +36,7 @@ void AudioManager::Play(const std::string& name, bool loop)
     }
 }
 
-void AudioManager::Stop(const std::string& filename)
+void AudioManager::Stop(const tstring& filename)
 {
     auto it = audioFiles.find(filename);
     if (it != audioFiles.end()) {
@@ -51,7 +51,7 @@ void AudioManager::StopAll()
     }
 }
 
-void AudioManager::SetVolume(const std::string& filename, float volume)
+void AudioManager::SetVolume(const tstring& filename, float volume)
 {
     auto it = audioFiles.find(filename);
     if (it != audioFiles.end()) {
