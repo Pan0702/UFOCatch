@@ -59,10 +59,10 @@ void TitleScene::Update()
     {
         SceneManager::ChangeScene("TutorialScene");
     }
-    // if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_0))
-    // {
-    //     SceneManager::ChangeScene("Debug");
-    // }
+    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_0))
+    {
+        SceneManager::ChangeScene("Debug");
+    }
 }
 
 void TitleScene::Draw()

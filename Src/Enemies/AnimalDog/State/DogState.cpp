@@ -1,8 +1,8 @@
-#include "CubeState.h"
+#include "DogState.h"
 
 #include "../../../System/GameInstance.h"
-#include "../ACube.h"
-#include "../../System/AnimalManager.h"
+#include "../Dog.h"
+#include "../../System/EnemyRegistr.h"
 
 
 CCubeBase::CCubeBase(CACube* cube, Type type)

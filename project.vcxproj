@@ -527,18 +527,18 @@
     <ClInclude Include="Libs\Imgui\imstb_rectpack.h" />
     <ClInclude Include="Libs\Imgui\imstb_textedit.h" />
     <ClInclude Include="Libs\Imgui\imstb_truetype.h" />
-    <ClInclude Include="Src\Enemies\AnimalChicken\AChicken.h" />
+    <ClInclude Include="Src\Enemies\AnimalChicken\Chicken.h" />
     <ClInclude Include="Src\Enemies\AnimalChicken\State\ChickenState.h" />
     <ClInclude Include="Src\Enemies\Base\EnemyBase.h" />
     <ClInclude Include="Src\Enemies\Base\StateBase.h" />
-    <ClInclude Include="Src\Enemies\AnimalDog\ACube.h" />
-    <ClInclude Include="Src\Enemies\AnimalDog\State\CubeState.h" />
+    <ClInclude Include="Src\Enemies\AnimalDog\Dog.h" />
+    <ClInclude Include="Src\Enemies\AnimalDog\State\DogState.h" />
     <ClInclude Include="Src\Enemies\Human\FunShape.h" />
     <ClInclude Include="Src\Enemies\Human\Human.h" />
     <ClInclude Include="Src\Enemies\Human\State\HumanState.h" />
     <ClInclude Include="Src\Enemies\Liner4Tree.h" />
     <ClInclude Include="Src\Enemies\System\AnimalFactor.h" />
-    <ClInclude Include="Src\Enemies\System\AnimalManager.h" />
+    <ClInclude Include="Src\Enemies\System\EnemyRegistr.h" />
     <ClInclude Include="Src\Player\PlayerHP.h" />
     <ClInclude Include="Src\Stage\StageFactor.h" />
     <ClInclude Include="Src\Stage\StageObject.h" />
@@ -603,7 +603,7 @@
     <ClCompile Include="Libs\Imgui\imgui_impl_dx11.cpp" />
     <ClCompile Include="Libs\Imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="Libs\Imgui\imgui_widgets.cpp" />
-    <ClCompile Include="Src\Enemies\AnimalChicken\AChicken.cpp" />
+    <ClCompile Include="Src\Enemies\AnimalChicken\Chicken.cpp" />
     <ClCompile Include="Src\Enemies\AnimalChicken\State\ChickenState.cpp" />
     <ClCompile Include="Src\Enemies\Base\EnemyBase.cpp" />
     <ClCompile Include="Src\Enemies\Base\StateBase.cpp">
@@ -678,7 +678,7 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="Src\Enemies\AnimalDog\ACube.cpp">
+    <ClCompile Include="Src\Enemies\AnimalDog\Dog.cpp">
       <AssemblerOutput>NoListing</AssemblerOutput>
       <AssemblerListingLocation>project\x64\Debug\</AssemblerListingLocation>
       <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
@@ -750,7 +750,7 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="Src\Enemies\AnimalDog\State\CubeState.cpp">
+    <ClCompile Include="Src\Enemies\AnimalDog\State\DogState.cpp">
       <AssemblerOutput>NoListing</AssemblerOutput>
       <AssemblerListingLocation>project\x64\Debug\</AssemblerListingLocation>
       <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
@@ -1111,7 +1111,7 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="Src\Enemies\System\AnimalManager.cpp">
+    <ClCompile Include="Src\Enemies\System\EnemyRegistr.cpp">
       <AssemblerOutput>NoListing</AssemblerOutput>
       <AssemblerListingLocation>project\x64\Debug\</AssemblerListingLocation>
       <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>

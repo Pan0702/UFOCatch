@@ -4,7 +4,7 @@
 #include "TutorialHuman.h"
 #include "../System/GameInstance.h""
 #include "../Enemies/Human/Human.h"
-#include "../Enemies/System/AnimalManager.h"
+#include "../Enemies/System/EnemyRegistr.h"
 #include "../System/Timer.h"
 
 namespace

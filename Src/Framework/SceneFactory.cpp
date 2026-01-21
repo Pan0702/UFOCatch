@@ -9,7 +9,7 @@
 #include "../Scene/ResultScene.h"
 #include "../Scene/SelectionScene.h"
 #include "../Scene/TutorialScene.h"
-#include "../Enemies/AnimalChicken/AChicken.h"
+#include "../Enemies/AnimalChicken/Chicken.h"
 #include "../Scene/DebugScene.h"
 
 SceneBase* SceneFactory::CreateFirst()
@@ -41,10 +41,10 @@ SceneBase* SceneFactory::Create(const std::string& name)
 	{
 		return new CTutorialScene();
 	}
-	// if (name == "Debug")
-	// {
-	// 	return new CDebugScene();
-	// }
+	if (name == "Debug")
+	{
+		return new CDebugScene();
+	}
 	//
 	assert(false);
 	return nullptr;

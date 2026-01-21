@@ -2,10 +2,10 @@
 #include <cassert>
 
 #include "../System/GameInstance.h"
-#include "../Enemies/System/AnimalManager.h"
+#include "../Enemies/System/EnemyRegistr.h"
 #include "../Player/PCamera.h"
 #include "../Player/Player.h"
-#include "../Enemies/AnimalDog/ACube.h"
+#include "../Enemies/AnimalDog/Dog.h"
 #include "../Enemies/System/AnimalFactor.h"
 #include "../System/DisplayInfo.h"
 #include "../System/VisionSystem.h"

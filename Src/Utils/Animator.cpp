@@ -133,6 +133,8 @@ float Animator::SubFrame()
 
 bool Animator::Finished()
 {
+	if (base == nullptr)
+		return true;
 	const ANIMATION &info = base->m_Animation[main.id];
 	return !info.loop && main.frame >= info.endFrame;
 }
@@ -145,4 +147,13 @@ void Animator::Stop()
 float Animator::Rate()
 {
 	return rate;
+}
+
+bool Animator::HasAnimation(int id) const
+{
+	if (base == nullptr)
+		return false;
+	if (id < 0 || id >= ANIMATION_MAX)
+		return false;
+	return base->m_Animation[id].used;
 }

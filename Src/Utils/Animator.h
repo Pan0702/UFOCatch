@@ -19,6 +19,7 @@ public:
 	float SubFrame();
 	bool Finished();
 	void Stop();
+	bool HasAnimation(int id) const;
 private:
 	CFbxMesh* base;
 	struct Info {

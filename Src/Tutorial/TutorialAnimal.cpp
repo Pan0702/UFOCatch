@@ -3,7 +3,7 @@
 #include "../System/GameInstance.h""
 #include "../Player/Player.h"
 #include "../Utils/Animator.h"
-#include "../Enemies/System/AnimalManager.h"
+#include "../Enemies/System/EnemyRegistr.h"
 #include "../Stage/Ground.h"
 
 namespace

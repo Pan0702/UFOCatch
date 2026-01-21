@@ -1,8 +1,8 @@
-#include "AnimalManager.h"
+#include "EnemyRegistr.h"
 
 #include "../../Utils/BBox.h""
 #include <thread>
-#include "../AnimalDog/ACube.h"
+#include "../AnimalDog/Dog.h"
 #include "../HUman/Human.h"
 
 namespace

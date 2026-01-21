@@ -1,19 +1,21 @@
-#include "ACube.h"
+#include "Chicken.h"
+
+#include <iostream>
 
 #include "../../Player/Player.h"
 #include "../../Stage/Ground.h"
 #include <queue>
 #include <thread>
 
-#include "../System/AnimalManager.h"
+#include "../System/EnemyRegistr.h"
 #include "../Base/StateBase.h"
-#include "State/CubeState.h"
+#include "State/ChickenState.h"
 #include "../../Utils/BBox.h"
 
-CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
+CAnimalChicken::CAnimalChicken(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos), m_areaSize(moveAreaSize)
 {
-    m_pMesh = ObjectManager::FindGameObject<CAnimalManager>()->MeshList("Dog");
+    m_pMesh = ObjectManager::FindGameObject<CAnimalManager>()->MeshList("Chicken");
     m_pAnimator = new Animator();
     m_pAnimator->SetModel(m_pMesh);
     m_pAnimator->Play(A_WALK);
@@ -22,16 +24,16 @@ CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     m_pGround = ObjectManager::FindGameObject<CGround>();
 
-    m_cubeStates[CBaseState::Type::IDLE] = new CCubeIdleState(this);
-    m_cubeStates[CBaseState::Type::WALK] = new CCubeWalkState(this);
-    m_cubeStates[CBaseState::Type::SUCTION] = new CCubeSuction(this);
-    m_cubeStates[CBaseState::Type::DESTROY] = new CCubeDestroy(this);
+    m_cubeStates[CBaseState::Type::IDLE] = new CChickenIdleState(this);
+    m_cubeStates[CBaseState::Type::WALK] = new CChickenWalkState(this);
+    m_cubeStates[CBaseState::Type::SUCTION] = new CChickenSuction(this);
+    m_cubeStates[CBaseState::Type::DESTROY] = new CChickenDestroy(this);
     m_pCurrentState = m_cubeStates[CBaseState::Type::WALK];
     m_pCurrentState->Enter();
     m_pBBox = CreateBBox();
 }
 
-CACube::~CACube()
+CAnimalChicken::~CAnimalChicken()
 {
     for (auto& state : m_cubeStates)
     {
@@ -39,8 +41,7 @@ CACube::~CACube()
     }
 }
 
-
-void CACube::Update()
+void CAnimalChicken::Update()
 {
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     if (m_pPlayer != nullptr)
@@ -50,42 +51,43 @@ void CACube::Update()
 
     CEnemyBase::Update();
 
-    // 削除フラグが立っている（CEnemyBase::Updateで処理がスキップされた）場合は、
-    // これ以上の処理（衝突判定など）を行わない
     if (m_pCurrentState != nullptr && m_pCurrentState == m_cubeStates[CBaseState::Type::DESTROY])
     {
         return;
     }
-
-    m_pAnimator->Update();
+    std::cout << m_pAnimator->CurrentFrame() << std::endl;
+    std::cout << m_pAnimator << std::endl;
+    if (m_pAnimator != nullptr) // アニメーターが存在するかチェック
+    {
+        m_pAnimator->Update();
+    }
     ResolveOBBCollisions();
     UpdateBBox();
 
-    // ステージオブジェクトとの衝突判定と押し戻し（最後に実行）
     ResolveStageCollisions();
 }
 
-void CACube::Draw()
+void CAnimalChicken::Draw()
 {
-    m_pMesh->Render(m_pAnimator, transform.matrix());
+    Object3D::Draw();
 }
 
-void CACube::IsSuctionCheck()
+void CAnimalChicken::IsSuctionCheck()
 {
     if (m_pPlayer == nullptr)return;
-    if (m_pPlayer->IsWithSuctionCone(transform.position /* + VECTOR3(0, m_maxSize.y, 0)*/) && m_pPlayer->GetIsSuckUp())
+    if (m_pPlayer->IsWithSuctionCone(transform.position) && m_pPlayer->GetIsSuckUp())
     {
         SetState(CBaseState::Type::SUCTION);
     }
 }
 
-VECTOR3 CACube::SuctionSpeed() const
+VECTOR3 CAnimalChicken::SuctionSpeed() const
 {
     return m_pPlayer->
         CalcSuctionDisplacement(1, transform.position);
 }
 
-bool CACube::ShouldApplyGravity() const
+bool CAnimalChicken::ShouldApplyGravity() const
 {
     return m_pCurrentState != m_cubeStates.at(CBaseState::Type::SUCTION);
 }

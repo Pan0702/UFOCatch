@@ -1,8 +1,8 @@
 #include "ChickenState.h"
 
 #include "../../../System/GameInstance.h"
-#include "../AnimalChicken.h"
-#include "../../System/AnimalManager.h"
+#include "../Chicken.h"
+#include "../../System/EnemyRegistr.h"
 
 
 CChickenBase::CChickenBase(CAnimalChicken* chicken, Type type)
@@ -38,6 +38,7 @@ void CChickenIdleState::Enter()
     stateIdle = static_cast<int>(round(Randomf(0, 1)));
     if (stateIdle == 1)
     {
+        
         m_pOwner->GetAnimator()->MergePlay(A_IDEL);
         m_pOwner->GetAnimator()->SetPlaySpeed(1.0f);
     }
@@ -77,21 +78,12 @@ void CChickenIdleState::Idle()
 
 void CChickenIdleState::IdleAnim()
 {
-    if (AnimationFinish())
+    float frame = m_pOwner->GetAnimator()->CurrentFrame();
+    if (frame >= 360.0f)
     {
         m_pOwner->SetState(NextStatePop());
     }
 }
-
-bool CChickenIdleState::AnimationFinish() const
-{
-    if (m_pOwner->GetAnimator()->CurrentFrame() >= 570.0f)
-    {
-        return true;
-    }
-    return false;
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CChickenWalkState::CChickenWalkState(CAnimalChicken* chicken)
     : CChickenBase(chicken, Type::WALK)
@@ -144,6 +136,13 @@ bool CChickenWalkState::BoundaryCheck(const VECTOR2& areaSize) const
 
 void CChickenWalkState::Update()
 {
+    // ステージオブジェクトと衝突したらIDLEに戻る
+    if (m_pOwner->IsHitStageObject())
+    {
+        m_pOwner->SetState(Type::IDLE);
+        return;
+    }
+
     if (m_rotation)
     {
         static constexpr float ROTATION_LERP_SPEED = 10.0f;
