@@ -564,6 +564,7 @@
     <ClInclude Include="Src\Framework\GameObject.h" />
     <ClInclude Include="Src\Framework\ObjectManager.h" />
     <ClInclude Include="Src\Framework\PoolAllocator.h" />
+    <ClInclude Include="Src\Framework\AudioManager.h" />
     <ClInclude Include="Src\Framework\ResourceManager.h" />
     <ClInclude Include="Src\Framework\SceneBase.h" />
     <ClInclude Include="Src\Framework\SceneFactory.h" />
@@ -1898,6 +1899,7 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Src\Framework\AudioManager.cpp" />
     <ClCompile Include="Src\Framework\ResourceManager.cpp">
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>

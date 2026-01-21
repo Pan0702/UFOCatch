@@ -3,7 +3,7 @@
 #include "../../Stage/Ground.h"
 #include "../../Stage/StageObject.h"
 #include "../System/EnemyRegistr.h"
-
+#include "../../Framework/AudioManager.h"
 namespace 
 {
     static constexpr float GROUND_CHECK_OFFSET = 0.1f;

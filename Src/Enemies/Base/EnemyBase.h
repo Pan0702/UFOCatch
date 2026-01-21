@@ -40,7 +40,7 @@ protected:
 
     // ステージオブジェクトとの衝突判定と押し戻し処理
     void ResolveStageCollisions();  // ステージオブジェクトとのOBB衝突を検出し、押し戻し処理を実行
-    
+
 
     CBaseState* m_pCurrentState;
     std::unordered_map<CBaseState::Type, CBaseState*> m_cubeStates;

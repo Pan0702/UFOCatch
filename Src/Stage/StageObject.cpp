@@ -122,7 +122,7 @@ void CStageObject::ResolveEnemyCollision(CEnemyBase* pEnemy)
     {
         // 衝突している場合、エネミーを押し戻す
         // ステージオブジェクトの中心からエネミーの中心へのベクトルを計算
-        
+
         // ステージの中心
         MATRIX4X4 stageCenterMat = XMMatrixTranslation(
             m_pOBB->m_fLengthX + m_pOBB->m_vMin.x,
@@ -150,7 +150,7 @@ void CStageObject::ResolveEnemyCollision(CEnemyBase* pEnemy)
         if (dist > 0.001f)
         {
             pushDir = normalize(pushDir);
-            
+
             // 押し戻し距離（とりあえず固定値だが、エネミー同士よりは強く押し戻す）
             static constexpr float STAGE_PUSHBACK_DIST = 0.2f;
             pEnemy->AddPosition(pushDir * STAGE_PUSHBACK_DIST);

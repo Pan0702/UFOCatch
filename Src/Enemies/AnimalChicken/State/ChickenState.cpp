@@ -2,6 +2,7 @@
 
 #include "../../../System/GameInstance.h"
 #include "../Chicken.h"
+#include "../../../Framework/AudioManager.h"
 #include "../../System/EnemyRegistr.h"
 
 
@@ -122,6 +123,7 @@ void CChickenWalkState::Enter()
     m_rotation = true;
     m_pOwner->GetAnimator()->MergePlay(A_WALK);
     m_pOwner->GetAnimator()->SetPlaySpeed(1.0f);
+    AudioManager::Play("Chichen");
 }
 
 bool CChickenWalkState::BoundaryCheck(const VECTOR2& areaSize) const
@@ -136,13 +138,6 @@ bool CChickenWalkState::BoundaryCheck(const VECTOR2& areaSize) const
 
 void CChickenWalkState::Update()
 {
-    // ステージオブジェクトと衝突したらIDLEに戻る
-    if (m_pOwner->IsHitStageObject())
-    {
-        m_pOwner->SetState(Type::IDLE);
-        return;
-    }
-
     if (m_rotation)
     {
         static constexpr float ROTATION_LERP_SPEED = 10.0f;
