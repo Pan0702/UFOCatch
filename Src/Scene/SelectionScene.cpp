@@ -7,6 +7,8 @@ CSelectionScene::CSelectionScene()
     m_pImageDoButton = new CSpriteImage("data/Select/DOButton.png");
     m_pImageTutorialButton = new CSpriteImage("data/Select/TutoButton.png");
     m_selectedIndex = 0;
+    m_pBGM = new CXAudioSource(_T("data/Sound/himitu.wav"));
+    m_pBGM->Play(1);
 }
 
 CSelectionScene::~CSelectionScene()
@@ -17,9 +19,14 @@ void CSelectionScene::Update()
 {
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_RETURN))
     if (m_selectedIndex == 0)
+    {
         SceneManager::ChangeScene("PlayScene");
-    else if (m_selectedIndex == 1)
+        m_pBGM->Stop();
+    }else if (m_selectedIndex == 1)
+    {
         SceneManager::ChangeScene("TutorialScene");
+        m_pBGM->Stop();
+    }
 
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_D))
     {

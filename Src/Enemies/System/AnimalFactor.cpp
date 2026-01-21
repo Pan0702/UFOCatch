@@ -4,18 +4,20 @@
 #include "../AnimalDog/Dog.h"
 #include "../Human/Human.h"
 
-CAnimalFactor::CAnimalFactor()
+CAnimalFactor::CAnimalFactor(float sizeX,float sizeZ)
 {
-    ObjectManager::FindGameObject<CStageFactor>()->SpawnObjects();
-    for (int i = 0; i < 10; i++)
+    float f1 ;
+    float f2;
+    ObjectManager::FindGameObject<CStageFactor>()->SpawnObjects(sizeX, sizeZ);
+    for (int i = 0; i < 12; i++)
     {
-        static constexpr int MAX_POS = 20;
-        static constexpr int MIX_POS = -20;
-        float f1 = Randomf(MIX_POS,MAX_POS);
-        float f2 = Randomf(MIX_POS,MAX_POS);
-        new CACube(VECTOR3(f1, 0, f2), VECTOR2(10, 10));
+         f1 = Randomf(-sizeX,sizeX);
+         f2 = Randomf(-sizeZ,sizeZ);
+        new CACube(VECTOR3(f1, 0, f2), VECTOR2(sizeX, sizeZ));
     }
-    new CHuman(VECTOR3(0, 0, 0), VECTOR2(10, 10));
+    f1 = Randomf(-sizeX,sizeX);
+    f2 = Randomf(-sizeZ,sizeZ);
+    new CHuman(VECTOR3(f1, 0, f2), VECTOR2(sizeX, sizeZ));
 }
 
 CAnimalFactor::~CAnimalFactor()

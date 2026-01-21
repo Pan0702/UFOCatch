@@ -5,5 +5,5 @@ class CStageFactor
 {
 public:
     CStageFactor();
-    void SpawnObjects();
+    void SpawnObjects(float sizeX, float sizez);
 };

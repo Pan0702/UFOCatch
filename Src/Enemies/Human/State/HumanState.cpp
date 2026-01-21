@@ -157,10 +157,10 @@ void CHumanWalkState::Enter()
     int retryCount = 0;
     static constexpr int MAX_RETRY = 50;
     static constexpr float TURN_ANGLE = 180.0f;        // 方向転換時の最大回転角度（度数法）
-    while (!boundaryFlag)
+    while (!boundaryFlag && retryCount < MAX_RETRY)
     {
         m_totalPosZMoveAmount = 0;
-        
+
         m_turnAmount = Randomf(-TURN_ANGLE, TURN_ANGLE) * DegToRad;
         static constexpr float MAX_MOVE_AMOUNT = 3.5f;     // 1回の移動で進む最大距離
         static constexpr float MIN_MOVE_AMOUNT = 1.0f;     // 1回の移動で進む最小距離
@@ -169,11 +169,6 @@ void CHumanWalkState::Enter()
         {
             boundaryFlag = true;
         }
-        if (retryCount < MAX_RETRY)
-        {
-            boundaryFlag = true;
-        }
-        
         retryCount++;
     }
 

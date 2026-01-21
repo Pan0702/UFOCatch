@@ -12,5 +12,6 @@ public:
 	// リザルトシーンへ遷移する //
 	void ChangeResultScene();
 private:
+	CXAudioSource* m_pBGM;
 	
 };

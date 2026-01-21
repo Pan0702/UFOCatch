@@ -19,7 +19,7 @@ CDebugScene::CDebugScene()
     Instantiate<CPlayerCamera>();
     new CAnimalManager(0);
     new CTimer(30);
-    Instantiate<CAnimalFactor>();
+    new CAnimalFactor(20,20);
     new CAnimalChicken();
     new CPlayer(20);
     Instantiate<CVisionSystem>();

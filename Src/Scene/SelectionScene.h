@@ -14,5 +14,6 @@ private:
     CSpriteImage* m_pImageBackGround;
     CSpriteImage* m_pImageDoButton;
     CSpriteImage* m_pImageTutorialButton;
+    CXAudioSource* m_pBGM;
     int m_selectedIndex;
 };

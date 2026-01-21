@@ -21,6 +21,10 @@ TitleScene::TitleScene()
     m_text.push_back("PlayScene");
     m_text.push_back("SelectScene");
     m_selectedIndex = 0;
+    m_pBGM = new CXAudioSource(_T("data/Sound/Sunny_day.wav"));
+    //m_pBGM->Play(1);
+    m_pBGM->Volume(0.2f);
+    //m_pSE = new CXAudioSource(_T("data/Sound/button.wav"));
 }
 
 TitleScene::~TitleScene()
@@ -39,11 +43,13 @@ void TitleScene::Update()
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_RETURN))
     {
         SceneManager::ChangeScene(m_text[m_selectedIndex].c_str());
+        m_pBGM->Stop();
     }
     if (GameDevice()->m_pDI->
                       CheckKey(KD_TRG, DIK_RETURN))
     {
         SceneManager::ChangeScene("SelectScene");
+        m_pBGM->Stop();
     }
     //     SceneManager::ChangeScene("PlayScene");
     // }
@@ -58,10 +64,12 @@ void TitleScene::Update()
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_3))
     {
         SceneManager::ChangeScene("TutorialScene");
+        m_pBGM->Stop();
     }
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_0))
     {
         SceneManager::ChangeScene("Debug");
+        m_pBGM->Stop();
     }
 }
 

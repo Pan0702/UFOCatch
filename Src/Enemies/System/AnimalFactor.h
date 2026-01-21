@@ -4,7 +4,7 @@
 class CAnimalFactor : public Object3D
 {
 public:
-    CAnimalFactor();
+    CAnimalFactor(float sizeX, float sizeZ);
     ~CAnimalFactor();
 private:
 };

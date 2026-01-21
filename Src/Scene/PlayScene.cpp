@@ -18,12 +18,13 @@ PlayScene::PlayScene()
     Instantiate<CPlayerCamera>();
     new CAnimalManager(2);
     new CTimer(30);
-    Instantiate<CAnimalFactor>();
+    new CAnimalFactor(20,20);
     new CPlayer(20);
     Instantiate<CVisionSystem>();
     Instantiate<CDisplayInfo>();
-    ObjectManager::FindGameObject<CGameInstance>()->Init(1000);
-
+    ObjectManager::FindGameObject<CGameInstance>()->Init(1300);
+    m_pBGM = new CXAudioSource(_T("data/Sound/yukai.wav"));
+    //m_pBGM->Play(1);
 }
 
 PlayScene::~PlayScene() = default;
@@ -56,4 +57,5 @@ void PlayScene::Draw()
 void PlayScene::ChangeResultScene()
 {
     SceneManager::ChangeScene("ResultScene");
+    m_pBGM->Stop();
 }
