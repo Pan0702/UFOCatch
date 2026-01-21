@@ -1,7 +1,7 @@
 #include "TutorialHuman.h"
 #include "../System/VisionSystem.h"
 #include "../Player/Player.h"
-#include "../Player/PolayerHP.h"
+#include "../Player/PlayerHP.h"
 #include "../Utils/Animator.h"
 #include "../Enemies/System/AnimalManager.h"
 

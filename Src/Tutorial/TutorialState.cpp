@@ -6,7 +6,7 @@
 #include "TutorialHuman.h"
 #include "../System/GameInstance.h""
 #include "../Player/Player.h"
-#include "../Player/PolayerHP.h"
+#include "../Player/PlayerHP.h"
 #include "../System/Timer.h"
 
 namespace
