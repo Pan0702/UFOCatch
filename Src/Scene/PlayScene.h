@@ -13,5 +13,6 @@ public:
 	void ChangeResultScene();
 private:
 	CXAudioSource* m_pBGM;
+	void QTreeDebug();
 	
 };

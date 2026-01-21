@@ -89,6 +89,14 @@ void CPlayer::Update()
 
     m_pEmitter->SetActive(m_SuctionActive); // 吸い込み中だけ生成
     m_pEmitter->Update(SceneManager::DeltaTime(), this->transform.position); // UFOの位置で生成
+    if (GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_L))
+    {
+        transform.scale = VECTOR3(0.3f,1.0f,0.f);
+    }
+    if (GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_K))
+    {
+        transform.scale = VECTOR3(0.5f, 0.5f, 0.5f);
+    }
 }
 
 ////////////////////

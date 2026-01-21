@@ -9,7 +9,7 @@ CAnimalFactor::CAnimalFactor(float sizeX,float sizeZ)
     float f1 ;
     float f2;
     ObjectManager::FindGameObject<CStageFactor>()->SpawnObjects(sizeX, sizeZ);
-    for (int i = 0; i < 12; i++)
+    for (int i = 0; i < 30; i++)
     {
          f1 = Randomf(-sizeX,sizeX);
          f2 = Randomf(-sizeZ,sizeZ);

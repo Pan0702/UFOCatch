@@ -14,9 +14,14 @@ public:
         int size = ((1 << ((level + 1) * 2)) - 1) / 3;
         m_cells.resize(size);
     }
-    
+    //要素を削除
     void AllClear() { for (auto& cell : m_cells) cell.Clear(); }
 
+    /// オブジェクトの追加
+    /// @param obj オブジェクトのポイント
+    /// @param pos XZ平面での場所
+    /// @param size オブジェクトの大きさ
+    /// @return オブジェクトを追加できたらTrue///
     bool Register(T* obj, const VECTOR2& pos, const VECTOR2& size)
     {
         // オブジェクトが属するセル番号を取得
@@ -27,9 +32,14 @@ public:
         // セルにオブジェクトを追加
         m_cells[cellIndex].Push(obj);
 
-        return true; // 常にtrueを返すため、戻り値の意味がない
+        return true; 
     }
 
+    ///
+    /// @param obj オブジェクトのポイント
+    /// @param pos XZ平面での場所
+    /// @param size オブジェクトの大きさ
+    /// @return  近くにいるオブジェクトを返却//
     std::vector<T*> GetObjects(T* pObj, const VECTOR2& pos, const VECTOR2& size)
     {
         std::vector<T*> collisionList;

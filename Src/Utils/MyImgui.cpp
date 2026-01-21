@@ -1,10 +1,10 @@
 //=============================================================================
 //
-//	ImGui‚ğg‚¢‚â‚·‚­‚·‚é‚½‚ß‚Ìƒ‰ƒCƒuƒ‰ƒŠ                Ver 2.0     2020.11.15
+//	ImGuiï¿½ï¿½ï¿½gï¿½ï¿½ï¿½â‚·ï¿½ï¿½ï¿½ï¿½ï¿½é‚½ï¿½ß‚Ìƒï¿½ï¿½Cï¿½uï¿½ï¿½ï¿½ï¿½                Ver 2.0     2020.11.15
 //
-//	‚±‚Ìƒ\[ƒXƒtƒ@ƒCƒ‹‚Å‚ÍA./Libs/Imgui ƒtƒHƒ‹ƒ_‚É“ü‚Á‚Ä‚¢‚é imguiƒVƒXƒeƒ€‚Ì
-//	ƒwƒbƒ_‚Æƒ\[ƒX‚ğg—p‚µ‚Ä‚¢‚é
-//	‚Ü‚½Aimgui‚Ìimgui_impl_win32.h/imgui_impl_win32.cpp‚ÍƒJƒXƒ^ƒ}ƒCƒY‚µ‚Ä‚ ‚éB
+//	ï¿½ï¿½ï¿½Ìƒ\ï¿½[ï¿½Xï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½Å‚ÍA./Libs/Imgui ï¿½tï¿½Hï¿½ï¿½ï¿½_ï¿½É“ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ imguiï¿½Vï¿½Xï¿½eï¿½ï¿½ï¿½ï¿½
+//	ï¿½wï¿½bï¿½_ï¿½Æƒ\ï¿½[ï¿½Xï¿½ï¿½ï¿½gï¿½pï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½
+//	ï¿½Ü‚ï¿½ï¿½Aimguiï¿½ï¿½imgui_impl_win32.h/imgui_impl_win32.cppï¿½ÍƒJï¿½Xï¿½^ï¿½}ï¿½Cï¿½Yï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½B
 //
 //																	MyImgui.cpp
 //=============================================================================
@@ -15,461 +15,461 @@
 
 
 // ============================================================================
-// MyImguiŠÖ”
+// MyImguiï¿½Öï¿½
 // namespace MyImgui
 // ============================================================================
 namespace MyImgui
 {
-
-	//=============================================================================
-	//
-	// MyImgui‚Ì‰Šú‰»
-	//
-	// ˆø”
-	//   HWND       hWnd      ƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
-	//   CDirect3D* pD3D      Direct3D
-	//   int        WidthIn   ƒEƒBƒ“ƒhƒE‚Ì•
-	//   int        HeightIn  ƒEƒBƒ“ƒhƒE‚Ì‚‚³
-	//
-	//-----------------------------------------------------------------------------
-	void ImguiInit(HWND hWnd, CDirect3D* pD3D, int WidthIn, int HeightIn)
-	{
-		// imgui‚Ì‰Šú‰»
-		IMGUI_CHECKVERSION();
-		ImGui::CreateContext();
-		ImGuiIO& io = ImGui::GetIO(); (void)io;
-
-		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-
-		// ƒEƒBƒ“ƒhƒE‚ÌF‚Ìİ’è
-		//ImGui::StyleColorsLight();    // –¾‚é‚¢ŠDF
-		ImGui::StyleColorsClassic();    // •‚Ì”¼“§–¾
-		//ImGui::StyleColorsDark();     // •
-
-		// i’jImGui_ImplWin32_Init()‚ÍAƒIƒŠƒWƒiƒ‹‚ÌŠÖ”‚ğƒJƒXƒ^ƒ}ƒCƒY‚µ‚Ä‚ ‚é
-		if (!ImGui_ImplWin32_Init(hWnd, WidthIn, HeightIn))   // -- 2020.8.7
-		{
-			MessageBox(0, _T("imgui‚ğ‰Šú‰»o—ˆ‚Ü‚¹‚ñ"), nullptr, MB_OK);
-		}
-		if (!ImGui_ImplDX11_Init(pD3D->m_pDevice, pD3D->m_pDeviceContext))
-		{
-			MessageBox(0, _T("imgui‚ğ‰Šú‰»o—ˆ‚Ü‚¹‚ñ"), nullptr, MB_OK);
-		}
-
-		// iniƒtƒ@ƒCƒ‹‚ğ¶¬‚µ‚È‚¢‚æ‚¤‚É
-		io.IniFilename = nullptr;
-
-		// ƒtƒHƒ“ƒg‚ÌƒpƒX‚ğæ“¾
-		char FontPath[MAX_PATH];  // ƒpƒXæ“¾ƒoƒbƒtƒ@
-		SHGetSpecialFolderPathA(nullptr, FontPath, CSIDL_FONTS, 0);
-		strcat_s(FontPath, "\\meiryo.ttc");
-
-		// “ú–{ŒêƒtƒHƒ“ƒg‚É‘Î‰
-		//io.Fonts->AddFontFromFileTTF(FontPath, 18.0f, nullptrptr, io.Fonts->GetGlyphRangesJapanese());
-
-		// “ú–{ŒêƒtƒHƒ“ƒg‚É‘Î‰(‚½‚¾‚µA”¼Šp•¶š‚ÍDefault‚Ì‚Ü‚Ü•\¦)
-		ImFontConfig imgui_config;
-		imgui_config.MergeMode = true;
-		io.Fonts->AddFontDefault();
-		io.Fonts->AddFontFromFileTTF(FontPath, 18.0f, &imgui_config, io.Fonts->GetGlyphRangesJapanese());
-
-		io.ImeWindowHandle = ImmGetDefaultIMEWnd(hWnd);   // “ú–{Œê“ü—Í‘Î‰‚©H 
-		//io.ImeWindowHandle = hWnd;                        // “ú–{Œê“ü—Í‘Î‰‚©B‚»‚Ì‚QH
-
-	}
-
-	//-----------------------------------------------------------------------------
-	//
-	// MyImgui‚ÌI—¹ˆ—
-	//
-	//-----------------------------------------------------------------------------
-	void ImguiQuit()
-	{
-
-		ImGui_ImplDX11_Shutdown();
-		ImGui_ImplWin32_Shutdown();
-		ImGui::DestroyContext();
-
-	}
-
-	//-----------------------------------------------------------------------------
-	//
-	// MyImgui‚Ì•`‰æ‘Oˆ—
-	//
-	//-----------------------------------------------------------------------------
-	void ImguiNewFrame()
-	{
-		// •`‰æ‘Oˆ—
-		ImGui_ImplDX11_NewFrame();
-		ImGui_ImplWin32_NewFrame();
-		ImGui::NewFrame();
-	}
-
-	//-----------------------------------------------------------------------------
-	//
-	// MyImgui‚ÌÀ•`‰æˆ—
-	//
-	//-----------------------------------------------------------------------------
-	void ImguiRender()
-	{
-
-		// MyImgui‚ÌXV
-		//Update();              // ƒfƒ‚ƒEƒBƒ“ƒhƒE‚Ì•\¦
-
-		// •`‰æŒãˆ—iÀ•`‰æj
-		ImGui::Render();
-
-		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-	}
-
-	//-----------------------------------------------------------------------------
-	//
-	// MyImgui‘S‘Ì‚ÌXVˆ—
-	//
-	//-----------------------------------------------------------------------------
-	void Update()
-	{
-		ImGuiIO& io = ImGui::GetIO();
-
-		// ƒfƒ‚ƒEƒBƒ“ƒhƒE1•\¦ˆ—
-		// ‚±‚ÌƒEƒBƒ“ƒhƒEImGui::ShowDemoWindow()‚ÍAƒVƒXƒeƒ€‚ÉÅ‰‚©‚ç—pˆÓ‚³‚ê‚Ä‚¢‚éƒfƒ‚ƒEƒBƒ“ƒhƒE‚Å‚ ‚é
-		static bool p_open = false;
-		if (io.KeysDown[VK_F8] == 1)
-		{
-			p_open = true;
-		}
-		if( p_open ) ImGui::ShowDemoWindow(&p_open);
-
-		// ƒfƒ‚ƒEƒBƒ“ƒhƒE2•\¦ˆ—
-		// ‚±‚ÌƒEƒBƒ“ƒhƒE‚ÍAMyImgui‚Åì¬‚µ‚½ƒfƒ‚ƒEƒBƒ“ƒhƒE‚Å‚ ‚é
-		static bool p_open2 = false;
-		if (io.KeysDown[VK_F9] == 1)
-		{
-			p_open2 = true;
-		}
-		if( p_open2) ShowDemoWindow2(&p_open2);
-
-	}
-
-
-	//-----------------------------------------------------------------------------
-	//
-	// ƒfƒ‚—pƒEƒBƒ“ƒhƒE(DemoWindow2)‚Ì•\¦
-	//
-	// ˆø”
-	//		bool* p_open : I—¹(•Â‚¶‚éƒ{ƒ^ƒ“)ƒtƒ‰ƒO  false‚ÅI—¹
-	//
-	//-----------------------------------------------------------------------------
-	void ShowDemoWindow2(bool* p_open)
-	{
-
-		// ”wŒi‚Æƒ^ƒCƒgƒ‹ƒo[‚ÌF‚Ìİ’è
-		// i’jPushStyleColor()‚Æ1:1‚ÅI—¹‚ÌPopStyleColor()‚ª•K—v
-		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.2f, 0.2f, 0.7f));          // ’Êí‚Ì”wŒiF
-		ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.5f, 0.1f, 0.5f));           // ’ÊíiƒtƒH[ƒJƒX‚ª‚È‚¢‚Æ‚«j‚Ìƒ^ƒCƒgƒ‹F
-		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 0.8f));     // ƒAƒNƒeƒBƒuiƒtƒH[ƒJƒX‚ª“–‚½‚Á‚Ä‚¢‚é‚Æ‚«j‚Ìƒ^ƒCƒgƒ‹F
-
-		// ƒEƒBƒ“ƒhƒEˆÊ’u‚ÆƒTƒCƒY‚ğİ’è‚µ‚Ü‚·B
-		//   ImGuiCond_Once ‚É‚æ‚èA‰‰ñ‚Ì‚İİ’è‚³‚ê‚Ü‚·B
-		//   ImGuiCond_Always ‚ÅAí‚Éİ’è‚·‚é‚±‚Æ‚à‚Å‚«‚Ü‚·B
-		ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_Once);
-		ImGui::SetNextWindowSize(ImVec2(400, 600), ImGuiCond_Once);
-
-		// ŠeƒtƒŒ[ƒ€‚Ì˜gü
-		//ImGui::GetStyle().FrameRounding = 3.0f;      // ƒtƒŒ[ƒ€‚ÌƒR[ƒi[ŠÛ
-		ImGui::GetStyle().FrameBorderSize = 1.0f;    // ˜gü‚Ì‘¾‚³
-		//ImGui::GetStyle().Colors[ImGuiCol_Border] = ImVec4(1, 1, 1, 1);    // ˜gü‚ÌF
-		//ImGui::GetStyle().Colors[ImGuiCol_BorderShadow] = ImVec4(0, 0, 0, 1);    // ˜gü‚Ì‰e‚ÌF
-
-		// ƒEƒBƒ“ƒhƒE’è‹`‚Ìİ’è
-		// EBegin‚ÅƒEƒCƒ“ƒhƒE‚Ì–¼‘Oİ’èB‚È‚¨A–¼‘O‚ÍƒEƒCƒ“ƒhƒE‚²‚Æ‚Éƒ†ƒj[ƒN‚É‚È‚é‚æ‚¤‚É‚·‚é‚±‚Æ
-		// Ep_open‚ÍA•Â‚¶‚éƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚Æ‚«false‚ª•Ô‚é
-		// Eflag‚ÍAImGuiWindowFlags_MenuBar, ImGuiWindowFlags_NoResize ‚È‚Ç
-		if (ImGui::Begin(u8"ImGui ƒfƒ‚ƒEƒCƒ“ƒhƒE‚Q‚Ìƒ^ƒCƒgƒ‹ƒo[", p_open))
-		{
-			// Å‰‚¾‚¯‘å‚«‚³‚ğİ’è   •s—v
-			//ImGui::SetWindowSize(ImVec2(400, 600), ImGuiCond_::ImGuiCond_FirstUseEver);
-
-			// -----------------------------------------------
-			// ƒeƒLƒXƒg•\¦B‚Ü‚½ASameLine()‚Å“¯ˆês‚É‚Q•¶•\¦‚à‰Â
-			ImGui::Text(u8"ƒeƒLƒXƒgƒRƒ“ƒeƒ“ƒc‚ğ•\¦B");
-			ImGui::SameLine();
-			ImGui::Text(u8"‚Ü‚½A“¯‚¶s‚É’Ç‰Á‚·‚é‚±‚Æ‚à‚Å‚«‚é");
-
-			// ‹æØ‚èü
-			ImGui::Separator();
-
-			// --------------------------------------------------
-			// ƒ`ƒFƒbƒNƒ{ƒbƒNƒX
-			static bool chkboxflag = false;
-			ImGui::Checkbox(u8"ƒ`ƒFƒbƒNƒ{ƒbƒNƒX‚ğ•\¦‚·‚é", &chkboxflag);
-
-			ImGui::Separator();
-
-			// ƒJƒ‰[ƒsƒbƒJ[ -----------------------------------
-
-			ImGui::PushItemWidth(220);     // €–Ú‚Ì•‚ğ220‚É‚·‚éB•K‚¸PopItemWidth()‚Æ‘Î‚É‚·‚é
-
-			// EƒzƒC[ƒ‹ƒ^ƒCƒvE“§–¾“xƒo[‚ğ•\¦BColorEditFlag‚ğw’è‚µ‚È‚¢‚Æƒ{[ƒhƒ^ƒCƒvB‚±‚Ì‚Æ‚«‚ÍA‰EƒNƒŠƒbƒN‚ÅŒ`®‚ğ‘I‘ğ‚Å‚«‚é
-			static float Colorpick[4] = { 0 };
-			ImGui::ColorPicker4(u8"ƒJƒ‰[ƒsƒbƒJ[", Colorpick,
-				ImGuiColorEditFlags_::ImGuiColorEditFlags_PickerHueWheel | ImGuiColorEditFlags_::ImGuiColorEditFlags_AlphaBar);
-			//ImGui::ColorPicker4(u8"ƒJƒ‰[ƒsƒbƒJ[", Colorpick);
-		
-			ImGui::PopItemWidth();     // €–Ú‚Ì•‚ğŒ³‚É–ß‚·
-
-			ImGui::Separator();
-
-			// ƒeƒLƒXƒgE”š“ü—Í‚Ì‚¢‚ë‚¢‚ë -------------------------
-
-			// ”¼Šp‰p”•¶š‚Ì“ü—Í
-			static char str[256] = { "" };   // charŒ^
-			//ImGui::InputTextMultiline(u8"”¼Šp‰p”•¶š‚Ì“ü—Í", str, 256, ImVec2(200,50));   // •¡”s“ü—Í
-			ImGui::InputText(u8"”¼Šp‰p”•¶š‚Ì“ü—Í", str, 256);   // ˆês“ü—Í
-
-
-
-			// “ú–{ŒêƒeƒLƒXƒg‚Ì“ü—Í
-			// ETCHARŒ^‚ğˆê’UUTF-8(char)Œ^‚É•ÏŠ·‚µ‚Ä“ü—Í‚·‚é
-			// E‚Â‚Ü‚èA@TCHARŒ^¨UTF-8(char)Œ^¨i“ü—Íj¨UTF-8(char)Œ^¨TCHARŒ^
-			static TCHAR tstr[256] = { _T("") };   // TCHARŒ^
-			char u8str[256];                       // UTF-8(char)Œ^
-
-			// TCHARŒ^‚ğUTF-8Œ^‚É•ÏŠ·
-			MyImgui::ConvertTCHARToUTF8(tstr, u8str);
-
-			// “ú–{ŒêƒeƒLƒXƒg“ü—Í
-			//ImGui::InputTextMultiline(u8"“ú–{Œê‚Ì“ü—Í", u8str, 256, ImVec2(200,50));   // •¡”s“ü—Í
-			ImGui::InputText(u8"“ú–{Œê‚Ì“ü—Í", u8str, 256);   // ˆês“ü—Í
-
-			// UTF-8Œ^‚ğTCHARŒ^‚É•ÏŠ·
-			MyImgui::ConvertUTF8ToTCHAR(u8str, tstr);
-
-
-			ImGui::Separator();
-
-
-			// ”š‚Ì“ü—Í
-			static int su1 = 0;
-			//ImGui::DragInt(u8"”š‚Ì“ü—Í", &su1);
-			ImGui::InputInt(u8"”š‚Ì“ü—Í", &su1);
-
-
-			// 4”š‚Ì“ü—Í
-			static int su2[4] = { 0 };
-			ImGui::SliderInt4(u8"‚S”’l‚Ì“ü—Í", su2, 0, 255);
-
-			ImGui::Separator();
-
-
-			// ƒRƒ“ƒ{ƒ{ƒbƒNƒX‚Ì‚¢‚ë‚¢‚ë ------------------------
-
-			// ‡@ ƒRƒ“ƒ{ƒ{ƒbƒNƒX1
-			// ”z—ñitems‚Ì“à—e‚ğ‚P€–Ú‚Ã‚ÂƒRƒ“ƒ{ƒ{ƒbƒNƒX‚Éİ’è‚µ‚Ä•\¦‚·‚é
-			// ƒNƒŠƒbƒN‚µ‚½ˆÊ’u‚Ì•¶š—ñƒ|ƒCƒ“ƒ^[‚ª‘I‘ğƒ|ƒCƒ“ƒ^[item_current‚Éİ’è‚³‚ê‚é
-			const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIII", "JJJJ", "KKKK", "LLLLLLL", "MMMM", "OOOOOOO" };
-			static const char* item_current = items[0];        // €–ÚƒŠƒXƒg‚Ìæ“ªˆÊ’u‚ğ‰Šú‘I‘ğƒ|ƒCƒ“ƒ^[‚Æ‚·‚é.
-			if (ImGui::BeginCombo("Combo 1", item_current, 0)) // 2”Ô–Ú‚Ìƒpƒ‰ƒ[ƒ^‚ÍAƒRƒ“ƒ{‚ğŠJ‚­‘O‚É‘I‘ğ‚³‚ê‚½ƒ|ƒCƒ“ƒ^[‚Å‚ ‚é.
-			{
-				for (int n = 0; n < IM_ARRAYSIZE(items); n++)
-				{
-					bool is_selected = (item_current == items[n]);   // Œ»İ‚ÌƒŠƒXƒgˆÊ’u‚ªA‘I‘ğƒ|ƒCƒ“ƒ^[ˆÊ’u‚Æˆê’v‚µ‚Ä‚¢‚é‚©”»’f‚·‚é
-					if (ImGui::Selectable(items[n], is_selected))    // ƒŠƒXƒg‚ğƒRƒ“ƒ{ƒ{ƒbƒNƒX‚É’Ç‰Á‚·‚éB‘I‘ğˆÊ’u‚Æˆê’v‚µ‚Ä‚¢‚½‚çtrue‚ğ•Ô‚·
-						item_current = items[n];                     // ‘I‘ğˆÊ’u‚ğ‘I‘ğƒ|ƒCƒ“ƒ^[‚Éİ’è‚·‚é
-					if (is_selected)
-						ImGui::SetItemDefaultFocus();   // ƒRƒ“ƒ{‚ğŠJ‚­‚Æ‚«‚Ì‰ŠúƒtƒH[ƒJƒX‚ğİ’è‚·‚é (scrolling + for keyboard navigation support in the upcoming navigation branch)
-				}
-				ImGui::EndCombo();
-			}
-
-			// ‡A ƒRƒ“ƒ{ƒ{ƒbƒNƒX2
-			// •\¦•¶š—ñ‚ğˆês(single constant string)‚Å’¼Úİ’è‚µ‚Ä•\¦‚·‚é
-			// ƒNƒŠƒbƒN‚µ‚½ˆÊ’u‚ª‘I‘ğƒ|ƒCƒ“ƒ^[item_current_2‚Éİ’è‚³‚ê‚é
-			static int item_current_2 = 1;    // ‰ŠúƒJ[ƒ\ƒ‹ˆÊ’u‚ğ‚P‚Æ‚·‚é
-			ImGui::Combo("Combo 2", &item_current_2, "aaaa\0bbbb\0cccc\0dddd\0eeee\0\0");
-
-			// ‡B ƒRƒ“ƒ{ƒ{ƒbƒNƒX3
-			// •\¦•¶š—ñ‚ğ”z—ñiã‹LA”z—ñitemsj‚ğg—p‚µ‚Ä•\¦‚·‚é
-			// ƒNƒŠƒbƒN‚µ‚½ˆÊ’u‚ª‘I‘ğƒ|ƒCƒ“ƒ^[item_current_2‚Éİ’è‚³‚ê‚é
-			static int item_current_3 = -1;    // ‰ŠúƒJ[ƒ\ƒ‹ˆÊ’u‚ğ‘I‘ğ‚µ‚È‚¢‚Æ‚·‚é
-			ImGui::Combo("Combo 3", &item_current_3, items, IM_ARRAYSIZE(items));
-
-			ImGui::Separator();
-
-
-			// ƒŠƒXƒgƒ{ƒbƒNƒX‚Ì‚¢‚ë‚¢‚ë ---------------------------
-
-			ImGui::PushItemWidth(100);     // €–Ú‚Ì•‚ğ100‚É‚·‚éB•K‚¸PopItemWidth()‚Æ‘Î‚É‚·‚é
-
-			// ‡@ ƒŠƒXƒgƒ{ƒbƒNƒX‚P
-			// ”z—ñlist_item‚Ì“à—e‚ğ‚P€–Ú‚Ã‚ÂƒŠƒXƒgƒ{ƒbƒNƒX‚Éİ’è‚µ‚Ä•\¦‚·‚é
-			// ƒNƒŠƒbƒN‚µ‚½ˆÊ’u‚ª‘I‘ğƒ|ƒCƒ“ƒ^[item_count‚Éİ’è‚³‚ê‚é
-			const char* list_item[] = { "TTTTT", "UUUUU", "VVVVV", "WWWWW", "XXXXX", "YYYYY", "ZZZZZ" };
-			static int  item_count = 0;    // €–Ú‚Ì‘I‘ğƒ|ƒCƒ“ƒ^[i‘I‘ğˆÊ’uj
-
-			if (ImGui::ListBoxHeader(u8"ListBox 1", item_count, 3)) // 2”Ô–Ú‚Ìƒpƒ‰ƒ[ƒ^‚ÍA‘I‘ğ‚³‚ê‚½ƒ|ƒCƒ“ƒ^[‚Å‚ ‚éB3”Ô–Ú‚Ìƒpƒ‰ƒ[ƒ^‚ÍAƒ{ƒbƒNƒX‚É•\¦‚·‚é€–Ú”‚Å‚ ‚éB
-			{
-				for (int n = 0; n < IM_ARRAYSIZE(list_item); n++)
-				{
-					bool is_selected = (item_count == n);  // Œ»İ‚ÌƒŠƒXƒgˆÊ’u‚ªA‘I‘ğƒ|ƒCƒ“ƒ^[ˆÊ’u‚Æˆê’v‚µ‚Ä‚¢‚é‚©”»’f‚·‚é
-					ImGui::PushID(n);
-					if (ImGui::Selectable(list_item[n], is_selected))   // ƒŠƒXƒg‚ğƒŠƒXƒgƒ{ƒbƒNƒX‚É’Ç‰Á‚·‚éB‘I‘ğˆÊ’u‚Æˆê’v‚µ‚Ä‚¢‚½‚çtrue‚ğ•Ô‚·
-					{
-						item_count = n;                    // ‘I‘ğˆÊ’u‚ğ‘I‘ğƒ|ƒCƒ“ƒ^[‚Éİ’è‚·‚é
-					}
-					if (is_selected)
-						ImGui::SetItemDefaultFocus();   // ƒŠƒXƒg‚ğŠJ‚­‚Æ‚«‚Ì‰ŠúƒtƒH[ƒJƒX‚ğİ’è‚·‚é
-					ImGui::PopID();
-				}
-				ImGui::ListBoxFooter();
-			}
-
-			ImGui::SameLine();
-
-			// ‡A ƒŠƒXƒgƒ{ƒbƒNƒX‚Q
-			// ”z—ñlist_item2‚Ì“à—e‚ğg—p‚µ‚ÄƒŠƒXƒgƒ{ƒbƒNƒX‚ğ•\¦‚·‚é
-			// ƒNƒŠƒbƒN‚µ‚½ˆÊ’u‚ª‘I‘ğƒ|ƒCƒ“ƒ^[item_count2‚Éİ’è‚³‚ê‚é
-			const char* list_item2[] = { "MMMMM", "NNNNN", "OOOOO", "PPPPP", "QQQQQ", "RRRRR", "SSSSS" };
-			static int  item_count2 = 0;    // €–Ú‚Ì‘I‘ğƒ|ƒCƒ“ƒ^[i‘I‘ğˆÊ’uj
-
-			ImGui::ListBox(u8"ListBox 2", &item_count2, list_item2, IM_ARRAYSIZE(list_item2), 3); // 5”Ô–Ú‚Ìƒpƒ‰ƒ[ƒ^‚ÍAƒ{ƒbƒNƒX‚É•\¦‚·‚é€–Ú”‚Å‚ ‚éB
-
-			ImGui::PopItemWidth();     // €–Ú‚Ì•‚ğŒ³‚É–ß‚·
-
-			// ‹æØ‚èü
-			ImGui::Separator();
-
-			ImGui::BeginChild(u8"ƒ`ƒƒƒCƒ‹ƒhƒEƒBƒ“ƒhƒE", ImVec2(260, 50), true);
-
-				ImGui::Text(u8"‚m‚D‚P");
-				ImGui::Text(u8"‚m‚D‚Q");
-				ImGui::Text(u8"‚m‚D‚R");
-				ImGui::Text(u8"‚m‚D‚S");
-				ImGui::Text(u8"‚m‚D‚T");
-				ImGui::Text(u8"‚m‚D‚U");
-				ImGui::Text(u8"‚m‚D‚V");
-				ImGui::Text(u8"‚m‚D‚W");
-
-			ImGui::EndChild();
-			ImGui::Separator();
-
-			// -------------------------------------------------
-			// ƒ{ƒ^ƒ““ü—Í
-			ImGui::Text("                                      ");
-			ImGui::SameLine();
-			if (ImGui::Button(u8"I—¹", ImVec2(60, 20)))
-			{
-				// ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚Æ‚«A*p_open‚Éfalse‚ğ•Ô‚·
-				*p_open = false;
-			}
-		}
-
-		ImGui::End();
-
-		// Fİ’è(”wŒi‚Æƒ^ƒCƒgƒ‹ƒo[)‚ÌŒãn––B
-		// ã‹LPushStyleColor()‚Æ1:1‚ÅpopStyleColor()‚ª•K—v
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-
-	}
-
-	//-----------------------------------------------------------------------------
-	//
-	// UTF-8‚©‚çTCHAR‚Ö‚Ì•ÏŠ·ŠÖ”
-	//
-	// ˆø”
-	//   char*  charIn        “ü—Í‚·‚éUTF-8•¶š—ñ
-	//   TCHAR* tcharOut      •ÏŠ·Œã‚ÌTCHAR•¶š—ñ(Out)
-	//
-	//-----------------------------------------------------------------------------
-	void ConvertUTF8ToTCHAR(char* charIn, TCHAR* tcharOut)
-	{
-
-	#if _UNICODE
-		// unicode‚Ìê‡
-		// UTF-8‚©‚çUTF-16‚Ö‚Ì•ÏŠ·
-		ConvertU8ToU16(charIn, tcharOut);
-
-	#else
-		// ƒ}ƒ‹ƒ`ƒoƒCƒg•¶š‚Ìê‡
-		// ‡@ UTF-8‚©‚çUTF-16‚Ö‚Ì•ÏŠ·
-		WCHAR wstr[512];
-		ConvertU8ToU16(charIn, wstr);
-
-		// ‡A Unicode •¶šƒR[ƒh(WCHAR)‚ğ‘æˆêˆø”‚Åw’è‚µ‚½•¶šƒR[ƒh‚É•ÏŠ·‚·‚é( CP_ACP ‚Í“ú–{ŒêWindows‚Å‚ÍƒVƒtƒgJISƒR[ƒh )
-		char  mstr[512];
-		WideCharToMultiByte(CP_ACP, 0, wstr, -1, mstr, 512, nullptr, nullptr);
-		strcpy_s(tcharOut, strlen(mstr) + 1, mstr);
-
-	#endif
-	}
-	//-----------------------------------------------------------------------------
-	//
-	// TCHAR‚©‚çUTF-8‚Ö‚Ì•ÏŠ·ŠÖ”
-	//
-	// ˆø”
-	//   TCHAR* tcharIn       “ü—Í‚·‚éTCHAR•¶š—ñ
-	//   char*  charOut       •ÏŠ·Œã‚ÌUTF-8•¶š—ñ(Out)
-	//
-	//-----------------------------------------------------------------------------
-	void ConvertTCHARToUTF8(TCHAR* tcharIn, char* charOut)
-	{
-
-	#if _UNICODE
-		// unicode‚Ìê‡
-		// UTF-16‚©‚çUTF-8‚Ö‚Ì•ÏŠ·
-		ConvertU16ToU8(tcharIn, charOut);
-
-	#else
-		// ƒ}ƒ‹ƒ`ƒoƒCƒg•¶š‚Ìê‡
-		// ‡@ “ü—Í•¶š—ñ‚Ìƒ}ƒ‹ƒ`ƒoƒCƒg(char)Œ^‚ğWCHARŒ^‚É•ÏŠ·
-		WCHAR wstr[512] = { L'\0' };
-		MultiByteToWideChar(CP_OEMCP, MB_PRECOMPOSED, tcharIn, -1, wstr, 512);
-		// ‡A WCHARŒ^‚ğUTF-8‚É•ÏŠ·‚·‚é
-		ConvertU16ToU8(wstr, charOut);
-
-	#endif
-
-	}
-
-
-	//-----------------------------------------------------------------------------
-	//
-	// UTF-8‚©‚çUTF-16‚Ö‚Ì•ÏŠ·ŠÖ”
-	//
-	// ˆø”
-	//   char*  charIn        “ü—Í‚·‚éUTF-8•¶š—ñ
-	//   WCHAR* wcharOut      •ÏŠ·Œã‚ÌUTF-16•¶š—ñ(Out)
-	//
-	//-----------------------------------------------------------------------------
-	void ConvertU8ToU16(char* charIn, WCHAR* wcharOut)
-	{
-
-		std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> convt;
-		std::wstring wch = convt.from_bytes(charIn);
-
-		wcscpy_s(wcharOut, wch.length() + 1, (WCHAR*)wch.c_str());
-
-	}
-	//-----------------------------------------------------------------------------
-	//
-	// UTF-16‚©‚çUTF-8‚Ö‚Ì•ÏŠ·ŠÖ”
-	//
-	// ˆø”
-	//   WCHAR* wcharIn       “ü—Í‚·‚éUTF-16•¶š—ñ
-	//   char*  charOut       •ÏŠ·Œã‚ÌUTF-8•¶š—ñ(Out)
-	//
-	//-----------------------------------------------------------------------------
-	void ConvertU16ToU8(WCHAR* wcharIn, char* charOut)
-	{
-
-		std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> convt;
-		std::string ch = convt.to_bytes(wcharIn);
-
-		strcpy_s(charOut, ch.length() + 1, ch.c_str());
-
-	}
-
+    //=============================================================================
+    //
+    // MyImguiï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½
+    //
+    // ï¿½ï¿½ï¿½ï¿½
+    //   HWND       hWnd      ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½nï¿½ï¿½ï¿½hï¿½ï¿½
+    //   CDirect3D* pD3D      Direct3D
+    //   int        WidthIn   ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½Ì•ï¿½
+    //   int        HeightIn  ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½Ìï¿½ï¿½ï¿½
+    //
+    //-----------------------------------------------------------------------------
+    void ImguiInit(HWND hWnd, CDirect3D* pD3D, int WidthIn, int HeightIn)
+    {
+        // imguiï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO();
+        (void)io;
+
+        //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+        //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+        // ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½ÌFï¿½Ìİ’ï¿½
+        //ImGui::StyleColorsLight();    // ï¿½ï¿½ï¿½é‚¢ï¿½Dï¿½F
+        ImGui::StyleColorsClassic(); // ï¿½ï¿½ï¿½Ì”ï¿½ï¿½ï¿½ï¿½ï¿½
+        //ImGui::StyleColorsDark();     // ï¿½ï¿½
+
+        // ï¿½iï¿½ï¿½ï¿½jImGui_ImplWin32_Init()ï¿½ÍAï¿½Iï¿½ï¿½ï¿½Wï¿½iï¿½ï¿½ï¿½ÌŠÖï¿½ï¿½ï¿½ï¿½Jï¿½Xï¿½^ï¿½}ï¿½Cï¿½Yï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½
+        if (!ImGui_ImplWin32_Init(hWnd, WidthIn, HeightIn)) // -- 2020.8.7
+        {
+            MessageBox(0, _T("imguiï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½oï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½"), nullptr, MB_OK);
+        }
+        if (!ImGui_ImplDX11_Init(pD3D->m_pDevice, pD3D->m_pDeviceContext))
+        {
+            MessageBox(0, _T("imguiï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½oï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½"), nullptr, MB_OK);
+        }
+
+        // iniï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½ğ¶ï¿½ï¿½ï¿½ï¿½È‚ï¿½ï¿½æ‚¤ï¿½ï¿½
+        io.IniFilename = nullptr;
+
+        // ï¿½tï¿½Hï¿½ï¿½ï¿½gï¿½Ìƒpï¿½Xï¿½ï¿½ï¿½æ“¾
+        char FontPath[MAX_PATH]; // ï¿½pï¿½Xï¿½æ“¾ï¿½oï¿½bï¿½tï¿½@
+        SHGetSpecialFolderPathA(nullptr, FontPath, CSIDL_FONTS, 0);
+        strcat_s(FontPath, "\\meiryo.ttc");
+
+        // ï¿½ï¿½ï¿½{ï¿½ï¿½tï¿½Hï¿½ï¿½ï¿½gï¿½É‘Î‰ï¿½
+        //io.Fonts->AddFontFromFileTTF(FontPath, 18.0f, nullptrptr, io.Fonts->GetGlyphRangesJapanese());
+
+        // ï¿½ï¿½ï¿½{ï¿½ï¿½tï¿½Hï¿½ï¿½ï¿½gï¿½É‘Î‰ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½pï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Defaultï¿½Ì‚Ü‚Ü•\ï¿½ï¿½)
+        ImFontConfig imgui_config;
+        imgui_config.MergeMode = true;
+        io.Fonts->AddFontDefault();
+        io.Fonts->AddFontFromFileTTF(FontPath, 18.0f, &imgui_config, io.Fonts->GetGlyphRangesJapanese());
+        io.Fonts->AddFontFromFileTTF("C:/WINDOWS/FONTS/BIZ-UDGOTHICR.TTC",
+                             18.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
+        io.ImeWindowHandle = ImmGetDefaultIMEWnd(hWnd); // ï¿½ï¿½ï¿½{ï¿½ï¿½ï¿½ï¿½Í‘Î‰ï¿½ï¿½ï¿½ï¿½H 
+        //io.ImeWindowHandle = hWnd;                        // ï¿½ï¿½ï¿½{ï¿½ï¿½ï¿½ï¿½Í‘Î‰ï¿½ï¿½ï¿½ï¿½Bï¿½ï¿½ï¿½Ì‚Qï¿½H
+    }
+
+    //-----------------------------------------------------------------------------
+    //
+    // MyImguiï¿½ÌIï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    //
+    //-----------------------------------------------------------------------------
+    void ImguiQuit()
+    {
+        ImGui_ImplDX11_Shutdown();
+        ImGui_ImplWin32_Shutdown();
+        ImGui::DestroyContext();
+    }
+
+    //-----------------------------------------------------------------------------
+    //
+    // MyImguiï¿½Ì•`ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½
+    //
+    //-----------------------------------------------------------------------------
+    void ImguiNewFrame()
+    {
+        // ï¿½`ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½
+        ImGui_ImplDX11_NewFrame();
+        ImGui_ImplWin32_NewFrame();
+
+        ImGui::NewFrame();
+    }
+
+    //-----------------------------------------------------------------------------
+    //
+    // MyImguiï¿½Ìï¿½ï¿½`ï¿½æˆï¿½ï¿½
+    //
+    //-----------------------------------------------------------------------------
+    void ImguiRender()
+    {
+        // MyImguiï¿½ÌXï¿½V
+        //Update();              // ï¿½fï¿½ï¿½ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½Ì•\ï¿½ï¿½
+
+        // ï¿½`ï¿½ï¿½ãˆï¿½ï¿½ï¿½iï¿½ï¿½ï¿½`ï¿½ï¿½j
+        ImGui::Render();
+
+        ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+    }
+
+    //-----------------------------------------------------------------------------
+    //
+    // MyImguiï¿½Sï¿½Ì‚ÌXï¿½Vï¿½ï¿½ï¿½ï¿½
+    //
+    //-----------------------------------------------------------------------------
+    void Update()
+    {
+        ImGuiIO& io = ImGui::GetIO();
+
+        // ï¿½fï¿½ï¿½ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½E1ï¿½\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        // ï¿½ï¿½ï¿½ÌƒEï¿½Bï¿½ï¿½ï¿½hï¿½EImGui::ShowDemoWindow()ï¿½ÍAï¿½Vï¿½Xï¿½eï¿½ï¿½ï¿½ÉÅï¿½ï¿½ï¿½ï¿½ï¿½pï¿½Ó‚ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½fï¿½ï¿½ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½Å‚ï¿½ï¿½ï¿½
+        static bool p_open = false;
+        if (io.KeysDown[VK_F8] == 1)
+        {
+            p_open = true;
+        }
+        if (p_open) ImGui::ShowDemoWindow(&p_open);
+
+        // ï¿½fï¿½ï¿½ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½E2ï¿½\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        // ï¿½ï¿½ï¿½ÌƒEï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½ÍAMyImguiï¿½Åì¬ï¿½ï¿½ï¿½ï¿½ï¿½fï¿½ï¿½ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½Å‚ï¿½ï¿½ï¿½
+        static bool p_open2 = false;
+        if (io.KeysDown[VK_F9] == 1)
+        {
+            p_open2 = true;
+        }
+        if (p_open2) ShowDemoWindow2(&p_open2);
+    }
+
+
+    //-----------------------------------------------------------------------------
+    //
+    // ï¿½fï¿½ï¿½ï¿½pï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½E(DemoWindow2)ï¿½Ì•\ï¿½ï¿½
+    //
+    // ï¿½ï¿½ï¿½ï¿½
+    //		bool* p_open : ï¿½Iï¿½ï¿½(ï¿½Â‚ï¿½ï¿½ï¿½{ï¿½^ï¿½ï¿½)ï¿½tï¿½ï¿½ï¿½O  falseï¿½ÅIï¿½ï¿½
+    //
+    //-----------------------------------------------------------------------------
+    void ShowDemoWindow2(bool* p_open)
+    {
+        // ï¿½wï¿½iï¿½Æƒ^ï¿½Cï¿½gï¿½ï¿½ï¿½oï¿½[ï¿½ÌFï¿½Ìİ’ï¿½
+        // ï¿½iï¿½ï¿½ï¿½jPushStyleColor()ï¿½ï¿½1:1ï¿½ÅIï¿½ï¿½ï¿½ï¿½ï¿½ï¿½PopStyleColor()ï¿½ï¿½ï¿½Kï¿½v
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.2f, 0.2f, 0.7f)); // ï¿½Êíï¿½Ì”wï¿½iï¿½F
+        ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.5f, 0.1f, 0.5f)); // ï¿½Êíï¿½iï¿½tï¿½Hï¿½[ï¿½Jï¿½Xï¿½ï¿½ï¿½È‚ï¿½ï¿½Æ‚ï¿½ï¿½jï¿½Ìƒ^ï¿½Cï¿½gï¿½ï¿½ï¿½F
+        ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 0.8f));
+        // ï¿½Aï¿½Nï¿½eï¿½Bï¿½uï¿½ï¿½ï¿½iï¿½tï¿½Hï¿½[ï¿½Jï¿½Xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½Æ‚ï¿½ï¿½jï¿½Ìƒ^ï¿½Cï¿½gï¿½ï¿½ï¿½F
+
+        // ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½Ê’uï¿½ÆƒTï¿½Cï¿½Yï¿½ï¿½İ’è‚µï¿½Ü‚ï¿½ï¿½B
+        //   ImGuiCond_Once ï¿½É‚ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½Ì‚İİ’è‚³ï¿½ï¿½Ü‚ï¿½ï¿½B
+        //   ImGuiCond_Always ï¿½ÅAï¿½ï¿½Éİ’è‚·ï¿½é‚±ï¿½Æ‚ï¿½ï¿½Å‚ï¿½ï¿½Ü‚ï¿½ï¿½B
+        ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_Once);
+        ImGui::SetNextWindowSize(ImVec2(400, 600), ImGuiCond_Once);
+
+        // ï¿½eï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½Ì˜gï¿½ï¿½
+        //ImGui::GetStyle().FrameRounding = 3.0f;      // ï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ÌƒRï¿½[ï¿½iï¿½[ï¿½ï¿½
+        ImGui::GetStyle().FrameBorderSize = 1.0f; // ï¿½gï¿½ï¿½ï¿½Ì‘ï¿½ï¿½ï¿½
+        //ImGui::GetStyle().Colors[ImGuiCol_Border] = ImVec4(1, 1, 1, 1);    // ï¿½gï¿½ï¿½ï¿½ÌF
+        //ImGui::GetStyle().Colors[ImGuiCol_BorderShadow] = ImVec4(0, 0, 0, 1);    // ï¿½gï¿½ï¿½ï¿½Ì‰eï¿½ÌF
+
+        // ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½ï¿½`ï¿½Ìİ’ï¿½
+        // ï¿½EBeginï¿½ÅƒEï¿½Cï¿½ï¿½ï¿½hï¿½Eï¿½Ì–ï¿½ï¿½Oï¿½İ’ï¿½Bï¿½È‚ï¿½ï¿½Aï¿½ï¿½ï¿½Oï¿½ÍƒEï¿½Cï¿½ï¿½ï¿½hï¿½Eï¿½ï¿½ï¿½Æ‚Éƒï¿½ï¿½jï¿½[ï¿½Nï¿½É‚È‚ï¿½æ‚¤ï¿½É‚ï¿½ï¿½é‚±ï¿½ï¿½
+        // ï¿½Ep_openï¿½ÍAï¿½Â‚ï¿½ï¿½ï¿½{ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ‚ï¿½falseï¿½ï¿½ï¿½Ô‚ï¿½
+        // ï¿½Eflagï¿½ÍAImGuiWindowFlags_MenuBar, ImGuiWindowFlags_NoResize ï¿½È‚ï¿½
+        if (ImGui::Begin(u8"ImGui ï¿½fï¿½ï¿½ï¿½Eï¿½Cï¿½ï¿½ï¿½hï¿½Eï¿½Qï¿½Ìƒ^ï¿½Cï¿½gï¿½ï¿½ï¿½oï¿½[", p_open))
+        {
+            // ï¿½Åï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å‚«ï¿½ï¿½ï¿½ï¿½İ’ï¿½   ï¿½sï¿½v
+            //ImGui::SetWindowSize(ImVec2(400, 600), ImGuiCond_::ImGuiCond_FirstUseEver);
+
+            // -----------------------------------------------
+            // ï¿½eï¿½Lï¿½Xï¿½gï¿½\ï¿½ï¿½ï¿½Bï¿½Ü‚ï¿½ï¿½ASameLine()ï¿½Å“ï¿½ï¿½ï¿½sï¿½É‚Qï¿½ï¿½ï¿½\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            ImGui::Text(u8"ï¿½eï¿½Lï¿½Xï¿½gï¿½Rï¿½ï¿½ï¿½eï¿½ï¿½ï¿½cï¿½ï¿½\ï¿½ï¿½ï¿½B");
+            ImGui::SameLine();
+            ImGui::Text(u8"ï¿½Ü‚ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½sï¿½É’Ç‰ï¿½ï¿½ï¿½ï¿½é‚±ï¿½Æ‚ï¿½ï¿½Å‚ï¿½ï¿½ï¿½");
+
+            // ï¿½ï¿½Ø‚ï¿½ï¿½
+            ImGui::Separator();
+
+            // --------------------------------------------------
+            // ï¿½`ï¿½Fï¿½bï¿½Nï¿½{ï¿½bï¿½Nï¿½X
+            static bool chkboxflag = false;
+            ImGui::Checkbox(u8"ï¿½`ï¿½Fï¿½bï¿½Nï¿½{ï¿½bï¿½Nï¿½Xï¿½ï¿½\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½", &chkboxflag);
+
+            ImGui::Separator();
+
+            // ï¿½Jï¿½ï¿½ï¿½[ï¿½sï¿½bï¿½Jï¿½[ -----------------------------------
+
+            ImGui::PushItemWidth(220); // ï¿½ï¿½ï¿½Ú‚Ì•ï¿½ï¿½ï¿½220ï¿½É‚ï¿½ï¿½ï¿½Bï¿½Kï¿½ï¿½PopItemWidth()ï¿½Æ‘Î‚É‚ï¿½ï¿½ï¿½
+
+            // ï¿½Eï¿½zï¿½Cï¿½[ï¿½ï¿½ï¿½^ï¿½Cï¿½vï¿½Eï¿½ï¿½ï¿½ï¿½ï¿½xï¿½oï¿½[ï¿½ï¿½\ï¿½ï¿½ï¿½BColorEditFlagï¿½ï¿½ï¿½wï¿½è‚µï¿½È‚ï¿½ï¿½Æƒ{ï¿½[ï¿½hï¿½^ï¿½Cï¿½vï¿½Bï¿½ï¿½ï¿½Ì‚Æ‚ï¿½ï¿½ÍAï¿½Eï¿½Nï¿½ï¿½ï¿½bï¿½Nï¿½ÅŒ`ï¿½ï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½Å‚ï¿½ï¿½ï¿½
+            static float Colorpick[4] = {0};
+            ImGui::ColorPicker4(u8"ï¿½Jï¿½ï¿½ï¿½[ï¿½sï¿½bï¿½Jï¿½[", Colorpick,
+                                ImGuiColorEditFlags_::ImGuiColorEditFlags_PickerHueWheel |
+                                ImGuiColorEditFlags_::ImGuiColorEditFlags_AlphaBar);
+            //ImGui::ColorPicker4(u8"ï¿½Jï¿½ï¿½ï¿½[ï¿½sï¿½bï¿½Jï¿½[", Colorpick);
+
+            ImGui::PopItemWidth(); // ï¿½ï¿½ï¿½Ú‚Ì•ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É–ß‚ï¿½
+
+            ImGui::Separator();
+
+            // ï¿½eï¿½Lï¿½Xï¿½gï¿½Eï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í‚Ì‚ï¿½ï¿½ë‚¢ï¿½ï¿½ -------------------------
+
+            // ï¿½ï¿½ï¿½pï¿½pï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì“ï¿½ï¿½ï¿½
+            static char str[256] = {""}; // charï¿½^
+            //ImGui::InputTextMultiline(u8"ï¿½ï¿½ï¿½pï¿½pï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì“ï¿½ï¿½ï¿½", str, 256, ImVec2(200,50));   // ï¿½ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½ï¿½
+            ImGui::InputText(u8"ï¿½ï¿½ï¿½pï¿½pï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì“ï¿½ï¿½ï¿½", str, 256); // ï¿½ï¿½sï¿½ï¿½ï¿½ï¿½
+
+
+            // ï¿½ï¿½ï¿½{ï¿½ï¿½eï¿½Lï¿½Xï¿½gï¿½Ì“ï¿½ï¿½ï¿½
+            // ï¿½ETCHARï¿½^ï¿½ï¿½ï¿½ï¿½UUTF-8(char)ï¿½^ï¿½É•ÏŠï¿½ï¿½ï¿½ï¿½Ä“ï¿½ï¿½Í‚ï¿½ï¿½ï¿½
+            // ï¿½Eï¿½Â‚Ü‚ï¿½Aï¿½@TCHARï¿½^ï¿½ï¿½UTF-8(char)ï¿½^ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½Íjï¿½ï¿½UTF-8(char)ï¿½^ï¿½ï¿½TCHARï¿½^
+            static TCHAR tstr[256] = {_T("")}; // TCHARï¿½^
+            char u8str[256]; // UTF-8(char)ï¿½^
+
+            // TCHARï¿½^ï¿½ï¿½UTF-8ï¿½^ï¿½É•ÏŠï¿½
+            MyImgui::ConvertTCHARToUTF8(tstr, u8str);
+
+            // ï¿½ï¿½ï¿½{ï¿½ï¿½eï¿½Lï¿½Xï¿½gï¿½ï¿½ï¿½ï¿½
+            //ImGui::InputTextMultiline(u8"ï¿½ï¿½ï¿½{ï¿½ï¿½Ì“ï¿½ï¿½ï¿½", u8str, 256, ImVec2(200,50));   // ï¿½ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½ï¿½
+            ImGui::InputText(u8"ï¿½ï¿½ï¿½{ï¿½ï¿½Ì“ï¿½ï¿½ï¿½", u8str, 256); // ï¿½ï¿½sï¿½ï¿½ï¿½ï¿½
+
+            // UTF-8ï¿½^ï¿½ï¿½TCHARï¿½^ï¿½É•ÏŠï¿½
+            MyImgui::ConvertUTF8ToTCHAR(u8str, tstr);
+
+
+            ImGui::Separator();
+
+
+            // ï¿½ï¿½ï¿½ï¿½ï¿½Ì“ï¿½ï¿½ï¿½
+            static int su1 = 0;
+            //ImGui::DragInt(u8"ï¿½ï¿½ï¿½ï¿½ï¿½Ì“ï¿½ï¿½ï¿½", &su1);
+            ImGui::InputInt(u8"ï¿½ï¿½ï¿½ï¿½ï¿½Ì“ï¿½ï¿½ï¿½", &su1);
+
+
+            // 4ï¿½ï¿½ï¿½ï¿½ï¿½Ì“ï¿½ï¿½ï¿½
+            static int su2[4] = {0};
+            ImGui::SliderInt4(u8"ï¿½Sï¿½ï¿½ï¿½lï¿½Ì“ï¿½ï¿½ï¿½", su2, 0, 255);
+
+            ImGui::Separator();
+
+
+            // ï¿½Rï¿½ï¿½ï¿½{ï¿½{ï¿½bï¿½Nï¿½Xï¿½Ì‚ï¿½ï¿½ë‚¢ï¿½ï¿½ ------------------------
+
+            // ï¿½@ ï¿½Rï¿½ï¿½ï¿½{ï¿½{ï¿½bï¿½Nï¿½X1
+            // ï¿½zï¿½ï¿½itemsï¿½Ì“ï¿½ï¿½eï¿½ï¿½ï¿½Pï¿½ï¿½ï¿½Ú‚Ã‚ÂƒRï¿½ï¿½ï¿½{ï¿½{ï¿½bï¿½Nï¿½Xï¿½Éİ’è‚µï¿½Ä•\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            // ï¿½Nï¿½ï¿½ï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½Ê’uï¿½Ì•ï¿½ï¿½ï¿½ï¿½ï¿½|ï¿½Cï¿½ï¿½ï¿½^ï¿½[ï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½|ï¿½Cï¿½ï¿½ï¿½^ï¿½[item_currentï¿½Éİ’è‚³ï¿½ï¿½ï¿½
+            const char* items[] = {
+                "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIII", "JJJJ", "KKKK", "LLLLLLL",
+                "MMMM", "OOOOOOO"
+            };
+            static const char* item_current = items[0]; // ï¿½ï¿½ï¿½Úƒï¿½ï¿½Xï¿½gï¿½Ìæ“ªï¿½Ê’uï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½|ï¿½Cï¿½ï¿½ï¿½^ï¿½[ï¿½Æ‚ï¿½ï¿½ï¿½.
+            if (ImGui::BeginCombo("Combo 1", item_current, 0))
+            // 2ï¿½Ô–Ú‚Ìƒpï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½^ï¿½ÍAï¿½Rï¿½ï¿½ï¿½{ï¿½ï¿½ï¿½Jï¿½ï¿½ï¿½Oï¿½É‘Iï¿½ï¿½ï¿½ï¿½ï¿½ê‚½ï¿½|ï¿½Cï¿½ï¿½ï¿½^ï¿½[ï¿½Å‚ï¿½ï¿½ï¿½.
+            {
+                for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+                {
+                    bool is_selected = (item_current == items[n]);
+                    // ï¿½ï¿½ï¿½İ‚Ìƒï¿½ï¿½Xï¿½gï¿½Ê’uï¿½ï¿½ï¿½Aï¿½Iï¿½ï¿½ï¿½|ï¿½Cï¿½ï¿½ï¿½^ï¿½[ï¿½Ê’uï¿½Æˆï¿½vï¿½ï¿½ï¿½Ä‚ï¿½ï¿½é‚©ï¿½ï¿½ï¿½fï¿½ï¿½ï¿½ï¿½
+                    if (ImGui::Selectable(items[n], is_selected))
+                        // ï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½Rï¿½ï¿½ï¿½{ï¿½{ï¿½bï¿½Nï¿½Xï¿½É’Ç‰ï¿½ï¿½ï¿½ï¿½ï¿½Bï¿½Iï¿½ï¿½ï¿½Ê’uï¿½Æˆï¿½vï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½trueï¿½ï¿½Ô‚ï¿½
+                        item_current = items[n]; // ï¿½Iï¿½ï¿½ï¿½Ê’uï¿½ï¿½Iï¿½ï¿½ï¿½|ï¿½Cï¿½ï¿½ï¿½^ï¿½[ï¿½Éİ’è‚·ï¿½ï¿½
+                    if (is_selected)
+                        ImGui::SetItemDefaultFocus();
+                    // ï¿½Rï¿½ï¿½ï¿½{ï¿½ï¿½ï¿½Jï¿½ï¿½ï¿½Æ‚ï¿½ï¿½Ìï¿½ï¿½ï¿½ï¿½tï¿½Hï¿½[ï¿½Jï¿½Xï¿½ï¿½İ’è‚·ï¿½ï¿½ (scrolling + for keyboard navigation support in the upcoming navigation branch)
+                }
+                ImGui::EndCombo();
+            }
+
+            // ï¿½A ï¿½Rï¿½ï¿½ï¿½{ï¿½{ï¿½bï¿½Nï¿½X2
+            // ï¿½\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½s(single constant string)ï¿½Å’ï¿½ï¿½Úİ’è‚µï¿½Ä•\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            // ï¿½Nï¿½ï¿½ï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½Ê’uï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½|ï¿½Cï¿½ï¿½ï¿½^ï¿½[item_current_2ï¿½Éİ’è‚³ï¿½ï¿½ï¿½
+            static int item_current_2 = 1; // ï¿½ï¿½ï¿½ï¿½ï¿½Jï¿½[ï¿½\ï¿½ï¿½ï¿½Ê’uï¿½ï¿½ï¿½Pï¿½Æ‚ï¿½ï¿½ï¿½
+            ImGui::Combo("Combo 2", &item_current_2, "aaaa\0bbbb\0cccc\0dddd\0eeee\0\0");
+
+            // ï¿½B ï¿½Rï¿½ï¿½ï¿½{ï¿½{ï¿½bï¿½Nï¿½X3
+            // ï¿½\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½zï¿½ï¿½iï¿½ï¿½Lï¿½Aï¿½zï¿½ï¿½itemsï¿½jï¿½ï¿½ï¿½gï¿½pï¿½ï¿½ï¿½Ä•\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            // ï¿½Nï¿½ï¿½ï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½Ê’uï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½|ï¿½Cï¿½ï¿½ï¿½^ï¿½[item_current_2ï¿½Éİ’è‚³ï¿½ï¿½ï¿½
+            static int item_current_3 = -1; // ï¿½ï¿½ï¿½ï¿½ï¿½Jï¿½[ï¿½\ï¿½ï¿½ï¿½Ê’uï¿½ï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½ï¿½Æ‚ï¿½ï¿½ï¿½
+            ImGui::Combo("Combo 3", &item_current_3, items, IM_ARRAYSIZE(items));
+
+            ImGui::Separator();
+
+
+            // ï¿½ï¿½ï¿½Xï¿½gï¿½{ï¿½bï¿½Nï¿½Xï¿½Ì‚ï¿½ï¿½ë‚¢ï¿½ï¿½ ---------------------------
+
+            ImGui::PushItemWidth(100); // ï¿½ï¿½ï¿½Ú‚Ì•ï¿½ï¿½ï¿½100ï¿½É‚ï¿½ï¿½ï¿½Bï¿½Kï¿½ï¿½PopItemWidth()ï¿½Æ‘Î‚É‚ï¿½ï¿½ï¿½
+
+            // ï¿½@ ï¿½ï¿½ï¿½Xï¿½gï¿½{ï¿½bï¿½Nï¿½Xï¿½P
+            // ï¿½zï¿½ï¿½list_itemï¿½Ì“ï¿½ï¿½eï¿½ï¿½ï¿½Pï¿½ï¿½ï¿½Ú‚Ã‚Âƒï¿½ï¿½Xï¿½gï¿½{ï¿½bï¿½Nï¿½Xï¿½Éİ’è‚µï¿½Ä•\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            // ï¿½Nï¿½ï¿½ï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½Ê’uï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½|ï¿½Cï¿½ï¿½ï¿½^ï¿½[item_countï¿½Éİ’è‚³ï¿½ï¿½ï¿½
+            const char* list_item[] = {"TTTTT", "UUUUU", "VVVVV", "WWWWW", "XXXXX", "YYYYY", "ZZZZZ"};
+            static int item_count = 0; // ï¿½ï¿½ï¿½Ú‚Ì‘Iï¿½ï¿½ï¿½|ï¿½Cï¿½ï¿½ï¿½^ï¿½[ï¿½iï¿½Iï¿½ï¿½ï¿½Ê’uï¿½j
+
+            if (ImGui::ListBoxHeader(u8"ListBox 1", item_count, 3))
+            // 2ï¿½Ô–Ú‚Ìƒpï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½^ï¿½ÍAï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½ê‚½ï¿½|ï¿½Cï¿½ï¿½ï¿½^ï¿½[ï¿½Å‚ï¿½ï¿½ï¿½B3ï¿½Ô–Ú‚Ìƒpï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½^ï¿½ÍAï¿½{ï¿½bï¿½Nï¿½Xï¿½É•\ï¿½ï¿½ï¿½ï¿½ï¿½é€ï¿½Úï¿½ï¿½Å‚ï¿½ï¿½ï¿½B
+            {
+                for (int n = 0; n < IM_ARRAYSIZE(list_item); n++)
+                {
+                    bool is_selected = (item_count == n); // ï¿½ï¿½ï¿½İ‚Ìƒï¿½ï¿½Xï¿½gï¿½Ê’uï¿½ï¿½ï¿½Aï¿½Iï¿½ï¿½ï¿½|ï¿½Cï¿½ï¿½ï¿½^ï¿½[ï¿½Ê’uï¿½Æˆï¿½vï¿½ï¿½ï¿½Ä‚ï¿½ï¿½é‚©ï¿½ï¿½ï¿½fï¿½ï¿½ï¿½ï¿½
+                    ImGui::PushID(n);
+                    if (ImGui::Selectable(list_item[n], is_selected))
+                    // ï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½gï¿½{ï¿½bï¿½Nï¿½Xï¿½É’Ç‰ï¿½ï¿½ï¿½ï¿½ï¿½Bï¿½Iï¿½ï¿½ï¿½Ê’uï¿½Æˆï¿½vï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½trueï¿½ï¿½Ô‚ï¿½
+                    {
+                        item_count = n; // ï¿½Iï¿½ï¿½ï¿½Ê’uï¿½ï¿½Iï¿½ï¿½ï¿½|ï¿½Cï¿½ï¿½ï¿½^ï¿½[ï¿½Éİ’è‚·ï¿½ï¿½
+                    }
+                    if (is_selected)
+                        ImGui::SetItemDefaultFocus(); // ï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½Jï¿½ï¿½ï¿½Æ‚ï¿½ï¿½Ìï¿½ï¿½ï¿½ï¿½tï¿½Hï¿½[ï¿½Jï¿½Xï¿½ï¿½İ’è‚·ï¿½ï¿½
+                    ImGui::PopID();
+                }
+                ImGui::ListBoxFooter();
+            }
+
+            ImGui::SameLine();
+
+            // ï¿½A ï¿½ï¿½ï¿½Xï¿½gï¿½{ï¿½bï¿½Nï¿½Xï¿½Q
+            // ï¿½zï¿½ï¿½list_item2ï¿½Ì“ï¿½ï¿½eï¿½ï¿½ï¿½gï¿½pï¿½ï¿½ï¿½Äƒï¿½ï¿½Xï¿½gï¿½{ï¿½bï¿½Nï¿½Xï¿½ï¿½\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            // ï¿½Nï¿½ï¿½ï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½Ê’uï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½|ï¿½Cï¿½ï¿½ï¿½^ï¿½[item_count2ï¿½Éİ’è‚³ï¿½ï¿½ï¿½
+            const char* list_item2[] = {"MMMMM", "NNNNN", "OOOOO", "PPPPP", "QQQQQ", "RRRRR", "SSSSS"};
+            static int item_count2 = 0; // ï¿½ï¿½ï¿½Ú‚Ì‘Iï¿½ï¿½ï¿½|ï¿½Cï¿½ï¿½ï¿½^ï¿½[ï¿½iï¿½Iï¿½ï¿½ï¿½Ê’uï¿½j
+
+            ImGui::ListBox(u8"ListBox 2", &item_count2, list_item2, IM_ARRAYSIZE(list_item2), 3);
+            // 5ï¿½Ô–Ú‚Ìƒpï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½^ï¿½ÍAï¿½{ï¿½bï¿½Nï¿½Xï¿½É•\ï¿½ï¿½ï¿½ï¿½ï¿½é€ï¿½Úï¿½ï¿½Å‚ï¿½ï¿½ï¿½B
+
+            ImGui::PopItemWidth(); // ï¿½ï¿½ï¿½Ú‚Ì•ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É–ß‚ï¿½
+
+            // ï¿½ï¿½Ø‚ï¿½ï¿½
+            ImGui::Separator();
+
+            ImGui::BeginChild(u8"ï¿½`ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½hï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½E", ImVec2(260, 50), true);
+
+            ImGui::Text(u8"ï¿½mï¿½ï¿½ï¿½Dï¿½P");
+            ImGui::Text(u8"ï¿½mï¿½ï¿½ï¿½Dï¿½Q");
+            ImGui::Text(u8"ï¿½mï¿½ï¿½ï¿½Dï¿½R");
+            ImGui::Text(u8"ï¿½mï¿½ï¿½ï¿½Dï¿½S");
+            ImGui::Text(u8"ï¿½mï¿½ï¿½ï¿½Dï¿½T");
+            ImGui::Text(u8"ï¿½mï¿½ï¿½ï¿½Dï¿½U");
+            ImGui::Text(u8"ï¿½mï¿½ï¿½ï¿½Dï¿½V");
+            ImGui::Text(u8"ï¿½mï¿½ï¿½ï¿½Dï¿½W");
+
+            ImGui::EndChild();
+            ImGui::Separator();
+
+            // -------------------------------------------------
+            // ï¿½{ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            ImGui::Text("                                      ");
+            ImGui::SameLine();
+            if (ImGui::Button(u8"ï¿½Iï¿½ï¿½", ImVec2(60, 20)))
+            {
+                // ï¿½{ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ‚ï¿½ï¿½A*p_openï¿½ï¿½falseï¿½ï¿½Ô‚ï¿½
+                *p_open = false;
+            }
+        }
+
+        ImGui::End();
+
+        // ï¿½Fï¿½İ’ï¿½(ï¿½wï¿½iï¿½Æƒ^ï¿½Cï¿½gï¿½ï¿½ï¿½oï¿½[)ï¿½ÌŒï¿½nï¿½ï¿½ï¿½B
+        // ï¿½ï¿½LPushStyleColor()ï¿½ï¿½1:1ï¿½ï¿½popStyleColor()ï¿½ï¿½ï¿½Kï¿½v
+        ImGui::PopStyleColor();
+        ImGui::PopStyleColor();
+        ImGui::PopStyleColor();
+    }
+
+    //-----------------------------------------------------------------------------
+    //
+    // UTF-8ï¿½ï¿½ï¿½ï¿½TCHARï¿½Ö‚Ì•ÏŠï¿½ï¿½Öï¿½
+    //
+    // ï¿½ï¿½ï¿½ï¿½
+    //   char*  charIn        ï¿½ï¿½ï¿½Í‚ï¿½ï¿½ï¿½UTF-8ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    //   TCHAR* tcharOut      ï¿½ÏŠï¿½ï¿½ï¿½ï¿½TCHARï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(Out)
+    //
+    //-----------------------------------------------------------------------------
+    void ConvertUTF8ToTCHAR(char* charIn, TCHAR* tcharOut)
+    {
+#if _UNICODE
+        // unicodeï¿½Ìê‡
+        // UTF-8ï¿½ï¿½ï¿½ï¿½UTF-16ï¿½Ö‚Ì•ÏŠï¿½
+        ConvertU8ToU16(charIn, tcharOut);
+
+#else
+        // ï¿½}ï¿½ï¿½ï¿½`ï¿½oï¿½Cï¿½gï¿½ï¿½ï¿½ï¿½ï¿½Ìê‡
+        // ï¿½@ UTF-8ï¿½ï¿½ï¿½ï¿½UTF-16ï¿½Ö‚Ì•ÏŠï¿½
+        WCHAR wstr[512];
+        ConvertU8ToU16(charIn, wstr);
+
+        // ï¿½A Unicode ï¿½ï¿½ï¿½ï¿½ï¿½Rï¿½[ï¿½h(WCHAR)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Åwï¿½è‚µï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Rï¿½[ï¿½hï¿½É•ÏŠï¿½ï¿½ï¿½ï¿½ï¿½( CP_ACP ï¿½Í“ï¿½ï¿½{ï¿½ï¿½Windowsï¿½Å‚ÍƒVï¿½tï¿½gJISï¿½Rï¿½[ï¿½h )
+        char mstr[512];
+        WideCharToMultiByte(CP_ACP, 0, wstr, -1, mstr, 512, nullptr, nullptr);
+        strcpy_s(tcharOut, strlen(mstr) + 1, mstr);
+
+#endif
+    }
+
+    //-----------------------------------------------------------------------------
+    //
+    // TCHARï¿½ï¿½ï¿½ï¿½UTF-8ï¿½Ö‚Ì•ÏŠï¿½ï¿½Öï¿½
+    //
+    // ï¿½ï¿½ï¿½ï¿½
+    //   TCHAR* tcharIn       ï¿½ï¿½ï¿½Í‚ï¿½ï¿½ï¿½TCHARï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    //   char*  charOut       ï¿½ÏŠï¿½ï¿½ï¿½ï¿½UTF-8ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(Out)
+    //
+    //-----------------------------------------------------------------------------
+    void ConvertTCHARToUTF8(TCHAR* tcharIn, char* charOut)
+    {
+#if _UNICODE
+        // unicodeï¿½Ìê‡
+        // UTF-16ï¿½ï¿½ï¿½ï¿½UTF-8ï¿½Ö‚Ì•ÏŠï¿½
+        ConvertU16ToU8(tcharIn, charOut);
+
+#else
+        // ï¿½}ï¿½ï¿½ï¿½`ï¿½oï¿½Cï¿½gï¿½ï¿½ï¿½ï¿½ï¿½Ìê‡
+        // ï¿½@ ï¿½ï¿½ï¿½Í•ï¿½ï¿½ï¿½ï¿½ï¿½Ìƒ}ï¿½ï¿½ï¿½`ï¿½oï¿½Cï¿½g(char)ï¿½^ï¿½ï¿½WCHARï¿½^ï¿½É•ÏŠï¿½
+        WCHAR wstr[512] = {L'\0'};
+        MultiByteToWideChar(CP_OEMCP, MB_PRECOMPOSED, tcharIn, -1, wstr, 512);
+        // ï¿½A WCHARï¿½^ï¿½ï¿½UTF-8ï¿½É•ÏŠï¿½ï¿½ï¿½ï¿½ï¿½
+        ConvertU16ToU8(wstr, charOut);
+
+#endif
+    }
+
+
+    //-----------------------------------------------------------------------------
+    //
+    // UTF-8ï¿½ï¿½ï¿½ï¿½UTF-16ï¿½Ö‚Ì•ÏŠï¿½ï¿½Öï¿½
+    //
+    // ï¿½ï¿½ï¿½ï¿½
+    //   char*  charIn        ï¿½ï¿½ï¿½Í‚ï¿½ï¿½ï¿½UTF-8ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    //   WCHAR* wcharOut      ï¿½ÏŠï¿½ï¿½ï¿½ï¿½UTF-16ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(Out)
+    //
+    //-----------------------------------------------------------------------------
+    void ConvertU8ToU16(char* charIn, WCHAR* wcharOut)
+    {
+        std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> convt;
+        std::wstring wch = convt.from_bytes(charIn);
+
+        wcscpy_s(wcharOut, wch.length() + 1, (WCHAR*)wch.c_str());
+    }
+
+    //-----------------------------------------------------------------------------
+    //
+    // UTF-16ï¿½ï¿½ï¿½ï¿½UTF-8ï¿½Ö‚Ì•ÏŠï¿½ï¿½Öï¿½
+    //
+    // ï¿½ï¿½ï¿½ï¿½
+    //   WCHAR* wcharIn       ï¿½ï¿½ï¿½Í‚ï¿½ï¿½ï¿½UTF-16ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    //   char*  charOut       ï¿½ÏŠï¿½ï¿½ï¿½ï¿½UTF-8ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(Out)
+    //
+    //-----------------------------------------------------------------------------
+    void ConvertU16ToU8(WCHAR* wcharIn, char* charOut)
+    {
+        std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> convt;
+        std::string ch = convt.to_bytes(wcharIn);
+
+        strcpy_s(charOut, ch.length() + 1, ch.c_str());
+    }
 }
