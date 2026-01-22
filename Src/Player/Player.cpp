@@ -216,6 +216,8 @@ VECTOR3 CPlayer::CalcSuctionDisplacement(const float& moveTimeSecond, const VECT
     return suctionDisplacementPerFrame * SceneManager::DeltaTime();
 }
 
+
+
 ////////////////////
 // オブジェクトがコーンの範囲内にいるかチェックする
 // @param targetPos 対象の位置
@@ -259,7 +261,7 @@ void CPlayer::Draw()
 ////////////////////
 // 地面に吸い込み範囲の円を描画する //
 ////////////////////
-void CPlayer::DrawSuctionCircle()
+void CPlayer::DrawSuctionCircle()const
 {
     // 吸い込み円描画の定数 //
     static constexpr float GROUND_OFFSET = 0.01f; // 地面から少し浮かせる高さ（Zファイティング回避用） //
@@ -272,28 +274,28 @@ void CPlayer::DrawSuctionCircle()
     CSprite spr;
 
     // 地面（Y=0）のUFO真下に配置する位置 //
-    VECTOR3 groundPos = VECTOR3(transform.position.x, GROUND_OFFSET, transform.position.z);
+    const VECTOR3 groundPos = VECTOR3(transform.position.x, GROUND_OFFSET, transform.position.z);
 
     // ワールドマトリックスを作成 //
     // スケール：吸い込み半径に合わせる //
-    MATRIX4X4 mScale = XMMatrixScaling(
+    const MATRIX4X4 mScale = XMMatrixScaling(
         m_coneRadius * CIRCLE_DIAMETER_SCALE,
         m_coneRadius * CIRCLE_DIAMETER_SCALE,
         CIRCLE_DEPTH
     );
     // 回転：X軸周りに-90度回転して地面に平行にする //
-    MATRIX4X4 mRotation = XMMatrixRotationX(GROUND_ROTATION);
+    const MATRIX4X4 mRotation = XMMatrixRotationX(GROUND_ROTATION);
     // 平行移動：地面のUFO真下へ //
-    MATRIX4X4 mTranslation = XMMatrixTranslation(groundPos.x, groundPos.y, groundPos.z);
+    const MATRIX4X4 mTranslation = XMMatrixTranslation(groundPos.x, groundPos.y, groundPos.z);
     // ワールドマトリックスを合成（スケール → 回転 → 平行移動） //
-    MATRIX4X4 mWorld = mScale * mRotation * mTranslation;
+    const MATRIX4X4 mWorld = mScale * mRotation * mTranslation;
     // カメラのビュー・プロジェクションマトリックスを取得 //
-    MATRIX4X4 mView = GameDevice()->m_mView;
-    MATRIX4X4 mProj = GameDevice()->m_mProj;
+    const MATRIX4X4 mView = GameDevice()->m_mView;
+    const MATRIX4X4 mProj = GameDevice()->m_mProj;
 
     // テクスチャのサイズを取得 //
-    DWORD texWidth = m_pCircleImage->m_dwImageWidth;
-    DWORD texHeight = m_pCircleImage->m_dwImageHeight;
+    const DWORD texWidth = m_pCircleImage->m_dwImageWidth;
+    const DWORD texHeight = m_pCircleImage->m_dwImageHeight;
 
     // 円形スプライトを描画 //
     spr.Draw3DWithWorldMatrix(

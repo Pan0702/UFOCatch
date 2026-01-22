@@ -14,7 +14,7 @@ public:
 		rotation = VECTOR3(0, 0, 0);   // ���W�A���p
 		scale = VECTOR3(1, 1, 1);
 	}
-	const MATRIX4X4 matrix() {
+	const MATRIX4X4 matrix() const {
 		MATRIX4X4 scaleM = XMMatrixScaling(
 			scale.x, scale.y, scale.z);
 		MATRIX4X4 rotX = XMMatrixRotationX(

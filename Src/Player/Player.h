@@ -11,23 +11,32 @@ public:
     // 例えば-20~20なら20と入力//
     CPlayer(float moveRange);
     ~CPlayer();
-    VECTOR3 GetPos(){return transform.position;}
+
     ///
     /// オブジェクトの場所を渡し、それがコーンの範囲内ならtrue,外ならfalse
-    /// @param targetPos 
+    /// @param targetPos
     /// @return bool
-    /// 
+    ///
     bool IsWithSuctionCone(const VECTOR3& targetPos) const;
 
-
-
-    /// g引き寄せるための移動量を計算 
+    /// g引き寄せるための移動量を計算
     /// @param moveTimeSecond
-    /// @param animalPos 
+    /// @param animalPos
     /// @return 1回当たりの移動量を返す
-    /// 
+    ///
     VECTOR3 CalcSuctionDisplacement(const float& moveTimeSecond, const VECTOR3& animalPos) const;
+
+    ///
+    /// レイを飛ばしてオブジェクトとの交差判定を行う
+    /// @param rayStart レイの始点
+    /// @param rayEnd レイの終点
+    /// @param hitPosition 衝突位置を格納する変数（Out）
+    /// @param hitNormal 衝突面の法線を格納する変数（Out）
+    /// @return 衝突していたらtrue
+    ///
+    bool CastRay(const VECTOR3& rayStart, const VECTOR3& rayEnd, MeshCollider::CollInfo*& coll) const;
     
+    const VECTOR3& GetPos()const{return transform.position;}
     void AddExp(float exp){ m_exp += exp; }
     float GetExp()const {return m_exp;}
     float GetAllExp()const {return m_allExp;}
@@ -39,12 +48,13 @@ private:
     void Update() override;
     void Draw() override;
 
+
     //判定円の描画
     ///Debug///
-    void DrawCircle(const VECTOR3& center, float radius, DWORD color);
+    //void DrawCircle(const VECTOR3& center, float radius, DWORD color);
 
     //吸い込み円の描画（地面投影）
-    void DrawSuctionCircle();
+    void DrawSuctionCircle() const;
     
     void HandleMovementInput();
     

@@ -1,11 +1,10 @@
 #include "StateBase.h"
 #include "../../Utils/MyMath.h"
-namespace
+
+CBaseState::CBaseState(CEnemyBase* enemy, Type type)
+    : m_pEnemy(enemy), m_kType(type)
 {
-    constexpr int NEXT_STATE_MAX_SIZE = 3;
 }
-
-
 CBaseState::Type CBaseState::NextStatePop()
 {
     SetNextState();
@@ -30,8 +29,11 @@ float CBaseState::ClampRotateY(const float& angle)
     return degAngle * DegToRad;
 }
 
+
+
 void CBaseState::SetNextState()
 {
+    constexpr int NEXT_STATE_MAX_SIZE = 3;
     while (actionQueue.size() <= NEXT_STATE_MAX_SIZE)
     {
         float randomNum = Randomf(0, 1);

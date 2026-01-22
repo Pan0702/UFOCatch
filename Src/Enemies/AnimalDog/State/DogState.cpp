@@ -5,10 +5,6 @@
 #include "../../System/EnemyRegistr.h"
 
 
-CCubeBase::CCubeBase(CACube* cube, Type type)
-    : m_pOwner(cube), m_kType(type)
-{
-}
 
 CCubeBase::~CCubeBase()
 {
@@ -26,7 +22,7 @@ void CCubeBase::NextState()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///Idle
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-CCubeIdleState::CCubeIdleState(CACube* cube)
+CCubeIdleState::CCubeIdleState(CADog* cube)
     : CCubeBase(cube, Type::IDLE)
       , timerCount(0)
       , stateIdle(0)
@@ -93,7 +89,7 @@ bool CCubeIdleState::AnimationFinish() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-CCubeWalkState::CCubeWalkState(CACube* cube)
+CCubeWalkState::CCubeWalkState(CADog* cube)
     : CCubeBase(cube, Type::WALK)
       , BASE_POS(0, 0, 0)
 {
@@ -169,7 +165,7 @@ void CCubeWalkState::Update()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-CCubeSuction::CCubeSuction(CACube* cube)
+CCubeSuction::CCubeSuction(CADog* cube)
     : CCubeBase(cube, Type::SUCTION)
       , m_distanceFromObjectToUFO(VECTOR3(0, 0, 0))
 {
@@ -199,7 +195,7 @@ void CCubeSuction::Update()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-CCubeDestroy::CCubeDestroy(CACube* cube)
+CCubeDestroy::CCubeDestroy(CADog* cube)
     : CCubeBase(cube, Type::DESTROY)
 {
 }

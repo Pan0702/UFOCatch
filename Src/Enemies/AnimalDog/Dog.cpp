@@ -10,7 +10,7 @@
 #include "State/DogState.h"
 #include "../../Utils/BBox.h"
 
-CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
+CADog::CADog(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos), m_areaSize(moveAreaSize)
 {
     m_pMesh = ObjectManager::FindGameObject<CAnimalManager>()->MeshList("Dog");
@@ -31,7 +31,7 @@ CACube::CACube(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     m_pBBox = CreateBBox();
 }
 
-CACube::~CACube()
+CADog::~CADog()
 {
     for (auto& state : m_cubeStates)
     {
@@ -40,7 +40,7 @@ CACube::~CACube()
 }
 
 
-void CACube::Update()
+void CADog::Update()
 {
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     if (m_pPlayer != nullptr)
@@ -65,12 +65,12 @@ void CACube::Update()
     ResolveStageCollisions();
 }
 
-void CACube::Draw()
+void CADog::Draw()
 {
     m_pMesh->Render(m_pAnimator, transform.matrix());
 }
 
-void CACube::IsSuctionCheck()
+void CADog::IsSuctionCheck()
 {
     if (m_pPlayer == nullptr)return;
     if (m_pPlayer->IsWithSuctionCone(transform.position /* + VECTOR3(0, m_maxSize.y, 0)*/) && m_pPlayer->GetIsSuckUp())
@@ -79,13 +79,13 @@ void CACube::IsSuctionCheck()
     }
 }
 
-VECTOR3 CACube::SuctionSpeed() const
+VECTOR3 CADog::SuctionSpeed() const
 {
     return m_pPlayer->
         CalcSuctionDisplacement(1, transform.position);
 }
 
-bool CACube::ShouldApplyGravity() const
+bool CADog::ShouldApplyGravity() const
 {
     return m_pCurrentState != m_cubeStates.at(CBaseState::Type::SUCTION);
 }

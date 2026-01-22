@@ -1,6 +1,8 @@
 #pragma once
 #include <queue>
 
+#include "EnemyBase.h"
+
 class CBaseState
 {
 public:
@@ -9,13 +11,13 @@ public:
         IDLE,
         WALK,
         SUCTION,
+        UNIQUEACTION,
         DESTROY,
         SEARCH,
         FIND_PLAYER,
         ESCAPE
     };
-
-    virtual ~CBaseState(){}
+    CBaseState(CEnemyBase* cube, Type type);
     virtual void Enter(){}
     virtual void Update(){}
     virtual void Exit(){}
@@ -25,8 +27,6 @@ public:
     ///
     void SetNextState();
 protected:
-    
-    CBaseState(){}
     ///
     ///配列から行動を取り出し、それをセット
     ///
@@ -34,7 +34,10 @@ protected:
 
     float ClampRotateY(const float& angle);
 private:
+
     static constexpr int NEXT_STATE_MAX_SIZE = 3;
     std::queue<CBaseState::Type> actionQueue;
     
+    CEnemyBase* m_pEnemy;
+    const Type m_kType;
 };

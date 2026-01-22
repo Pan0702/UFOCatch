@@ -8,8 +8,8 @@ namespace
     const VECTOR3 INIT_CAM_LOOK = VECTOR3(0, 1, -1.5);
     const VECTOR3 INIT_SUCTION_CAM_POS = VECTOR3(0, 4, -7);
     constexpr float REFERENCE_HEIGHT = 5.0f; // 基準高さ
-    const VECTOR3 name1 = VECTOR3(0, 17.1f, -10.3f);
-    const VECTOR3 name2 = VECTOR3(0, 2.3f, -10.3f);
+    const VECTOR3 offsetPoint1 = VECTOR3(0, 17.1f, -10.3f);
+    const VECTOR3 offsetPoint2 = VECTOR3(0, 2.3f, -10.3f);
 }
 
 CPlayerCamera::CPlayerCamera()
@@ -98,8 +98,8 @@ void CPlayerCamera::ZoomIn(const VECTOR3& pos)
     // m_debugTargetLook = targetLook;
 
     // 制御点はプレイヤー位置を基準にオフセット//
-    VECTOR3 controlPoint1 = startLook  + name1;
-    VECTOR3 controlPoint2 = targetLook + name2;
+    VECTOR3 controlPoint1 = startLook  + offsetPoint1;
+    VECTOR3 controlPoint2 = targetLook + offsetPoint2;
     
 
     m_camPosBezier.Start(startPos, controlPoint1, controlPoint2, targetPos, 1.0f);
@@ -128,8 +128,8 @@ void CPlayerCamera::ZoomOut(const VECTOR3& pos)
     VECTOR3 targetLook = pos + INIT_CAM_LOOK;
 
     // 制御点はプレイヤー位置を基準にオフセット//
-    VECTOR3 controlPoint1 = pos + name2 ;
-    VECTOR3 controlPoint2 = pos + name1;
+    VECTOR3 controlPoint1 = pos + offsetPoint2 ;
+    VECTOR3 controlPoint2 = pos + offsetPoint1;
 
     m_camPosBezier.Start(startPos, controlPoint1, controlPoint2, targetPos, 1.0f);
     m_camLookBezier.Start(startLook, targetLook, 1.0f);

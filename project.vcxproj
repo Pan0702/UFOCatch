@@ -530,9 +530,11 @@
     <ClInclude Include="Src\Enemies\AnimalChicken\Chicken.h" />
     <ClInclude Include="Src\Enemies\AnimalChicken\State\ChickenState.h" />
     <ClInclude Include="Src\Enemies\Base\EnemyBase.h" />
+    <ClInclude Include="Src\Enemies\Base\State.h" />
     <ClInclude Include="Src\Enemies\Base\StateBase.h" />
     <ClInclude Include="Src\Enemies\AnimalDog\Dog.h" />
     <ClInclude Include="Src\Enemies\AnimalDog\State\DogState.h" />
+    <ClInclude Include="Src\Enemies\Component\ComponentBase.h" />
     <ClInclude Include="Src\Enemies\Human\FunShape.h" />
     <ClInclude Include="Src\Enemies\Human\Human.h" />
     <ClInclude Include="Src\Enemies\Human\State\HumanState.h" />
@@ -607,6 +609,7 @@
     <ClCompile Include="Src\Enemies\AnimalChicken\Chicken.cpp" />
     <ClCompile Include="Src\Enemies\AnimalChicken\State\ChickenState.cpp" />
     <ClCompile Include="Src\Enemies\Base\EnemyBase.cpp" />
+    <ClCompile Include="Src\Enemies\Base\State.cpp" />
     <ClCompile Include="Src\Enemies\Base\StateBase.cpp">
       <AssemblerOutput>NoListing</AssemblerOutput>
       <AssemblerListingLocation>project\x64\Debug\</AssemblerListingLocation>
@@ -823,6 +826,7 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Src\Enemies\Component\ComponentBase.cpp" />
     <ClCompile Include="Src\Enemies\Human\FunShape.cpp">
       <AssemblerOutput>NoListing</AssemblerOutput>
       <AssemblerListingLocation>project\x64\Debug\</AssemblerListingLocation>

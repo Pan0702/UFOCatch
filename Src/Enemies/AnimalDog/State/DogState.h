@@ -2,14 +2,14 @@
 #include "../../Base/StateBase.h"
 #include "./../../../Common/Object3D.h"
 #include "./../../../Player/Player.h"
-class CACube;
+class CADog;
 
 class CCubeBase : public CBaseState
 {
 public:
-    CCubeBase(CACube* cube, Type type);
+    CCubeBase(CADog* cube, Type type);
     ~CCubeBase();
-    CACube* m_pOwner;
+    CADog* m_pOwner;
     const Type m_kType;
 
 protected:
@@ -19,7 +19,7 @@ protected:
 class CCubeIdleState : public CCubeBase
 {
 public:
-    CCubeIdleState(CACube* cube);
+    CCubeIdleState(CADog* cube);
     void Enter() override;
     void Update() override;
 
@@ -41,7 +41,7 @@ private:
 class CCubeWalkState : public CCubeBase
 {
 public:
-    CCubeWalkState(CACube* cube);
+    CCubeWalkState(CADog* cube);
     void Enter() override;
     void Update() override;
 
@@ -60,7 +60,7 @@ private:
 class CCubeSuction : public CCubeBase
 {
 public:
-    CCubeSuction(CACube* cube);
+    CCubeSuction(CADog* cube);
     void Update() override;
 
 private:
@@ -71,6 +71,6 @@ private:
 class CCubeDestroy : public CCubeBase
 {
 public:
-    CCubeDestroy(CACube* cube);
+    CCubeDestroy(CADog* cube);
     void Enter() override;
 };
