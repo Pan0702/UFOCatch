@@ -28,22 +28,31 @@ CBBox* CEnemyBase::CreateBBox()
 void CEnemyBase::SetState(CBaseState::Type type)
 {
     m_pCurrentState->Exit();
-    m_pCurrentState = m_cubeStates[type];
+    m_pCurrentState = m_states[type];
     m_pCurrentState->Enter();
 }
 
 CEnemyBase::~CEnemyBase()
 {
     SAFE_DELETE(m_pBBox);
-    for (auto& state : m_cubeStates)
+    SAFE_DELETE(m_pCurrentState);
+    SAFE_DELETE(m_pGround);
+    SAFE_DELETE(m_pComponent);
+    
+    for (auto& state : m_states)
     {
         SAFE_DELETE(state.second);
     }
+    for (auto& component : m_components)
+        {
+        SAFE_DELETE(component.second);
+        }
+    
 }
 
 void CEnemyBase::Update()
 {
-    if (m_pCurrentState != nullptr && m_pCurrentState == m_cubeStates[CBaseState::Type::DESTROY])
+    if (m_pCurrentState != nullptr && m_pCurrentState == m_states[CBaseState::Type::DESTROY])
     {
         return;
     }
@@ -256,5 +265,15 @@ void CEnemyBase::ResolveStageCollisions()
         if (stage == nullptr) continue;
         stage->ResolveEnemyCollision(this);
     }
+}
+
+CComponentBase* CEnemyBase::GetComponent(CBaseState::Type type) const
+{
+    auto itr = m_components.find(type);
+    if (itr == m_components.end())
+    {
+        return nullptr;
+    }
+    return itr->second;
 }
 

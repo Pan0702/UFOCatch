@@ -19,13 +19,11 @@ public:
     ///
     void IsSuctionCheck();
 
-    VECTOR3 SuctionSpeed() const;
-    void DestroyCube();
+    const VECTOR3& SuctionSpeed() const;
 
     void AddPos(const VECTOR3& pos) { transform.position = transform.position + pos; }
     const VECTOR2& GetAreaSize() const { return m_areaSize; }
     void SetRotateY(float r) { transform.rotation.y = r; }
-    CComponentBase* GetComponent() const { return m_pComponent; }
 
 private:
     void Update() override;
@@ -37,5 +35,5 @@ private:
     const VECTOR3 m_basePos;
     const VECTOR2 m_areaSize;
     CPlayer* m_pPlayer;
-    CComponentBase* m_pComponent;
+
 };

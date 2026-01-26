@@ -22,18 +22,18 @@ CADog::CADog(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     m_pGround = ObjectManager::FindGameObject<CGround>();
 
-    m_cubeStates[CBaseState::Type::IDLE] = new CCubeIdleState(this);
-    m_cubeStates[CBaseState::Type::WALK] = new CCubeWalkState(this);
-    m_cubeStates[CBaseState::Type::SUCTION] = new CCubeSuction(this);
-    m_cubeStates[CBaseState::Type::DESTROY] = new CCubeDestroy(this);
-    m_pCurrentState = m_cubeStates[CBaseState::Type::WALK];
+    m_states[CBaseState::Type::IDLE] = new CCubeIdleState(this);
+    m_states[CBaseState::Type::WALK] = new CCubeWalkState(this);
+    m_states[CBaseState::Type::SUCTION] = new CCubeSuction(this);
+    m_states[CBaseState::Type::DESTROY] = new CCubeDestroy(this);
+    m_pCurrentState = m_states[CBaseState::Type::WALK];
     m_pCurrentState->Enter();
     m_pBBox = CreateBBox();
 }
 
 CADog::~CADog()
 {
-    for (auto& state : m_cubeStates)
+    for (auto& state : m_states)
     {
         SAFE_DELETE(state.second);
     }
@@ -52,7 +52,7 @@ void CADog::Update()
 
     // 削除フラグが立っている（CEnemyBase::Updateで処理がスキップされた）場合は、
     // これ以上の処理（衝突判定など）を行わない
-    if (m_pCurrentState != nullptr && m_pCurrentState == m_cubeStates[CBaseState::Type::DESTROY])
+    if (m_pCurrentState != nullptr && m_pCurrentState == m_states[CBaseState::Type::DESTROY])
     {
         return;
     }
@@ -79,7 +79,7 @@ void CADog::IsSuctionCheck()
     }
 }
 
-VECTOR3 CADog::SuctionSpeed() const
+const VECTOR3& CADog::SuctionSpeed() const
 {
     return m_pPlayer->
         CalcSuctionDisplacement(1, transform.position);
@@ -87,5 +87,5 @@ VECTOR3 CADog::SuctionSpeed() const
 
 bool CADog::ShouldApplyGravity() const
 {
-    return m_pCurrentState != m_cubeStates.at(CBaseState::Type::SUCTION);
+    return m_pCurrentState != m_states.at(CBaseState::Type::SUCTION);
 }

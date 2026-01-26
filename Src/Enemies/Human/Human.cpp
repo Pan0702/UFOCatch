@@ -24,10 +24,10 @@ CHuman::CHuman(VECTOR3 pos, VECTOR2 areaSize)
     m_dwColor = 100;
     angle = 0.0f;
 
-    m_cubeStates[CBaseState::Type::IDLE] = new CHumanIdleState(this);
-    m_cubeStates[CBaseState::Type::WALK] = new CHumanWalkState(this);
-    m_cubeStates[CBaseState::Type::FIND_PLAYER] = new CHumanFindPlayer(this);
-    m_pCurrentState = m_cubeStates[CBaseState::Type::IDLE];
+    m_states[CBaseState::Type::IDLE] = new CHumanIdleState(this);
+    m_states[CBaseState::Type::WALK] = new CHumanWalkState(this);
+    m_states[CBaseState::Type::FIND_PLAYER] = new CHumanFindPlayer(this);
+    m_pCurrentState = m_states[CBaseState::Type::IDLE];
     m_pCurrentState->Enter();
     m_pCurrentState->SetNextState();
     m_pFunShape = new CFunShape();
@@ -37,13 +37,13 @@ CHuman::CHuman(VECTOR3 pos, VECTOR2 areaSize)
 
 CHuman::~CHuman()
 {
-    for (auto& state : m_cubeStates)
+    for (auto& state : m_states)
     {
         if (state.second == nullptr) continue;
         SAFE_DELETE(state.second);
         state.second = nullptr;
     }
-    m_cubeStates.clear();
+    m_states.clear();
 }
 
 void CHuman::Update()
@@ -51,7 +51,7 @@ void CHuman::Update()
     CEnemyBase::Update();
 
     // 削除フラグが立っている場合は、これ以上の処理を行わない
-    if (m_pCurrentState != nullptr && m_pCurrentState == m_cubeStates[CBaseState::Type::DESTROY])
+    if (m_pCurrentState != nullptr && m_pCurrentState == m_states[CBaseState::Type::DESTROY])
     {
         return;
     }

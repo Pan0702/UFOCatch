@@ -6,6 +6,7 @@
 #include "../../Common/Object3D.h"
 #include "../../Utils//BBox.h"
 #include "../../Stage/Ground.h"
+#include "../Component/ComponentBase.h"
 
 class CEnemyBase : public Object3D
 {
@@ -40,12 +41,13 @@ protected:
 
     // ステージオブジェクトとの衝突判定と押し戻し処理
     void ResolveStageCollisions();  // ステージオブジェクトとのOBB衝突を検出し、押し戻し処理を実行
-
+    CComponentBase* GetComponent(CBaseState::Type type) const;
 
     CBaseState* m_pCurrentState;
-    std::unordered_map<CBaseState::Type, CBaseState*> m_cubeStates;
+    std::unordered_map<CBaseState::Type, CBaseState*> m_states;
+    std::unordered_map<CBaseState::Type, CComponentBase*> m_components;
     CBBox* m_pBBox;
     CGround* m_pGround;
-    
+    CComponentBase* m_pComponent;
     float m_velocityY;
 };

@@ -6,6 +6,8 @@
 class CBaseState
 {
 public:
+    virtual ~CBaseState() = default;
+
     enum class Type
     {
         IDLE,
@@ -33,11 +35,12 @@ protected:
     CBaseState::Type NextStatePop();
 
     float ClampRotateY(const float& angle);
+    CEnemyBase* m_pEnemy;
+    const Type m_kType;
 private:
 
     static constexpr int NEXT_STATE_MAX_SIZE = 3;
     std::queue<CBaseState::Type> actionQueue;
     
-    CEnemyBase* m_pEnemy;
-    const Type m_kType;
+
 };

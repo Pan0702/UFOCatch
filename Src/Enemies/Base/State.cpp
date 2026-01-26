@@ -2,14 +2,13 @@
 
 #include "EnemyBase.h"
 
-CWalk::CWalk(CEnemyBase* e) 
-    :CBaseState(e, Type::WALK)
+CWalk::CWalk(CEnemyBase* e)
+    : CBaseState(e, Type::WALK)
 {
 }
 
 void CWalk::Enter()
 {
-    CBaseState::Enter();
 }
 
 void CWalk::Update()
@@ -23,7 +22,7 @@ void CWalk::Exit()
 }
 
 CIdle::CIdle(CEnemyBase* e)
-:CBaseState(e, Type::IDLE)
+    : CBaseState(e, Type::IDLE)
 {
 }
 
@@ -34,7 +33,8 @@ void CIdle::Enter()
 
 void CIdle::Update()
 {
-    CBaseState::Update();
+    m_pEnemy->GetComponent();
+
 }
 
 void CIdle::Exit()
@@ -43,7 +43,7 @@ void CIdle::Exit()
 }
 
 CSuction::CSuction(CEnemyBase* e)
-:CBaseState(e, Type::SUCTION)
+    : CBaseState(e, Type::SUCTION)
 {
 }
 
@@ -63,7 +63,7 @@ void CSuction::Exit()
 }
 
 CUniqueAction::CUniqueAction(CEnemyBase* e)
-:CBaseState(e, Type::UNIQUEACTION)
+    : CBaseState(e, Type::UNIQUEACTION)
 {
 }
 
