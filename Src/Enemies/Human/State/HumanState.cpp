@@ -47,7 +47,7 @@ CHumanIdleState::CHumanIdleState(CHuman* human)
 {
 }
 
-void CHumanIdleState::Enter()
+void CHumanIdleState::Enter(Type type)
 {
     frameCount = 0;
     currentAngle = 0;
@@ -151,7 +151,7 @@ CHumanWalkState::CHumanWalkState(CHuman* human)
 {
 }
 
-void CHumanWalkState::Enter()
+void CHumanWalkState::Enter(Type type)
 {
     bool boundaryFlag = false;
     int retryCount = 0;
@@ -220,7 +220,7 @@ CHumanFindPlayer::CHumanFindPlayer(CHuman* human)
 {
 }
 
-void CHumanFindPlayer::Enter()
+void CHumanFindPlayer::Enter(Type type)
 {
     ObjectManager::FindGameObject<CPlayerHP>()->SubHP();
     m_pOwner->GetAnimator()->MergePlay(A_IDEL);

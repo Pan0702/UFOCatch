@@ -1,10 +1,43 @@
 #include "StateBase.h"
 #include "../../Utils/MyMath.h"
+# define STR(var) #var	
 
-CBaseState::CBaseState(CEnemyBase* enemy, Type type)
-    : m_pEnemy(enemy), m_kType(type)
+CBaseState::CBaseState(CEnemyBase* e)
 {
+    m_pEnemy = e;
 }
+
+CBaseState::~CBaseState()
+{
+    SAFE_DELETE(m_pComponent);
+    SAFE_DELETE(m_pEnemy)
+}
+
+void CBaseState::Enter(Type type)
+{
+    m_pComponent = m_pEnemy->GetComponent(type);
+    if (m_pComponent == nullptr)
+    {
+        MessageBox(nullptr, STR(m_kType), _T(STR(m_kType)"ComponentがNullです"), MB_OK);
+    }
+    m_pComponent->Enter();
+}
+
+void CBaseState::Update()
+{
+    m_pComponent->Update();
+    if (m_pComponent->IsFinish())
+    {
+        m_pEnemy->SetState(NextStatePop());
+    }
+}
+
+void CBaseState::Exit()
+{
+    m_pComponent->Exit();
+    m_pComponent = nullptr;
+}
+
 CBaseState::Type CBaseState::NextStatePop()
 {
     SetNextState();

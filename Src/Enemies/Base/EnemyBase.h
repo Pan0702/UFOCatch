@@ -6,6 +6,7 @@
 #include "../../Common/Object3D.h"
 #include "../../Utils//BBox.h"
 #include "../../Stage/Ground.h"
+#include "../Component/ComponentBase.h"
 
 class CEnemyBase : public Object3D
 {
@@ -21,9 +22,11 @@ public:
     std::vector<CEnemyBase*> GetNearbyEnemies() const;
     
     CBBox* GetBBox() const { return m_pBBox; }
-    
+    void SetRotateY(float y)  { transform.position.y = y; }
     // ステージなどからの強制的な位置更新用
     void AddPosition(const VECTOR3& addPos) { transform.position += addPos; }
+    
+    CComponentBase* GetComponent(CBaseState::Type type) const;
 
 protected:
     // 物理演算
@@ -40,12 +43,11 @@ protected:
 
     // ステージオブジェクトとの衝突判定と押し戻し処理
     void ResolveStageCollisions();  // ステージオブジェクトとのOBB衝突を検出し、押し戻し処理を実行
-
-
-    CBaseState* m_pCurrentState;
-    std::unordered_map<CBaseState::Type, CBaseState*> m_cubeStates;
-    CBBox* m_pBBox;
-    CGround* m_pGround;
     
+
+    std::unordered_map<CBaseState::Type, CComponentBase*> m_components;
+    CBaseState* m_pState = nullptr;
+    CBBox* m_pBBox = nullptr;
+    CGround* m_pGround;
     float m_velocityY;
 };

@@ -35,7 +35,7 @@ CChickenIdleState::CChickenIdleState(CAnimalChicken* chicken)
 {
 }
 
-void CChickenIdleState::Enter()
+void CChickenIdleState::Enter(Type type)
 {
     stateIdle = static_cast<int>(std::round(Randomf(0, 1)));
     if (stateIdle == 1)
@@ -92,7 +92,7 @@ CChickenWalkState::CChickenWalkState(CAnimalChicken* chicken)
 {
 }
 
-void CChickenWalkState::Enter()
+void CChickenWalkState::Enter(Type type)
 {
     bool boundaryFlag = false;
     int retryCount = 0;
@@ -168,7 +168,7 @@ CChickenSuction::CChickenSuction(CAnimalChicken* chicken)
 {
 }
 
-void CChickenSuction::Enter()
+void CChickenSuction::Enter(Type type)
 {
    m_pOwner->GetAudio()->Play();
 
@@ -217,7 +217,7 @@ CChickenDestroy::CChickenDestroy(CAnimalChicken* chicken)
 {
 }
 
-void CChickenDestroy::Enter()
+void CChickenDestroy::Enter(Type type)
 {
     ObjectManager::FindGameObject<CGameInstance>()->AddScore(150);
     ObjectManager::FindGameObject<CGameInstance>()->AddCapture(1);

@@ -1,19 +1,14 @@
 #pragma once
-
-#include "../../Common/Object3D.h"
 #include "../Base/EnemyBase.h"
-#include "../../Player/Player.h"
-#include "../Component/ComponentBase.h"
+class CPlayer;
 
-
-class CCubeBase;
-
-class CADog : public CEnemyBase
+class CADebug : public CEnemyBase
 {
 public:
-    CADog(const VECTOR3& iniPos = VECTOR3(0, 0, 0), const VECTOR2& moveAreaSize = VECTOR2(10, 10));
-    ~CADog();
-
+    CADebug();
+    CADebug(const VECTOR3& iniPos, const VECTOR2& moveAreaSize);
+    ~CADebug();
+private:
     ///
     ///吸い込み範囲にオブジェクトがいて、吸い込みボタンが押されていたらStateをSuctionにかえる
     ///

@@ -4,6 +4,7 @@
 #include "../../Stage/StageObject.h"
 #include "../System/EnemyRegistr.h"
 #include "../../Framework/AudioManager.h"
+
 namespace 
 {
     static constexpr float GROUND_CHECK_OFFSET = 0.1f;
@@ -11,8 +12,6 @@ namespace
 CEnemyBase::CEnemyBase()
     : m_velocityY(0.0f), m_pGround(nullptr)
 {
-    m_pCurrentState = nullptr;
-    m_pBBox = nullptr;
 }
 
 CBBox* CEnemyBase::CreateBBox()
@@ -27,32 +26,32 @@ CBBox* CEnemyBase::CreateBBox()
 
 void CEnemyBase::SetState(CBaseState::Type type)
 {
-    m_pCurrentState->Exit();
-    m_pCurrentState = m_cubeStates[type];
-    m_pCurrentState->Enter();
+    m_pState->Exit();
+    if (type == CBaseState::Type::DESTROY)return;
+    m_pState->Enter(type);
 }
 
 CEnemyBase::~CEnemyBase()
 {
     SAFE_DELETE(m_pBBox);
-    for (auto& state : m_cubeStates)
-    {
-        SAFE_DELETE(state.second);
-    }
+    SAFE_DELETE(m_pState);
+    SAFE_DELETE(m_pGround);
+    
+
+    for (auto& component : m_components)
+        {
+        SAFE_DELETE(component.second);
+        }
+    
 }
 
 void CEnemyBase::Update()
 {
-    if (m_pCurrentState != nullptr && m_pCurrentState == m_cubeStates[CBaseState::Type::DESTROY])
-    {
-        return;
-    }
-
     ApplyGravity();
 
-    if (m_pCurrentState)
+    if (m_pState)
     {
-        m_pCurrentState->Update();
+        m_pState->Update();
     }
 }
 
@@ -256,5 +255,15 @@ void CEnemyBase::ResolveStageCollisions()
         if (stage == nullptr) continue;
         stage->ResolveEnemyCollision(this);
     }
+}
+
+CComponentBase* CEnemyBase::GetComponent(CBaseState::Type type) const
+{
+    auto itr = m_components.find(type);
+    if (itr == m_components.end())
+    {
+        return nullptr;
+    }
+    return itr->second;
 }
 

@@ -20,7 +20,7 @@ class CCubeIdleState : public CCubeBase
 {
 public:
     CCubeIdleState(CADog* cube);
-    void Enter() override;
+    void Enter(Type type) override;
     void Update() override;
 
 private:
@@ -42,7 +42,7 @@ class CCubeWalkState : public CCubeBase
 {
 public:
     CCubeWalkState(CADog* cube);
-    void Enter() override;
+    void Enter(Type type) override;
     void Update() override;
 
 private:
@@ -72,5 +72,5 @@ class CCubeDestroy : public CCubeBase
 {
 public:
     CCubeDestroy(CADog* cube);
-    void Enter() override;
+    void Enter(Type type) override;
 };

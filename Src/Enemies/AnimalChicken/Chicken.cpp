@@ -24,19 +24,19 @@ CAnimalChicken::CAnimalChicken(const VECTOR3& iniPos, const VECTOR2& moveAreaSiz
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     m_pGround = ObjectManager::FindGameObject<CGround>();
 
-    m_cubeStates[CBaseState::Type::IDLE] = new CChickenIdleState(this);
-    m_cubeStates[CBaseState::Type::WALK] = new CChickenWalkState(this);
-    m_cubeStates[CBaseState::Type::SUCTION] = new CChickenSuction(this);
-    m_cubeStates[CBaseState::Type::DESTROY] = new CChickenDestroy(this);
-    m_pCurrentState = m_cubeStates[CBaseState::Type::WALK];
-    m_pCurrentState->Enter();
+    m_states[CBaseState::Type::IDLE] = new CChickenIdleState(this);
+    m_states[CBaseState::Type::WALK] = new CChickenWalkState(this);
+    m_states[CBaseState::Type::SUCTION] = new CChickenSuction(this);
+    m_states[CBaseState::Type::DESTROY] = new CChickenDestroy(this);
+    m_pState = m_states[CBaseState::Type::WALK];
+    m_pState->Enter(TODO);
     m_pBBox = CreateBBox();
     m_pCry = new CXAudioSource(_T("data/Sound/ChickenCry.wav"));
 }
 
 CAnimalChicken::~CAnimalChicken()
 {
-    for (auto& state : m_cubeStates)
+    for (auto& state : m_states)
     {
         SAFE_DELETE(state.second);
     }
@@ -53,7 +53,7 @@ void CAnimalChicken::Update()
 
     CEnemyBase::Update();
 
-    if (m_pCurrentState != nullptr && m_pCurrentState == m_cubeStates[CBaseState::Type::DESTROY])
+    if (m_pState != nullptr && m_pState == m_states[CBaseState::Type::DESTROY])
     {
         return;
     }
@@ -89,5 +89,5 @@ VECTOR3 CAnimalChicken::SuctionSpeed() const
 
 bool CAnimalChicken::ShouldApplyGravity() const
 {
-    return m_pCurrentState != m_cubeStates.at(CBaseState::Type::SUCTION);
+    return m_pState != m_states.at(CBaseState::Type::SUCTION);
 }

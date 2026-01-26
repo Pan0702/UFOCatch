@@ -1,16 +1,12 @@
-#include "Dog.h"
+#include "AnimalDubug.h"
 
 #include "../../Player/Player.h"
 #include "../../Stage/Ground.h"
-#include <queue>
-#include <thread>
-
-#include "../System/EnemyRegistr.h"
+#include "../Component/Idle.h"
 #include "../Base/StateBase.h"
-#include "State/DogState.h"
-#include "../../Utils/BBox.h"
+#include "../System/EnemyRegistr.h"
 
-CADog::CADog(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
+CADebug::CADebug(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos), m_areaSize(moveAreaSize)
 {
     m_pMesh = ObjectManager::FindGameObject<CAnimalManager>()->MeshList("Dog");
@@ -26,21 +22,20 @@ CADog::CADog(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     m_states[CBaseState::Type::WALK] = new CCubeWalkState(this);
     m_states[CBaseState::Type::SUCTION] = new CCubeSuction(this);
     m_states[CBaseState::Type::DESTROY] = new CCubeDestroy(this);
+    
+    m_components[CBaseState::Type::IDLE] = new CIdle();
     m_pState = m_states[CBaseState::Type::WALK];
     m_pState->Enter(TODO);
     m_pBBox = CreateBBox();
 }
 
-CADog::~CADog()
+CADebug::~CADebug()
 {
-    for (auto& state : m_states)
-    {
-        SAFE_DELETE(state.second);
-    }
+
 }
 
 
-void CADog::Update()
+void CADebug::Update()
 {
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     if (m_pPlayer != nullptr)
@@ -65,12 +60,12 @@ void CADog::Update()
     ResolveStageCollisions();
 }
 
-void CADog::Draw()
+void CADebug::Draw()
 {
     m_pMesh->Render(m_pAnimator, transform.matrix());
 }
 
-void CADog::IsSuctionCheck()
+void CADebug::IsSuctionCheck()
 {
     if (m_pPlayer == nullptr)return;
     if (m_pPlayer->IsWithSuctionCone(transform.position /* + VECTOR3(0, m_maxSize.y, 0)*/) && m_pPlayer->GetIsSuckUp())
@@ -79,13 +74,13 @@ void CADog::IsSuctionCheck()
     }
 }
 
-const VECTOR3& CADog::SuctionSpeed() const
+const VECTOR3& CADebug::SuctionSpeed() const
 {
     return m_pPlayer->
         CalcSuctionDisplacement(1, transform.position);
 }
 
-bool CADog::ShouldApplyGravity() const
+bool CADebug::ShouldApplyGravity() const
 {
     return m_pState != m_states.at(CBaseState::Type::SUCTION);
 }

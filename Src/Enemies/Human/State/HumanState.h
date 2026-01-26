@@ -19,7 +19,7 @@ class CHumanIdleState : public CHumanBase
 {
 public:
     CHumanIdleState(CHuman* human);
-    void Enter() override;
+    void Enter(Type type) override;
     void Update() override;
 
 private:
@@ -39,7 +39,7 @@ class CHumanWalkState : public CHumanBase
 {
 public:
     CHumanWalkState(CHuman* human);
-    void Enter() override;
+    void Enter(Type type) override;
     void Update() override;
 
 private:
@@ -56,6 +56,6 @@ class CHumanFindPlayer : public CHumanBase
 {
 public:
     CHumanFindPlayer(CHuman* human);
-    void Enter() override;
+    void Enter(Type type) override;
     void Update() override;
 };

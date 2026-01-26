@@ -19,7 +19,7 @@ class CChickenIdleState : public CChickenBase
 {
 public:
     CChickenIdleState(CAnimalChicken* chicken);
-    void Enter() override;
+    void Enter(Type type) override;
     void Update() override;
 
 private:
@@ -36,7 +36,7 @@ class CChickenWalkState : public CChickenBase
 {
 public:
     CChickenWalkState(CAnimalChicken* chicken);
-    void Enter() override;
+    void Enter(Type type) override;
     void Update() override;
 
 private:
@@ -55,7 +55,7 @@ class CChickenSuction : public CChickenBase
 {
 public:
     CChickenSuction(CAnimalChicken* chicken);
-    void Enter() override;
+    void Enter(Type type) override;
     void Update() override;
 
 private:
@@ -67,5 +67,5 @@ class CChickenDestroy : public CChickenBase
 {
 public:
     CChickenDestroy(CAnimalChicken* chicken);
-    void Enter() override;
+    void Enter(Type type) override;
 };

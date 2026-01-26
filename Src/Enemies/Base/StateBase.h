@@ -6,6 +6,9 @@
 class CBaseState
 {
 public:
+    CBaseState(CEnemyBase* e);
+    ~CBaseState();
+
     enum class Type
     {
         IDLE,
@@ -17,10 +20,10 @@ public:
         FIND_PLAYER,
         ESCAPE
     };
-    CBaseState(CEnemyBase* cube, Type type);
-    virtual void Enter(){}
-    virtual void Update(){}
-    virtual void Exit(){}
+
+    virtual void Enter(Type type);
+    virtual void Update();
+    virtual void Exit();
 
     ///
     ///次のstateが４つ配列に入ってなかったら次の配列をランダムでセット
@@ -33,11 +36,15 @@ protected:
     CBaseState::Type NextStatePop();
 
     float ClampRotateY(const float& angle);
+    CEnemyBase* m_pEnemy;
+    Type m_kType;
+    CComponentBase* m_pComponent = nullptr;
+    
+    
 private:
 
     static constexpr int NEXT_STATE_MAX_SIZE = 3;
     std::queue<CBaseState::Type> actionQueue;
     
-    CEnemyBase* m_pEnemy;
-    const Type m_kType;
+
 };
