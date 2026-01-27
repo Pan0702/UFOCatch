@@ -2,9 +2,10 @@
 #include "../Base/EnemyBase.h"
 #include "../System/EnemyRegistr.h"
 
-CWalk::CWalk(CEnemyBase* e)
+CWalk::CWalk(CEnemyBase* e,float speed)
 {
     m_pOwner = e;
+    m_moveAmount = speed;
 }
 
 void CWalk::Enter()
@@ -52,7 +53,7 @@ void CWalk::Enter()
     m_targetRotation = m_currentRotation + m_turnAmount;
     
     //回転補間を走らせるためのフラグ
-    m_rotation = true
+    m_rotation = true;
     Animator* animator = m_pOwner->GetAnimator();
     animator->MergePlay(AnimationType::A_IDEL);
     animator->SetPlaySpeed(1.0f);
@@ -82,11 +83,11 @@ void CWalk::Update()
         }
         m_pOwner->SetRotateY(ClampRotateY(m_currentRotation));
     }
-    static constexpr float MOVE_SPEED = 1.2f;
     
+    float moveAmount1frame = m_moveSpeed * SceneManager::DeltaTime();
     m_pOwner->AddPosition(
-        VECTOR3(0, 0, MOVE_SPEED * SceneManager::DeltaTime()) * XMMatrixRotationY(m_currentRotation));
-    m_totalPosZMoveAmount += MOVE_SPEED * SceneManager::DeltaTime();
+        VECTOR3(0, 0, moveAmount1frame) * XMMatrixRotationY(m_currentRotation));
+    m_totalPosZMoveAmount += moveAmount1frame;
 
     if (m_totalPosZMoveAmount > m_moveAmount)
     {
