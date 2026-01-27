@@ -23,10 +23,12 @@ public:
     
     CBBox* GetBBox() const { return m_pBBox; }
     void SetRotateY(float y)  { transform.position.y = y; }
+    const VECTOR2& GetAreaSize() const { return m_areaSize; }
     // ステージなどからの強制的な位置更新用
     void AddPosition(const VECTOR3& addPos) { transform.position += addPos; }
     
     CComponentBase* GetComponent(CBaseState::Type type) const;
+    virtual const VECTOR3& SuctionSpeed() const;
 
 protected:
     // 物理演算
@@ -46,8 +48,10 @@ protected:
     
 
     std::unordered_map<CBaseState::Type, CComponentBase*> m_components;
+    CComponentBase* m_pComponent = nullptr;
     CBaseState* m_pState = nullptr;
     CBBox* m_pBBox = nullptr;
     CGround* m_pGround;
     float m_velocityY;
+    VECTOR2 m_areaSize;
 };

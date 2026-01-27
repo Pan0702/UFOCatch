@@ -267,3 +267,9 @@ CComponentBase* CEnemyBase::GetComponent(CBaseState::Type type) const
     return itr->second;
 }
 
+const VECTOR3& CEnemyBase::SuctionSpeed() const
+{
+    return VECTOR3(0, 0, 0);
+}
+
+

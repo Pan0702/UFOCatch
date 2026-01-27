@@ -7,13 +7,14 @@
 #include "../System/EnemyRegistr.h"
 
 CADebug::CADebug(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
-    : m_basePos(iniPos), m_areaSize(moveAreaSize)
+    : m_basePos(iniPos)
 {
     m_pMesh = ObjectManager::FindGameObject<CAnimalManager>()->MeshList("Dog");
     m_pAnimator = new Animator();
     m_pAnimator->SetModel(m_pMesh);
     m_pAnimator->Play(A_WALK);
 
+    m_areaSize = moveAreaSize;
     transform.position = iniPos;
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     m_pGround = ObjectManager::FindGameObject<CGround>();
@@ -82,5 +83,5 @@ const VECTOR3& CADebug::SuctionSpeed() const
 
 bool CADebug::ShouldApplyGravity() const
 {
-    return m_pState != m_states.at(CBaseState::Type::SUCTION);
+    return m_pComponent != m_components.at(CBaseState::Type::SUCTION);
 }

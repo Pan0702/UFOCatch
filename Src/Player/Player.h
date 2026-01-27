@@ -18,12 +18,12 @@ public:
     /// @return bool
     ///
     bool IsWithSuctionCone(const VECTOR3& targetPos) const;
-
-    /// g引き寄せるための移動量を計算
-    /// @param moveTimeSecond
-    /// @param animalPos
-    /// @return 1回当たりの移動量を返す
-    ///
+    
+    // 引き寄せるための移動量を計算する
+    // 高さの差が大きいほど遅く、近いほど速く吸い込む
+    // @param moveTimeSecond  移動にかける時間
+    // @param animalPos  動物の位置
+    // @return 1回当たりの移動量 //
     VECTOR3 CalcSuctionDisplacement(const float& moveTimeSecond, const VECTOR3& animalPos) const;
 
     ///

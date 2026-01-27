@@ -33,28 +33,7 @@ CCubeSuction::CCubeSuction(CADog* cube)
 {
 }
 
-void CCubeSuction::Update()
-{
-    m_distanceFromObjectToUFO = m_pOwner->SuctionSpeed();
-    m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
-    if (m_pPlayer != nullptr){
-        if (m_pPlayer->GetIsSuckUp())
-        {
-            if (m_pPlayer->GetTransform().position.y - 0.15f <= m_pOwner->GetTransform().position.y )
-            {
-                m_pOwner->SetState(Type::DESTROY);
-            }
-            else
-            {
-                m_pOwner->AddPos(m_distanceFromObjectToUFO);
-            }
-        }
-        else
-        {
-            m_pOwner->SetState(NextStatePop());
-        }
-    }
-}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CCubeDestroy::CCubeDestroy(CADog* cube)
