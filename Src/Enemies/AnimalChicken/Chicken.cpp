@@ -4,13 +4,14 @@
 
 #include "../../Player/Player.h"
 #include "../../Stage/Ground.h"
-#include <queue>
-#include <thread>
-
 #include "../System/EnemyRegistr.h"
 #include "../Base/StateBase.h"
 #include "State/ChickenState.h"
 #include "../../Utils/BBox.h"
+#include "../Component/Idle.h"
+#include "../Component/Suction.h"
+#include "../Component/Walk.h"
+#include "../Component/Destroy.h"
 
 CAnimalChicken::CAnimalChicken(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos), m_areaSize(moveAreaSize)
@@ -24,19 +25,19 @@ CAnimalChicken::CAnimalChicken(const VECTOR3& iniPos, const VECTOR2& moveAreaSiz
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     m_pGround = ObjectManager::FindGameObject<CGround>();
 
-    m_states[CBaseState::Type::IDLE] = new CChickenIdleState(this);
-    m_states[CBaseState::Type::WALK] = new CChickenWalkState(this);
-    m_states[CBaseState::Type::SUCTION] = new CChickenSuction(this);
-    m_states[CBaseState::Type::DESTROY] = new CChickenDestroy(this);
-    m_pState = m_states[CBaseState::Type::WALK];
-    m_pState->Enter(TODO);
+    m_components[CBaseState::Type::IDLE] = new CIdle(this,360.0f);
+    m_components[CBaseState::Type::WALK] = new CWalk(this, 1.2f);
+    m_components[CBaseState::Type::SUCTION] = new CSuction(this);
+    m_components[CBaseState::Type::DESTROY] = new CDestroy(this,150,1.5f);
+    m_pComponent = m_components[CBaseState::Type::WALK];
+    m_pState->Enter(CBaseState::Type::WALK);
     m_pBBox = CreateBBox();
     m_pCry = new CXAudioSource(_T("data/Sound/ChickenCry.wav"));
 }
 
 CAnimalChicken::~CAnimalChicken()
 {
-    for (auto& state : m_states)
+    for (auto& state : m_components)
     {
         SAFE_DELETE(state.second);
     }
@@ -53,7 +54,7 @@ void CAnimalChicken::Update()
 
     CEnemyBase::Update();
 
-    if (m_pState != nullptr && m_pState == m_states[CBaseState::Type::DESTROY])
+    if (m_pState != nullptr && m_pComponent == m_components[CBaseState::Type::DESTROY])
     {
         return;
     }
@@ -81,7 +82,7 @@ void CAnimalChicken::IsSuctionCheck()
     }
 }
 
-VECTOR3 CAnimalChicken::SuctionSpeed() const
+const VECTOR3& CAnimalChicken::SuctionSpeed() const
 {
     return m_pPlayer->
         CalcSuctionDisplacement(1, transform.position);
@@ -89,5 +90,5 @@ VECTOR3 CAnimalChicken::SuctionSpeed() const
 
 bool CAnimalChicken::ShouldApplyGravity() const
 {
-    return m_pState != m_states.at(CBaseState::Type::SUCTION);
+    return m_pComponent != m_components.at(CBaseState::Type::SUCTION);
 }

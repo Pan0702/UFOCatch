@@ -535,6 +535,8 @@
     <ClInclude Include="Src\Enemies\AnimalDog\Dog.h" />
     <ClInclude Include="Src\Enemies\AnimalDog\State\DogState.h" />
     <ClInclude Include="Src\Enemies\Component\ComponentBase.h" />
+    <ClInclude Include="Src\Enemies\Component\Destroy.h" />
+    <ClInclude Include="Src\Enemies\Component\IdleHuman.h" />
     <ClInclude Include="Src\Enemies\Component\Idle.h" />
     <ClInclude Include="Src\Enemies\Component\Suction.h" />
     <ClInclude Include="Src\Enemies\Component\Walk.h" />
@@ -906,7 +908,8 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="Src\Enemies\Component\ComponentBase.cpp" />
+    <ClCompile Include="Src\Enemies\Component\Destroy.cpp" />
+    <ClCompile Include="Src\Enemies\Component\IdleHuman.cpp" />
     <ClCompile Include="Src\Enemies\Component\Idle.cpp" />
     <ClCompile Include="Src\Enemies\Component\Suction.cpp" />
     <ClCompile Include="Src\Enemies\Component\Walk.cpp" />
@@ -3878,6 +3881,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
+    <Content Include="Src\Scene\TutorialScene.cpp~" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

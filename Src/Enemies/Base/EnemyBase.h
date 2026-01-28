@@ -29,7 +29,7 @@ public:
     
     CComponentBase* GetComponent(CBaseState::Type type) const;
     virtual const VECTOR3& SuctionSpeed() const;
-
+    void IsSuctionCheck();
 protected:
     // 物理演算
     void ApplyGravity();  // 重力を適用し、地面との衝突判定を行う

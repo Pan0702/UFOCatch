@@ -1,6 +1,5 @@
 #include "Walk.h"
 #include "../Base/EnemyBase.h"
-#include "../System/EnemyRegistr.h"
 
 CWalk::CWalk(CEnemyBase* e, float speed)
 {
@@ -56,31 +55,33 @@ bool CWalk::CalcRandomMove()
         // 移動距離：[1.0, 3.5] をランダムに選ぶ
         m_moveAmount = Randomf(kMinMove,kMaxMove);
 
+        VECTOR3 tmpPos = m_position + VECTOR3(0, 0,
+                                      m_moveAmount) * XMMatrixRotationY(m_turnAmount);
         // この回転＋移動で境界外に出ないなら採用して終了
-        if(BoundaryCheck(m_pOwner->GetAreaSize()))
+        if(IsInsideAreaXZ(tmpPos,m_pOwner->GetAreaSize()))
         {
             return true;
         }
     }
     return false;
 }
-
-///  回転・移動後の位置が境界内に収まるかチェック
-/// @param areaSize エリアのサイズ
-/// @return 境界内ならtrue、境界外ならfalse
-bool CWalk::BoundaryCheck(const VECTOR2&
-    areaSize) const
-{
-    VECTOR3 tmpPos = m_position + VECTOR3(0, 0,
-                                          m_moveAmount) * XMMatrixRotationY(m_turnAmount);
-    if (tmpPos.x <= areaSize.x && tmpPos.x >=
-        -areaSize.x && tmpPos.z <= areaSize.y &&
-        tmpPos.z >= -areaSize.y)
-    {
-        return true;
-    }
-    return false;
-}
+//別のところに書いた関数で動くか試すためコメントアウト
+// /// 回転・移動後の位置が境界内に収まるかチェック
+// /// @param areaSize エリアのサイズ
+// /// @return 境界内ならtrue、境界外ならfalse
+// bool CWalk::BoundaryCheck(const VECTOR2&
+//     areaSize) const
+// {
+//     VECTOR3 tmpPos = m_position + VECTOR3(0, 0,
+//                                           m_moveAmount) * XMMatrixRotationY(m_turnAmount);
+//     if (tmpPos.x <= areaSize.x && tmpPos.x >=
+//         -areaSize.x && tmpPos.z <= areaSize.y &&
+//         tmpPos.z >= -areaSize.y)
+//     {
+//         return true;
+//     }
+//     return false;
+// }
 
 void CWalk::PlayWalkAnimation()
 {

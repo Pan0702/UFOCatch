@@ -1,7 +1,10 @@
 #include "Idle.h"
+
+#include "../Human/Human.h"
 #include "../System/EnemyRegistr.h"
 
-CIdle::CIdle(CEnemyBase* e)
+CIdle::CIdle(CEnemyBase* e,float endFrame)
+    :m_endFrame(endFrame)
 {
     m_pOwner = e;
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
@@ -21,6 +24,12 @@ void CIdle::Enter()
     }
     m_timerCnt = 0;
     m_isFinish = false;
+    
+    CHuman* human = ObjectManager::FindGameObject<CHuman>();
+    if (human == m_pOwner and human != nullptr)
+    {
+        m_isFinish = true;
+    }
 }
 
 void CIdle::Update()
@@ -28,13 +37,13 @@ void CIdle::Update()
     switch (m_idleState)
     {
     case ANIMATION:
-        IdleAnim();
+            IdleAnim();
         break;
     case STOP:
         IdleStop();
         break;
     default:
-        assert("error:IdelState");
+        assert("error:IdleState");
         break;
     }
 }

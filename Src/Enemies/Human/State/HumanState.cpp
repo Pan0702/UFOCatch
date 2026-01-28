@@ -4,25 +4,6 @@
 #include "../../../Player/PlayerHP.h"
 #include "../Human.h"
 #include "../../System/EnemyRegistr.h"
-namespace
-{
-    //////////////////////////////////////////////
-    ///Idle
-    /// //////////////////////////////////////////
-     constexpr float ANIMATION_FPS = 30.0f;          // アニメーションのフレームレート（1秒あたりのフレーム数） 
-     constexpr float TOTAL_FRAMES = 100.0f;          // アニメーション全体の総フレーム数 
-     constexpr float NECK_ANIMATION_END = 86.0f;     // 首の回転アニメーションが終了するフレーム番号 
-     constexpr float WAIT_START_FRAME = 6.0f;        // 首の回転が開始されるまでの待機フレーム数 
-     constexpr float CYCLE_DURATION = 81.0f;         // 左右を見回す1サイクルの合計フレーム数 
-     constexpr float HALF_CYCLE_DURATION = 41.0f;    // 半サイクル（片側を見る）のフレーム数 
-     constexpr float CHANGE_DURATION = 15.0f;        // 首を回転させる動作にかかるフレーム数 
-     constexpr float HOLD_END_FRAME = 27.0f;         // 首を回転させた状態を保持する終了フレーム 
-     constexpr float RETURN_START_FRAME = 27.0f;     // 首を元の位置に戻し始めるフレーム
-     constexpr float RETURN_END_FRAME = 41.0f;       // 首を元の位置に戻し終わるフレーム
-     constexpr float CHANGE_DIVISOR = 14.0f;         // 首の回転補間計算用の除数（CHANGE_DURATION - 1） 
-     constexpr float RETURN_DIVISOR = 13.0f;         // 首の復帰補間計算用の除数（RETURN_END_FRAME - RETURN_START_FRAME - 1） 
-     constexpr float ANGLE = 50.0f;                  // 首を左右に回転させる角度（度数法） 
-}
 
 
 CHumanBase::CHumanBase(CHuman* human, Type type)
@@ -49,18 +30,7 @@ CHumanIdleState::CHumanIdleState(CHuman* human)
 
 void CHumanIdleState::Enter(Type type)
 {
-    frameCount = 0;
-    currentAngle = 0;
-    animationTime = 0;
-    stateIdle = static_cast<int>(std::round(Randomf(0, 1)));
-    if (stateIdle)
-    {
-        m_pOwner->GetAnimator()->MergePlay(A_IDEL);
-    }
-    else
-    {
-        m_pOwner->GetAnimator()->MergePlay(A_SEACH);
-    }
+
 }
 
 void CHumanIdleState::Update()
@@ -82,60 +52,15 @@ void CHumanIdleState::Update()
 void CHumanIdleState::LookAround()
 {
     RotationAngle();
-    if (m_pOwner->GetAnimator()->Finished())
-    {
-        m_pOwner->SetAngle(0);
-        m_pOwner->SetState(NextStatePop());
-    }
+
 }
 
 void CHumanIdleState::RotationAngle()
 {
-    animationTime += SceneManager::DeltaTime();
-        
-    float currentFrame = GetCurrentFrame();
-    
-    if (currentFrame >= TOTAL_FRAMES) { 
-        animationTime = 0.0f;
-        currentAngle = 0.0f;
-        return;
-    }
-    
-    if (currentFrame > NECK_ANIMATION_END) {  
-        return;
-    }
-        
-    if (currentFrame <= WAIT_START_FRAME) {
-        currentAngle = 0.0f;
-    }
-    else {
-        float cycleFrame = currentFrame - WAIT_START_FRAME;
-            
-        if (cycleFrame <= CYCLE_DURATION) {
-            int halfCycle = static_cast<int>((cycleFrame - 1.0f) / HALF_CYCLE_DURATION);
-            float localFrame = fmodf(cycleFrame - 1.0f, HALF_CYCLE_DURATION);
-                
-            float targetAngle = (halfCycle == 0) ? ANGLE : -ANGLE;
-                
-            if (localFrame < CHANGE_DURATION) {
-                float t = localFrame / CHANGE_DIVISOR;
-                currentAngle = Lerp(0.0f, targetAngle, t);
-            }
-            else if (localFrame < HOLD_END_FRAME) {
-                currentAngle = targetAngle;
-            }
-            else if (localFrame < RETURN_END_FRAME) {
-                float t = (localFrame - RETURN_START_FRAME) / RETURN_DIVISOR;
-                currentAngle = Lerp(targetAngle, 0.0f, t);
-            }
-        }
-    }
-    m_pOwner->SetAngle(currentAngle * DegToRad);
+
 }
 
-float CHumanIdleState::GetCurrentFrame() const {
-    return animationTime * ANIMATION_FPS;
-}
+
 void CHumanIdleState::Idle()
 {
     if (m_pOwner->GetAnimator()->Finished())

@@ -1,7 +1,7 @@
 #pragma once
 #include "../../Player/Player.h"
 #include "../Base/EnemyBase.h"
-
+#include "../System/EnemyRegistr.h"
 class CComponentBase
 {
 public:

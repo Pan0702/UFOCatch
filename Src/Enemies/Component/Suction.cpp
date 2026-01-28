@@ -1,5 +1,7 @@
 #include "Suction.h"
-#include "../../Core/Game/Macro.h"
+#include "../Base/EnemyBase.h"
+
+
 CSuction::CSuction(CEnemyBase* e)
 {
     m_pOwner = e;
@@ -9,6 +11,8 @@ CSuction::CSuction(CEnemyBase* e)
 void CSuction::Enter()
 {
     m_isFinish = false;
+    m_pOwner->GetAnimator()->MergePlay(AnimationType::A_RUN);
+    m_pOwner->GetAnimator()->SetPlaySpeed(6.0f);
 }
 
 void CSuction::Update()
@@ -37,5 +41,5 @@ void CSuction::Update()
 
 void CSuction::Exit()
 {
-    CComponentBase::Exit();
+
 }

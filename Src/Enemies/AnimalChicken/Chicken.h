@@ -15,12 +15,9 @@ public:
 
     void IsSuctionCheck();
 
-    VECTOR3 SuctionSpeed() const;
-    void DestroyChicken();
+    const VECTOR3& SuctionSpeed() const;
 
     void AddPos(const VECTOR3& pos) { transform.position = transform.position + pos; }
-    VECTOR2 GetAreaSize() const { return m_areaSize; }
-    void SetRotateY(float r){transform.rotation.y = r;}
     CXAudioSource* GetAudio() const { return m_pCry; }
 
 private:

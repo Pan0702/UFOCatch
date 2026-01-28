@@ -2,8 +2,11 @@
 
 #include "../../Player/Player.h"
 #include "../../Stage/Ground.h"
-#include "../Component/Idle.h"
 #include "../Base/StateBase.h"
+#include "../Component/Idle.h"
+#include "../Component/Suction.h"
+#include "../Component/Walk.h"
+#include "../Component/Destroy.h"
 #include "../System/EnemyRegistr.h"
 
 CADebug::CADebug(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
@@ -18,22 +21,16 @@ CADebug::CADebug(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     transform.position = iniPos;
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     m_pGround = ObjectManager::FindGameObject<CGround>();
-
-    m_states[CBaseState::Type::IDLE] = new CCubeIdleState(this);
-    m_states[CBaseState::Type::WALK] = new CCubeWalkState(this);
-    m_states[CBaseState::Type::SUCTION] = new CCubeSuction(this);
-    m_states[CBaseState::Type::DESTROY] = new CCubeDestroy(this);
     
-    m_components[CBaseState::Type::IDLE] = new CIdle();
-    m_pState = m_states[CBaseState::Type::WALK];
-    m_pState->Enter(TODO);
+    m_components[CBaseState::Type::IDLE] = new CIdle(this,570.0f);
+    m_components[CBaseState::Type::WALK] = new CWalk(this, 2.0f);
+    m_components[CBaseState::Type::SUCTION] = new CSuction(this);
+    m_components[CBaseState::Type::DESTROY] = new CDestroy(this,100,1);
+    m_pState->Enter(CBaseState::Type::WALK);
     m_pBBox = CreateBBox();
 }
 
-CADebug::~CADebug()
-{
-
-}
+CADebug::~CADebug() = default;
 
 
 void CADebug::Update()
@@ -48,7 +45,7 @@ void CADebug::Update()
 
     // 削除フラグが立っている（CEnemyBase::Updateで処理がスキップされた）場合は、
     // これ以上の処理（衝突判定など）を行わない
-    if (m_pState != nullptr && m_pState == m_states[CBaseState::Type::DESTROY])
+    if (m_pState != nullptr && m_pComponent == m_components[CBaseState::Type::DESTROY])
     {
         return;
     }
@@ -66,17 +63,9 @@ void CADebug::Draw()
     m_pMesh->Render(m_pAnimator, transform.matrix());
 }
 
-void CADebug::IsSuctionCheck()
-{
-    if (m_pPlayer == nullptr)return;
-    if (m_pPlayer->IsWithSuctionCone(transform.position /* + VECTOR3(0, m_maxSize.y, 0)*/) && m_pPlayer->GetIsSuckUp())
-    {
-        SetState(CBaseState::Type::SUCTION);
-    }
-}
-
 const VECTOR3& CADebug::SuctionSpeed() const
 {
+    //1秒で吸い込み
     return m_pPlayer->
         CalcSuctionDisplacement(1, transform.position);
 }

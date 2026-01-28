@@ -4,10 +4,7 @@
 class CIdle : public CComponentBase
 {
 public:
-    CIdle();
-    ~CIdle();
-
-    CIdle(CEnemyBase* e);
+    CIdle(CEnemyBase* e, float endFrame);
     void Enter() override;
     void Update() override;
 
@@ -26,4 +23,6 @@ private:
     
     int m_idleState = 0;
     float m_timerCnt = 0;
+    bool m_isHuman = false;
+    const float m_endFrame;
 };
