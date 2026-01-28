@@ -13,7 +13,7 @@ void Suction::Enter()
 
 void Suction::Update()
 {
-    VECTOR3 distanceFromObjectToUFO = m_pOwner->S;
+    VECTOR3 distanceFromObjectToUFO = m_pOwner->SuctionSpeed();
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     if (m_pPlayer == nullptr) return;
     if (m_pPlayer->GetIsSuckUp())
