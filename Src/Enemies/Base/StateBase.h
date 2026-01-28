@@ -1,6 +1,5 @@
 #pragma once
 #include <queue>
-
 #include "EnemyBase.h"
 
 class CBaseState
@@ -35,7 +34,7 @@ protected:
     ///
     CBaseState::Type NextStatePop();
 
-    float ClampRotateY(const float& angle);
+    static float ClampRotateY(const float& angle);
     CEnemyBase* m_pEnemy;
     Type m_kType;
     CComponentBase* m_pComponent = nullptr;

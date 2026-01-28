@@ -1,24 +1,24 @@
 #include "Suction.h"
-
-Suction::Suction(CEnemyBase* e)
+#include "../../Core/Game/Macro.h"
+CSuction::CSuction(CEnemyBase* e)
 {
     m_pOwner = e;
 }
 
 
-void Suction::Enter()
+void CSuction::Enter()
 {
     m_isFinish = false;
 }
 
-void Suction::Update()
+void CSuction::Update()
 {
     VECTOR3 distanceFromObjectToUFO = m_pOwner->SuctionSpeed();
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     if (m_pPlayer == nullptr) return;
     if (m_pPlayer->GetIsSuckUp())
     {
-        float maxPos = m_pOwner->GetTransform().position.y + m_pOwner->GetMesh()->m_vMax.y
+        float maxPos = m_pOwner->GetTransform().position.y + m_pOwner->GetMesh()->m_vMax.y;
         if (m_pPlayer->GetTransform().position.y <= maxPos)
         {
             m_isFinish = true;
@@ -35,7 +35,7 @@ void Suction::Update()
 }
 
 
-void Suction::Exit()
+void CSuction::Exit()
 {
     CComponentBase::Exit();
 }

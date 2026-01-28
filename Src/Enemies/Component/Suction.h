@@ -1,12 +1,11 @@
 #pragma once
 #include "ComponentBase.h"
 
-class Suction : public CComponentBase
+class CSuction : public CComponentBase
 {
 public:
-    Suction();
-    Suction(CEnemyBase* e);
-    ~Suction();
+    CSuction(CEnemyBase* e);
+    ~CSuction();
     void Enter() override;
     void Update() override;
     void Exit() override;

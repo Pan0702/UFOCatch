@@ -1,5 +1,6 @@
 #include "StateBase.h"
 #include "../../Utils/MyMath.h"
+#include "../Component/Suction.h"
 # define STR(var) #var	
 
 CBaseState::CBaseState(CEnemyBase* e)
@@ -40,6 +41,8 @@ void CBaseState::Exit()
 
 CBaseState::Type CBaseState::NextStatePop()
 {
+    const CSuction* s = ObjectManager::FindGameObject<CSuction>();
+    if (m_pComponent == s)return Type::SUCTION;
     SetNextState();
     Type type = actionQueue.front();
     actionQueue.pop();

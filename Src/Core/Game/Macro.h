@@ -1,5 +1,5 @@
 #pragma once
-//ƒ}ƒNƒ’è‹`
+//ï¿½}ï¿½Nï¿½ï¿½ï¿½ï¿½`
 #define SAFE_RELEASE(x) if(x){x->Release(); x=0;}
 #define SAFE_DELETE(x) if(x){delete x; x=0;}
 #define SAFE_DELETE_ARRAY(p){ if(p){ delete[] (p);   (p)=nullptr;}}

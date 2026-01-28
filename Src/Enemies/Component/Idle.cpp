@@ -1,5 +1,4 @@
 #include "Idle.h"
-
 #include "../System/EnemyRegistr.h"
 
 CIdle::CIdle(CEnemyBase* e)
