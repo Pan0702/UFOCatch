@@ -535,6 +535,7 @@
     <ClInclude Include="Src\Enemies\AnimalDog\Dog.h" />
     <ClInclude Include="Src\Enemies\AnimalDog\State\DogState.h" />
     <ClInclude Include="Src\Enemies\Component\ComponentBase.h" />
+    <ClInclude Include="Src\Enemies\Component\Destroy.h" />
     <ClInclude Include="Src\Enemies\Component\Idle.h" />
     <ClInclude Include="Src\Enemies\Component\Suction.h" />
     <ClInclude Include="Src\Enemies\Component\Walk.h" />
@@ -907,6 +908,7 @@
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="Src\Enemies\Component\ComponentBase.cpp" />
+    <ClCompile Include="Src\Enemies\Component\Destroy.cpp" />
     <ClCompile Include="Src\Enemies\Component\Idle.cpp" />
     <ClCompile Include="Src\Enemies\Component\Suction.cpp" />
     <ClCompile Include="Src\Enemies\Component\Walk.cpp" />

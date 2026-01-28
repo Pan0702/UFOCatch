@@ -18,11 +18,12 @@ private:
     /// @return 有効な移動パラメータが見つかった場  合true、 最大試行回数を超えた場合false
     bool CalcRandomMove();
     
+    /*
     ///  回転・移動後の位置が境界内に収まるかチェック
     /// @param areaSize エリアのサイズ
     /// @return 境界内ならtrue、境界外ならfalse
     bool BoundaryCheck(const VECTOR2& areaSize) const;
-    
+    */
     ///Walkのアニメーションを1.0fの速度で再生する
     void PlayWalkAnimation();
     

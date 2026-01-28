@@ -43,8 +43,5 @@ CCubeDestroy::CCubeDestroy(CADog* cube)
 
 void CCubeDestroy::Enter(Type type)
 {
-    ObjectManager::FindGameObject<CGameInstance>()->AddScore(1000);
-    ObjectManager::FindGameObject<CGameInstance>()->AddCapture(1);
-    ObjectManager::FindGameObject<CPlayer>()->AddExp(1);
-    m_pOwner->DestroyMe();
+
 }
