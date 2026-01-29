@@ -7,10 +7,10 @@ class CADog;
 class CCubeBase : public CBaseState
 {
 public:
-    CCubeBase(CADog* cube, Type type);
+    CCubeBase(CADog* cube, State type);
     ~CCubeBase();
     CADog* m_pOwner;
-    const Type m_kType;
+    const State m_kType;
 
 protected:
     void NextState();
@@ -20,7 +20,7 @@ class CCubeIdleState : public CCubeBase
 {
 public:
     CCubeIdleState(CADog* cube);
-    void Enter(Type type) override;
+    void Enter(State type) override;
     void Update() override;
 
 private:
@@ -42,7 +42,7 @@ class CCubeWalkState : public CCubeBase
 {
 public:
     CCubeWalkState(CADog* cube);
-    void Enter(Type type) override;
+    void Enter(State type) override;
     void Update() override;
 
 private:
@@ -72,5 +72,5 @@ class CCubeDestroy : public CCubeBase
 {
 public:
     CCubeDestroy(CADog* cube);
-    void Enter(Type type) override;
+    void Enter(State type) override;
 };

@@ -5,7 +5,7 @@
 class CIdleHuman : public CComponentBase
 {
 public:
-    CIdleHuman(CHuman* e, float animEndFrame);
+    CIdleHuman(CHuman* e);
     void Enter() override;
     void Update() override;
 
@@ -31,7 +31,6 @@ private:
     int frameCnt = 0;
     float currentAngle = 0;
     float animationTime = 0;
-    const float m_endFrame; 
 
     // CIdleHuman専用のオーナー（CHuman型） //
     CHuman* m_pOwner;

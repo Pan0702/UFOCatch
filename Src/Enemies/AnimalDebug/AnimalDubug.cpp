@@ -22,11 +22,11 @@ CADebug::CADebug(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     m_pGround = ObjectManager::FindGameObject<CGround>();
     
-    m_components[CBaseState::Type::IDLE] = new CIdle(this,570.0f);
-    m_components[CBaseState::Type::WALK] = new CWalk(this, 2.0f);
-    m_components[CBaseState::Type::SUCTION] = new CSuction(this);
-    m_components[CBaseState::Type::DESTROY] = new CDestroy(this,100,1);
-    m_pState->Enter(CBaseState::Type::WALK);
+    m_components[CBaseState::State::IDLE] = new CIdle(this,570.0f);
+    m_components[CBaseState::State::WALK] = new CWalk(this, 2.0f);
+    m_components[CBaseState::State::SUCTION] = new CSuction(this);
+    m_components[CBaseState::State::DESTROY] = new CDestroy(this,100,1);
+    m_pState->Enter(CBaseState::State::WALK);
     m_pBBox = CreateBBox();
 }
 
@@ -45,7 +45,7 @@ void CADebug::Update()
 
     // 削除フラグが立っている（CEnemyBase::Updateで処理がスキップされた）場合は、
     // これ以上の処理（衝突判定など）を行わない
-    if (m_pState != nullptr && m_pComponent == m_components[CBaseState::Type::DESTROY])
+    if (m_pState != nullptr && m_pComponent == m_components[CBaseState::State::DESTROY])
     {
         return;
     }
@@ -72,5 +72,5 @@ const VECTOR3& CADebug::SuctionSpeed() const
 
 bool CADebug::ShouldApplyGravity() const
 {
-    return m_pComponent != m_components.at(CBaseState::Type::SUCTION);
+    return m_pComponent != m_components.at(CBaseState::State::SUCTION);
 }

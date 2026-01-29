@@ -1,6 +1,5 @@
 #pragma once
 #include <unordered_map>
-#include <vector>
 
 #include "StateBase.h"
 #include "../../Common/Object3D.h"
@@ -12,9 +11,8 @@ class CEnemyBase : public Object3D
 {
 public:
     CEnemyBase();
-    virtual void SetState(CBaseState::Type type);
-
     ~CEnemyBase();
+    virtual void SetState(CBaseState::State type);
     void Update() override;
     bool GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const;
 
@@ -27,7 +25,7 @@ public:
     // ステージなどからの強制的な位置更新用
     void AddPosition(const VECTOR3& addPos) { transform.position += addPos; }
     
-    CComponentBase* GetComponent(CBaseState::Type type) const;
+    CComponentBase* GetComponent(CBaseState::State type) const;
     virtual const VECTOR3& SuctionSpeed() const;
     void IsSuctionCheck();
 protected:
@@ -41,17 +39,16 @@ protected:
 
     // OBB衝突判定と押し戻し処理
     void ResolveOBBCollisions();  // 周辺エネミーとのOBB衝突を検出し、押し戻し処理を実行
-    virtual void CalcApplyPushback(CEnemyBase* other);  // 衝突相手との押し戻しベクトルを計算して適用
+    virtual void CalcApplyPushback(CEnemyBase* other);  // 衝突相手との押し戻しベクトルを計算して適用//
 
     // ステージオブジェクトとの衝突判定と押し戻し処理
-    void ResolveStageCollisions();  // ステージオブジェクトとのOBB衝突を検出し、押し戻し処理を実行
-    
+    void ResolveStageCollisions();  // ステージオブジェクトとのOBB衝突を検出し、押し戻し処理を実行//
 
-    std::unordered_map<CBaseState::Type, CComponentBase*> m_components;
+    std::unordered_map<CBaseState::State, CComponentBase*> m_components;
     CComponentBase* m_pComponent = nullptr;
     CBaseState* m_pState = nullptr;
     CBBox* m_pBBox = nullptr;
-    CGround* m_pGround;
+    CGround* m_pGround = nullptr;
     float m_velocityY;
     VECTOR2 m_areaSize;
 };

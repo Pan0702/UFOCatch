@@ -6,10 +6,10 @@ class CAnimalChicken;
 class CChickenBase : public CBaseState
 {
 public:
-    CChickenBase(CAnimalChicken* chicken, Type type);
+    CChickenBase(CAnimalChicken* chicken, State type);
     ~CChickenBase();
     CAnimalChicken* m_pOwner;
-    const Type m_kType;
+    const State m_kType;
 
 protected:
     void NextState();
@@ -19,7 +19,7 @@ class CChickenIdleState : public CChickenBase
 {
 public:
     CChickenIdleState(CAnimalChicken* chicken);
-    void Enter(Type type) override;
+    void Enter(State type) override;
     void Update() override;
 
 private:
@@ -36,7 +36,7 @@ class CChickenWalkState : public CChickenBase
 {
 public:
     CChickenWalkState(CAnimalChicken* chicken);
-    void Enter(Type type) override;
+    void Enter(State type) override;
     void Update() override;
 
 private:
@@ -55,7 +55,7 @@ class CChickenSuction : public CChickenBase
 {
 public:
     CChickenSuction(CAnimalChicken* chicken);
-    void Enter(Type type) override;
+    void Enter(State type) override;
     void Update() override;
 
 private:
@@ -67,5 +67,5 @@ class CChickenDestroy : public CChickenBase
 {
 public:
     CChickenDestroy(CAnimalChicken* chicken);
-    void Enter(Type type) override;
+    void Enter(State type) override;
 };

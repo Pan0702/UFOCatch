@@ -25,12 +25,12 @@ CAnimalChicken::CAnimalChicken(const VECTOR3& iniPos, const VECTOR2& moveAreaSiz
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     m_pGround = ObjectManager::FindGameObject<CGround>();
 
-    m_components[CBaseState::Type::IDLE] = new CIdle(this,360.0f);
-    m_components[CBaseState::Type::WALK] = new CWalk(this, 1.2f);
-    m_components[CBaseState::Type::SUCTION] = new CSuction(this);
-    m_components[CBaseState::Type::DESTROY] = new CDestroy(this,150,1.5f);
-    m_pComponent = m_components[CBaseState::Type::WALK];
-    m_pState->Enter(CBaseState::Type::WALK);
+    m_components[CBaseState::State::IDLE] = new CIdle(this,360.0f);
+    m_components[CBaseState::State::WALK] = new CWalk(this, 1.2f);
+    m_components[CBaseState::State::SUCTION] = new CSuction(this);
+    m_components[CBaseState::State::DESTROY] = new CDestroy(this,150,1.5f);
+    m_pComponent = m_components[CBaseState::State::WALK];
+    m_pState->Enter(CBaseState::State::WALK);
     m_pBBox = CreateBBox();
     m_pCry = new CXAudioSource(_T("data/Sound/ChickenCry.wav"));
 }
@@ -54,7 +54,7 @@ void CAnimalChicken::Update()
 
     CEnemyBase::Update();
 
-    if (m_pState != nullptr && m_pComponent == m_components[CBaseState::Type::DESTROY])
+    if (m_pState != nullptr && m_pComponent == m_components[CBaseState::State::DESTROY])
     {
         return;
     }
@@ -78,7 +78,7 @@ void CAnimalChicken::IsSuctionCheck()
     if (m_pPlayer == nullptr)return;
     if (m_pPlayer->IsWithSuctionCone(transform.position) && m_pPlayer->GetIsSuckUp())
     {
-        SetState(CBaseState::Type::SUCTION);
+        SetState(CBaseState::State::SUCTION);
     }
 }
 
@@ -90,5 +90,5 @@ const VECTOR3& CAnimalChicken::SuctionSpeed() const
 
 bool CAnimalChicken::ShouldApplyGravity() const
 {
-    return m_pComponent != m_components.at(CBaseState::Type::SUCTION);
+    return m_pComponent != m_components.at(CBaseState::State::SUCTION);
 }

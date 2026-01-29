@@ -7,8 +7,8 @@
 #include "../../Human/Human.h"
 
 
-CChickenBase::CChickenBase(CAnimalChicken* chicken, Type type)
-    : m_pOwner(chicken), m_kType(type)
+CChickenBase::CChickenBase(CAnimalChicken* chicken, State type)
+    : CBaseState(chicken), m_pOwner(chicken), m_kType(type)
 {
 }
 
@@ -29,13 +29,13 @@ void CChickenBase::NextState()
 ///Idle
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CChickenIdleState::CChickenIdleState(CAnimalChicken* chicken)
-    : CChickenBase(chicken, Type::IDLE)
+    : CChickenBase(chicken, State::IDLE)
       , timerCount(0)
       , stateIdle(0)
 {
 }
 
-void CChickenIdleState::Enter(Type type)
+void CChickenIdleState::Enter(State type)
 {
     stateIdle = static_cast<int>(std::round(Randomf(0, 1)));
     if (stateIdle == 1)
@@ -87,12 +87,12 @@ void CChickenIdleState::IdleAnim()
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CChickenWalkState::CChickenWalkState(CAnimalChicken* chicken)
-    : CChickenBase(chicken, Type::WALK)
+    : CChickenBase(chicken, State::WALK)
       , BASE_POS(0, 0, 0)
 {
 }
 
-void CChickenWalkState::Enter(Type type)
+void CChickenWalkState::Enter(State type)
 {
     bool boundaryFlag = false;
     int retryCount = 0;
@@ -163,12 +163,12 @@ void CChickenWalkState::Update()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CChickenSuction::CChickenSuction(CAnimalChicken* chicken)
-    : CChickenBase(chicken, Type::SUCTION)
+    : CChickenBase(chicken, State::SUCTION)
       , m_distanceFromObjectToUFO(VECTOR3(0, 0, 0))
 {
 }
 
-void CChickenSuction::Enter(Type type)
+void CChickenSuction::Enter(State type)
 {
    m_pOwner->GetAudio()->Play();
 
@@ -197,7 +197,7 @@ void CChickenSuction::Update()
         {
             if (m_pPlayer->GetTransform().position.y - 0.15f <= m_pOwner->GetTransform().position.y )
             {
-                m_pOwner->SetState(Type::DESTROY);
+                m_pOwner->SetState(State::DESTROY);
             }
             else
             {
@@ -213,11 +213,11 @@ void CChickenSuction::Update()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CChickenDestroy::CChickenDestroy(CAnimalChicken* chicken)
-    : CChickenBase(chicken, Type::DESTROY)
+    : CChickenBase(chicken, State::DESTROY)
 {
 }
 
-void CChickenDestroy::Enter(Type type)
+void CChickenDestroy::Enter(State type)
 {
     ObjectManager::FindGameObject<CGameInstance>()->AddScore(150);
     ObjectManager::FindGameObject<CGameInstance>()->AddCapture(1);

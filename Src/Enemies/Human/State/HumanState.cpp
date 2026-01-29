@@ -6,8 +6,8 @@
 #include "../../System/EnemyRegistr.h"
 
 
-CHumanBase::CHumanBase(CHuman* human, Type type)
-    :m_pOwner(human), m_kType(type)
+CHumanBase::CHumanBase(CHuman* human, State type)
+    : CBaseState(human), m_pOwner(human), m_kType(type)
 {
 }
 
@@ -24,11 +24,11 @@ void CHumanBase::NextState()
     m_pOwner->SetState(NextStatePop());
 }
 CHumanIdleState::CHumanIdleState(CHuman* human)
-    : CHumanBase(human, Type::IDLE)
+    : CHumanBase(human, State::IDLE)
 {
 }
 
-void CHumanIdleState::Enter(Type type)
+void CHumanIdleState::Enter(State type)
 {
 
 }
@@ -72,11 +72,11 @@ void CHumanIdleState::Idle()
 
 
 CHumanWalkState::CHumanWalkState(CHuman* human)
-    : CHumanBase(human, Type::IDLE)
+    : CHumanBase(human, State::IDLE)
 {
 }
 
-void CHumanWalkState::Enter(Type type)
+void CHumanWalkState::Enter(State type)
 {
     bool boundaryFlag = false;
     int retryCount = 0;
@@ -140,23 +140,4 @@ void CHumanWalkState::Update()
     }
 }
 
-CHumanFindPlayer::CHumanFindPlayer(CHuman* human)
-    : CHumanBase(human, Type::FIND_PLAYER)
-{
-}
 
-void CHumanFindPlayer::Enter(Type type)
-{
-    ObjectManager::FindGameObject<CPlayerHP>()->SubHP();
-    m_pOwner->GetAnimator()->MergePlay(A_IDEL);
-}
-
-void CHumanFindPlayer::Update()
-{
-   if (not m_pOwner->GetInSight())
-   {
-       m_pOwner->SetAngle(0);
-       m_pOwner->SetState(Type::WALK);
-   }
-    
-}

@@ -28,7 +28,7 @@ void CCubeBase::NextState()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CCubeSuction::CCubeSuction(CADog* cube)
-    : CCubeBase(cube, Type::SUCTION)
+    : CCubeBase(cube, State::SUCTION)
       , m_distanceFromObjectToUFO(VECTOR3(0, 0, 0))
 {
 }
@@ -37,11 +37,11 @@ CCubeSuction::CCubeSuction(CADog* cube)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CCubeDestroy::CCubeDestroy(CADog* cube)
-    : CCubeBase(cube, Type::DESTROY)
+    : CCubeBase(cube, State::DESTROY)
 {
 }
 
-void CCubeDestroy::Enter(Type type)
+void CCubeDestroy::Enter(State type)
 {
 
 }

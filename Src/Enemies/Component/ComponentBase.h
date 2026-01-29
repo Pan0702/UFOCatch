@@ -2,6 +2,8 @@
 #include "../../Player/Player.h"
 #include "../Base/EnemyBase.h"
 #include "../System/EnemyRegistr.h"
+class CEnemyBase;
+
 class CComponentBase
 {
 public:

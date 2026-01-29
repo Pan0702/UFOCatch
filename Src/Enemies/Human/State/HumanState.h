@@ -6,10 +6,10 @@ class CHuman;
 class CHumanBase : public CBaseState
 {
 public:
-    CHumanBase(CHuman* cube, Type type);
+    CHumanBase(CHuman* cube, State type);
     ~CHumanBase();
     CHuman* m_pOwner;
-    const Type m_kType;
+    const State m_kType;
 
 protected:
     void NextState();
@@ -19,7 +19,7 @@ class CHumanIdleState : public CHumanBase
 {
 public:
     CHumanIdleState(CHuman* human);
-    void Enter(Type type) override;
+    void Enter(State type) override;
     void Update() override;
 
 private:
@@ -39,7 +39,7 @@ class CHumanWalkState : public CHumanBase
 {
 public:
     CHumanWalkState(CHuman* human);
-    void Enter(Type type) override;
+    void Enter(State type) override;
     void Update() override;
 
 private:
@@ -56,6 +56,6 @@ class CHumanFindPlayer : public CHumanBase
 {
 public:
     CHumanFindPlayer(CHuman* human);
-    void Enter(Type type) override;
+    void Enter(State type) override;
     void Update() override;
 };
