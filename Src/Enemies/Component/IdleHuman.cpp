@@ -6,8 +6,7 @@
 // コンストラクタ
 // @param e このコンポーネントの所有者（人間キャラクター）
 ////////////////////
-CIdleHuman::CIdleHuman(CHuman* e,float animEndFrame)
-    :m_endFrame(animEndFrame)
+CIdleHuman::CIdleHuman(CHuman* e)
 {
     m_pOwner = e;
 }
@@ -203,7 +202,7 @@ float CIdleHuman::GetCurrentFrame() const
 ////////////////////
 bool CIdleHuman::AnimationFinish() const
 {
-    if (m_pOwner->GetAnimator()->CurrentFrame() >= m_endFrame)
+    if (m_pOwner->GetAnimator()->Finished())
     {
         return true;
     }

@@ -2,16 +2,14 @@
 
 #include "../../Player/Player.h"
 #include "../../Stage/Ground.h"
-#include <queue>
-#include <thread>
 
 #include "../System/EnemyRegistr.h"
 #include "../Base/StateBase.h"
-#include "State/DogState.h"
 #include "../../Utils/BBox.h"
 #include "../Component/Idle.h"
 #include "../Component/Walk.h"
 #include "../Component/Suction.h"
+#include "../Component/Destroy.h"
 
 CADog::CADog(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos), m_areaSize(moveAreaSize)
@@ -25,10 +23,12 @@ CADog::CADog(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     m_pGround = ObjectManager::FindGameObject<CGround>();
     
-    m_components[CBaseState::Type::IDLE] = new CIdle(this,570.0f);
-    m_components[CBaseState::Type::WALK] = new CWalk(this, 2.0f);
-    m_components[CBaseState::Type::SUCTION] = new CSuction(this);
-    m_pState->Enter(CBaseState::Type::WALK);
+    m_components[CBaseState::State::IDLE] = new CIdle(this,570.0f);
+    m_components[CBaseState::State::WALK] = new CWalk(this, 2.0f);
+    m_components[CBaseState::State::SUCTION] = new CSuction(this);
+    m_components[CBaseState::State::DESTROY] = new CDestroy(this,100,1.0f);
+    m_pComponent = m_components[CBaseState::State::WALK];
+    m_pState->Enter(CBaseState::State::WALK);
     m_pBBox = CreateBBox();
 }
 
@@ -53,7 +53,7 @@ void CADog::Update()
 
     // 削除フラグが立っている（CEnemyBase::Updateで処理がスキップされた）場合は、
     // これ以上の処理（衝突判定など）を行わない
-    if (m_pState != nullptr && m_pComponent == m_components[CBaseState::Type::DESTROY])
+    if (m_pState != nullptr && m_pComponent == m_components[CBaseState::State::DESTROY])
     {
         return;
     }
@@ -77,7 +77,7 @@ void CADog::IsSuctionCheck()
     if (m_pPlayer == nullptr)return;
     if (m_pPlayer->IsWithSuctionCone(transform.position /* + VECTOR3(0, m_maxSize.y, 0)*/) && m_pPlayer->GetIsSuckUp())
     {
-        SetState(CBaseState::Type::SUCTION);
+        SetState(CBaseState::State::SUCTION);
     }
 }
 
@@ -89,5 +89,5 @@ const VECTOR3& CADog::SuctionSpeed() const
 
 bool CADog::ShouldApplyGravity() const
 {
-    return m_pComponent != m_components.at(CBaseState::Type::SUCTION);
+    return m_pComponent != m_components.at(CBaseState::State::SUCTION);
 }

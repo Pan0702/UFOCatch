@@ -10,9 +10,10 @@ namespace
     static constexpr float GROUND_CHECK_OFFSET = 0.1f;
 }
 CEnemyBase::CEnemyBase()
-    : m_velocityY(0.0f), m_pGround(nullptr)
+    : m_velocityY(0.0f)
 {
 }
+
 
 CBBox* CEnemyBase::CreateBBox()
 {
@@ -24,10 +25,11 @@ CBBox* CEnemyBase::CreateBBox()
 }
 
 
-void CEnemyBase::SetState(CBaseState::Type type)
+void CEnemyBase::SetState(CBaseState::State type)
 {
     m_pState->Exit();
-    if (type == CBaseState::Type::DESTROY)return;
+    if (type == CBaseState::State::DESTROY)return;
+    m_pComponent = m_components[type];
     m_pState->Enter(type);
 }
 
@@ -35,13 +37,11 @@ CEnemyBase::~CEnemyBase()
 {
     SAFE_DELETE(m_pBBox);
     SAFE_DELETE(m_pState);
-    SAFE_DELETE(m_pGround);
-    
 
     for (auto& component : m_components)
-        {
+    {
         SAFE_DELETE(component.second);
-        }
+    }
     
 }
 
@@ -257,7 +257,7 @@ void CEnemyBase::ResolveStageCollisions()
     }
 }
 
-CComponentBase* CEnemyBase::GetComponent(CBaseState::Type type) const
+CComponentBase* CEnemyBase::GetComponent(CBaseState::State type) const
 {
     auto itr = m_components.find(type);
     if (itr == m_components.end())
@@ -280,7 +280,7 @@ void CEnemyBase::IsSuctionCheck()
     pos.y += m_pMesh->m_vMax.y; 
     if (pl->IsWithSuctionCone(pos) && pl->GetIsSuckUp())
     {
-        SetState(CBaseState::Type::SUCTION);
+        SetState(CBaseState::State::SUCTION);
     }
 }
 

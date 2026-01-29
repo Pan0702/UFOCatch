@@ -1,26 +1,32 @@
 #pragma once
 #include <queue>
-#include "EnemyBase.h"
 
+
+class CEnemyBase;
+class CComponentBase;
+namespace
+{
+    
+}
 class CBaseState
 {
 public:
     CBaseState(CEnemyBase* e);
     ~CBaseState();
 
-    enum class Type
+    enum State
     {
-        IDLE,
+        IDLE = 0,
         WALK,
         SUCTION,
         UNIQUEACTION,
         DESTROY,
         SEARCH,
         FIND_PLAYER,
-        ESCAPE
+        ESCAPE,
     };
 
-    virtual void Enter(Type type);
+    virtual void Enter(State type);
     virtual void Update();
     virtual void Exit();
 
@@ -32,18 +38,18 @@ protected:
     ///
     ///配列から行動を取り出し、それをセット
     ///
-    CBaseState::Type NextStatePop();
+    CBaseState::State NextStatePop();
 
     static float ClampRotateY(const float& angle);
     CEnemyBase* m_pEnemy;
-    Type m_kType;
-    CComponentBase* m_pComponent = nullptr;
+    State m_kType;
+    CComponentBase* m_pComponent;
     
     
 private:
 
     static constexpr int NEXT_STATE_MAX_SIZE = 3;
-    std::queue<CBaseState::Type> actionQueue;
+    std::queue<CBaseState::State> actionQueue;
     
 
 };

@@ -7,6 +7,9 @@
 #include "../System/EnemyRegistr.h"
 #include "../../Utils/BBox.h"
 #include "../../Stage/Ground.h"
+#include "../Component/Find.h"
+#include "../Component/IdleHuman.h"
+#include "../Component/Walk.h"
 
 namespace
 {
@@ -24,11 +27,12 @@ CHuman::CHuman(VECTOR3 pos, VECTOR2 areaSize)
     m_dwColor = 100;
     angle = 0.0f;
 
-    m_states[CBaseState::Type::IDLE] = new CHumanIdleState(this);
-    m_states[CBaseState::Type::WALK] = new CHumanWalkState(this);
-    m_states[CBaseState::Type::FIND_PLAYER] = new CHumanFindPlayer(this);
-    m_pState = m_states[CBaseState::Type::IDLE];
-    m_pState->Enter(TODO);
+    m_components[CBaseState::State::IDLE] = new CIdleHuman(this);
+    m_components[CBaseState::State::WALK] = new CWalk(this,1.2f);
+    m_components[CBaseState::State::FIND_PLAYER] = new CFind(this);
+    m_pComponent = m_components[CBaseState::State::IDLE];
+    m_pState = new CBaseState(this);
+    m_pState->Enter(CBaseState::State::IDLE);
     m_pState->SetNextState();
     m_pFunShape = new CFunShape();
     m_pGround = ObjectManager::FindGameObject<CGround>();
@@ -37,13 +41,13 @@ CHuman::CHuman(VECTOR3 pos, VECTOR2 areaSize)
 
 CHuman::~CHuman()
 {
-    for (auto& state : m_states)
+    for (auto& state : m_components)
     {
         if (state.second == nullptr) continue;
         SAFE_DELETE(state.second);
         state.second = nullptr;
     }
-    m_states.clear();
+    m_components.clear();
 }
 
 void CHuman::Update()
@@ -51,7 +55,7 @@ void CHuman::Update()
     CEnemyBase::Update();
 
     // 削除フラグが立っている場合は、これ以上の処理を行わない
-    if (m_pState != nullptr && m_pState == m_states[CBaseState::Type::DESTROY])
+    if (m_pState != nullptr && m_pComponent == m_components[CBaseState::State::DESTROY])
     {
         return;
     }
@@ -65,7 +69,7 @@ void CHuman::Update()
     if (m_inSight)
     {
         m_dwColor = 255;
-        SetState(CBaseState::Type::FIND_PLAYER);
+        SetState(CBaseState::State::FIND_PLAYER);
     }
     else
     {

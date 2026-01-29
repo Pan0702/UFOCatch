@@ -14,12 +14,12 @@ CBaseState::~CBaseState()
     SAFE_DELETE(m_pEnemy)
 }
 
-void CBaseState::Enter(Type type)
+void CBaseState::Enter(State type)
 {
     m_pComponent = m_pEnemy->GetComponent(type);
     if (m_pComponent == nullptr)
     {
-        MessageBox(nullptr, STR(m_kType), _T(STR(m_kType)"ComponentがNullです"), MB_OK);
+        MessageBox(nullptr, STR(m_kType), _T(STR(m_kType)"Component is Null"), MB_OK);
     }
     m_pComponent->Enter();
 }
@@ -39,12 +39,12 @@ void CBaseState::Exit()
     m_pComponent = nullptr;
 }
 
-CBaseState::Type CBaseState::NextStatePop()
+CBaseState::State CBaseState::NextStatePop()
 {
     const CSuction* s = ObjectManager::FindGameObject<CSuction>();
-    if (m_pComponent == s)return Type::SUCTION;
+    if (m_pComponent == s)return State::SUCTION;
     SetNextState();
-    Type type = actionQueue.front();
+    State type = actionQueue.front();
     actionQueue.pop();
     return type;
 }
@@ -75,11 +75,11 @@ void CBaseState::SetNextState()
         float randomNum = Randomf(0, 1);
         if (randomNum > 0.3f)
         {
-            actionQueue.push(Type::WALK);
+            actionQueue.push(State::WALK);
         }
         else
         {
-            actionQueue.push(Type::IDLE);
+            actionQueue.push(State::IDLE);
         }
     }
 }
