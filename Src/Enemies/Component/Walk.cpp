@@ -1,10 +1,11 @@
 #include "Walk.h"
 #include "../Base/EnemyBase.h"
+#include "../Human/Human.h"
 
 CWalk::CWalk(CEnemyBase* e, float speed)
 {
     m_pOwner = e;
-    m_moveAmount = speed;
+    m_moveSpeed = speed;
 }
 
 void CWalk::Enter()
@@ -22,7 +23,6 @@ void CWalk::Enter()
     // 「移動しない（0）」にして、回転だけはランダムに与える
     if (!foundValidMove)
     {
-        m_moveAmount = 0.0f;
         m_turnAmount = Randomf(-kTurnAngleDeg, kTurnAngleDeg) * DegToRad;
     }
 
@@ -53,7 +53,7 @@ bool CWalk::CalcRandomMove()
         m_turnAmount = Randomf(-kTurnAngleDeg,kTurnAngleDeg) * DegToRad;
         
         // 移動距離：[1.0, 3.5] をランダムに選ぶ
-        m_moveAmount = Randomf(kMinMove,kMaxMove);
+          m_moveAmount = Randomf(kMinMove,kMaxMove);
 
         VECTOR3 tmpPos = m_position + VECTOR3(0, 0,
                                       m_moveAmount) * XMMatrixRotationY(m_turnAmount);
@@ -86,7 +86,7 @@ bool CWalk::CalcRandomMove()
 void CWalk::PlayWalkAnimation()
 {
     Animator* animator = m_pOwner->GetAnimator();
-    animator->MergePlay(AnimationType::A_IDEL);
+    animator->MergePlay(AnimationType::A_WALK);
     animator->SetPlaySpeed(1.0f);
 }
 
@@ -106,16 +106,19 @@ void CWalk::Update()
         m_pOwner->SetRotateY(ClampRotateY(m_currentRotation));
     }
 
-    float moveAmount1frame = m_moveSpeed * SceneManager::DeltaTime();
     m_pOwner->AddPosition(
-        VECTOR3(0, 0, moveAmount1frame) * XMMatrixRotationY(m_currentRotation));
-    m_totalPosZMoveAmount += moveAmount1frame;
+        VECTOR3(0, 0, m_moveSpeed * SceneManager::DeltaTime()) * XMMatrixRotationY(m_currentRotation));
+    m_totalPosZMoveAmount += m_moveSpeed * SceneManager::DeltaTime();
 
     if (m_totalPosZMoveAmount > m_moveAmount)
     {
         m_isFinish = true;
     }
-    m_pOwner->IsSuctionCheck();
+    CHuman* pHuman = ObjectManager::FindGameObject<CHuman>();
+    if (pHuman != m_pOwner)
+    {
+        m_pOwner->IsSuctionCheck();
+    }
 }
 
 float CWalk::ClampRotateY(float angle)

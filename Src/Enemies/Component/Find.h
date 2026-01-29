@@ -6,14 +6,11 @@ class CFind : public CComponentBase
 {
 public:
     CFind(CHuman* human);
-    ~CFind();
+    ~CFind() = default;
 
     void Enter() override;
     void Update() override;
 
-    void Exit() override
-    {
-    }
 
 private:
     CHuman* m_pOwner;

@@ -7,8 +7,6 @@ public:
     CIdle(CEnemyBase* e, float endFrame);
     void Enter() override;
     void Update() override;
-
-    void Exit() override;
     
 private:
     void IdleStop();

@@ -24,12 +24,6 @@ void CIdle::Enter()
     }
     m_timerCnt = 0;
     m_isFinish = false;
-    
-    CHuman* human = ObjectManager::FindGameObject<CHuman>();
-    if (human == m_pOwner and human != nullptr)
-    {
-        m_isFinish = true;
-    }
 }
 
 void CIdle::Update()
@@ -45,6 +39,11 @@ void CIdle::Update()
     default:
         assert("error:IdleState");
         break;
+    }
+    CHuman* pHuman = ObjectManager::FindGameObject<CHuman>();
+    if (pHuman != m_pOwner)
+    {
+        m_pOwner->IsSuctionCheck();
     }
 }
 

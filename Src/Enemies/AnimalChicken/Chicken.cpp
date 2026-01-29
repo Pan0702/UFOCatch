@@ -30,6 +30,7 @@ CAnimalChicken::CAnimalChicken(const VECTOR3& iniPos, const VECTOR2& moveAreaSiz
     m_components[CBaseState::State::SUCTION] = new CSuction(this);
     m_components[CBaseState::State::DESTROY] = new CDestroy(this,150,1.5f);
     m_pComponent = m_components[CBaseState::State::WALK];
+    m_pState = new CBaseState(this);
     m_pState->Enter(CBaseState::State::WALK);
     m_pBBox = CreateBBox();
     m_pCry = new CXAudioSource(_T("data/Sound/ChickenCry.wav"));

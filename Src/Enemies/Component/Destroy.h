@@ -6,11 +6,7 @@ class CDestroy : public CComponentBase
 public:
     CDestroy(CEnemyBase* e, int score, float exp);
 
-    void Enter() override;
-    void Update() override{}
-    void Exit() override{}
-
-private:
+    void Enter() override;private:
     int m_score;
     float m_exp;
 };

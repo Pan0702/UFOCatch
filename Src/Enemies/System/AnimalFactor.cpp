@@ -13,7 +13,7 @@ CAnimalFactor::CAnimalFactor(float sizeX,float sizeZ)
     {
          f1 = Randomf(-sizeX,sizeX);
          f2 = Randomf(-sizeZ,sizeZ);
-        new CADog(VECTOR3(f1, 0, f2), VECTOR2(sizeX, sizeZ));
+        new CADog(VECTOR3(f1, 3, f2), VECTOR2(sizeX, sizeZ));
     }
     f1 = Randomf(-sizeX,sizeX);
     f2 = Randomf(-sizeZ,sizeZ);

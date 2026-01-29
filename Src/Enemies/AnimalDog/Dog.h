@@ -17,18 +17,18 @@ public:
     ///
     ///吸い込み範囲にオブジェクトがいて、吸い込みボタンが押されていたらStateをSuctionにかえる
     ///
-    void IsSuctionCheck();
+    // void IsSuctionCheck();
 
     const VECTOR3& SuctionSpeed() const;
 
     void AddPos(const VECTOR3& pos) { transform.position = transform.position + pos; }
-    const VECTOR2& GetAreaSize() const { return m_areaSize; }
-    void SetRotateY(float r) { transform.rotation.y = r; }
+
 
 private:
     void Update() override;
-    void Draw() override;
+
     bool ShouldApplyGravity() const override;
+
 
 private:
     bool m_isInConeArea;

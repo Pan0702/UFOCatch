@@ -22,13 +22,15 @@ CADog::CADog(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     transform.position = iniPos;
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     m_pGround = ObjectManager::FindGameObject<CGround>();
-    
-    m_components[CBaseState::State::IDLE] = new CIdle(this,570.0f);
-    m_components[CBaseState::State::WALK] = new CWalk(this, 2.0f);
+
+    m_components[CBaseState::State::IDLE] = new CIdle(this, 570.0f);
+    m_components[CBaseState::State::WALK] = new CWalk(this, 1.2f);
     m_components[CBaseState::State::SUCTION] = new CSuction(this);
-    m_components[CBaseState::State::DESTROY] = new CDestroy(this,100,1.0f);
-    m_pComponent = m_components[CBaseState::State::WALK];
-    m_pState->Enter(CBaseState::State::WALK);
+    m_components[CBaseState::State::DESTROY] = new CDestroy(this, 100, 1.0f);
+    m_pComponent = m_components[CBaseState::State::IDLE];
+    m_pState = new CBaseState(this);
+    s = CBaseState::State::IDLE;
+    m_pState->Enter(CBaseState::State::IDLE);
     m_pBBox = CreateBBox();
 }
 
@@ -48,7 +50,8 @@ void CADog::Update()
     {
         m_isInConeArea = m_pPlayer->IsWithSuctionCone(transform.position);
     }
-
+    
+    //地面との当たり判定と、ComponentのUpdateを呼び出してる
     CEnemyBase::Update();
 
     // 削除フラグが立っている（CEnemyBase::Updateで処理がスキップされた）場合は、
@@ -58,31 +61,20 @@ void CADog::Update()
         return;
     }
 
-    m_pAnimator->Update();
-    m_pState->Update();
-    ResolveOBBCollisions();
-    UpdateBBox();
-
-    // ステージオブジェクトとの衝突判定と押し戻し（最後に実行）
-    ResolveStageCollisions();
 }
 
-void CADog::Draw()
-{
-    m_pMesh->Render(m_pAnimator, transform.matrix());
-}
-
-void CADog::IsSuctionCheck()
-{
-    if (m_pPlayer == nullptr)return;
-    if (m_pPlayer->IsWithSuctionCone(transform.position /* + VECTOR3(0, m_maxSize.y, 0)*/) && m_pPlayer->GetIsSuckUp())
-    {
-        SetState(CBaseState::State::SUCTION);
-    }
-}
+// void CADog::IsSuctionCheck()
+// {
+//     if (m_pPlayer == nullptr)return;
+//     if (m_pPlayer->IsWithSuctionCone(transform.position /* + VECTOR3(0, m_maxSize.y, 0)*/) && m_pPlayer->GetIsSuckUp())
+//     {
+//         SetState(CBaseState::State::SUCTION);
+//     }
+// }
 
 const VECTOR3& CADog::SuctionSpeed() const
 {
+    //1秒で吸い込む
     return m_pPlayer->
         CalcSuctionDisplacement(1, transform.position);
 }

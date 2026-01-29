@@ -7,7 +7,6 @@ public:
     CWalk(CEnemyBase* e, float speed);
     void Enter() override;
     void Update() override;
-    void Exit() override{}
 
 private:
     

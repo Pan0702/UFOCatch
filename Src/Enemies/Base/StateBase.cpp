@@ -1,5 +1,6 @@
 #include "StateBase.h"
 #include "../../Utils/MyMath.h"
+#include "../Component/Destroy.h"
 #include "../Component/Suction.h"
 # define STR(var) #var	
 
@@ -10,8 +11,6 @@ CBaseState::CBaseState(CEnemyBase* e)
 
 CBaseState::~CBaseState()
 {
-    SAFE_DELETE(m_pComponent);
-    SAFE_DELETE(m_pEnemy)
 }
 
 void CBaseState::Enter(State type)
@@ -26,6 +25,8 @@ void CBaseState::Enter(State type)
 
 void CBaseState::Update()
 {
+    if (m_pComponent == nullptr) return;
+
     m_pComponent->Update();
     if (m_pComponent->IsFinish())
     {
@@ -41,8 +42,13 @@ void CBaseState::Exit()
 
 CBaseState::State CBaseState::NextStatePop()
 {
-    const CSuction* s = ObjectManager::FindGameObject<CSuction>();
-    if (m_pComponent == s)return State::SUCTION;
+    // Suctionコンポーネントが完了している場合はDestroyに切り替える
+    CSuction* suctionComponent = dynamic_cast<CSuction*>(m_pEnemy->GetComponent(State::SUCTION));
+    if (suctionComponent != nullptr && suctionComponent->IsFinishSuction())
+    {
+        return State::DESTROY;
+    }
+
     SetNextState();
     State type = actionQueue.front();
     actionQueue.pop();

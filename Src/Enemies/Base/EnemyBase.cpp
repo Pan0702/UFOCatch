@@ -28,7 +28,7 @@ CBBox* CEnemyBase::CreateBBox()
 void CEnemyBase::SetState(CBaseState::State type)
 {
     m_pState->Exit();
-    if (type == CBaseState::State::DESTROY)return;
+    s = type;
     m_pComponent = m_components[type];
     m_pState->Enter(type);
 }
@@ -48,11 +48,16 @@ CEnemyBase::~CEnemyBase()
 void CEnemyBase::Update()
 {
     ApplyGravity();
-
+    m_pAnimator->Update();
     if (m_pState)
     {
         m_pState->Update();
     }
+    //近くにいるオブジェクトを取得し、当たっていたら押し戻す
+    ResolveOBBCollisions();
+    UpdateBBox();
+    // ステージオブジェクトとの衝突判定と押し戻し（最後に実行）
+    ResolveStageCollisions();
 }
 
 void CEnemyBase::ApplyGravity()

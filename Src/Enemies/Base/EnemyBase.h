@@ -20,7 +20,7 @@ public:
     std::vector<CEnemyBase*> GetNearbyEnemies() const;
     
     CBBox* GetBBox() const { return m_pBBox; }
-    void SetRotateY(float y)  { transform.position.y = y; }
+    void SetRotateY(float y)  { transform.rotation.y = y; }
     const VECTOR2& GetAreaSize() const { return m_areaSize; }
     // ステージなどからの強制的な位置更新用
     void AddPosition(const VECTOR3& addPos) { transform.position += addPos; }
@@ -51,4 +51,5 @@ protected:
     CGround* m_pGround = nullptr;
     float m_velocityY;
     VECTOR2 m_areaSize;
+    CBaseState::State s;
 };
