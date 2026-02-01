@@ -22,16 +22,22 @@ CADog::CADog(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     transform.position = iniPos;
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     m_pGround = ObjectManager::FindGameObject<CGround>();
+    InitStates();
+    m_pBBox = CreateBBox();
+}
 
+void CADog::InitStates()
+{
+    //アニメーションの最終フレーム : 570.0f //
     m_components[CBaseState::State::IDLE] = new CIdle(this, 570.0f);
+    //移動スピード : 1.2f//
     m_components[CBaseState::State::WALK] = new CWalk(this, 1.2f);
     m_components[CBaseState::State::SUCTION] = new CSuction(this);
+    //Score : 100 ,Exp : 1.0f //
     m_components[CBaseState::State::DESTROY] = new CDestroy(this, 100, 1.0f);
     m_pComponent = m_components[CBaseState::State::IDLE];
     m_pState = new CBaseState(this);
-    s = CBaseState::State::IDLE;
     m_pState->Enter(CBaseState::State::IDLE);
-    m_pBBox = CreateBBox();
 }
 
 CADog::~CADog()
@@ -79,7 +85,8 @@ const VECTOR3& CADog::SuctionSpeed() const
         CalcSuctionDisplacement(1, transform.position);
 }
 
+
 bool CADog::ShouldApplyGravity() const
 {
-    return m_pComponent != m_components.at(CBaseState::State::SUCTION);
+  return m_pComponent != m_components.at(CBaseState::State::SUCTION);
 }

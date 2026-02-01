@@ -51,5 +51,4 @@ protected:
     CGround* m_pGround = nullptr;
     float m_velocityY;
     VECTOR2 m_areaSize;
-    CBaseState::State s;
 };

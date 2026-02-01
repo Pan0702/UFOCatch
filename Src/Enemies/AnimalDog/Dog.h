@@ -21,12 +21,9 @@ public:
 
     const VECTOR3& SuctionSpeed() const;
 
-    void AddPos(const VECTOR3& pos) { transform.position = transform.position + pos; }
-
-
 private:
+    void InitStates();
     void Update() override;
-
     bool ShouldApplyGravity() const override;
 
 
@@ -35,5 +32,4 @@ private:
     const VECTOR3 m_basePos;
     const VECTOR2 m_areaSize;
     CPlayer* m_pPlayer;
-
 };
