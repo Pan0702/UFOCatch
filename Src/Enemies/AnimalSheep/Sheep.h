@@ -10,6 +10,7 @@ public:
     ~CSheep();
 
     const VECTOR3& SuctionSpeed() const;
+    void OnSuctionReleased();
 
 private:
     
@@ -26,4 +27,5 @@ private:
     const VECTOR2 m_areaSize;
     CPlayer* m_pPlayer;
     CAShepherdDog* m_pShepherdDog;
+    bool m_wasSuctioned;  // 前フレームで吸い込まれていたか
 };

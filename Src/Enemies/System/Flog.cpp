@@ -1,12 +1,12 @@
 #include "Flog.h"
 
-void Flog::RemoveFromArray(CSheep* sheep)
+void CFlog::RemoveFromArray(CSheep* sheep)
 {
     sheeps.erase(std::remove(sheeps.begin(), sheeps.end(), sheep), sheeps.end());
 }
 
 
-FlogInfo Flog::CalcFlogInfo(std::vector<CSheep*> sheeps) const
+FlogInfo CFlog::CalcFlogInfo(std::vector<CSheep*> sheeps) const
 {
     FlogInfo info;
     info.centroid = VECTOR3(0,0,0);

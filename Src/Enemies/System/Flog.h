@@ -10,11 +10,11 @@ struct FlogInfo
     CSheep* furthestSheep;  //一番遠くにいる羊のptr;
     float maxDistance;      //中心から一番遠くにいる動物までの距離
 };
-class Flog : public Object3D
+class CFlog : public Object3D
 {
 public:
-    Flog();
-    ~Flog();
+    CFlog();
+    ~CFlog();
     void Update() override;
     FlogInfo CalcFlogInfo(std::vector<CSheep*> sheeps) const;
 private:
