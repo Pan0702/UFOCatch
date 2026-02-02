@@ -27,6 +27,8 @@ public:
         ESCAPE,
         HERDED, // 2. 誘導されている（群れる・犬やUFOから逃げる）
         PANIC, // 3. パニック（犬がいなくなって暴走）
+        COLLECTING,
+        DRIVING,
     };
 
     virtual void Enter(State type);

@@ -38,3 +38,12 @@ bool CSheep::ShouldApplyGravity() const
 {
     return m_pComponent != m_components.at(CBaseState::State::SUCTION);
 }
+
+void CSheep::OnSuction()
+{
+    if (m_pShepherdDog != nullptr)
+    {
+        m_pShepherdDog->ChangeStateHerded(this);  // 犬に報告
+        m_pShepherdDog->StartHerding();  // 犬に群れ制御開始を指示
+    }
+}
