@@ -14,10 +14,9 @@ public:
     void Draw() override;
     void StartHerding();
     void RescueSheep(CSheep* sheep);
-
+    void PopRescueQueue();
     const std::vector<CSheep*>& GetSheeps() const { return m_sheeps; }
     const std::vector<CSheep*>& GetRescueQueue() const { return m_rescueQueue; }
-    void PopRescueQueue() { if (!m_rescueQueue.empty()) m_rescueQueue.erase(m_rescueQueue.begin()); }
     void AddSheep(CSheep* sheep) { m_sheeps.push_back(sheep); }
 private:
     std::vector<CSheep*> m_sheeps;

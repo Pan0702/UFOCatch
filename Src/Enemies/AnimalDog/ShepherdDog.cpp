@@ -14,6 +14,7 @@ CAShepherdDog::CAShepherdDog()
 
 void CAShepherdDog::Update()
 {
+    // 平常時は何もしない
     if (!m_isHerding) return;
 
     // 救助モード：救助待ちの羊がいる場合
@@ -46,11 +47,15 @@ void CAShepherdDog::Update()
     {
         SetState(CBaseState::State::COLLECTING);
     }
+    // まとまっている → Driving
     else
     {
         SetState(CBaseState::State::DRIVING);
     }
+    
+    CEnemyBase::Update();  // Component実行
 }
+
 
 void CAShepherdDog::ChangeStateHerded(const CSheep* sheep) const
 {
@@ -83,11 +88,13 @@ void CAShepherdDog::RescueSheep(CSheep* sheep)
     {
         m_rescueQueue.push_back(sheep);
     }
+    m_rescueQueue.push_back(sheep);
+}
 
-    // 現在救助中でなければ、すぐに救助モードに移行
-    if (!m_isRescuing)
+void CAShepherdDog::PopRescueQueue()
+{
+    if (!m_rescueQueue.empty())
     {
-        m_isRescuing = true;
-        SetState(CBaseState::State::COLLECTING);
+        m_rescueQueue.erase(m_rescueQueue.begin());
     }
 }
