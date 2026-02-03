@@ -1,6 +1,8 @@
 #include "Sheep.h"
 #include "../Component/Idle.h"
 #include "../Component/Suction.h"
+#include "../Component/Sheep.h"
+
 CSheep::CSheep(CAShepherdDog* shepherdDog,const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     :m_basePos(iniPos), m_areaSize(moveAreaSize), m_pShepherdDog(shepherdDog), m_wasSuctioned(false)
 {

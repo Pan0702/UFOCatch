@@ -14,3 +14,4 @@ void CDestroy::Enter()
     ObjectManager::FindGameObject<CPlayer>()->AddExp(m_exp);
     m_pOwner->DestroyMe();
 }
+

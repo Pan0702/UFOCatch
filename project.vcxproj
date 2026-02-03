@@ -540,6 +540,7 @@
     <ClInclude Include="Src\Enemies\Component\Find.h" />
     <ClInclude Include="Src\Enemies\Component\IdleHuman.h" />
     <ClInclude Include="Src\Enemies\Component\Idle.h" />
+    <ClInclude Include="Src\Enemies\Component\Sheep.h" />
     <ClInclude Include="Src\Enemies\Component\SheperDog.h" />
     <ClInclude Include="Src\Enemies\Component\Suction.h" />
     <ClInclude Include="Src\Enemies\Component\Walk.h" />
@@ -846,6 +847,7 @@
     <ClCompile Include="Src\Enemies\Component\Find.cpp" />
     <ClCompile Include="Src\Enemies\Component\IdleHuman.cpp" />
     <ClCompile Include="Src\Enemies\Component\Idle.cpp" />
+    <ClCompile Include="Src\Enemies\Component\Sheep.cpp" />
     <ClCompile Include="Src\Enemies\Component\SheperDog.cpp" />
     <ClCompile Include="Src\Enemies\Component\Suction.cpp" />
     <ClCompile Include="Src\Enemies\Component\Walk.cpp" />

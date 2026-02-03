@@ -4,9 +4,12 @@
 
 CAShepherdDog::CAShepherdDog()
 {
-    
-    m_components[CBaseState::State::COLLECTING] = new CCollectiong(this,2.0f);
-    m_components[CBaseState::State::DRIVING] = new CDriving(this,2.0f);
+    m_components[CBaseState::State::COLLECTING] = new CCollectiong(this, 2.0f);
+    m_components[CBaseState::State::DRIVING] = new CDriving(this, 2.0f);
+    m_pComponent = m_components[CBaseState::State::RESCUE] = new CRescue(this);
+    m_pState = new CBaseState(this);
+    m_pComponent = m_components[CBaseState::State::IDLE];
+    m_pState->Enter(CBaseState::State::IDLE);
 }
 
 void CAShepherdDog::Update()
@@ -34,7 +37,7 @@ void CAShepherdDog::Update()
                 m_isRescuing = false;
             }
         }
-        return;  // 救助モード中は通常の群れ制御をしない
+        return; // 救助モード中は通常の群れ制御をしない
     }
 
     // 通常モード：群れ全体を管理
@@ -69,18 +72,21 @@ void CAShepherdDog::RescueSheep(CSheep* sheep)
     sheep->SetState(CBaseState::State::HERDED);
 
     // 群れ制御を開始（まだ開始していなければ）
-    if (!m_isHerding) {
+    if (!m_isHerding)
+    {
         m_isHerding = true;
     }
 
     // 救助待ちリストに追加（重複チェック）
     auto it = std::find(m_rescueQueue.begin(), m_rescueQueue.end(), sheep);
-    if (it == m_rescueQueue.end()) {
+    if (it == m_rescueQueue.end())
+    {
         m_rescueQueue.push_back(sheep);
     }
 
     // 現在救助中でなければ、すぐに救助モードに移行
-    if (!m_isRescuing) {
+    if (!m_isRescuing)
+    {
         m_isRescuing = true;
         SetState(CBaseState::State::COLLECTING);
     }

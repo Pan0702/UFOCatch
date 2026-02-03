@@ -29,6 +29,7 @@ public:
         PANIC, // 3. パニック（犬がいなくなって暴走）
         COLLECTING,
         DRIVING,
+        RESCUE,
     };
 
     virtual void Enter(State type);

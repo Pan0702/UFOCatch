@@ -18,8 +18,6 @@ private:
     void Update() override;
     bool ShouldApplyGravity() const override;
     void OnSuction();
-    
-
 
 private:
     bool m_isInConeArea;
