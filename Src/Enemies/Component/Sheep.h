@@ -17,7 +17,6 @@ private:
 };
 
 
-
 class CPanic : public CComponentBase
 {
 public:

@@ -1,5 +1,5 @@
 #include "Sheep.h"
-
+#include "../System/Flog.h"
 CHerded::CHerded(CSheep* sheep)
 {
     m_pOwner = sheep;
@@ -14,10 +14,10 @@ void CHerded::Enter()
 
 void CHerded::Update()
 {
-    VECTOR3 boidsForce = CalculateBoids();
-    VECTOR3 escapeForce = CalculateEscapeFromUFO();
+    const VECTOR3 boidsForce = CalculateBoids();
+    const VECTOR3 escapeForce = CalculateEscapeFromUFO();
     
-    VECTOR3 totalForce = boidsForce + escapeForce;
+    const VECTOR3 totalForce = boidsForce + escapeForce;
     if (totalForce.LengthSquare() > 0.0001f)
     {
         normalize(totalForce);

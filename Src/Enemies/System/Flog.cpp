@@ -3,14 +3,14 @@
 void CFlog::RemoveFromArray(const CSheep* sheep)
 {
     // Swap and Pop方式で高速削除
-    for (size_t i = 0; i < m_allSheeps.size(); ++i)
+    for (size_t i = 0; i < m_allSheep.size(); ++i)
     {
-        if (m_allSheeps[i] == sheep)
+        if (m_allSheep[i] == sheep)
         {
             // 最後の要素と入れ替え
-            m_allSheeps[i] = m_allSheeps.back();
+            m_allSheep[i] = m_allSheep.back();
             // 最後を削除
-            m_allSheeps.pop_back();
+            m_allSheep.pop_back();
             
             // メモリ解放
             SAFE_DELETE(sheep);
@@ -20,15 +20,19 @@ void CFlog::RemoveFromArray(const CSheep* sheep)
 }
 
 
+CFlog::CFlog() = default;
+
+CFlog::~CFlog() = default;
+
 void CFlog::Initialize()
 {
     // パラメータ
-    const int SHEEP_COUNT = 30;      // 羊の総数
-    const int DOG_COUNT = 3;         // 犬の数
-    const int SHEEP_PER_DOG = SHEEP_COUNT / DOG_COUNT;  // 1匹の犬あたりの羊数
+    constexpr  int SHEEP_COUNT = 30;      // 羊の総数
+    constexpr int DOG_COUNT = 3;         // 犬の数
+    constexpr int SHEEP_PER_DOG = SHEEP_COUNT / DOG_COUNT;  // 1匹の犬あたりの羊数
     
     VECTOR3 spawnCenter(0, 0, 0);    // 生成位置の中心
-    float spawnRadius = 10.0f;       // 生成範囲の半径
+
     VECTOR2 areaSize(50.0f, 50.0f);  // 移動可能エリア
     
     // 犬を生成
@@ -36,7 +40,7 @@ void CFlog::Initialize()
     {
         CAShepherdDog* dog = new CAShepherdDog();
         // 犬の初期位置設定など
-        m_allDogs.push_back(dog);
+        m_shepherdDogs.push_back(dog);
     }
     
     // 羊を生成して犬に割り振る
@@ -44,6 +48,7 @@ void CFlog::Initialize()
     {
         // ランダムな初期位置
         float angle = Randomf(0.0f, XM_2PI);
+        constexpr float spawnRadius = 10.0f;       // 生成範囲の半径
         float radius = Randomf(0.0f, spawnRadius);
         VECTOR3 iniPos = spawnCenter + VECTOR3(
             cosf(angle) * radius,
@@ -62,25 +67,25 @@ void CFlog::Initialize()
         
         // 相互参照を設定
         assignedDog->AddSheep(sheep);  // 犬に羊を追加
-        m_allSheeps.push_back(sheep);
+        m_allSheep.push_back(sheep);
     }
 }
 
-FlogInfo CFlog::CalcFlogInfo(const std::vector<CSheep*>& sheeps) const
+FlogInfo CFlog::CalcFlogInfo(const std::vector<CSheep*>& manySheep) const
 {
     FlogInfo info;
     info.centroid = VECTOR3(0,0,0);
     info.maxDistance = 0.0f;
     info.furthestSheep = nullptr;
     
-    if (sheeps.empty())return info;
-    for (auto sheep : sheeps)   
+    if (manySheep.empty())return info;
+    for (auto sheep : manySheep)   
     {  
         info.centroid += sheep->GetTransform().position;
     }
-    info.centroid /= sheeps.size();
+    info.centroid /= manySheep.size();
     
-    for (auto sheep : sheeps)
+    for (auto sheep : manySheep)
     {
         float distance = (info.centroid - sheep->GetTransform().position).LengthSquare();
         if (distance > Pow2(info.maxDistance))

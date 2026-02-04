@@ -2,13 +2,13 @@
 #include "../AnimalDog//ShepherdDog.h"  // パスは調整してください
 #include "../System/Flog.h"
 
-CCollectiong::CCollectiong(CAShepherdDog* dog, float speed)
+CCollecting::CCollecting(CAShepherdDog* dog, float speed)
     : m_moveSpeed(speed)
 {
     m_pOwner = dog;
 }
 
-void CCollectiong::Enter()
+void CCollecting::Enter()
 {
     m_isFinish = false;
 
@@ -27,7 +27,7 @@ void CCollectiong::Enter()
     m_targetPos = sheepPos - toCentroid * m_behindDistance;
 }
 
-void CCollectiong::Update()
+void CCollecting::Update()
 {
     // 目標位置へ移動
     VECTOR3 currentPos = m_pOwner->GetTransform().position;

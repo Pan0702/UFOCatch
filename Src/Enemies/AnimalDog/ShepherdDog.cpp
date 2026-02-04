@@ -1,12 +1,11 @@
 #include "ShepherdDog.h"
-
+#include "../System/Flog.h"
 #include "../Component/SheperDog.h"
-
 CAShepherdDog::CAShepherdDog()
 {
-    m_pMesh = ObjectManager::FindGameObject<>()->GetModel("Dog");
+    m_pMesh = ObjectManager::FindGameObject<CModelRegistry>()->GetMesh("Dog");
     //動くスピード2.0f
-    m_components[CBaseState::State::COLLECTING] = new CCollectiong(this, 2.0f);
+    m_components[CBaseState::State::COLLECTING] = new CCollecting(this, 2.0f);
     //動くスピード2.0f
     m_components[CBaseState::State::DRIVING] = new CDriving(this, 2.0f);
     //スコアが２００、経験値が2.0f
@@ -17,6 +16,8 @@ CAShepherdDog::CAShepherdDog()
     m_pState->Enter(CBaseState::State::IDLE);
 }
 
+CAShepherdDog::~CAShepherdDog() = default;
+
 void CAShepherdDog::Update()
 {
     // 平常時は何もしない
@@ -26,7 +27,7 @@ void CAShepherdDog::Update()
     if (m_isRescuing && !m_rescueQueue.empty())
     {
         // COLLECTINGが完了したら、救助完了
-        CCollectiong* collecting = dynamic_cast<CCollectiong*>(m_components[CBaseState::State::COLLECTING]);
+        CCollecting* collecting = dynamic_cast<CCollecting*>(m_components[CBaseState::State::COLLECTING]);
         if (collecting != nullptr && collecting->IsFinish())
         {
             // 救助完了：リストから削除

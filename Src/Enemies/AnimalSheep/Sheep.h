@@ -6,14 +6,12 @@ class CSheep : public CEnemyBase
 public:
 
     CSheep(CAShepherdDog* shepherdDog,const VECTOR3& iniPos = VECTOR3(0, 0, 0), const VECTOR2& moveAreaSize = VECTOR2(10, 10));
-    CSheep();
     ~CSheep();
 
     const VECTOR3& SuctionSpeed() const;
     void OnSuctionReleased();
 
 private:
-    
     void InitStates();
     void Update() override;
     bool ShouldApplyGravity() const override;

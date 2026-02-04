@@ -551,6 +551,8 @@
     <ClInclude Include="Src\Enemies\System\AnimalFactor.h" />
     <ClInclude Include="Src\Enemies\System\EnemyRegistr.h" />
     <ClInclude Include="Src\Enemies\System\Flog.h" />
+    <ClInclude Include="Src\Enemies\System\ModelRegistry.h" />
+    <ClInclude Include="Src\Enemies\System\QuadTreeIndex.h" />
     <ClInclude Include="Src\Player\PlayerHP.h" />
     <ClInclude Include="Src\Stage\StageFactor.h" />
     <ClInclude Include="Src\Stage\StageObject.h" />
@@ -1213,6 +1215,8 @@
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="Src\Enemies\System\Flog.cpp" />
+    <ClCompile Include="Src\Enemies\System\ModelRegistry.cpp" />
+    <ClCompile Include="Src\Enemies\System\QuadTreeIndex.cpp" />
     <ClCompile Include="Src\Player\PlayerHP.cpp" />
     <ClCompile Include="Src\Stage\StageFactor.cpp" />
     <ClCompile Include="Src\Stage\StageObject.cpp" />

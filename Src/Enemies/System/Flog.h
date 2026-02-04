@@ -1,7 +1,7 @@
 #pragma once
 #include "../../Common/Object3D.h"
+#include "../AnimalDog/ShepherdDog.h"
 #include "../AnimalSheep/Sheep.h"
-#include "../AnimalDog//ShepherdDog.h"
 
 //群れに関する情報
 struct FlogInfo
@@ -17,14 +17,13 @@ public:
     CFlog();
     ~CFlog();
     void Initialize();  // 羊と犬を生成して紐付け
-    void Update() override;
-    FlogInfo CalcFlogInfo(const std::vector<CSheep*>& sheeps) const;
-    const std::vector<CSheep*>& GetAllSheeps() const { return m_allSheeps; }
+    FlogInfo CalcFlogInfo(const std::vector<CSheep*>& manySheep) const;
+    const std::vector<CSheep*>& GetAllSheeps() const { return m_allSheep; }
 
 private:
     void Spawn(int a);
     void RemoveFromArray(const CSheep* sheep);
 
-    std::vector<CSheep*> m_allSheeps;
+    std::vector<CSheep*> m_allSheep;
     std::vector<CAShepherdDog*> m_shepherdDogs;
 };

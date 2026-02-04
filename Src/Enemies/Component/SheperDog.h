@@ -2,14 +2,13 @@
 #include "ComponentBase.h"
 #include "Destroy.h"
 #include "../AnimalDog/ShepherdDog.h"
-#include "../AnimalSheep/Sheep.h"
-class CCollectiong : public CComponentBase
+
+class CCollecting : public CComponentBase
 {
 public:
-    CCollectiong(CAShepherdDog* dog, float speed);
+    CCollecting(CAShepherdDog* dog, float speed);
     void Enter() override;
     void Update() override;
-
 
 private:
     CAShepherdDog* m_pOwner;

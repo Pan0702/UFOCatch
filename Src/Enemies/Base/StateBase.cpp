@@ -1,16 +1,11 @@
 #include "StateBase.h"
 #include "../../Utils/MyMath.h"
-#include "../Component/Destroy.h"
 #include "../Component/Suction.h"
 # define STR(var) #var	
 
 CBaseState::CBaseState(CEnemyBase* e)
 {
     m_pEnemy = e;
-}
-
-CBaseState::~CBaseState()
-{
 }
 
 void CBaseState::Enter(State type)

@@ -1,8 +1,7 @@
 #pragma once
 #include "Dog.h"
-#include "../AnimalSheep/Sheep.h"
-#include "../System/Flog.h"
 
+class CSheep;
 class CAShepherdDog : public CADog
 {
 public:
@@ -11,7 +10,6 @@ public:
     
     void Update() override;
     void ChangeStateHerded(const CSheep* sheep) const;
-    void Draw() override;
     void StartHerding();
     void RescueSheep(CSheep* sheep);
     void PopRescueQueue();

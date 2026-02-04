@@ -5,17 +5,15 @@
 class CEnemyBase;
 class CComponentBase;
 
-namespace
-{
-}
 
 class CBaseState
 {
 public:
+    
     CBaseState(CEnemyBase* e);
-    ~CBaseState();
+    virtual ~CBaseState() = default;
 
-    enum State
+    enum class State : uint8_t
     {
         IDLE = 0,
         WALK,

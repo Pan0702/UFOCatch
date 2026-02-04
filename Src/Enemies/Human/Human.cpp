@@ -24,7 +24,6 @@ CHuman::CHuman(VECTOR3 pos, VECTOR2 areaSize)
     m_pAnimator = new Animator();
     m_pAnimator->SetModel(m_pMesh);
     
-    m_dwColor = 100;
     angle = 0.0f;
 
     m_components[CBaseState::State::IDLE] = new CIdleHuman(this);
@@ -68,12 +67,10 @@ void CHuman::Update()
 
     if (m_inSight)
     {
-        m_dwColor = 255;
         SetState(CBaseState::State::FIND_PLAYER);
     }
     else
     {
-        m_dwColor = 0;
         ObjectManager::FindGameObject<CPlayerHP>()->ResetFlag();
     }
     AtkArea();
@@ -99,17 +96,18 @@ void CHuman::AtkArea() const
 
 //Humanの範囲をLineで可視化
 //範囲内なら水色、外なら緑になる
-void CHuman::DrawDirectionLine()
-{
-    CSprite spr;
-    MATRIX4X4 mat = XMMatrixRotationY(angle + transform.rotation.y);
-
-    VECTOR3 startPos = transform.position;
-
-    VECTOR3 endPos = startPos + VECTOR3(0, 0, LINE_LENGTH) * mat;
-
-    spr.DrawLine3D(startPos, endPos, RGB(0, 255, m_dwColor));
-}
+//Debug
+// void CHuman::DrawDirectionLine()
+// {
+//     CSprite spr;
+//     const MATRIX4X4 mat = XMMatrixRotationY(angle + transform.rotation.y);
+//
+//     const VECTOR3 startPos = transform.position;
+//
+//     const VECTOR3 endPos = startPos + VECTOR3(0, 0, LINE_LENGTH) * mat;
+//     
+//    // spr.DrawLine3D(startPos, endPos, RGB(0, 255, m_dwColor));
+// }
 
 
 // void CHuman::FanShape()
