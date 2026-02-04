@@ -1,6 +1,6 @@
 #include "ShepherdDog.h"
 #include "../System/Flog.h"
-#include "../Component/SheperDog.h"
+#include "../Component/SheperdDogComp.h"
 CAShepherdDog::CAShepherdDog()
 {
     m_pMesh = ObjectManager::FindGameObject<CModelRegistry>()->GetMesh("Dog");

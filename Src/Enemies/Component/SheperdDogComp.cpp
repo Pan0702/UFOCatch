@@ -1,4 +1,4 @@
-#include "SheperDog.h"
+#include "SheperdDogComp.h"
 #include "../AnimalDog//ShepherdDog.h"  // パスは調整してください
 #include "../System/Flog.h"
 

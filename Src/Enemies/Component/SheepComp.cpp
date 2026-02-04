@@ -1,4 +1,4 @@
-#include "Sheep.h"
+#include "SheepComp.h"
 #include "../System/Flog.h"
 CHerded::CHerded(CSheep* sheep)
 {

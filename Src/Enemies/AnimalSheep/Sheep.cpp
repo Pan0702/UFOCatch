@@ -1,7 +1,7 @@
 #include "Sheep.h"
 #include "../Component/Idle.h"
 #include "../Component/Suction.h"
-#include "../Component/Sheep.h"
+#include "../Component/SheepComp.h"
 
 CSheep::CSheep(CAShepherdDog* shepherdDog,const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     :m_basePos(iniPos), m_areaSize(moveAreaSize), m_pShepherdDog(shepherdDog), m_wasSuctioned(false)
@@ -20,9 +20,7 @@ void CSheep::InitStates()
     m_pState->Enter(CBaseState::State::IDLE);
 }
 
-CSheep::~CSheep()
-{
-}
+CSheep::~CSheep() = default;
 
 const VECTOR3& CSheep::SuctionSpeed() const
 {
