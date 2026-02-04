@@ -4,9 +4,14 @@
 
 CAShepherdDog::CAShepherdDog()
 {
+    m_pMesh = ObjectManager::FindGameObject<>()->GetModel("Dog");
+    //動くスピード2.0f
     m_components[CBaseState::State::COLLECTING] = new CCollectiong(this, 2.0f);
+    //動くスピード2.0f
     m_components[CBaseState::State::DRIVING] = new CDriving(this, 2.0f);
-    m_pComponent = m_components[CBaseState::State::RESCUE] = new CRescue(this);
+    //スコアが２００、経験値が2.0f
+    m_components[CBaseState::State::RESCUE] = new CDestroyShepherdDog(this,200,2.0f);
+    m_components[CBaseState::State::RESCUE] = new CRescue(this);
     m_pState = new CBaseState(this);
     m_pComponent = m_components[CBaseState::State::IDLE];
     m_pState->Enter(CBaseState::State::IDLE);
@@ -43,7 +48,8 @@ void CAShepherdDog::Update()
 
     // 通常モード：群れ全体を管理
     FlogInfo info = ObjectManager::FindGameObject<CFlog>()->CalcFlogInfo(m_sheeps);
-    if (info.maxDistance > 10.0f)
+    constexpr float flogRadius = 10.0f;
+    if (info.maxDistance > flogRadius)
     {
         SetState(CBaseState::State::COLLECTING);
     }
@@ -97,4 +103,19 @@ void CAShepherdDog::PopRescueQueue()
     {
         m_rescueQueue.erase(m_rescueQueue.begin());
     }
+}
+
+const std::vector<CSheep*>& CAShepherdDog::GetSheeps() const
+{
+    return m_sheeps; 
+}
+
+const std::vector<CSheep*>& CAShepherdDog::GetRescueQueue() const
+{
+    return m_rescueQueue;
+}
+
+void CAShepherdDog::AddSheep(CSheep* sheep)
+{
+    m_sheeps.push_back(sheep);
 }

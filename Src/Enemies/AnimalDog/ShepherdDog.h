@@ -15,9 +15,9 @@ public:
     void StartHerding();
     void RescueSheep(CSheep* sheep);
     void PopRescueQueue();
-    const std::vector<CSheep*>& GetSheeps() const { return m_sheeps; }
-    const std::vector<CSheep*>& GetRescueQueue() const { return m_rescueQueue; }
-    void AddSheep(CSheep* sheep) { m_sheeps.push_back(sheep); }
+    const std::vector<CSheep*>& GetSheeps() const;
+    const std::vector<CSheep*>& GetRescueQueue() const;
+    void AddSheep(CSheep* sheep) ;
 private:
     std::vector<CSheep*> m_sheeps;
     std::vector<CSheep*> m_rescueQueue;  // 救助待ちの羊リスト

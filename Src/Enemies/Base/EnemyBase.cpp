@@ -28,7 +28,6 @@ CBBox* CEnemyBase::CreateBBox()
 void CEnemyBase::SetState(CBaseState::State type)
 {
     m_pState->Exit();
-    s = type;
     m_pComponent = m_components[type];
     m_pState->Enter(type);
 }
