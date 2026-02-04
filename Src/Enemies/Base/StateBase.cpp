@@ -1,7 +1,7 @@
 #include "StateBase.h"
 #include "../../Utils/MyMath.h"
 #include "../Component/Suction.h"
-# define STR(var) #var	
+# define STR(var) #var
 
 CBaseState::CBaseState(CEnemyBase* e)
 {
@@ -51,7 +51,8 @@ CBaseState::State CBaseState::NextStatePop()
 }
 
 float CBaseState::ClampRotateY(const float& angle)
-{    float degAngle = angle * RadToDeg;
+{
+    float degAngle = angle * RadToDeg;
     constexpr float HALF_ROTATION_DEG = 180.0f;
     constexpr float FULL_ROTATION_DEG = 360.0f;
     while (degAngle > HALF_ROTATION_DEG)
@@ -65,7 +66,6 @@ float CBaseState::ClampRotateY(const float& angle)
 
     return degAngle * DegToRad;
 }
-
 
 
 void CBaseState::SetNextState()
@@ -84,4 +84,3 @@ void CBaseState::SetNextState()
         }
     }
 }
-
