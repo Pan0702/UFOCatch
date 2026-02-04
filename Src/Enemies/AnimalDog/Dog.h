@@ -27,9 +27,11 @@ private:
     bool ShouldApplyGravity() const override;
 
 
+protected:
+    CPlayer* m_pPlayer;
 private:
     bool m_isInConeArea;
     const VECTOR3 m_basePos;
     const VECTOR2 m_areaSize;
-    CPlayer* m_pPlayer;
+
 };

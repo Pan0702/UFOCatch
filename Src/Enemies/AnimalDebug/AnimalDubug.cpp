@@ -7,12 +7,12 @@
 #include "../Component/Suction.h"
 #include "../Component/Walk.h"
 #include "../Component/Destroy.h"
-#include "../System/EnemyRegistr.h"
+#include "../System/EnemyManager.h"
 
 CADebug::CADebug(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos)
 {
-    m_pMesh = ObjectManager::FindGameObject<CAnimalManager>()->MeshList("Dog");
+    m_pMesh = ObjectManager::FindGameObject<CEnemyManager>()->MeshList("Dog");
     m_pAnimator = new Animator();
     m_pAnimator->SetModel(m_pMesh);
     m_pAnimator->Play(A_WALK);

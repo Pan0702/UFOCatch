@@ -7,13 +7,11 @@ public:
     CHerded(CSheep* sheep);
     void Enter() override;
     void Update() override;
-    void Exit() override;
 
 private:
     CSheep* m_pOwner;
-    VECTOR3 CalculateBoids();
-    VECTOR3 CalculateEscapeFromUFO() const;
-
+    VECTOR3 CalculateBoids() const;
+    VECTOR3 CalculateEscapeFromDog() const;
 };
 
 
@@ -23,7 +21,6 @@ public:
     CPanic(CSheep* sheep);
     void Enter() override;
     void Update() override;
-    void Exit() override;
 
 private:
     CSheep* m_pOwner;

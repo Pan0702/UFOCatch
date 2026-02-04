@@ -3,7 +3,7 @@
 #include "../Player/Player.h"
 #include "../Player/PlayerHP.h"
 #include "../Utils/Animator.h"
-#include "../Enemies/System/EnemyRegistr.h"
+#include "../Enemies/System/EnemyManager.h"
 
 namespace
 {

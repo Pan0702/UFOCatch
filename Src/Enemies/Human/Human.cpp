@@ -4,7 +4,7 @@
 #include "../../Player/PlayerHP.h"
 #include "../../System/VisionSystem.h"
 #include "State/HumanState.h"
-#include "../System/EnemyRegistr.h"
+#include "../System/EnemyManager.h"
 #include "../../Utils/BBox.h"
 #include "../../Stage/Ground.h"
 #include "../Component/Find.h"
@@ -16,11 +16,11 @@ namespace
     constexpr float LINE_LENGTH = 7.0f;
 }
 
-CHuman::CHuman(VECTOR3 pos, VECTOR2 areaSize)
+CHuman::CHuman(const VECTOR3& pos, const VECTOR2& areaSize)
     : m_AreaSize(areaSize)
 {
     transform.position = pos;
-    m_pMesh = ObjectManager::FindGameObject<CAnimalManager>()->MeshList("Human");
+    m_pMesh = ObjectManager::FindGameObject<CEnemyManager>()->MeshList("Human");
     m_pAnimator = new Animator();
     m_pAnimator->SetModel(m_pMesh);
     

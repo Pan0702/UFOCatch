@@ -3,7 +3,7 @@
 #include "../../../System/GameInstance.h"
 #include "../Chicken.h"
 #include "../../../Framework/AudioManager.h"
-#include "../../System/EnemyRegistr.h"
+#include "../../System/EnemyManager.h"
 #include "../../Human/Human.h"
 
 

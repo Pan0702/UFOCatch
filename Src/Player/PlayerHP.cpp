@@ -49,7 +49,9 @@ void CPlayerHP::Update()
             m_invincible = 0;
             m_found = true;
             m_seemToFind = false;
-            m_currentHp -= 1;
+            //いまのHPから１引く
+            m_currentHp--;
+            //見つかった回数を追加
             pGI->AddDiscovery(1);
         }
     }

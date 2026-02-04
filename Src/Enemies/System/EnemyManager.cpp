@@ -1,4 +1,4 @@
-#include "EnemyRegistr.h"
+#include "EnemyManager.h"
 #include "../../Utils/BBox.h"
 #include "../AnimalDog/Dog.h"
 #include "../HUman/Human.h"
@@ -10,7 +10,7 @@ namespace
     constexpr float FULL_ROTATION_DEG = 360.0f;
 }
 
-CAnimalManager::CAnimalManager(int time)
+CEnemyManager::CEnemyManager()
     : m_pMesh(nullptr)
     , m_pMeshCol(nullptr)
     , m_pModelRegistry(nullptr)
@@ -25,16 +25,15 @@ CAnimalManager::CAnimalManager(int time)
     m_pQuadTreeIndex = new CQuadTreeIndex();
 }
 
-CAnimalManager::~CAnimalManager()
+CEnemyManager::~CEnemyManager()
 {
-    delete m_pModelRegistry;
+    SAFE_DELETE(m_pModelRegistry);
     m_pModelRegistry = nullptr;
-
-    delete m_pQuadTreeIndex;
+    SAFE_DELETE(m_pQuadTreeIndex);
     m_pQuadTreeIndex = nullptr;
 }
 
-void CAnimalManager::Update()
+void CEnemyManager::Update()
 {
     // QuadTreeIndexを更新
     if (m_pQuadTreeIndex)
@@ -43,7 +42,7 @@ void CAnimalManager::Update()
     }
 }
 
-CFbxMesh* CAnimalManager::MeshList(const std::string& str) const
+CFbxMesh* CEnemyManager::MeshList(const std::string& str) const
 {
     if (m_pModelRegistry)
     {
@@ -52,7 +51,7 @@ CFbxMesh* CAnimalManager::MeshList(const std::string& str) const
     return nullptr;
 }
 
-void CAnimalManager::SetRotationY(const float& angle)
+void CEnemyManager::SetRotationY(const float& angle)
 {
     float degAngle = angle * RadToDeg;
 
@@ -68,10 +67,8 @@ void CAnimalManager::SetRotationY(const float& angle)
     transform.rotation.y = degAngle * DegToRad;
 }
 
-const std::vector<CEnemyBase*>& CAnimalManager::GetNearbyEnemies(
-    CEnemyBase* pObj,
-    const VECTOR2& pos,
-    const VECTOR2& size) const
+const std::vector<CEnemyBase*>& CEnemyManager::GetNearbyEnemies(
+    CEnemyBase* pObj,const VECTOR2& pos,const VECTOR2& size) const
 {
     static std::vector<CEnemyBase*> emptyResult;
 
@@ -82,7 +79,7 @@ const std::vector<CEnemyBase*>& CAnimalManager::GetNearbyEnemies(
     return emptyResult;
 }
 
-const CollisionStats& CAnimalManager::GetCollisionStats() const
+const CollisionStats& CEnemyManager::GetCollisionStats() const
 {
     static CollisionStats emptyStats;
 
@@ -93,7 +90,7 @@ const CollisionStats& CAnimalManager::GetCollisionStats() const
     return emptyStats;
 }
 
-void CAnimalManager::ResetCollisionStats() const
+void CEnemyManager::ResetCollisionStats() const
 {
     if (m_pQuadTreeIndex)
     {

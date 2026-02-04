@@ -95,7 +95,7 @@ void Animator::MergePlay(int id, float time)
 
 	const ANIMATION& info = base->m_Animation[id];
 	if (!info.used) {
-		MessageBox(nullptr, "Animator::Play()", _T("������ �A�j���[�V������Load����Ă��܂��� ������"), MB_OK);
+		MessageBox(nullptr, "Animator::MPlay()", _T("該当のアニメーションがロードされていません"), MB_OK);
 	}
 	if (main.id != id) {
 		changeTime = time;

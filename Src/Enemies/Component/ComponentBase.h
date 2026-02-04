@@ -1,6 +1,6 @@
 #pragma once
 #include "../../Player/Player.h"
-#include "../System/EnemyRegistr.h"
+#include "../System/EnemyManager.h"
 #include "../Base/EnemyBase.h"
 
 class CComponentBase

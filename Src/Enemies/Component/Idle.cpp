@@ -1,7 +1,7 @@
 #include "Idle.h"
 
 #include "../Human/Human.h"
-#include "../System/EnemyRegistr.h"
+#include "../System/EnemyManager.h"
 
 CIdle::CIdle(CEnemyBase* e,float endFrame)
     :m_endFrame(endFrame)
@@ -67,7 +67,7 @@ void CIdle::IdleAnim()
 
 bool CIdle::AnimationFinish() const
 {
-    if (m_pOwner->GetAnimator()->CurrentFrame() >= 570.0f)
+    if (m_pOwner->GetAnimator()->CurrentFrame() >= m_endFrame)
     {
         return true;
     }

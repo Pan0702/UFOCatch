@@ -1,5 +1,5 @@
 #include "TutorialScene.h"
-#include "../Enemies/System/EnemyRegistr.h"
+#include "../Enemies/System/EnemyManager.h"
 #include "../Player/PCamera.h"
 #include "../Player/Player.h"
 #include "../Enemies/AnimalDog/Dog.h"

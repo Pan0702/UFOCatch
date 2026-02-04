@@ -2,12 +2,13 @@
 #include <cassert>
 
 #include "../System/GameInstance.h"
-#include "../Enemies/System//EnemyRegistr.h"
+#include "../Enemies/System//EnemyManager.h"
 #include "../Player/PCamera.h"
 #include "../Player/Player.h"
 #include "../Enemies/AnimalChicken/Chicken.h"
 #include "../Enemies/AnimalDog//Dog.h"
 #include "../Enemies/System//AnimalFactor.h"
+#include "../Enemies/System/Flog.h"
 #include "../System/DisplayInfo.h"
 #include "../System/VisionSystem.h"
 #include "../Stage/StageFactor.h"
@@ -17,16 +18,15 @@ CDebugScene::CDebugScene()
 {
     Instantiate<CStageFactor>();
     Instantiate<CPlayerCamera>();
-    new CAnimalManager(0);
-    new CTimer(30);
-    new CAnimalFactor(20,20);
-    new CAnimalChicken();
-    new CPlayer(20);
+    SingleInstantiate<CEnemyManager>();
+    new CTimer(300);
+    //new CAnimalFactor(20, 20);
+   // new CAnimalChicken();
+    new CPlayer(50);
     Instantiate<CVisionSystem>();
     Instantiate<CDisplayInfo>();
-    
+    Instantiate<CFlog>();
     ObjectManager::FindGameObject<CGameInstance>()->Init(1000);
-
 }
 
 CDebugScene::~CDebugScene()
@@ -40,10 +40,8 @@ void CDebugScene::ChangeResultScene()
 
 void CDebugScene::Update()
 {
-
 }
 
 void CDebugScene::Draw()
 {
-
 }

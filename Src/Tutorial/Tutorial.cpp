@@ -4,7 +4,7 @@
 #include "TutorialHuman.h"
 #include "../System/GameInstance.h""
 #include "../Enemies/Human/Human.h"
-#include "../Enemies/System/EnemyRegistr.h"
+#include "../Enemies/System/EnemyManager.h"
 #include "../System/Timer.h"
 
 namespace
@@ -89,7 +89,7 @@ void CTutorial::Lesson()
     static constexpr int LESSON_TIME_SECONDS = 30;
     static constexpr int LESSON_ANIMAL_COUNT = 5;
 
-    new CAnimalManager(0);
+    new CEnemyManager();
     new CTimer(LESSON_TIME_SECONDS);
 
     // 人間を1体生成 //

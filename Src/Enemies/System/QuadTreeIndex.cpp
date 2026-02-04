@@ -37,30 +37,29 @@ void CQuadTreeIndex::Update()
 }
 
 const std::vector<CEnemyBase*>& CQuadTreeIndex::GetNearbyEnemies(
-    CEnemyBase* pObj,
-    const VECTOR2& pos,
-    const VECTOR2& size) const
+    CEnemyBase* pObj,const VECTOR2& pos,const VECTOR2& size) const
 {
-    static std::vector<CEnemyBase*> emptyResult;
+    static std::vector<CEnemyBase*> result;
+    result.clear();
 
     if (m_pTree == nullptr)
     {
-        return emptyResult;
+        return result;
     }
 
     // 処理時間の計測開始
     auto startTime = std::chrono::high_resolution_clock::now();
 
     // 四分木から周辺オブジェクトを取得
-    std::vector<CEnemyBase*> nearbyEnemies = m_pTree->GetObjects(pObj, pos, size);
+    result = m_pTree->GetObjects(pObj, pos, size);
 
     // 処理時間の計測終了
     auto endTime = std::chrono::high_resolution_clock::now();
     float elapsedMs = std::chrono::duration<float, std::milli>(endTime - startTime).count();
 
-    CalcCollisionStats(elapsedMs, nearbyEnemies);
+    CalcCollisionStats(elapsedMs, result);
 
-    return nearbyEnemies;
+    return result;
 }
 
 void CQuadTreeIndex::CalcCollisionStats(float elapsedMs, const std::vector<CEnemyBase*>& enemies) const

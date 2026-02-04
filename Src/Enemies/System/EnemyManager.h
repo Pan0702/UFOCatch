@@ -9,11 +9,11 @@ class CFbxMesh;
 
 // 動物管理クラス（ファサード）
 // ModelRegistryとQuadTreeIndexを統合して使用
-class CAnimalManager : public Object3D
+class CEnemyManager : public Object3D
 {
 public:
-    CAnimalManager(int time);
-    ~CAnimalManager();
+    CEnemyManager();
+    ~CEnemyManager();
 
     void SetRotationY(const float& angle);
 
@@ -22,9 +22,7 @@ public:
 
     // 周辺エネミー取得（QuadTreeIndexに委譲）
     const std::vector<CEnemyBase*>& GetNearbyEnemies(
-        CEnemyBase* pObj,
-        const VECTOR2& pos,
-        const VECTOR2& size) const;
+        CEnemyBase* pObj,const VECTOR2& pos,const VECTOR2& size) const;
 
     // 統計情報（QuadTreeIndexに委譲）
     const CollisionStats& GetCollisionStats() const;

@@ -9,7 +9,7 @@ class CHumanBase;
 class CHuman : public CEnemyBase
 {
 public:
-    CHuman(VECTOR3 pos,VECTOR2 areaSize = VECTOR2(10, 10));
+    CHuman(const VECTOR3& pos, const VECTOR2& areaSize = VECTOR2(10, 10));
     ~CHuman();
     
     void AddPos(const VECTOR3& pos){ transform.position = transform.position + pos;}

@@ -3,6 +3,8 @@
 #include "PCamera.h"
 #include <iostream>
 #include <algorithm>
+
+#include "ConeDraw.h"
 #include "PlayerHP.h"
 #include "../Utils/Lerp.h"
 #include "../System/VisionSystem.h"
@@ -21,6 +23,7 @@ CPlayer::CPlayer(float moveRange)
     m_pMesh = new CFbxMesh();
     m_pMesh->Load("data/Player/UFO.mesh");
     new CPlayerHP(3);
+    new CConeDraw();
     m_coneDegree = 7;
     //半径の計算//
     m_coneRadius = transform.position.y * tan(DegToRad * m_coneDegree);

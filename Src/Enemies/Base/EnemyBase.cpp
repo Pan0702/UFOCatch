@@ -2,7 +2,7 @@
 #include "EnemyBase.h"
 #include "../../Stage/Ground.h"
 #include "../../Stage/StageObject.h"
-#include "../System/EnemyRegistr.h"
+#include "../System/EnemyManager.h"
 #include "../../Framework/AudioManager.h"
 
 namespace 
@@ -27,6 +27,9 @@ CBBox* CEnemyBase::CreateBBox()
 
 void CEnemyBase::SetState(CBaseState::State type)
 {
+    // 同じ状態なら何もしない
+    if (m_pComponent == m_components[type]) return;
+
     m_pState->Exit();
     m_pComponent = m_components[type];
     m_pState->Enter(type);
@@ -150,7 +153,7 @@ bool CEnemyBase::GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const
 std::vector<CEnemyBase*> CEnemyBase::GetNearbyEnemies() const
 {
     // AnimalManagerを取得 //
-    CAnimalManager* manager = ObjectManager::FindGameObject<CAnimalManager>();
+    CEnemyManager* manager = ObjectManager::FindGameObject<CEnemyManager>();
     if (manager == nullptr)
     {
         return std::vector<CEnemyBase*>();

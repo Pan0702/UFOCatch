@@ -3,7 +3,7 @@
 #include "../../Player/Player.h"
 #include "../../Stage/Ground.h"
 
-#include "../System/EnemyRegistr.h"
+#include "../System/EnemyManager.h"
 #include "../Base/StateBase.h"
 #include "../../Utils/BBox.h"
 #include "../Component/Idle.h"
@@ -14,7 +14,7 @@
 CADog::CADog(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos), m_areaSize(moveAreaSize)
 {
-    m_pMesh = ObjectManager::FindGameObject<CAnimalManager>()->MeshList("Dog");
+    m_pMesh = ObjectManager::FindGameObject<CEnemyManager>()->MeshList("Dog");
     m_pAnimator = new Animator();
     m_pAnimator->SetModel(m_pMesh);
     m_pAnimator->Play(A_WALK);

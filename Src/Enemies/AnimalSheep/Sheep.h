@@ -10,17 +10,16 @@ public:
 
     const VECTOR3& SuctionSpeed() const;
     void OnSuctionReleased();
+    CAShepherdDog* GetMaster() const { return m_pShepherdDog; }
 
 private:
     void InitStates();
     void Update() override;
     bool ShouldApplyGravity() const override;
-    void OnSuction();
+    void OnSuction() const;
 
 private:
     bool m_isInConeArea;
-    const VECTOR3 m_basePos;
-    const VECTOR2 m_areaSize;
     CPlayer* m_pPlayer;
     CAShepherdDog* m_pShepherdDog;
     bool m_wasSuctioned;  // 前フレームで吸い込まれていたか

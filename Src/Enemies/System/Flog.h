@@ -21,7 +21,6 @@ public:
     const std::vector<CSheep*>& GetAllSheeps() const { return m_allSheep; }
 
 private:
-    void Spawn(int a);
     void RemoveFromArray(const CSheep* sheep);
 
     std::vector<CSheep*> m_allSheep;

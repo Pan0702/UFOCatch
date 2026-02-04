@@ -3,7 +3,7 @@
 #include "../../../Utils/Lerp.h"
 #include "../../../Player/PlayerHP.h"
 #include "../Human.h"
-#include "../../System/EnemyRegistr.h"
+#include "../../System/EnemyManager.h"
 
 
 CHumanBase::CHumanBase(CHuman* human, State type)

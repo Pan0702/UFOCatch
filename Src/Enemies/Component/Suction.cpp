@@ -13,7 +13,7 @@ void CSuction::Enter()
 {
     m_isFinish = false;
     m_isFinishSuction = false;
-    m_pOwner->GetAnimator()->MergePlay(AnimationType::A_RUN);
+    m_pOwner->GetAnimator()->MergePlay(AnimationType::A_WALK);
     m_pOwner->GetAnimator()->SetPlaySpeed(6.0f);
 }
 

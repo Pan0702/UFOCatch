@@ -2,7 +2,7 @@
 #include <cassert>
 
 #include "../System/GameInstance.h"
-#include "../Enemies/System/EnemyRegistr.h"
+#include "../Enemies/System/EnemyManager.h"
 #include "../Player/PCamera.h"
 #include "../Player/Player.h"
 #include "../Enemies/AnimalDog/Dog.h"
@@ -17,7 +17,7 @@ PlayScene::PlayScene()
 {
     Instantiate<CStageFactor>();
     Instantiate<CPlayerCamera>();
-    new CAnimalManager(2);
+    new CEnemyManager();
     new CTimer(100);
     new CAnimalFactor(20,20);
     new CPlayer(20);
@@ -67,7 +67,7 @@ void PlayScene::QTreeDebug()
 {
     
     // 四分木の当たり判定統計を表示//
-    CAnimalManager* pAnimalManager = ObjectManager::FindGameObject<CAnimalManager>();
+    CEnemyManager* pAnimalManager = ObjectManager::FindGameObject<CEnemyManager>();
     if (pAnimalManager != nullptr)
     {
         const CollisionStats& stats = pAnimalManager->GetCollisionStats();
