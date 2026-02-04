@@ -4,7 +4,7 @@
 class CConeDraw : public Object3D
 {
 public:
-    CConeDraw();
+    CConeDraw(float coneTopPos);
     ~CConeDraw();
 private:
     void Update() override;

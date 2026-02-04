@@ -86,13 +86,6 @@ void CDriving::Enter()
     VECTOR3 ufoPos = player->GetTransform().position;
     VECTOR3 centroid = info.centroid;
 
-    // デバッグ出力
-    ImGui::Begin("CDriving Enter Debug");
-    ImGui::Text("SheepCount: %zu", sheepCount);
-    ImGui::Text("Centroid: %.2f, %.2f, %.2f", centroid.x, centroid.y, centroid.z);
-    ImGui::Text("UFO Pos: %.2f, %.2f, %.2f", ufoPos.x, ufoPos.y, ufoPos.z);
-    ImGui::End();
-
     // UFOから群れへの方向（逃げる方向）
     VECTOR3 escapeDir = centroid - ufoPos;
     escapeDir.y = 0;
@@ -121,13 +114,6 @@ void CDriving::Update()
     direction.y = 0;
     const float distanceSq = direction.LengthSquare();
 
-    // デバッグ出力
-    ImGui::Begin("Dog Driving");
-    ImGui::Text("TargetPos: %.2f, %.2f, %.2f", m_targetPos.x, m_targetPos.y, m_targetPos.z);
-    ImGui::Text("CurrentPos: %.2f, %.2f, %.2f", currentPos.x, currentPos.y, currentPos.z);
-    ImGui::Text("DistanceSq: %.2f", distanceSq);
-    ImGui::End();
-
     constexpr float arrivalThresholdSq = 0.25f;
     // 目標に到達したら終了
     if (distanceSq < arrivalThresholdSq)
@@ -154,6 +140,8 @@ CRescue::CRescue(CAShepherdDog* dog)
 void CRescue::Enter()
 {
     m_isFinish = false;
+    m_pOwner->GetAnimator()->MergePlay(AnimationType::A_RUN);
+    m_pOwner->GetAnimator()->SetPlaySpeed(1.5f);
 
     // 救助キューから対象を取得
     if (m_pOwner->GetRescueQueue().empty())

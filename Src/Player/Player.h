@@ -18,6 +18,7 @@ public:
     /// @return bool
     ///
     bool IsWithSuctionCone(const VECTOR3& targetPos) const;
+    bool IsInsideSuctionCircle(const VECTOR3& targetPos) const;
     
     // 引き寄せるための移動量を計算する
     // 高さの差が大きいほど遅く、近いほど速く吸い込む
@@ -42,6 +43,7 @@ public:
     float GetAllExp()const {return m_allExp;}
     int GetLv()const {return m_lv;}
     bool GetIsSuckUp() const { return m_SuctionActive; }
+    float GetRadius() const { return m_coneRadius; }
 
 private:
 
@@ -86,8 +88,6 @@ private:
     // 吸い込み円描画用
     CSpriteImage* m_pCircleImage;
     
-    CSpriteImage* m_pParticleImage;
-    CParticleEmitter* m_pEmitter;
 
 };
 

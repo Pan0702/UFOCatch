@@ -23,7 +23,7 @@ CPlayer::CPlayer(float moveRange)
     m_pMesh = new CFbxMesh();
     m_pMesh->Load("data/Player/UFO.mesh");
     new CPlayerHP(3);
-    new CConeDraw();
+    
     m_coneDegree = 7;
     //半径の計算//
     m_coneRadius = transform.position.y * tan(DegToRad * m_coneDegree);
@@ -38,18 +38,14 @@ CPlayer::CPlayer(float moveRange)
 
     // 吸い込み円用のテクスチャを読み込み
     m_pCircleImage = new CSpriteImage(TEXT("data/CircleSuction.png"));
-
-    m_pParticleImage = new CSpriteImage(_T("data/particle.png"));
-    m_pEmitter = new CParticleEmitter(m_pParticleImage);
-    m_pEmitter->SetConeShape(m_coneRadius, m_coneTopPos);
+    
+    new CConeDraw(m_coneTopPos);
 }
 
 CPlayer::~CPlayer()
 {
     SAFE_DELETE(m_pMesh);
     SAFE_DELETE(m_pCircleImage);
-    SAFE_DELETE(m_pParticleImage);
-    SAFE_DELETE(m_pEmitter);
 }
 
 void CPlayer::Update()
@@ -84,14 +80,11 @@ void CPlayer::Update()
     // Lerp処理//
     UpdateHeightAndRadiusLerp();
 
-
-    m_pEmitter->SetConeShape(m_coneRadius, transform.position.y);
+    
     CVisionSystem* pVision = ObjectManager::FindGameObject<CVisionSystem>();
     pVision->SetCircleCenter(transform.position);
     pVision->SetCircleRadius(m_coneRadius);
-
-    m_pEmitter->SetActive(m_SuctionActive); // 吸い込み中だけ生成
-    m_pEmitter->Update(SceneManager::DeltaTime(), this->transform.position); // UFOの位置で生成
+    
     if (GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_L))
     {
         transform.scale = VECTOR3(0.3f,1.0f,0.f);
@@ -238,6 +231,13 @@ bool CPlayer::IsWithSuctionCone(const VECTOR3& targetPos) const
     return false;
 }
 
+bool CPlayer::IsInsideSuctionCircle(const VECTOR3& targetPos) const
+{
+    const float dx = targetPos.x - transform.position.x;
+    const float dz = targetPos.z - transform.position.z;
+    return (dx * dx + dz * dz) <= (m_coneRadius * m_coneRadius);
+}
+
 void CPlayer::Draw()
 {
     CPlayerHP* hp = ObjectManager::FindGameObject<CPlayerHP>();
@@ -256,8 +256,7 @@ void CPlayer::Draw()
 
     // 吸い込み円を描画
     DrawSuctionCircle();
-
-    m_pEmitter->Render();
+    
     //DrawCircle(VECTOR3(transform.position.x, 0, transform.position.z), m_coneRadius, RGB(0, 255, 0));
 }
 

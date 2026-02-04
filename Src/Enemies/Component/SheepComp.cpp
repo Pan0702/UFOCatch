@@ -19,21 +19,7 @@ void CHerded::Update()
 
     VECTOR3 totalForce = boidsForce + escapeForce;
     totalForce.y = 0;
-
-    // デバッグ出力
-    ImGui::Begin("Sheep Debug");
-    ImGui::Text("Boids: %.2f, %.2f, %.2f", boidsForce.x, boidsForce.y, boidsForce.z);
-    ImGui::Text("Escape: %.2f, %.2f, %.2f", escapeForce.x, escapeForce.y, escapeForce.z);
-    ImGui::Text("Total: %.2f, %.2f, %.2f", totalForce.x, totalForce.y, totalForce.z);
-    ImGui::Text("HasMaster: %s", m_pOwner->GetMaster() ? "YES" : "NULL");
-    if (m_pOwner->GetMaster())
-    {
-        VECTOR3 dogPos = m_pOwner->GetMaster()->GetTransform().position;
-        VECTOR3 myPos = m_pOwner->GetTransform().position;
-        float dist = sqrtf((dogPos - myPos).LengthSquare());
-        ImGui::Text("Dog Distance: %.2f", dist);
-    }
-    ImGui::End();
+    
 
     if (totalForce.LengthSquare() > 0.0001f)
     {

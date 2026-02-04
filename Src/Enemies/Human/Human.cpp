@@ -91,7 +91,7 @@ void CHuman::Draw()
 
 void CHuman::AtkArea() const
 {
-    m_pFunShape->PosSet(transform.position, angle + transform.rotation.y);
+    m_pFunShape->PosSet(transform.position, angle + transform.rotation.y * );
 }
 
 //Humanの範囲をLineで可視化

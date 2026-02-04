@@ -69,6 +69,10 @@ void CIdleHuman::Exit()
 ////////////////////
 void CIdleHuman::IdleAnim()
 {
+    if (AnimationFinish())
+    {
+        m_isFinish = true;
+    }
 }
 
 ////////////////////
@@ -202,7 +206,7 @@ float CIdleHuman::GetCurrentFrame() const
 ////////////////////
 bool CIdleHuman::AnimationFinish() const
 {
-    if (m_pOwner->GetAnimator()->Finished())
+    if (m_pOwner->GetAnimator()->CurrentFrame() >= 175.0f)
     {
         return true;
     }

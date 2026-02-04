@@ -540,8 +540,8 @@
     <ClInclude Include="Src\Enemies\Component\Find.h" />
     <ClInclude Include="Src\Enemies\Component\IdleHuman.h" />
     <ClInclude Include="Src\Enemies\Component\Idle.h" />
-    <ClInclude Include="Src\Enemies\Component\Sheep.h" />
-    <ClInclude Include="Src\Enemies\Component\SheperDog.h" />
+    <ClInclude Include="Src\Enemies\Component\SheepComp.h" />
+    <ClInclude Include="Src\Enemies\Component\SheperdDogComp.h" />
     <ClInclude Include="Src\Enemies\Component\Suction.h" />
     <ClInclude Include="Src\Enemies\Component\Walk.h" />
     <ClInclude Include="Src\Enemies\Human\FunShape.h" />
@@ -549,10 +549,11 @@
     <ClInclude Include="Src\Enemies\Human\State\HumanState.h" />
     <ClInclude Include="Src\Enemies\Liner4Tree.h" />
     <ClInclude Include="Src\Enemies\System\AnimalFactor.h" />
-    <ClInclude Include="Src\Enemies\System\EnemyRegistr.h" />
+    <ClInclude Include="Src\Enemies\System\EnemyManager.h" />
     <ClInclude Include="Src\Enemies\System\Flog.h" />
     <ClInclude Include="Src\Enemies\System\ModelRegistry.h" />
     <ClInclude Include="Src\Enemies\System\QuadTreeIndex.h" />
+    <ClInclude Include="Src\Player\ConeDraw.h" />
     <ClInclude Include="Src\Player\PlayerHP.h" />
     <ClInclude Include="Src\Stage\StageFactor.h" />
     <ClInclude Include="Src\Stage\StageObject.h" />
@@ -849,8 +850,8 @@
     <ClCompile Include="Src\Enemies\Component\Find.cpp" />
     <ClCompile Include="Src\Enemies\Component\IdleHuman.cpp" />
     <ClCompile Include="Src\Enemies\Component\Idle.cpp" />
-    <ClCompile Include="Src\Enemies\Component\Sheep.cpp" />
-    <ClCompile Include="Src\Enemies\Component\SheperDog.cpp" />
+    <ClCompile Include="Src\Enemies\Component\SheepComp.cpp" />
+    <ClCompile Include="Src\Enemies\Component\SheperdDogComp.cpp" />
     <ClCompile Include="Src\Enemies\Component\Suction.cpp" />
     <ClCompile Include="Src\Enemies\Component\Walk.cpp" />
     <ClCompile Include="Src\Enemies\Human\FunShape.cpp">
@@ -1142,7 +1143,7 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="Src\Enemies\System\EnemyRegistr.cpp">
+    <ClCompile Include="Src\Enemies\System\EnemyManager.cpp">
       <AssemblerOutput>NoListing</AssemblerOutput>
       <AssemblerListingLocation>project\x64\Debug\</AssemblerListingLocation>
       <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
@@ -1217,6 +1218,7 @@
     <ClCompile Include="Src\Enemies\System\Flog.cpp" />
     <ClCompile Include="Src\Enemies\System\ModelRegistry.cpp" />
     <ClCompile Include="Src\Enemies\System\QuadTreeIndex.cpp" />
+    <ClCompile Include="Src\Player\ConeDraw.cpp" />
     <ClCompile Include="Src\Player\PlayerHP.cpp" />
     <ClCompile Include="Src\Stage\StageFactor.cpp" />
     <ClCompile Include="Src\Stage\StageObject.cpp" />
@@ -3824,7 +3826,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
-    <Content Include="Src\Scene\TutorialScene.cpp~" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

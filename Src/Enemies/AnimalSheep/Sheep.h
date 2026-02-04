@@ -16,11 +16,12 @@ private:
     void InitStates();
     void Update() override;
     bool ShouldApplyGravity() const override;
-    void OnSuction() const;
+    void OnSuction();
 
 private:
     bool m_isInConeArea;
     CPlayer* m_pPlayer;
     CAShepherdDog* m_pShepherdDog;
     bool m_wasSuctioned;  // 前フレームで吸い込まれていたか
+    
 };

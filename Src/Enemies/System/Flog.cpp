@@ -36,7 +36,7 @@ void CFlog::Initialize()
 
     VECTOR3 spawnCenter(0, 0, 0); // 生成位置の中心
 
-    VECTOR2 areaSize(50.0f, 50.0f); // 移動可能エリア
+    VECTOR2 areaSize(25.0f, 25.0f); // 移動可能エリア
 
     // 犬を生成
     for (int i = 0; i < DOG_COUNT; ++i)

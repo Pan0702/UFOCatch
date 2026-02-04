@@ -283,9 +283,7 @@ void CEnemyBase::IsSuctionCheck()
 {
     const CPlayer* pl = ObjectManager::FindGameObject<CPlayer>();
     if (pl == nullptr)return;
-    VECTOR3 pos = transform.position;
-    pos.y += m_pMesh->m_vMax.y; 
-    if (pl->IsWithSuctionCone(pos) && pl->GetIsSuckUp())
+    if (pl->GetIsSuckUp() && pl->IsInsideSuctionCircle(transform.position))
     {
         SetState(CBaseState::State::SUCTION);
     }

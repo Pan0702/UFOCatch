@@ -34,13 +34,31 @@ CAShepherdDog::~CAShepherdDog() = default;
 void CAShepherdDog::Update()
 {
     // UFOが吸い込み中かどうかをリアルタイムで確認
-    bool isSucking = (m_pPlayer != nullptr && m_pPlayer->GetIsSuckUp());
+    bool isSucking = false;
+    if (m_pPlayer != nullptr && m_pPlayer->GetIsSuckUp())
+    {
+        for (const auto sheep : m_sheeps)
+        {
+            if (sheep != nullptr && m_pPlayer->IsInsideSuctionCircle(sheep->GetTransform().position))
+            {
+                isSucking = true;
+                break;
+            }
+        }
+    }
 
     ImGui::Begin("ShepherdDog Debug");
     ImGui::Text("Pos: %.2f, %.2f", transform.position.x, transform.position.z);
     ImGui::Text("UFO Sucking: %s", isSucking ? "true" : "false");
     ImGui::Text("m_sheeps.size: %zu", m_sheeps.size());
     ImGui::End();
+    
+    if (!m_rescueQueue.empty())
+    {
+        SetState(CBaseState::State::RESCUE);
+        CEnemyBase::Update();
+        return;
+    }
 
     // 群れ情報を取得
     FlogInfo info = ObjectManager::FindGameObject<CFlog>()->CalcFlogInfo(m_sheeps);
