@@ -86,6 +86,7 @@ void CTutorial::SpawnHuman()
 ////////////////////
 void CTutorial::Lesson()
 {
+    new CTimer(20);
     static constexpr int LESSON_TIME_SECONDS = 30;
     static constexpr int LESSON_ANIMAL_COUNT = 5;
 

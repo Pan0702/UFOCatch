@@ -11,7 +11,4 @@ public:
         transform.position = pos;
         transform.rotation.y = angle;
     };
-
-private:
-    void Draw();
 };

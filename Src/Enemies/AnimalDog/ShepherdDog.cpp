@@ -46,12 +46,6 @@ void CAShepherdDog::Update()
             }
         }
     }
-
-    ImGui::Begin("ShepherdDog Debug");
-    ImGui::Text("Pos: %.2f, %.2f", transform.position.x, transform.position.z);
-    ImGui::Text("UFO Sucking: %s", isSucking ? "true" : "false");
-    ImGui::Text("m_sheeps.size: %zu", m_sheeps.size());
-    ImGui::End();
     
     if (!m_rescueQueue.empty())
     {

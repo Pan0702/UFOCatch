@@ -17,7 +17,6 @@ CTutorialScene::CTutorialScene()
     Instantiate<CStageFactor>();
     new CGround("data/Ground/Prefabs/Objectes001.mesh", VECTOR3(1.0f, 1.0f, 1.0f));
     Instantiate<CPlayerCamera>();
-    new CTimer(20);
     new CPlayer(10);
     Instantiate<CVisionSystem>();
     Instantiate<CDisplayInfo>();

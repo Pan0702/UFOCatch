@@ -13,10 +13,10 @@ CStageFactor::CStageFactor()
 
 void CStageFactor::SpawnObjects(float sizeX,float sizeZ)
 {
-    // for (int i = 0; i < 30; ++i)
-    // {
-    //    int  randomX = Randomf(-sizeX, sizeX);
-    //     int randomZ = Randomf(-sizez, sizez);
-    //     new CStageObject("data/Ground/Prefabs/Tree1a.mesh",VECTOR3(randomX,0.0f,randomZ),2);
-    // }
+    for (int i = 0; i < 30; ++i)
+    {
+       float randomX = Randomf(-sizeX, sizeX);
+        float randomZ = Randomf(-sizeZ, sizeZ);
+        new CStageObject("data/Ground/Prefabs/Tree1a.mesh",VECTOR3(randomX,0.0f,randomZ),2);
+    }
 }

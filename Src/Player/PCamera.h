@@ -19,7 +19,7 @@ public:
     // @param pos プレイヤーの位置 //
     void ZoomOut(const VECTOR3& pos);
 private:
-    void DebugImGui();
+    //void DebugImGui();
     void Update() override;
     void UpdateCameraBezier();
 

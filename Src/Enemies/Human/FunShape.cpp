@@ -7,10 +7,4 @@ CFunShape::CFunShape()
     transform.scale = VECTOR3(1.0f, 1.0f, 1.0f);
 }
 
-CFunShape::~CFunShape()
-{
-}
-void CFunShape::Draw()
-{
-    Object3D::Draw();
-}
+CFunShape::~CFunShape() = default;

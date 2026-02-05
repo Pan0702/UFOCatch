@@ -13,6 +13,7 @@ public:
 	void ChangeResultScene();
 private:
 	CXAudioSource* m_pBGM;
-	void QTreeDebug();
+	//4ぶんき計算Debug
+	//void QTreeDebug();
 	
 };

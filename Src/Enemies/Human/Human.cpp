@@ -11,10 +11,6 @@
 #include "../Component/IdleHuman.h"
 #include "../Component/Walk.h"
 
-namespace
-{
-    constexpr float LINE_LENGTH = 7.0f;
-}
 
 CHuman::CHuman(const VECTOR3& pos, const VECTOR2& areaSize)
     : m_AreaSize(areaSize)
@@ -23,7 +19,8 @@ CHuman::CHuman(const VECTOR3& pos, const VECTOR2& areaSize)
     m_pMesh = ObjectManager::FindGameObject<CEnemyManager>()->MeshList("Human");
     m_pAnimator = new Animator();
     m_pAnimator->SetModel(m_pMesh);
-    
+    m_pAnimator->Play(A_IDEL);
+    m_pAnimator->SetPlaySpeed(1.0f);
     angle = 0.0f;
 
     m_components[CBaseState::State::IDLE] = new CIdleHuman(this);
@@ -85,13 +82,14 @@ void CHuman::Update()
 void CHuman::Draw()
 {
     m_pMesh->Render(m_pAnimator, transform.matrix());
+    //Debug関数
     //DrawDirectionLine();
     //FanShape();
 }
 
 void CHuman::AtkArea() const
 {
-    m_pFunShape->PosSet(transform.position, angle + transform.rotation.y * );
+    m_pFunShape->PosSet(transform.position, angle + transform.rotation.y );
 }
 
 //Humanの範囲をLineで可視化
@@ -109,7 +107,7 @@ void CHuman::AtkArea() const
 //    // spr.DrawLine3D(startPos, endPos, RGB(0, 255, m_dwColor));
 // }
 
-
+//Dugub//
 // void CHuman::FanShape()
 // {
 //     CSprite spr;
@@ -123,7 +121,7 @@ void CHuman::AtkArea() const
 //         MATRIX4X4 mat = XMMatrixRotationY(transform.rotation.y + angle);
 //         
 //         VECTOR3 startPos = transform.position;
-//         VECTOR3 endPos = startPos + VECTOR3(0, 0, LINE_LENGTH) * mat;
+//         VECTOR3 endPos = startPos + VECTOR3(0, 0, 7.0f) * mat;
 //
 //         spr.DrawLine3D(startPos, endPos, RGB(255, 0, 0));
 //     }
