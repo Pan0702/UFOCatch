@@ -18,7 +18,7 @@ TitleScene::TitleScene()
         VECTOR4(0, 0, 1366, 768),
         new CSpriteImage("data/Title/Title.jpg")));
 
-    m_text.push_back("PlayScene");
+    m_text.push_back("SelectScene");
     m_text.push_back("SelectScene");
     m_selectedIndex = 0;
     m_pBGM = new CXAudioSource(_T("data/Sound/Sunny_day.wav"));
@@ -42,13 +42,7 @@ void TitleScene::Update()
     m_selectedIndex = GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_S) ? (m_selectedIndex + 1) % 2 : m_selectedIndex;
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_RETURN))
     {
-        SceneManager::ChangeScene(m_text[m_selectedIndex].c_str());
-    }
-    if (GameDevice()->m_pDI->
-                      CheckKey(KD_TRG, DIK_RETURN))
-    {
-        SceneManager::ChangeScene("SelectScene");
-        m_pBGM->Stop();
+        SceneManager::ChangeSceneWithTransition(m_text[m_selectedIndex].c_str());
     }
     //     SceneManager::ChangeScene("PlayScene");
     // }
