@@ -12,6 +12,7 @@ private:
     CSheep* m_pOwner;
     VECTOR3 CalculateBoids() const;
     VECTOR3 CalculateEscapeFromDog() const;
+    VECTOR3 CalculateBoundaryForce() const;  // 中心点への引き寄せと半径制約
 };
 
 

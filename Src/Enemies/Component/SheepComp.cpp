@@ -15,11 +15,12 @@ void CHerded::Enter()
 void CHerded::Update()
 {
     const VECTOR3 boidsForce = CalculateBoids();
-    const VECTOR3 escapeForce = CalculateEscapeFromDog();
+    // const VECTOR3 escapeForce = CalculateEscapeFromDog();  // 一旦無効化
+    const VECTOR3 boundaryForce = CalculateBoundaryForce();  // 中心への引き寄せと半径制約
 
-    VECTOR3 totalForce = boidsForce + escapeForce;
+    VECTOR3 totalForce = boidsForce + boundaryForce;
     totalForce.y = 0;
-    
+
 
     if (totalForce.LengthSquare() > 0.0001f)
     {
@@ -138,6 +139,46 @@ VECTOR3 CHerded::CalculateEscapeFromDog() const
         normalize(diff);
         constexpr float dogEscapeWeight = 2.5f;
         return diff * dogEscapeWeight;
+    }
+
+    return {0, 0, 0};
+}
+
+VECTOR3 CHerded::CalculateBoundaryForce() const
+{
+    CFlog* flog = ObjectManager::FindGameObject<CFlog>();
+    if (flog == nullptr) return {0, 0, 0};
+
+    const VECTOR3 flockCenter = flog->GetFlockCenter();
+    const float flockRadius = flog->GetFlockRadius();
+    const VECTOR3 myPos = m_pOwner->GetTransform().position;
+
+    VECTOR3 toCenter = flockCenter - myPos;
+    toCenter.y = 0;
+
+    const float distanceToCenter = sqrtf(toCenter.LengthSquare());
+
+    // 半径外に出た場合、強い力で中心に戻す
+    if (distanceToCenter > flockRadius)
+    {
+        if (toCenter.LengthSquare() > 0.0001f)
+        {
+            normalize(toCenter);
+            // 半径を超えるほど強い力で引き戻す
+            const float overDistance = distanceToCenter - flockRadius;
+            const float boundaryWeight = 3.0f + overDistance * 0.5f;
+            return toCenter * boundaryWeight;
+        }
+    }
+    // 半径の80%を超えたら、ゆるやかに中心へ引き寄せる
+    else if (distanceToCenter > flockRadius * 0.8f)
+    {
+        if (toCenter.LengthSquare() > 0.0001f)
+        {
+            normalize(toCenter);
+            const float softWeight = 0.5f;
+            return toCenter * softWeight;
+        }
     }
 
     return {0, 0, 0};

@@ -8,6 +8,7 @@
 #include "SceneBase.h"
 #include "ObjectManager.h"
 #include "../Core/Game/GameMain.h"
+#include "../Framework/AudioManager.h"
 
 class GameObject {
 public:
@@ -36,6 +37,7 @@ public:
 	/// </summary>
 	virtual void DestroyMe() {
 		ObjectManager::Destroy(this);
+		AudioManager::Play(_T("SuctionEnd"), false);
 	}
 
 	/// <summary>

@@ -20,9 +20,17 @@ public:
     FlogInfo CalcFlogInfo(const std::vector<CSheep*>& manySheep) const;
     const std::vector<CSheep*>& GetAllSheeps() const { return m_allSheep; }
 
+    // 群れの中心点と半径の取得
+    const VECTOR3& GetFlockCenter() const { return m_flockCenter; }
+    float GetFlockRadius() const { return m_flockRadius; }
+
 private:
     void RemoveFromArray(const CSheep* sheep);
 
     std::vector<CSheep*> m_allSheep;
     std::vector<CAShepherdDog*> m_shepherdDogs;
+
+    // 群れの中心点と半径
+    VECTOR3 m_flockCenter;
+    float m_flockRadius;
 };

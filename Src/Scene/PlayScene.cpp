@@ -24,8 +24,8 @@ PlayScene::PlayScene()
     Instantiate<CVisionSystem>();
     Instantiate<CDisplayInfo>();
     ObjectManager::FindGameObject<CGameInstance>()->Init(3000 );
-    m_pBGM = new CXAudioSource(_T("data/Sound/yukai.wav"));
-    m_pBGM->Play(1);
+  //  m_pBGM = new CXAudioSource(_T("data/Sound/yukai.wav"));
+   // m_pBGM->Play(1);
 }
 
 PlayScene::~PlayScene() = default;

@@ -38,6 +38,10 @@ void CFlog::Initialize()
 
     VECTOR2 areaSize(25.0f, 25.0f); // 移動可能エリア
 
+    // 群れの中心点と半径を設定
+    m_flockCenter = VECTOR3(0, 0, 0);
+    m_flockRadius = 20.0f;
+
     // 犬を生成
     for (int i = 0; i < DOG_COUNT; ++i)
     {

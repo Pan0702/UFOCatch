@@ -24,6 +24,5 @@ private:
 	};
 	std::vector<ImageInfo> m_imageInfos;
 	
-	CXAudioSource* m_pBGM ;
-	CXAudioSource* m_pSE;
+
 };

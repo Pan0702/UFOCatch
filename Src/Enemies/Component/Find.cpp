@@ -8,6 +8,8 @@ CFind::CFind(CHuman* human)
 
 void CFind::Enter()
 {
+    AudioManager::Load("HumnaVoice",_T("data/Sound/hey.wav"));
+    AudioManager::Play(_T("HumnaVoice"), false);
     m_isFinish = true;
     ObjectManager::FindGameObject<CPlayerHP>()->SubHP();
     m_pOwner->GetAnimator()->MergePlay(A_IDEL);

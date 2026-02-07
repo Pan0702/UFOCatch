@@ -6,9 +6,5 @@ class CFunShape : public Object3D
 public:
     CFunShape();
     ~CFunShape();
-    void PosSet(const VECTOR3& pos, const float angle)
-    {
-        transform.position = pos;
-        transform.rotation.y = angle;
-    };
+    void PosSet(const VECTOR3& pos, const float angle);
 };

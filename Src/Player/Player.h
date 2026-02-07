@@ -76,6 +76,7 @@ private:
     int m_lv;
     //吸い込み状態
     bool m_SuctionActive;
+    bool m_prevSuctionActive; // 前フレームの吸い込み状態
     bool m_zoomUp;
     float m_coneTopPos;
     bool m_draw;

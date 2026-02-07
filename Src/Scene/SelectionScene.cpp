@@ -1,5 +1,5 @@
 #include "SelectionScene.h"
-
+#include "../Framework/AudioManager.h"
 CSelectionScene::CSelectionScene()
 {
     m_pSprite = new CSprite();
@@ -13,6 +13,7 @@ CSelectionScene::CSelectionScene()
 
 CSelectionScene::~CSelectionScene()
 {
+    SAFE_DELETE(m_pBGM);
 }
 
 void CSelectionScene::Update()
@@ -20,21 +21,23 @@ void CSelectionScene::Update()
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_RETURN))
     if (m_selectedIndex == 0)
     {
-        SceneManager::ChangeScene("PlayScene");
-        m_pBGM->Stop();
+        SceneManager::ChangeSceneWithTransition("PlayScene");
+        AudioManager::Play(_T("Decide"), false);
     }else if (m_selectedIndex == 1)
     {
-        SceneManager::ChangeScene("TutorialScene");
-        m_pBGM->Stop();
+        SceneManager::ChangeSceneWithTransition("TutorialScene");
+        AudioManager::Play(_T("Decide"), false);
     }
 
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_D))
     {
         m_selectedIndex = (m_selectedIndex + 1) % 2;
+        AudioManager::Play(_T("Select"), false);
     }
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_A))
     {
         m_selectedIndex = (m_selectedIndex - 1 + 2) % 2;
+        AudioManager::Play(_T("Select"), false);
     }
     
 }

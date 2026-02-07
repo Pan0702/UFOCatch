@@ -23,7 +23,7 @@ CPlayer::CPlayer(float moveRange)
     m_pMesh = new CFbxMesh();
     m_pMesh->Load("data/Player/UFO.mesh");
     new CPlayerHP(3);
-    
+
     m_coneDegree = 7;
     //半径の計算//
     m_coneRadius = transform.position.y * tan(DegToRad * m_coneDegree);
@@ -34,12 +34,15 @@ CPlayer::CPlayer(float moveRange)
     m_coneTopPos = transform.position.y;
     transform.scale = VECTOR3(0.5f, 0.5f, 0.5f);
     m_SuctionActive = false;
+    m_prevSuctionActive = false;
     m_draw = true;
 
     // 吸い込み円用のテクスチャを読み込み
     m_pCircleImage = new CSpriteImage(TEXT("data/CircleSuction.png"));
-    
+
     new CConeDraw(m_coneTopPos);
+    AudioManager::Load("Suction", _T("data/Sound/suction.wav"));
+    AudioManager::Load("SuctionEnd", _T("data/Sound/suctionEnd.wav"));
 }
 
 CPlayer::~CPlayer()
@@ -75,19 +78,35 @@ void CPlayer::Update()
         m_SuctionActive = false;
     }
 
+    // 吸い込み状態が変化したときだけ音声を制御
+    if (m_SuctionActive && !m_prevSuctionActive)
+    {
+        // 吸い込み開始：ループ再生
+        AudioManager::Play(_T("Suction"), false);
+    }
+    else if (!m_SuctionActive && m_prevSuctionActive)
+    {
+        // 吸い込み終了：停止して終了音を再生
+        AudioManager::Stop(_T("Suction"));
+    }
+
+    // 前フレームの状態を保存
+    m_prevSuctionActive = m_SuctionActive;
+
     CheckLevel();
 
     // Lerp処理//
     UpdateHeightAndRadiusLerp();
 
-    
+
     CVisionSystem* pVision = ObjectManager::FindGameObject<CVisionSystem>();
     pVision->SetCircleCenter(transform.position);
     pVision->SetCircleRadius(m_coneRadius);
-    
+
+    //Debug用
     if (GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_L))
     {
-        transform.scale = VECTOR3(0.3f,1.0f,0.f);
+        transform.scale = VECTOR3(0.3f, 1.0f, 0.f);
     }
     if (GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_K))
     {
@@ -119,6 +138,7 @@ void CPlayer::CheckLevel()
     if (m_exp >= m_allExp)
     {
         float tmp = m_exp - m_allExp;
+
         m_allExp *= 1.3f;
         m_exp = tmp;
         m_lv++;
@@ -213,7 +233,6 @@ VECTOR3 CPlayer::CalcSuctionDisplacement(const float& moveTimeSecond, const VECT
 }
 
 
-
 ////////////////////
 // オブジェクトがコーンの範囲内にいるかチェックする
 // @param targetPos 対象の位置
@@ -256,17 +275,17 @@ void CPlayer::Draw()
 
     // 吸い込み円を描画
     DrawSuctionCircle();
-    
+
     //DrawCircle(VECTOR3(transform.position.x, 0, transform.position.z), m_coneRadius, RGB(0, 255, 0));
 }
 
 ////////////////////
 // 地面に吸い込み範囲の円を描画する //
 ////////////////////
-void CPlayer::DrawSuctionCircle()const
+void CPlayer::DrawSuctionCircle() const
 {
     // 吸い込み円描画の定数 //
-    static constexpr float GROUND_OFFSET = 0.01f; // 地面から少し浮かせる高さ（Zファイティング回避用） //
+    static constexpr float GROUND_OFFSET = 0.1f; // 地面から少し浮かせる高さ（Zファイティング回避用） //
     static constexpr float CIRCLE_DIAMETER_SCALE = 2.0f; // 半径から直径への変換倍率 //
     static constexpr float CIRCLE_DEPTH = 1.0f; // 円の奥行き（Z軸方向のスケール） //
     static constexpr float GROUND_ROTATION = -XM_PI / 2.0f; // 地面に平行にするための回転角度（-90度） //
@@ -307,7 +326,7 @@ void CPlayer::DrawSuctionCircle()const
         mProj,
         VECTOR2(SPRITE_SIZE, SPRITE_SIZE), // サイズ（ワールドマトリックスでスケールするので1.0） //
         VECTOR2(0, 0), // テクスチャ座標（左上） //
-        VECTOR2((float)texWidth, (float)texHeight), // テクスチャサイズ（全体を使用） //
+        VECTOR2(static_cast<float>(texWidth), static_cast<float>(texHeight)), // テクスチャサイズ（全体を使用） //
         CIRCLE_ALPHA // アルファ（半透明） //
     );
 }
