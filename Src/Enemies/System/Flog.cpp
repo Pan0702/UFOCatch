@@ -31,31 +31,19 @@ void CFlog::Initialize()
 {
     // パラメータ
     constexpr int SHEEP_COUNT = 10; // 羊の総数
-    constexpr int DOG_COUNT = 1; // 犬の数
-    constexpr int SHEEP_PER_DOG = SHEEP_COUNT / DOG_COUNT; // 1匹の犬あたりの羊数
 
     VECTOR3 spawnCenter(0, 0, 0); // 生成位置の中心
 
-    VECTOR2 areaSize(25.0f, 25.0f); // 移動可能エリア
-
     // 群れの中心点と半径を設定
     m_flockCenter = VECTOR3(0, 0, 0);
-    m_flockRadius = 20.0f;
+    m_flockRadius = 4.0f;
 
-    // 犬を生成
-    for (int i = 0; i < DOG_COUNT; ++i)
-    {
-        CAShepherdDog* dog = new CAShepherdDog();
-        // 犬の初期位置設定など
-        m_shepherdDogs.push_back(dog);
-    }
-
-    // 羊を生成して犬に割り振る
+    // 羊を生成
     for (int i = 0; i < SHEEP_COUNT; ++i)
     {
         // ランダムな初期位置
         float angle = Randomf(0.0f, XM_2PI);
-        constexpr float spawnRadius = 10.0f; // 生成範囲の半径
+        const float spawnRadius = m_flockRadius; // 生成範囲の半径
         float radius = Randomf(0.0f, spawnRadius);
         VECTOR3 iniPos = spawnCenter + VECTOR3(
             cosf(angle) * radius,
@@ -63,17 +51,8 @@ void CFlog::Initialize()
             sinf(angle) * radius
         );
 
-        // どの犬の担当か決定
-        int dogIndex = i / SHEEP_PER_DOG;
-        if (dogIndex >= DOG_COUNT) dogIndex = DOG_COUNT - 1; // 余りは最後の犬に
-
-        CAShepherdDog* assignedDog = m_shepherdDogs[dogIndex];
-
-        // 羊を生成
-        CSheep* sheep = new CSheep(assignedDog, iniPos, areaSize);
-
-        // 相互参照を設定
-        assignedDog->AddSheep(sheep); // 犬に羊を追加
+        // 羊を生成（ShepherdDog不要）
+        CSheep* sheep = new CSheep(iniPos);
         m_allSheep.push_back(sheep);
     }
 }

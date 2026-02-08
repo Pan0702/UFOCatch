@@ -189,6 +189,7 @@ void CGameMain::Draw()
 
 	SceneManager::Draw();
 	ObjectManager::Draw();
+	SceneManager::DrawTransition();
 
 	MyImgui::ImguiRender();      // MyImgui���`�揈��    // -- 2020.11.15
 

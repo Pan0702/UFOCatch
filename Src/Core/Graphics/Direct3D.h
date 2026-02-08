@@ -71,6 +71,11 @@ public:
 	ID3D11BlendState*         m_pBlendStateTrapen;
 	ID3D11BlendState*         m_pBlendStateAdd;
 
+	// デプスステンシルステート
+	ID3D11DepthStencilState*  m_pDepthStencilStateDefault;  // デフォルト（ZWrite有効）
+	ID3D11DepthStencilState*  m_pDepthStencilStateNoWrite;  // ZWrite無効（透明描画用）
+	ID3D11DepthStencilState*  m_pDepthStencilStateNoZTest;  // ZTest/ZWrite無効（常に描画）
+
 	//�e�N�X�`���[�̃T���v���[
 	ID3D11SamplerState*       m_pSampleLinear;
 	ID3D11SamplerState*       m_pSampleBorder;
@@ -91,6 +96,7 @@ public:
 	~CDirect3D();
 	HRESULT InitD3D(HWND, DWORD, DWORD );
 	HRESULT InitBlendState();
+	HRESULT InitDepthStencilState();
 	HRESULT InitSampler();
 	HRESULT ReadCso(const TCHAR* csoName, BYTE** ppByteArray, DWORD* pCsoSize);
 	HRESULT CreateTextureFromFile(const TCHAR* TName, ID3D11Texture2D** ppTexture2D, DWORD& dwImageWidth, DWORD& dwImageHeight, UINT MipLevels = 1);

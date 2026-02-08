@@ -10,10 +10,15 @@ public:
 private:
     void Update() override;
     void Draw() override;
-    CSprite* m_pSprite;
+    void InitButtons();
+
+    //Buttonに関する情報
+    struct ButtomInfo
+    {
+        CSpriteImage* image;
+        std::string sceneName;
+    };
+    std::vector<ButtomInfo> m_buttons;
     CSpriteImage* m_pImageBackGround;
-    CSpriteImage* m_pImageDoButton;
-    CSpriteImage* m_pImageTutorialButton;
-    CXAudioSource* m_pBGM;
     int m_selectedIndex;
 };

@@ -41,16 +41,22 @@ void CScreenTransition::Update(float deltaTime)
             m_percent = 1.0f;
             m_state = State::Hold;
             m_timer = 0.0f;
+
+            // FadeOut完了直後にコールバックを呼ぶ（シーン切り替えを開始させる）
+            if (m_onComplete)
+            {
+                m_onComplete();
+                m_onComplete = nullptr;
+            }
         }
     }
     else if (m_state == State::Hold)
     {
-        constexpr float m_holdDuration = 0.15f; // ホールド時間（秒）
-        //ホールド時間が経過したらコールバックを呼ぶ
-        if (m_timer >= m_holdDuration && m_onComplete)
+        constexpr float m_holdDuration = 0.05f; // ホールド時間を短縮
+        //ホールド時間が経過したら何もしない（コールバックは既に呼ばれている）
+        if (m_timer >= m_holdDuration)
         {
-            m_onComplete();
-            m_onComplete = nullptr;
+            // ここで自動的にFadeInは始まらない。SceneManagerがStartFadeInを呼ぶのを待つ
         }
     }
     else if (m_state == State::FadeIn)

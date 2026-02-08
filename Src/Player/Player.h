@@ -53,7 +53,7 @@ private:
 
     //判定円の描画
     ///Debug///
-    //void DrawCircle(const VECTOR3& center, float radius, DWORD color);
+    void DrawCircle(const VECTOR3& center, float radius, DWORD color);
 
     //吸い込み円の描画（地面投影）
     void DrawSuctionCircle() const;

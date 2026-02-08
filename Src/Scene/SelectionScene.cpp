@@ -1,31 +1,46 @@
 #include "SelectionScene.h"
 #include "../Framework/AudioManager.h"
 CSelectionScene::CSelectionScene()
-{
-    m_pSprite = new CSprite();
+{   
     m_pImageBackGround = new CSpriteImage("data/Select/Select.png");
-    m_pImageDoButton = new CSpriteImage("data/Select/DOButton.png");
-    m_pImageTutorialButton = new CSpriteImage("data/Select/TutoButton.png");
     m_selectedIndex = 0;
-    m_pBGM = new CXAudioSource(_T("data/Sound/himitu.wav"));
-    m_pBGM->Play(1);
+    InitButtons();
+    AudioManager::Load("Select",_T("data/Sound/himitu.wav"));
+    AudioManager::Play("Select");
+}
+
+void CSelectionScene::InitButtons()
+{
+    //PlaySceneボタン //
+    {
+        ButtomInfo info{};
+        info.image = new CSpriteImage("data/Select/DOButton.png");
+        info.sceneName = "PlayScene";
+        m_buttons.push_back(info);
+    }
+    
+    //Tutorialボタン //
+    {
+        ButtomInfo info{};
+        info.image = new CSpriteImage("data/Select/TutoButton.png");
+        info.sceneName = "TutorialScene";
+        m_buttons.push_back(info);
+    }
 }
 
 CSelectionScene::~CSelectionScene()
 {
-    SAFE_DELETE(m_pBGM);
+    for (auto& button : m_buttons)
+    {
+        SAFE_DELETE(button.image);
+    }
 }
 
 void CSelectionScene::Update()
 {
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_RETURN))
-    if (m_selectedIndex == 0)
     {
-        SceneManager::ChangeSceneWithTransition("PlayScene");
-        AudioManager::Play(_T("Decide"), false);
-    }else if (m_selectedIndex == 1)
-    {
-        SceneManager::ChangeSceneWithTransition("TutorialScene");
+        SceneManager::ChangeSceneWithTransition(m_buttons[m_selectedIndex].sceneName.c_str());
         AudioManager::Play(_T("Decide"), false);
     }
 
@@ -44,15 +59,12 @@ void CSelectionScene::Update()
 
 void CSelectionScene::Draw()
 {
-    m_pSprite->Draw(m_pImageBackGround, 0, 0, 0, 0, 1366, 768);
-    switch (m_selectedIndex)
-    {
-        case 0:
-            m_pSprite->Draw(m_pImageDoButton, 0, 0, 0, 0, 1366, 768);
-            break;
-        case 1:
-            m_pSprite->Draw(m_pImageTutorialButton, 0, 0, 0, 0, 1366, 768);
-            break;
-    }
- 
+    static constexpr float imageWidthMaxSize = 1366;
+    static constexpr float imageHeightMaxSize = 768;
+    CSprite spr;
+    //背景のひょうじ //
+    spr.Draw(m_pImageBackGround, 0, 0, 0, 0, imageWidthMaxSize, imageHeightMaxSize);
+    //選択中のボタンの表示//
+    spr.Draw(m_buttons[m_selectedIndex].image, 0, 0, 0, 0, imageWidthMaxSize, imageHeightMaxSize);
 }
+

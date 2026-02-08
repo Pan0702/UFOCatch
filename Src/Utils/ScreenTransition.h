@@ -37,7 +37,7 @@ private:
     std::unique_ptr<CSpriteImage> m_pImage;
 
     State m_state = State::Idle;
-    float m_duration = 0.3f;    // アニメーション時間（秒）秒/
+    float m_duration = 0.2f;    // アニメーション時間（秒）秒/
     float m_timer = 0.0f;
     float m_percent = 0.0f;     // 0.0〜1.0
 

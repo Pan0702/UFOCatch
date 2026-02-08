@@ -13,6 +13,18 @@ private:
     VECTOR3 CalculateBoids() const;
     VECTOR3 CalculateEscapeFromDog() const;
     VECTOR3 CalculateBoundaryForce() const;  // 中心点への引き寄せと半径制約
+    VECTOR3 CalculateWandering();  // ランダムな徘徊行動
+
+    // Wandering用のパラメータ
+    VECTOR3 m_wanderTarget;
+    float m_wanderTimer;
+
+    // 移動時間管理（一定時間後にIDLEに戻る）
+    float m_walkDuration;
+    float m_walkTimer;
+
+    // 回転の滑らかさ
+    float m_currentRotation;
 };
 
 

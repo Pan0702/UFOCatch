@@ -24,14 +24,15 @@ CPlayer::CPlayer(float moveRange)
     m_pMesh->Load("data/Player/UFO.mesh");
     new CPlayerHP(3);
 
-    m_coneDegree = 7;
+    m_coneDegree = 4;
+    m_coneTopPos = transform.position.y + 4.0f;
     //半径の計算//
-    m_coneRadius = transform.position.y * tan(DegToRad * m_coneDegree);
+    m_coneRadius = m_coneTopPos * tan(DegToRad * m_coneDegree);
     m_allExp = 1;
     m_exp = 0.001;
     m_lv = 1;
     m_zoomUp = false;
-    m_coneTopPos = transform.position.y;
+    
     transform.scale = VECTOR3(0.5f, 0.5f, 0.5f);
     m_SuctionActive = false;
     m_prevSuctionActive = false;
@@ -40,7 +41,7 @@ CPlayer::CPlayer(float moveRange)
     // 吸い込み円用のテクスチャを読み込み
     m_pCircleImage = new CSpriteImage(TEXT("data/CircleSuction.png"));
 
-    new CConeDraw(m_coneTopPos);
+    new CConeDraw(m_coneTopPos - 4);
     AudioManager::Load("Suction", _T("data/Sound/suction.wav"));
     AudioManager::Load("SuctionEnd", _T("data/Sound/suctionEnd.wav"));
 }
@@ -276,7 +277,7 @@ void CPlayer::Draw()
     // 吸い込み円を描画
     DrawSuctionCircle();
 
-    //DrawCircle(VECTOR3(transform.position.x, 0, transform.position.z), m_coneRadius, RGB(0, 255, 0));
+    DrawCircle(VECTOR3(transform.position.x, 0, transform.position.z), m_coneRadius, RGB(0, 255, 0));
 }
 
 ////////////////////
@@ -331,7 +332,7 @@ void CPlayer::DrawSuctionCircle() const
     );
 }
 
-#if 0
+
 ///Debug///
 void CPlayer::DrawCircle(const VECTOR3& center, float radius, DWORD color)
 {
@@ -356,9 +357,10 @@ void CPlayer::DrawCircle(const VECTOR3& center, float radius, DWORD color)
         // 線を描画
         spr.DrawLine3D(point1, point2, color);
     }
-    spr.DrawLine3D(transform.position, VECTOR3(center.x + m_coneRadius, center.y, center.z), color);
-    spr.DrawLine3D(transform.position, VECTOR3(center.x - m_coneRadius, center.y, center.z), color);
-    spr.DrawLine3D(transform.position, VECTOR3(center.x, center.y, center.z + m_coneRadius), color);
-    spr.DrawLine3D(transform.position, VECTOR3(center.x, center.y, center.z - m_coneRadius), color);
+    const VECTOR3 TopPos = VECTOR3(transform.position.x, m_coneTopPos, transform.position.z); 
+    spr.DrawLine3D(TopPos, VECTOR3(center.x + m_coneRadius, center.y, center.z), color);
+    spr.DrawLine3D(TopPos, VECTOR3(center.x - m_coneRadius, center.y, center.z), color);
+    spr.DrawLine3D(TopPos, VECTOR3(center.x, center.y, center.z + m_coneRadius), color);
+    spr.DrawLine3D(TopPos, VECTOR3(center.x, center.y, center.z - m_coneRadius), color);
 }
-#endif
+

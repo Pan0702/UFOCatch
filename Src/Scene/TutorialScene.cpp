@@ -23,6 +23,8 @@ CTutorialScene::CTutorialScene()
     Instantiate<CTutorial>();
     Instantiate<CTutorialDisplayInfo>();
     Instantiate<CDisplayInfo>();
+    AudioManager::Load(_T("Play"), _T("data/Sound/yukai.wav"));
+    AudioManager::Play(_T("Play"), true);
     ObjectManager::FindGameObject<CGameInstance>()->Init(1000);
 }
 

@@ -1073,6 +1073,9 @@ bool CSprite::Draw3DWithWorldMatrix(CSpriteImage* pImage, const MATRIX4X4& mWorl
         m_pD3D->m_pDeviceContext->OMSetBlendState(m_pD3D->m_pBlendStateAdd, nullptr, mask);
     }
 
+    // ZTest/ZWrite無効のデプスステンシルステートを設定（常に描画、背景が見える）
+    m_pD3D->m_pDeviceContext->OMSetDepthStencilState(m_pD3D->m_pDepthStencilStateNoZTest, 0);
+
     // �����������Υ��󥹥���ȥХåե����˳Ƽ�ǡ������Ϥ�
     D3D11_MAPPED_SUBRESOURCE pData;
     CONSTANT_BUFFER_SPRITE cb;
@@ -1108,6 +1111,9 @@ bool CSprite::Draw3DWithWorldMatrix(CSpriteImage* pImage, const MATRIX4X4& mWorl
 
     // �̾�Υ֥��ǥ��󥰤��᤹
     m_pD3D->m_pDeviceContext->OMSetBlendState(m_pD3D->m_pBlendStateTrapen, nullptr, mask);
+
+    // デフォルトのデプスステンシルステートに戻す
+    m_pD3D->m_pDeviceContext->OMSetDepthStencilState(m_pD3D->m_pDepthStencilStateDefault, 0);
 
     return true;
 }

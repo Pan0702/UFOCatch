@@ -4,7 +4,7 @@
 #include "sceneManager.h"
 #include "sceneBase.h"
 #include "SceneFactory.h"
-#include "../Scene/ScreenTransition.h"
+#include "../Utils/ScreenTransition.h"
 #include <Windows.h>
 
 namespace
@@ -23,7 +23,7 @@ namespace
     LARGE_INTEGER freq;
     LARGE_INTEGER current;
     float deltaTime;
-    static constexpr int REC_SIZE = 60;
+     constexpr int REC_SIZE = 60;
     float record[REC_SIZE];
     int recCount = 0;
 
@@ -45,11 +45,11 @@ namespace
         {
             float sum = 0;
             for (int i = 0; i < REC_SIZE; i++)
+            {
                 sum += record[i];
+            }
             sum /= REC_SIZE;
             t2 = (std::min)(t2, sum * 3.0f);
-            //			if (t2 <= sum * 1.1f)
-            //				t2 = sum;
         }
         record[recCount % REC_SIZE] = t;
         recCount++;
@@ -76,13 +76,6 @@ void SceneManager::Update()
     if (transition)
         transition->Update(deltaTime);
 
-    // シーン切り替え後にFadeIn開始
-    if (waitingForFadeIn && nextName == currentName)
-    {
-        waitingForFadeIn = false;
-        transition->StartFadeIn();
-    }
-
     if (nextName != currentName)
     {
         if (currentScene != nullptr)
@@ -93,6 +86,14 @@ void SceneManager::Update()
         currentName = nextName;
         currentScene = factory->Create(nextName);
     }
+
+    // シーン切り替え後にFadeIn開始
+    if (waitingForFadeIn && nextName == currentName)
+    {
+        waitingForFadeIn = false;
+        // シーンのロード（currentSceneの生成）が完了した直後にFadeInを開始する
+        transition->StartFadeIn();
+    }
     if (currentScene != nullptr)
         currentScene->Update();
 }
@@ -101,8 +102,11 @@ void SceneManager::Draw()
 {
     if (currentScene != nullptr)
         currentScene->Draw();
+}
 
-    // トランジションは最前面に描画
+void SceneManager::DrawTransition()
+{
+    // トランジションは最前面に描画（ObjectManager::Draw()より後に呼ぶこと）
     if (transition)
         transition->Draw();
 }

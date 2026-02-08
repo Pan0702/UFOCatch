@@ -194,6 +194,7 @@ HRESULT CDirect3D::InitD3D(HWND hWnd, DWORD dwWidth, DWORD dwHeight)
 
 	// �u�����h�X�e�[�g���쐬����
 	InitBlendState();
+	InitDepthStencilState();
 
 	// COM �I�u�W�F�N�g(CLSID_WICImagingFactory)�̍쐬
 	hr = CoCreateInstance(
@@ -351,6 +352,59 @@ HRESULT CDirect3D::InitBlendState()
 	// �f�t�H���g�̃u�����h�X�e�[�g���A���t�@�u�����h�p�u�����h�X�e�[�g�ɂ���            // -- 2020.1.15
 	// (�����F�̃u�����f�B���O��ݒ�)
 	m_pDeviceContext->OMSetBlendState(m_pBlendStateTrapen, nullptr, mask);
+
+	return S_OK;
+}
+
+//------------------------------------------------------------------------
+// InitDepthStencilState
+// デプスステンシルステートを初期化する
+//------------------------------------------------------------------------
+HRESULT CDirect3D::InitDepthStencilState()
+{
+	HRESULT hr;
+
+	// デフォルトのデプスステンシルステート（ZWrite有効）
+	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
+	ZeroMemory(&depthStencilDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+
+	depthStencilDesc.DepthEnable = TRUE;  // 深度テスト有効
+	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;  // 深度バッファへの書き込み有効
+	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;  // 手前のものを描画
+
+	hr = m_pDevice->CreateDepthStencilState(&depthStencilDesc, &m_pDepthStencilStateDefault);
+	if (FAILED(hr))
+	{
+		MessageBox(0, _T("Direct3D.cpp Default DepthStencilState creation failed"), _T(""), MB_OK);
+		return E_FAIL;
+	}
+
+	// ZWrite無効のデプスステンシルステート（透明描画用）
+	ZeroMemory(&depthStencilDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+
+	depthStencilDesc.DepthEnable = TRUE;  // 深度テスト有効
+	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;  // 深度バッファへの書き込み無効
+	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;  // 同じ深度または手前のものを描画
+
+	hr = m_pDevice->CreateDepthStencilState(&depthStencilDesc, &m_pDepthStencilStateNoWrite);
+	if (FAILED(hr))
+	{
+		MessageBox(0, _T("Direct3D.cpp ZWrite disabled DepthStencilState creation failed"), _T(""), MB_OK);
+		return E_FAIL;
+	}
+
+	// ZTest/ZWrite完全無効のデプスステンシルステート（常に描画、背景が常に見える）
+	ZeroMemory(&depthStencilDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+
+	depthStencilDesc.DepthEnable = FALSE;  // 深度テスト無効（常に描画）
+	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;  // 深度バッファへの書き込み無効
+
+	hr = m_pDevice->CreateDepthStencilState(&depthStencilDesc, &m_pDepthStencilStateNoZTest);
+	if (FAILED(hr))
+	{
+		MessageBox(0, _T("Direct3D.cpp ZTest disabled DepthStencilState creation failed"), _T(""), MB_OK);
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -917,6 +971,10 @@ void CDirect3D::DestroyD3D()
 	SAFE_RELEASE(m_pBlendStateNormal);
 	SAFE_RELEASE(m_pBlendStateTrapen);
 	SAFE_RELEASE(m_pBlendStateAdd);
+
+	SAFE_RELEASE(m_pDepthStencilStateDefault);
+	SAFE_RELEASE(m_pDepthStencilStateNoWrite);
+	SAFE_RELEASE(m_pDepthStencilStateNoZTest);
 
 	SAFE_RELEASE(m_pRStateR);	   	 // -- 2024.3.23
 	SAFE_RELEASE(m_pRStateRW);	   	 // -- 2024.3.23

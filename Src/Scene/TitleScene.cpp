@@ -59,19 +59,19 @@ void TitleScene::Update()
         // }
         if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_1))
         {
-            SceneManager::ChangeScene("ResultScene");
+            SceneManager::ChangeSceneWithTransition("ResultScene");
         }
-        // if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_2))
-        // {
-        //     SceneManager::ChangeScene("SelectScene");
-        // }
+        if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_2))
+        {
+            SceneManager::ChangeSceneWithTransition("SelectScene");
+        }
         if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_3))
         {
-            SceneManager::ChangeScene("TutorialScene");
+            SceneManager::ChangeSceneWithTransition("TutorialScene");
         }
         if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_0))
         {
-            SceneManager::ChangeScene("Debug");
+            SceneManager::ChangeSceneWithTransition("Debug");
         }
     }
 

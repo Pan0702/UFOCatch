@@ -1,6 +1,8 @@
 #include "Walk.h"
 #include "../Base/EnemyBase.h"
 #include "../Human/Human.h"
+#include "../AnimalSheep/Sheep.h"
+#include "../System/Flog.h"
 
 CWalk::CWalk(CEnemyBase* e, float speed)
 {
@@ -45,20 +47,40 @@ bool CWalk::CalcRandomMove()
     static constexpr int kMaxRetry = 50;// ランダム移動の試行回数上限（境界外に出ない組み合わせが見つかるまで最大 N 回試す）
     static constexpr float kMinMove = 1.0f;// ランダム移動距離の範囲（最小～最大）
     static constexpr float kMaxMove = 3.5f;// ランダム移動距離の範囲（最小～最大）
-    
+
+    // Sheep専用の範囲チェック
+    CSheep* sheep = dynamic_cast<CSheep*>(m_pOwner);
+    CFlog* flog = nullptr;
+    if (sheep != nullptr)
+    {
+        flog = ObjectManager::FindGameObject<CFlog>();
+    }
+
     // ランダムに（回転量＋移動距離）を作って、境界内に収まるまでリトライ
-    for (int retry = 0; retry < kMaxRetry;++retry)
+    for (int retry = 0; retry < kMaxRetry; ++retry)
     {
         // 回転量：[-180°, +180°] をランダムに選んでラジアンへ変換
-        m_turnAmount = Randomf(-kTurnAngleDeg,kTurnAngleDeg) * DegToRad;
-        
+        m_turnAmount = Randomf(-kTurnAngleDeg, kTurnAngleDeg) * DegToRad;
+
         // 移動距離：[1.0, 3.5] をランダムに選ぶ
-          m_moveAmount = Randomf(kMinMove,kMaxMove);
+        m_moveAmount = Randomf(kMinMove, kMaxMove);
 
         VECTOR3 tmpPos = m_position + VECTOR3(0, 0,
                                       m_moveAmount) * XMMatrixRotationY(m_turnAmount);
-        // この回転＋移動で境界外に出ないなら採用して終了
-        if(IsInsideAreaXZ(tmpPos,m_pOwner->GetAreaSize()))
+
+        // Sheepの場合、Flogの範囲内かチェック
+        if (flog != nullptr)
+        {
+            VECTOR3 toCenter = flog->GetFlockCenter() - tmpPos;
+            toCenter.y = 0;
+            float distanceToCenter = sqrtf(toCenter.LengthSquare());
+            if (distanceToCenter <= flog->GetFlockRadius())
+            {
+                return true;
+            }
+        }
+        // 他のエネミーの場合、既存のAreaSizeチェック
+        else if (IsInsideAreaXZ(tmpPos, m_pOwner->GetAreaSize()))
         {
             return true;
         }

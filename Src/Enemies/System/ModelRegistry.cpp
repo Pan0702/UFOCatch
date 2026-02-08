@@ -20,7 +20,7 @@ CModelRegistry::~CModelRegistry()
 
 void CModelRegistry::LoadDefaultModels()
 {
-    // Dog
+    // Dog//
     {
         ModelEntry entry = {};
         entry.name = "Dog";
@@ -32,7 +32,7 @@ void CModelRegistry::LoadDefaultModels()
         m_models.push_back(entry);
     }
 
-    // Human
+    // Human//
     {
         ModelEntry entry = {};
         entry.name = "Human";
@@ -44,7 +44,7 @@ void CModelRegistry::LoadDefaultModels()
         m_models.push_back(entry);
     }
 
-    // Chicken
+    // Chicken//
     {
         ModelEntry entry = {};
         entry.name = "Chicken";

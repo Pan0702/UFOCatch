@@ -21,6 +21,7 @@ namespace SceneManager {
 	void Start();
 	void Update();
 	void Draw();
+	void DrawTransition();
 	void Release();
 
 	/// <summary>

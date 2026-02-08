@@ -7,6 +7,7 @@
 #include "../Player/Player.h"
 #include "../Enemies/AnimalDog/Dog.h"
 #include "../Enemies/System/AnimalFactor.h"
+#include "../Enemies/System/Flog.h"
 #include "../System/DisplayInfo.h"
 #include "../System/VisionSystem.h"
 #include "../Stage/StageFactor.h"
@@ -19,13 +20,14 @@ PlayScene::PlayScene()
     Instantiate<CPlayerCamera>();
     new CEnemyManager();
     new CTimer(40);
+    new CPlayer(30);             
     new CAnimalFactor(20,20);
-    new CPlayer(30);
+    Instantiate<CFlog>();           
     Instantiate<CVisionSystem>();
     Instantiate<CDisplayInfo>();
     ObjectManager::FindGameObject<CGameInstance>()->Init(3000 );
-  //  m_pBGM = new CXAudioSource(_T("data/Sound/yukai.wav"));
-   // m_pBGM->Play(1);
+    m_pBGM = new CXAudioSource(_T("data/Sound/yukai.wav"));
+    m_pBGM->Play(1);
 }
 
 PlayScene::~PlayScene() = default;
@@ -59,7 +61,7 @@ void PlayScene::Draw()
 ////////////////////
 void PlayScene::ChangeResultScene()
 {
-    SceneManager::ChangeScene("ResultScene");
+    SceneManager::ChangeSceneWithTransition("ResultScene");
     m_pBGM->Stop();
 }
 //4分木の計算量目視Debug

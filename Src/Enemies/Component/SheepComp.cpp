@@ -1,34 +1,83 @@
 #include "SheepComp.h"
 #include "../System/Flog.h"
 CHerded::CHerded(CSheep* sheep)
+    : m_wanderTimer(0.0f), m_walkTimer(0.0f), m_walkDuration(0.0f), m_currentRotation(0.0f)
 {
     m_pOwner = sheep;
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
+
+    // 初期のWander方向をランダムに設定
+    float randomAngle = Randomf(0.0f, XM_2PI);
+    m_wanderTarget = VECTOR3(sinf(randomAngle), 0, cosf(randomAngle));
 }
 
 void CHerded::Enter()
 {
     m_isFinish = false;
     m_pOwner->GetAnimator()->MergePlay(AnimationType::A_WALK);
+
+    // 状態に入るたびにWander方向をリセット
+    float randomAngle = Randomf(0.0f, XM_2PI);
+    m_wanderTarget = VECTOR3(sinf(randomAngle), 0, cosf(randomAngle));
+    m_wanderTimer = 0.0f;
+
+    // 移動時間をランダムに設定（3～7秒）
+    m_walkDuration = Randomf(3.0f, 7.0f);
+    m_walkTimer = 0.0f;
+
+    // 現在の回転を保存
+    m_currentRotation = m_pOwner->GetTransform().rotation.y;
 }
 
 void CHerded::Update()
 {
+    // 移動時間をカウント
+    m_walkTimer += SceneManager::DeltaTime();
+
+    // 一定時間経過したらIDLEに戻る
+    if (m_walkTimer >= m_walkDuration)
+    {
+        m_isFinish = true;
+        m_pOwner->SetState(CBaseState::State::IDLE);
+        return;
+    }
+
     const VECTOR3 boidsForce = CalculateBoids();
-    // const VECTOR3 escapeForce = CalculateEscapeFromDog();  // 一旦無効化
-    const VECTOR3 boundaryForce = CalculateBoundaryForce();  // 中心への引き寄せと半径制約
+    const VECTOR3 wanderForce = CalculateWandering();
+    const VECTOR3 boundaryForce = CalculateBoundaryForce();
 
-    VECTOR3 totalForce = boidsForce + boundaryForce;
+    // 力を合成（Wandering優先で自由な動き）
+    VECTOR3 totalForce = wanderForce + boidsForce + boundaryForce;
     totalForce.y = 0;
-
 
     if (totalForce.LengthSquare() > 0.0001f)
     {
         normalize(totalForce);
 
-        // 移動方向に回転
+        // 目標の回転角度を計算
         float targetAngle = atan2f(totalForce.x, totalForce.z);
-        m_pOwner->SetRotateY(targetAngle);
+
+        // 現在の回転から目標の回転へ滑らかに補間（回転速度: 3.0 rad/s）
+        constexpr float rotationSpeed = 3.0f;
+        float angleDiff = targetAngle - m_currentRotation;
+
+        // 角度を-π～πの範囲に正規化
+        while (angleDiff > XM_PI) angleDiff -= XM_2PI;
+        while (angleDiff < -XM_PI) angleDiff += XM_2PI;
+
+        // 回転を補間
+        float rotationDelta = angleDiff * rotationSpeed * SceneManager::DeltaTime();
+        if (fabsf(angleDiff) < fabsf(rotationDelta))
+        {
+            m_currentRotation = targetAngle;
+        }
+        else
+        {
+            m_currentRotation += rotationDelta;
+        }
+
+        // 回転を適用
+        m_pOwner->SetRotateY(m_currentRotation);
 
         // 移動
         const float moveSpeed = 1.5f;
@@ -96,8 +145,8 @@ VECTOR3 CHerded::CalculateBoids() const
         if (cohesion.LengthSquare() > 0.0001f)
         {
             normalize(cohesion);
-            // 吸い込み中は凝集力が強くなる（ストロンボムモデル）
-            float cohesionWeight = isSucking ? 1.05f : 0.2f;
+            // 吸い込み中は凝集力が強くなる、通常時は弱く（自由な動きを優先）
+            float cohesionWeight = isSucking ? 1.5f : 0.1f;
             cohesion *= cohesionWeight;
         }
     }
@@ -105,7 +154,7 @@ VECTOR3 CHerded::CalculateBoids() const
     if (separationCount > 0 && separation.LengthSquare() > 0.0001f)
     {
         normalize(separation);
-        constexpr float separationWeight = 1.5f;  // 分離（近すぎる仲間から離れる）
+        constexpr float separationWeight = 2.0f;  // 分離を強めて、近づきすぎを防ぐ
         separation *= separationWeight;
     }
 
@@ -120,7 +169,7 @@ VECTOR3 CHerded::CalculateEscapeFromDog() const
         return {0, 0, 0};
     }
 
-    CAShepherdDog* dog = m_pOwner->GetMaster();
+    CAShepherdDog* dog = nullptr;
     if (dog == nullptr) return {0, 0, 0};
 
     const VECTOR3 dogPos = dog->GetTransform().position;
@@ -158,7 +207,7 @@ VECTOR3 CHerded::CalculateBoundaryForce() const
 
     const float distanceToCenter = sqrtf(toCenter.LengthSquare());
 
-    // 半径外に出た場合、強い力で中心に戻す
+    // 半径外に出た場合のみ、強い力で中心に戻す
     if (distanceToCenter > flockRadius)
     {
         if (toCenter.LengthSquare() > 0.0001f)
@@ -166,19 +215,39 @@ VECTOR3 CHerded::CalculateBoundaryForce() const
             normalize(toCenter);
             // 半径を超えるほど強い力で引き戻す
             const float overDistance = distanceToCenter - flockRadius;
-            const float boundaryWeight = 3.0f + overDistance * 0.5f;
+            const float boundaryWeight = 5.0f + overDistance * 1.0f;
             return toCenter * boundaryWeight;
         }
     }
-    // 半径の80%を超えたら、ゆるやかに中心へ引き寄せる
-    else if (distanceToCenter > flockRadius * 0.8f)
+
+    // 半径内では完全に自由（境界力なし）
+    return {0, 0, 0};
+}
+
+VECTOR3 CHerded::CalculateWandering()
+{
+    // 一定時間ごとにランダムな方向を変更
+    m_wanderTimer += SceneManager::DeltaTime();
+
+    constexpr float changeDirectionInterval = 3.0f;  // 3秒ごとに方向変更
+    if (m_wanderTimer >= changeDirectionInterval)
     {
-        if (toCenter.LengthSquare() > 0.0001f)
-        {
-            normalize(toCenter);
-            const float softWeight = 0.5f;
-            return toCenter * softWeight;
-        }
+        // ランダムな角度を生成（現在の方向から±60度の範囲）
+        float currentAngle = atan2f(m_wanderTarget.x, m_wanderTarget.z);
+        float randomOffset = Randomf(-XM_PI / 3.0f, XM_PI / 3.0f);  // ±60度
+        float newAngle = currentAngle + randomOffset;
+
+        m_wanderTarget = VECTOR3(sinf(newAngle), 0, cosf(newAngle));
+        m_wanderTimer = 0.0f;
+    }
+
+    // Wander方向に正規化された力を返す
+    VECTOR3 wanderForce = m_wanderTarget;
+    if (wanderForce.LengthSquare() > 0.0001f)
+    {
+        normalize(wanderForce);
+        constexpr float wanderWeight = 1.0f;  // Wanderの強さ
+        return wanderForce * wanderWeight;
     }
 
     return {0, 0, 0};
@@ -226,20 +295,27 @@ void CPanic::Update()
     // パニック状態で移動
     const float moveSpeed = 2.0f;  // HERDEDより速く（パニック状態）
     m_pOwner->AddPosition(m_panicDirection * moveSpeed * SceneManager::DeltaTime());
-    
-    // エリア外に出たら方向転換
-    const VECTOR3 currentPos = m_pOwner->GetTransform().position;
-    const VECTOR2 areaSize = m_pOwner->GetAreaSize();
-    
-    if (!IsInsideAreaXZ(currentPos, areaSize))
+
+    // 群れの範囲外に出たら方向転換
+    CFlog* flog = ObjectManager::FindGameObject<CFlog>();
+    if (flog != nullptr)
     {
-        // エリア中心方向に向き直す
-        VECTOR3 toCenter = VECTOR3(0, 0, 0) - currentPos;
-        toCenter.y = 0; 
-        if (toCenter.LengthSquare() > 0.0001f)
+        const VECTOR3 flockCenter = flog->GetFlockCenter();
+        const float flockRadius = flog->GetFlockRadius();
+        const VECTOR3 currentPos = m_pOwner->GetTransform().position;
+
+        VECTOR3 toCenter = flockCenter - currentPos;
+        toCenter.y = 0;
+        const float distanceToCenter = sqrtf(toCenter.LengthSquare());
+
+        // 半径外に出た場合、中心方向に向き直す
+        if (distanceToCenter > flockRadius)
         {
-            normalize(toCenter);
-            m_panicDirection = toCenter;
+            if (toCenter.LengthSquare() > 0.0001f)
+            {
+                normalize(toCenter);
+                m_panicDirection = toCenter;
+            }
         }
     }
     
