@@ -17,6 +17,7 @@ public:
     /// @return bool
     ///
     bool IsWithSuctionCone(const VECTOR3& targetPos) const;
+    const VECTOR3& CalcSuctionDisplacement(float moveTimeSecond, const VECTOR3& animalPos) const;
     bool IsInsideSuctionCircle(const VECTOR3& targetPos) const;
     
 
@@ -29,6 +30,7 @@ private:
 
     void HandleMovementInput();
     void UpdateCameraPos();
+
 
     bool m_SuctionActive;
     bool m_prevSuctionActive;

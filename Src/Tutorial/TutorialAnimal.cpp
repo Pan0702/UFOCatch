@@ -38,11 +38,10 @@ CTutorialAnimal::CTutorialAnimal(const VECTOR3& pos)
 void CTutorialAnimal::Update()
 {
     CPlayer* pPl = ObjectManager::FindGameObject<CPlayer>();
-    CPlayerLevel level;
     // 吸い込む範囲内かつ吸い込むボタンを押していたら位置を足していく //
     if (pPl->IsWithSuctionCone(transform.position) && pPl->GetIsSuckUp())
     {
-        transform.position += CalcSuctionDisplacement(SUCTION_SPEED_FACTOR, transform.position,pPl->GetPos(),level.GetConeTopPos());
+       // transform.position += CalcSuctionDisplacement(SUCTION_SPEED_FACTOR, transform.position,pPl->GetPos(),pPl->GetTransform().position.y, SceneManager::DeltaTime());
         m_velocityY = 0.0f;  // 吸い込み中は重力をリセット //
     }
     else

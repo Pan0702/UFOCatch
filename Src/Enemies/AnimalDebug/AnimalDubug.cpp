@@ -66,9 +66,8 @@ void CADebug::Draw()
 
 const VECTOR3& CADebug::SuctionSpeed() const
 {
-    CPlayerLevel lv;
-    //1秒で吸い込み
-    return CalcSuctionDisplacement(1, transform.position,m_pPlayer->GetPos(),lv.GetConeTopPos());
+    constexpr float suctionTime = 1.0f;
+    return m_pPlayer->CalcSuctionDisplacement(suctionTime,transform.position);
 }
 
 bool CADebug::ShouldApplyGravity() const

@@ -15,9 +15,23 @@ private:
     void Update() override;
     void Draw()   override;
 
-    void DrawSuctionCircle() const;
-
     CPlayer*      m_pPlayer;
     CPlayerLevel* m_pLevel;
+};
+
+class CCircleDraw : public Object3D
+{
+public:
+    CCircleDraw();
+    ~CCircleDraw() override;
+
+private:
+    void Update() override;
+    void Draw()   override;
+
+    CPlayer*      m_pPlayer;
     CSpriteImage* m_pCircleImage;
+    CPlayerLevel* m_pLevel;
+    
+    float m_radius;
 };

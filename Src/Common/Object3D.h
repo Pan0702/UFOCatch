@@ -133,11 +133,14 @@ public:
 	/// <returns>SphereCollider</returns>
 	SphereCollider  GetSphereCollider();
 
-
+	//オブジェクトの下に影を描画//
+	void DrawObjectShadow();
 
 protected:
 	CFbxMesh* m_pMesh;
 	Animator* m_pAnimator;
 	MeshCollider* m_pMeshCol;
+	CSpriteImage* m_pSpriteImage;
 	Transform transform;
+	VECTOR3 a;
 };

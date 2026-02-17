@@ -24,6 +24,7 @@ CADog::CADog(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     m_pGround = ObjectManager::FindGameObject<CGround>();
     InitStates();
+    m_pSpriteImage = new CSpriteImage(TEXT("data/CircleSuction.png"));
     m_pBBox = CreateBBox();
 }
 
@@ -81,9 +82,8 @@ void CADog::Update()
 
 const VECTOR3& CADog::SuctionSpeed() const
 {
-    CPlayerLevel * level = ObjectManager::FindGameObject<CPlayerLevel>();
-    //1秒で吸い込む
-    return CalcSuctionDisplacement(1, transform.position,m_pPlayer->GetPos(), m_pPlayer->GetIsSuckUp() ? level->GetConeTopPos() : 0.0f);
+    constexpr float suctionTime = 1.0f;
+    return m_pPlayer->CalcSuctionDisplacement(suctionTime,transform.position);
 }
 
 

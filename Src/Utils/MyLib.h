@@ -8,8 +8,8 @@ namespace MyLib
     // @param moveTimeSecond  移動にかける時間
     // @param animalPos  動物の位置
     // @return 1回当たりの移動量 //
-    const VECTOR3& CalcSuctionDisplacement(const float& moveTimeSecond,
-                                           const VECTOR3& animalPos, const VECTOR3& plPos, const float topPos);
+    VECTOR3 CalcSuctionDisplacement(float moveTimeSecond,
+                                    VECTOR3 animalPos, VECTOR3 plPos, float topPos, float deltaTime);
 }
 
 using namespace MyLib;

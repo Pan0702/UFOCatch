@@ -35,6 +35,7 @@ CAnimalChicken::CAnimalChicken(const VECTOR3& iniPos, const VECTOR2& moveAreaSiz
     m_pState->Enter(CBaseState::State::WALK);
     m_pBBox = CreateBBox();
     m_pCry = new CXAudioSource(_T("data/Sound/ChickenCry.wav"));
+    m_pSpriteImage = new CSpriteImage(TEXT("data/CircleSuction.png"));
 }
 
 CAnimalChicken::~CAnimalChicken()
@@ -44,6 +45,7 @@ CAnimalChicken::~CAnimalChicken()
         SAFE_DELETE(state.second);
     }
     SAFE_DELETE(m_pCry);
+    SAFE_DELETE(m_pSpriteImage);
 }
 
 void CAnimalChicken::Update()
@@ -86,8 +88,8 @@ void CAnimalChicken::IsSuctionCheck()
 
 const VECTOR3& CAnimalChicken::SuctionSpeed() const
 {
-    static CPlayerLevel level(0, 0);
-    return CalcSuctionDisplacement(1, transform.position, m_pPlayer->GetPos(), m_pPlayer->GetIsSuckUp() ? level.GetConeTopPos() : 0.0f);
+    constexpr float suctionTime = 1.0f;
+    return m_pPlayer->CalcSuctionDisplacement(suctionTime,transform.position);
 }
 
 bool CAnimalChicken::ShouldApplyGravity() const

@@ -15,13 +15,13 @@ CConeDraw::CConeDraw(float coneTopPos)
     transform.scale.y = coneTopPos;
     SetDrawOrder(-1);
 
-    m_pCircleImage = new CSpriteImage(TEXT("data/CircleSuction.png"));
+
 }
 
 CConeDraw::~CConeDraw()
 {
     SAFE_DELETE(m_pMesh);
-    SAFE_DELETE(m_pCircleImage);
+
 }
 
 void CConeDraw::Update()
@@ -47,16 +47,34 @@ void CConeDraw::Draw()
             Object3D::Draw();
         }
     }
-
-    DrawSuctionCircle();
 }
 
 ////////////////////
 // 地面に吸い込み範囲の円を描画する //
 ////////////////////
-void CConeDraw::DrawSuctionCircle() const
+
+
+CCircleDraw::CCircleDraw()
 {
-    if (!m_pCircleImage || !m_pLevel || !m_pPlayer) return;
+    SetDrawOrder(1);
+    m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
+    m_pLevel  = ObjectManager::FindGameObject<CPlayerLevel>();
+    m_pCircleImage = new CSpriteImage(TEXT("data/CircleSuction.png"));
+}
+
+CCircleDraw::~CCircleDraw()
+{
+    SAFE_DELETE(m_pCircleImage);
+}
+
+void CCircleDraw::Update()
+{
+    Object3D::Update();
+}
+
+void CCircleDraw::Draw()
+{
+    if (!m_pCircleImage  || !m_pPlayer) return;
 
     static constexpr float GROUND_OFFSET        = 0.1f;
     static constexpr float CIRCLE_DIAMETER_SCALE = 2.0f;

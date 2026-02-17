@@ -17,6 +17,7 @@ CSheep::CSheep(const VECTOR3& iniPos)
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     InitStates();
     transform.position = iniPos;
+    m_pSpriteImage = new CSpriteImage(TEXT("data/CircleSuction.png"));
 }
 void CSheep::InitStates()
 {
@@ -45,8 +46,8 @@ CSheep::~CSheep()
 
 const VECTOR3& CSheep::SuctionSpeed() const
 {
-    CPlayerLevel* level = ObjectManager::FindGameObject<CPlayerLevel>();
-    return CalcSuctionDisplacement(1, transform.position, m_pPlayer->GetPos(), m_pPlayer->GetIsSuckUp() ? level->GetConeTopPos() : 0.0f);
+    constexpr float suctionTime = 1.0f;
+    return m_pPlayer->CalcSuctionDisplacement(suctionTime,transform.position);
 }
 
 

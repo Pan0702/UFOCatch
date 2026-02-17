@@ -22,7 +22,7 @@ PlayScene::PlayScene()
     new CTimer(40);
     new CPlayer(30);             
     new CAnimalFactor(20,20);
-    Instantiate<CFlog>();           
+   // Instantiate<CFlog>();           
     Instantiate<CVisionSystem>();
     Instantiate<CDisplayInfo>();
     ObjectManager::FindGameObject<CGameInstance>()->Init(3000 );
