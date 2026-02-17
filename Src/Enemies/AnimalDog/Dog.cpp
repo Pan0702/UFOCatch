@@ -10,6 +10,7 @@
 #include "../Component/Walk.h"
 #include "../Component/Suction.h"
 #include "../Component/Destroy.h"
+#include "../../Utils/MyLib.h"
 
 CADog::CADog(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos), m_areaSize(moveAreaSize)
@@ -80,9 +81,9 @@ void CADog::Update()
 
 const VECTOR3& CADog::SuctionSpeed() const
 {
+    CPlayerLevel * level = ObjectManager::FindGameObject<CPlayerLevel>();
     //1秒で吸い込む
-    return m_pPlayer->
-        CalcSuctionDisplacement(1, transform.position);
+    return CalcSuctionDisplacement(1, transform.position,m_pPlayer->GetPos(), m_pPlayer->GetIsSuckUp() ? level->GetConeTopPos() : 0.0f);
 }
 
 

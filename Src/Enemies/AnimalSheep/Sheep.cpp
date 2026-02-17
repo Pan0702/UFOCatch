@@ -4,6 +4,7 @@
 #include "../Component/Idle.h"
 #include "../Component/Suction.h"
 #include "../Component/Walk.h"
+#include "../../Utils/MyLib.h"
 
 CSheep::CSheep(const VECTOR3& iniPos)
     : m_wasSuctioned(false)
@@ -44,8 +45,8 @@ CSheep::~CSheep()
 
 const VECTOR3& CSheep::SuctionSpeed() const
 {
-    return m_pPlayer->
-       CalcSuctionDisplacement(1, transform.position);
+    CPlayerLevel* level = ObjectManager::FindGameObject<CPlayerLevel>();
+    return CalcSuctionDisplacement(1, transform.position, m_pPlayer->GetPos(), m_pPlayer->GetIsSuckUp() ? level->GetConeTopPos() : 0.0f);
 }
 
 

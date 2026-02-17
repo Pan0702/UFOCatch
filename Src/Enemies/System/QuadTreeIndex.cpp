@@ -36,11 +36,10 @@ void CQuadTreeIndex::Update()
     }
 }
 
-const std::vector<CEnemyBase*>& CQuadTreeIndex::GetNearbyEnemies(
+std::vector<CEnemyBase*> CQuadTreeIndex::GetNearbyEnemies(
     CEnemyBase* pObj,const VECTOR2& pos,const VECTOR2& size) const
 {
-    static std::vector<CEnemyBase*> result;
-    result.clear();
+    std::vector<CEnemyBase*> result;
 
     if (m_pTree == nullptr)
     {
@@ -88,8 +87,17 @@ void CQuadTreeIndex::CalcCollisionStats(float elapsedMs, const std::vector<CEnem
     m_stats.totalChecks = static_cast<int>(enemies.size());
 
     // 敵の総数を取得
-    std::list<CEnemyBase*> allEnemies = ObjectManager::FindGameObjects<CEnemyBase>();
-    m_stats.enemyCount = static_cast<int>(allEnemies.size());
+    // ※ 毎フレーム全走査は重いため、概算または直近の値を使用することを検討
+    // 現状はエラー回避のため、この高コストな計算を限定的に行うか、一旦コメントアウトまたは最小限にする
+    // ここでのFindGameObjectsが、GetNearbyEnemies(全エネミーが呼ぶ)から呼ばれるため非常に重い
+    static int lastEnemyCount = 0;
+    static int frameDivider = 0;
+    if (frameDivider++ % 60 == 0) {
+         std::list<CEnemyBase*> allEnemies = ObjectManager::FindGameObjects<CEnemyBase>();
+         lastEnemyCount = static_cast<int>(allEnemies.size());
+    }
+    
+    m_stats.enemyCount = lastEnemyCount;
 
     // 総当たりの場合の判定回数（自分以外の全敵）
     m_stats.potentialChecks = m_stats.enemyCount > 0 ? m_stats.enemyCount - 1 : 0;

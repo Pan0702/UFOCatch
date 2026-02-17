@@ -31,7 +31,7 @@ public:
     void Update();
 
     // 周辺のエネミーを取得
-    const std::vector<CEnemyBase*>& GetNearbyEnemies(
+    std::vector<CEnemyBase*> GetNearbyEnemies(
         CEnemyBase* pObj,
         const VECTOR2& pos,
         const VECTOR2& size) const;

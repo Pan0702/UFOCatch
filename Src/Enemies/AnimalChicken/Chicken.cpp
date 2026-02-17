@@ -12,6 +12,7 @@
 #include "../Component/Suction.h"
 #include "../Component/Walk.h"
 #include "../Component/Destroy.h"
+#include "../../Utils/MyLib.h"  
 
 CAnimalChicken::CAnimalChicken(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos), m_areaSize(moveAreaSize)
@@ -85,8 +86,8 @@ void CAnimalChicken::IsSuctionCheck()
 
 const VECTOR3& CAnimalChicken::SuctionSpeed() const
 {
-    return m_pPlayer->
-        CalcSuctionDisplacement(1, transform.position);
+    static CPlayerLevel level(0, 0);
+    return CalcSuctionDisplacement(1, transform.position, m_pPlayer->GetPos(), m_pPlayer->GetIsSuckUp() ? level.GetConeTopPos() : 0.0f);
 }
 
 bool CAnimalChicken::ShouldApplyGravity() const

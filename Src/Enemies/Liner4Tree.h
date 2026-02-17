@@ -107,8 +107,11 @@ private:
     uint16_t Get2DMortonNumber(float worldX, float worldY)
     {
         // ワールド座標を4分木空間の相対座標に変換
-        float normX = (worldX - m_area.x) / (m_area.z - m_area.x);
-        float normY = (worldY - m_area.y) / (m_area.w - m_area.y);
+        float divX = m_area.z - m_area.x;
+        float divY = m_area.w - m_area.y;
+        
+        float normX = (divX > 0.0001f) ? (worldX - m_area.x) / divX : 0.0f;
+        float normY = (divY > 0.0001f) ? (worldY - m_area.y) / divY : 0.0f;
 
         if (normX < 0) normX = 0;
         if (normY < 0) normY = 0;
@@ -116,8 +119,8 @@ private:
         //  最大レベルの解像度に変換
         uint16_t maxCells = 1 << m_maxLevel;
 
-        uint16_t cellX = normX * maxCells; 
-        uint16_t cellY = normY * maxCells; 
+        uint16_t cellX = (uint16_t)(normX * maxCells); 
+        uint16_t cellY = (uint16_t)(normY * maxCells); 
 
         //  範囲チェック（上限のみ）
         if (cellX >= maxCells) cellX = maxCells - 1;
@@ -140,18 +143,20 @@ private:
         }
 
         uint16_t xorResult = leftTop ^ rightBottom;
-        uint16_t checkBit = 0x3 << ((m_maxLevel - 1) * 2);
-
+        
         int level = 0;
-
-        for (int i = 0; i < m_maxLevel; i++)
+        if (m_maxLevel > 0)
         {
-            if (xorResult & checkBit)
+            uint16_t checkBit = 0x3 << ((m_maxLevel - 1) * 2);
+            for (int i = 0; i < m_maxLevel; i++)
             {
-                level = i;
-                break;
+                if (xorResult & checkBit)
+                {
+                    level = i;
+                    break;
+                }
+                checkBit >>= 2;
             }
-            checkBit >>= 2;
         }
 
         uint16_t offset = ((1 << (level * 2)) - 1) / 3;

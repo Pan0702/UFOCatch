@@ -21,7 +21,7 @@ public:
     CFbxMesh* MeshList(const std::string& str) const;
 
     // 周辺エネミー取得（QuadTreeIndexに委譲）
-    const std::vector<CEnemyBase*>& GetNearbyEnemies(
+    std::vector<CEnemyBase*> GetNearbyEnemies(
         CEnemyBase* pObj,const VECTOR2& pos,const VECTOR2& size) const;
 
     // 統計情報（QuadTreeIndexに委譲）

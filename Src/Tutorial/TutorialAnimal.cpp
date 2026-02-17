@@ -5,6 +5,7 @@
 #include "../Utils/Animator.h"
 #include "../Enemies/System/EnemyManager.h"
 #include "../Stage/Ground.h"
+#include "../Utils/MyLib.h"
 
 namespace
 {
@@ -37,10 +38,11 @@ CTutorialAnimal::CTutorialAnimal(const VECTOR3& pos)
 void CTutorialAnimal::Update()
 {
     CPlayer* pPl = ObjectManager::FindGameObject<CPlayer>();
+    CPlayerLevel level;
     // 吸い込む範囲内かつ吸い込むボタンを押していたら位置を足していく //
     if (pPl->IsWithSuctionCone(transform.position) && pPl->GetIsSuckUp())
     {
-        transform.position += pPl->CalcSuctionDisplacement(SUCTION_SPEED_FACTOR, transform.position);
+        transform.position += CalcSuctionDisplacement(SUCTION_SPEED_FACTOR, transform.position,pPl->GetPos(),level.GetConeTopPos());
         m_velocityY = 0.0f;  // 吸い込み中は重力をリセット //
     }
     else
@@ -54,7 +56,7 @@ void CTutorialAnimal::Update()
 ////////////////////
 void CTutorialAnimal::Destroy()
 {
-    ObjectManager::FindGameObject<CPlayer>()->AddExp(CAPTURE_EXP);
+    ObjectManager::FindGameObject<CPlayerLevel>()->AddExp(CAPTURE_EXP);
     ObjectManager::FindGameObject<CGameInstance>()->AddScore(CAPTURE_SCORE);
     ObjectManager::FindGameObject<CGameInstance>()->AddCapture(CAPTURE_COUNT);
     DestroyMe();

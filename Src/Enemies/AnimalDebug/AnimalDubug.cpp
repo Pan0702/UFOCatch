@@ -8,6 +8,7 @@
 #include "../Component/Walk.h"
 #include "../Component/Destroy.h"
 #include "../System/EnemyManager.h"
+#include "../../Utils/MyLib.h"
 
 CADebug::CADebug(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos)
@@ -65,9 +66,9 @@ void CADebug::Draw()
 
 const VECTOR3& CADebug::SuctionSpeed() const
 {
+    CPlayerLevel lv;
     //1秒で吸い込み
-    return m_pPlayer->
-        CalcSuctionDisplacement(1, transform.position);
+    return CalcSuctionDisplacement(1, transform.position,m_pPlayer->GetPos(),lv.GetConeTopPos());
 }
 
 bool CADebug::ShouldApplyGravity() const

@@ -11,7 +11,7 @@ void CDestroy::Enter()
 {
     ObjectManager::FindGameObject<CGameInstance>()->AddScore(m_score);
     ObjectManager::FindGameObject<CGameInstance>()->AddCapture(1);
-    ObjectManager::FindGameObject<CPlayer>()->AddExp(m_exp);
+    ObjectManager::FindGameObject<CPlayerLevel>()->AddExp(m_exp);
     m_pOwner->DestroyMe();
 }
 

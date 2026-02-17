@@ -85,6 +85,9 @@ void SceneManager::Update()
         }
         currentName = nextName;
         currentScene = factory->Create(nextName);
+        // シーン生成はロード処理で時間がかかる場合がある。
+        // ロード時間を次フレームの deltaTime に含めないようタイムスタンプをリセットする。
+        QueryPerformanceCounter(&current);
     }
 
     // シーン切り替え後にFadeIn開始

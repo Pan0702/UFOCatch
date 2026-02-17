@@ -67,16 +67,14 @@ void CEnemyManager::SetRotationY(const float& angle)
     transform.rotation.y = degAngle * DegToRad;
 }
 
-const std::vector<CEnemyBase*>& CEnemyManager::GetNearbyEnemies(
+std::vector<CEnemyBase*> CEnemyManager::GetNearbyEnemies(
     CEnemyBase* pObj,const VECTOR2& pos,const VECTOR2& size) const
 {
-    static std::vector<CEnemyBase*> emptyResult;
-
     if (m_pQuadTreeIndex)
     {
         return m_pQuadTreeIndex->GetNearbyEnemies(pObj, pos, size);
     }
-    return emptyResult;
+    return std::vector<CEnemyBase*>();
 }
 
 const CollisionStats& CEnemyManager::GetCollisionStats() const

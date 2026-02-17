@@ -221,6 +221,6 @@ void CChickenDestroy::Enter(State type)
 {
     ObjectManager::FindGameObject<CGameInstance>()->AddScore(150);
     ObjectManager::FindGameObject<CGameInstance>()->AddCapture(1);
-    ObjectManager::FindGameObject<CPlayer>()->AddExp(1.5f);
+    ObjectManager::FindGameObject<CPlayerLevel>()->AddExp(1.5f);
     m_pOwner->DestroyMe();
 }
