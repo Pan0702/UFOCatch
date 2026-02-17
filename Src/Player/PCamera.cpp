@@ -102,9 +102,9 @@ void CPlayerCamera::ZoomIn(const VECTOR3& pos)
     VECTOR3 controlPoint2 = targetLook + offsetPoint2;
     
 
-    m_camPosBezier.Start(startPos, controlPoint1, controlPoint2, targetPos, 1.0f);
-    m_camLookBezier.Start(startLook, targetLook, 1.0f);
-    state = 0;
+    m_camPosBezier.Start(startPos, controlPoint1, controlPoint2, targetPos, 0.7f);
+    m_camLookBezier.Start(startLook, targetLook, 0.7f);
+    state = zoomIn;
 }
 
 ////////////////////
@@ -131,9 +131,9 @@ void CPlayerCamera::ZoomOut(const VECTOR3& pos)
     VECTOR3 controlPoint1 = pos + offsetPoint2 ;
     VECTOR3 controlPoint2 = pos + offsetPoint1;
 
-    m_camPosBezier.Start(startPos, controlPoint1, controlPoint2, targetPos, 1.0f);
-    m_camLookBezier.Start(startLook, targetLook, 1.0f);
-    state = 1;
+    m_camPosBezier.Start(startPos, controlPoint1, controlPoint2, targetPos, 0.5f);
+    m_camLookBezier.Start(startLook, targetLook, 0.5f);
+    state = zoomOut;
 }
 
 #if 0

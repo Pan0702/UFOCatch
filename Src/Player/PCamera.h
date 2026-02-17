@@ -26,15 +26,14 @@ private:
 
     VECTOR3 m_camPos;
     VECTOR3 m_camLook;
-
     
     BezierValueVec3 m_camPosBezier;
     LerpValueVec3 m_camLookBezier;
-    int state;
+    uint8_t state;
 
     VECTOR3 m_animStartPlayerPos;  // アニメーション開始時のプレイヤー位置
     VECTOR3 m_playerOffset;        // プレイヤー移動による差分
-    enum
+    enum : uint8_t
     {
         zoomIn = 0,
         zoomOut = 1,

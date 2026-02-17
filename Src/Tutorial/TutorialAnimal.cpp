@@ -54,7 +54,7 @@ void CTutorialAnimal::Update()
 ////////////////////
 void CTutorialAnimal::Destroy()
 {
-    ObjectManager::FindGameObject<CPlayer>()->AddExp(CAPTURE_EXP);
+    ObjectManager::FindGameObject<CPlayerLevel>()->AddExp(CAPTURE_EXP);
     ObjectManager::FindGameObject<CGameInstance>()->AddScore(CAPTURE_SCORE);
     ObjectManager::FindGameObject<CGameInstance>()->AddCapture(CAPTURE_COUNT);
     DestroyMe();

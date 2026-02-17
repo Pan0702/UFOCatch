@@ -1,9 +1,13 @@
 #include "TitleScene.h"
 #include "../Core/Game/GameMain.h"
 #include "../Framework/AudioManager.h"
+#include "../Enemies/System/EnemyManager.h"
 
 TitleScene::TitleScene()
 {
+    // PlayScene用モデルを起動時に先読みしておく
+    SingleInstantiate<CEnemyManager>();
+
     m_imageInfos.push_back(ImageInfo(
         VECTOR2(42, 301),
         VECTOR4(0, 0, 505, 260),
@@ -73,6 +77,10 @@ void TitleScene::Update()
         {
             SceneManager::ChangeSceneWithTransition("Debug");
         }
+    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_4))
+    {
+        SceneManager::ChangeSceneWithTransition("PlayScene");
+    }
     }
 
     void TitleScene::Draw()

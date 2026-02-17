@@ -18,7 +18,7 @@ PlayScene::PlayScene()
 {
     Instantiate<CStageFactor>();
     Instantiate<CPlayerCamera>();
-    new CEnemyManager();
+    SingleInstantiate<CEnemyManager>();
     new CTimer(40);
     new CPlayer(30);             
     new CAnimalFactor(20,20);

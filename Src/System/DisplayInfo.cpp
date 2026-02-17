@@ -98,7 +98,7 @@ void CDisplayInfo::ExpDraw()
 {
     //LvBaseを描画
     m_pSprite->Draw(m_expImage, 144, 713, 0, 160, 1224, 55);
-    CPlayer* pl = ObjectManager::FindGameObject<CPlayer>();
+    CPlayerLevel* pl = ObjectManager::FindGameObject<CPlayerLevel>();
     if (!pl) return;
 
     //割合を計算
@@ -170,7 +170,7 @@ void CDisplayInfo::HPDraw()
 void CDisplayInfo::LvDraw()
 { 
 
-    CPlayer* pl = ObjectManager::FindGameObject<CPlayer>();
+    CPlayerLevel* pl = ObjectManager::FindGameObject<CPlayerLevel>();
     int lv = pl->GetLv();
     
     // 桁数を計算
