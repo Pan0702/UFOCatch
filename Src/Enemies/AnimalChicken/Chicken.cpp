@@ -84,7 +84,7 @@ void CAnimalChicken::IsSuctionCheck()
     }
 }
 
-const VECTOR3& CAnimalChicken::SuctionSpeed() const
+VECTOR3 CAnimalChicken::SuctionSpeed() const
 {
     static CPlayerLevel level(0, 0);
     return CalcSuctionDisplacement(1, transform.position, m_pPlayer->GetPos(), m_pPlayer->GetIsSuckUp() ? level.GetConeTopPos() : 0.0f);

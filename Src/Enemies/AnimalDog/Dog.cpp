@@ -79,11 +79,11 @@ void CADog::Update()
 //     }
 // }
 
-const VECTOR3& CADog::SuctionSpeed() const
+VECTOR3 CADog::SuctionSpeed() const
 {
     CPlayerLevel * level = ObjectManager::FindGameObject<CPlayerLevel>();
     //1秒で吸い込む
-    return CalcSuctionDisplacement(1, transform.position,m_pPlayer->GetPos(), m_pPlayer->GetIsSuckUp() ? level->GetConeTopPos() : 0.0f);
+    return CalcSuctionDisplacement(1, transform.position, m_pPlayer->GetPos(),m_pPlayer->GetTransform().position.y);
 }
 
 

@@ -9,8 +9,8 @@
 // @return 1回当たりの移動量
 ////////////////////
 
-const VECTOR3& MyLib::CalcSuctionDisplacement(const float& moveTimeSecond, const VECTOR3& animalPos,
-                                              const VECTOR3& plPos, const float topPos)
+const VECTOR3 MyLib::CalcSuctionDisplacement(const float& moveTimeSecond, const VECTOR3& animalPos,
+                                             const VECTOR3& plPos, const float topPos)
 {
     const float heightDiff = topPos - animalPos.y;
     const float progress = 1.0f - (heightDiff / topPos);

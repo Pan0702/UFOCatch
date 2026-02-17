@@ -64,7 +64,7 @@ void CADebug::Draw()
     m_pMesh->Render(m_pAnimator, transform.matrix());
 }
 
-const VECTOR3& CADebug::SuctionSpeed() const
+VECTOR3 CADebug::SuctionSpeed() const
 {
     CPlayerLevel lv;
     //1秒で吸い込み

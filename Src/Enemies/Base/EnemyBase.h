@@ -26,7 +26,7 @@ public:
     void AddPosition(const VECTOR3& addPos) { transform.position += addPos; }
     
     CComponentBase* GetComponent(CBaseState::State type) const;
-    virtual const VECTOR3& SuctionSpeed() const;
+    virtual VECTOR3 SuctionSpeed() const;
     void IsSuctionCheck();
 protected:
     // 物理演算

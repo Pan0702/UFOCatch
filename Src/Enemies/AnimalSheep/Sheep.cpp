@@ -43,10 +43,10 @@ CSheep::~CSheep()
     }
 }
 
-const VECTOR3& CSheep::SuctionSpeed() const
+VECTOR3 CSheep::SuctionSpeed() const
 {
     CPlayerLevel* level = ObjectManager::FindGameObject<CPlayerLevel>();
-    return CalcSuctionDisplacement(1, transform.position, m_pPlayer->GetPos(), m_pPlayer->GetIsSuckUp() ? level->GetConeTopPos() : 0.0f);
+    return CalcSuctionDisplacement(1, transform.position, m_pPlayer->GetPos(),m_pPlayer->GetTransform().position.y);
 }
 
 

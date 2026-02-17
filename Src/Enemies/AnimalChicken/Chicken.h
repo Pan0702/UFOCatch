@@ -15,7 +15,7 @@ public:
 
     void IsSuctionCheck();
 
-    const VECTOR3& SuctionSpeed() const;
+    VECTOR3 SuctionSpeed() const;
 
     void AddPos(const VECTOR3& pos) { transform.position = transform.position + pos; }
     CXAudioSource* GetAudio() const { return m_pCry; }
