@@ -7,17 +7,6 @@
 #include "../Stage/Ground.h"
 #include "../Utils/MyLib.h"
 
-namespace
-{
-    // 吸い込み時の移動速度係数 //
-    constexpr int SUCTION_SPEED_FACTOR = 1;
-    // 捕獲時に加算する経験値 //
-    constexpr int CAPTURE_EXP = 1;
-    // 捕獲時に加算するスコア //
-    constexpr int CAPTURE_SCORE = 100;
-    // 捕獲時に加算する捕獲数 //
-    constexpr int CAPTURE_COUNT = 1;
-}
 
 CTutorialAnimal::CTutorialAnimal(const VECTOR3& pos)
 {
@@ -41,7 +30,10 @@ void CTutorialAnimal::Update()
     // 吸い込む範囲内かつ吸い込むボタンを押していたら位置を足していく //
     if (pPl->IsWithSuctionCone(transform.position) && pPl->GetIsSuckUp())
     {
-       // transform.position += CalcSuctionDisplacement(SUCTION_SPEED_FACTOR, transform.position,pPl->GetPos(),pPl->GetTransform().position.y, SceneManager::DeltaTime());
+        // 吸い込み時の移動速度係数 //
+        constexpr int SUCTION_SPEED_FACTOR = 1;
+
+        transform.position += pPl->CalcSuctionDisplacement(SUCTION_SPEED_FACTOR, transform.position);
         m_velocityY = 0.0f;  // 吸い込み中は重力をリセット //
     }
     else
@@ -55,6 +47,12 @@ void CTutorialAnimal::Update()
 ////////////////////
 void CTutorialAnimal::Destroy()
 {
+    // 捕獲時に加算する経験値 //
+    constexpr int CAPTURE_EXP = 1;
+    // 捕獲時に加算するスコア //
+    constexpr int CAPTURE_SCORE = 100;
+    // 捕獲時に加算する捕獲数 //
+    constexpr int CAPTURE_COUNT = 1;
     ObjectManager::FindGameObject<CPlayerLevel>()->AddExp(CAPTURE_EXP);
     ObjectManager::FindGameObject<CGameInstance>()->AddScore(CAPTURE_SCORE);
     ObjectManager::FindGameObject<CGameInstance>()->AddCapture(CAPTURE_COUNT);

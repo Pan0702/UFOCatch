@@ -152,6 +152,4 @@ SphereCollider  Object3D::GetSphereCollider()
 		m_pMeshCol->GetBall(&col.center, &col.radius);
 	}
 	return col;
-}
-
-　　
+}//　

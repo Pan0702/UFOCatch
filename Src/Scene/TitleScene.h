@@ -1,5 +1,6 @@
 #pragma once
 #include "../Framework/SceneBase.h"
+#include "../Utils/WipeAnimator.h"
 
 // ゲーム起動時のタイトルシーン //
 class TitleScene : public SceneBase
@@ -23,6 +24,6 @@ private:
 			: pos(pos), imageSize(imageSize), pImage(pImage) {}
 	};
 	std::vector<ImageInfo> m_imageInfos;
-	
 
+	WipeAnimator m_wipeAnim{ 2 };
 };

@@ -75,7 +75,7 @@ HRESULT CSpriteImage::Load(const TCHAR* TName)
 {
     if (FAILED(m_pD3D->CreateShaderResourceViewFromFile(TName, &m_pTexture, m_dwImageWidth, m_dwImageHeight)))
     {
-        MessageBox(0, _T("?X?v???C?g?@?e?N?X?`???[???????????"), TName, MB_OK);
+        MessageBox(0, _T("SpriteLoad:false"), TName, MB_OK);
         return E_FAIL;
     }
     return S_OK;

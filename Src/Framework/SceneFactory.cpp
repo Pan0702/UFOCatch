@@ -25,6 +25,9 @@ SceneBase* SceneFactory::Create(const std::string& name)
 	if (name == "TitleScene") {
 		return new TitleScene();
 	}
+	if (name == "Easy") {
+		return new PlayScene();
+	}
 	if (name == "PlayScene") {
 		return new PlayScene();
 	}
@@ -36,7 +39,7 @@ SceneBase* SceneFactory::Create(const std::string& name)
 	{
 		return new CResultScene();
 	}
-	if (name == "TutorialScene")
+	if (name == "Tutorial")
 	{
 		return new CTutorialScene();
 	}

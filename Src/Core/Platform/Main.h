@@ -21,7 +21,7 @@
 #define WINDOW_WIDTH   1366   
 #define WINDOW_HEIGHT  768    
 
-#define APP_NAME _T("UNAP")
+#define APP_NAME _T("UFOAbducition")
 
 class CGameMain;
 

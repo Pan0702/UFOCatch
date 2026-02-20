@@ -6,7 +6,7 @@ CShadowObject::CShadowObject(Object3D* pOwner, const TCHAR* imagePath, int drawO
     : m_pOwner(pOwner)
     , m_pSpriteImage(new CSpriteImage(imagePath))
 {
-    SetDrawOrder(drawOrder);
+    SetDrawOrder(1);
 }
 
 CShadowObject::~CShadowObject()

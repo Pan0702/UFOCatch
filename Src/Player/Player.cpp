@@ -26,7 +26,7 @@ CPlayer::CPlayer(float moveRange)
     m_pLevel = new CPlayerLevel(transform.position.y + INITIAL_CONE_HEIGHT, CONE_DEGREE);
 
     new CPlayerHP(3);
-    new CConeDraw(m_pLevel->GetConeTopPos());
+    new CConeDraw(transform.position.y);
     new CCircleDraw();
 
     transform.scale = VECTOR3(0.5f, 0.5f, 0.5f);

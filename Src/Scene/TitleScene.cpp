@@ -44,59 +44,74 @@ TitleScene::~TitleScene()
 
 void TitleScene::Update()
 {
+    int newIndex  = m_selectedIndex;
+    int direction = 0;
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_W))
     {
-        m_selectedIndex = (m_selectedIndex - 1 + 2) % 2;
+        newIndex  = (m_selectedIndex - 1 + 2) % 2;
+        direction = -1;
         AudioManager::Play(_T("Select"), false);
     }
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_S))
     {
-        m_selectedIndex = (m_selectedIndex + 1) % 2;
+        newIndex  = (m_selectedIndex + 1) % 2;
+        direction = 1;
         AudioManager::Play(_T("Select"), false);
     }
+    if (newIndex != m_selectedIndex)
+    {
+        m_wipeAnim.ChangeTo(m_selectedIndex, newIndex, direction);
+        m_selectedIndex = newIndex;
+    }
+
+    m_wipeAnim.Update();
+
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_RETURN))
     {
         AudioManager::Play(_T("Decide"), false);
         SceneManager::ChangeSceneWithTransition(m_text[m_selectedIndex].c_str());
     }
-        //     SceneManager::ChangeScene("PlayScene");
-        // }
-        if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_1))
-        {
-            SceneManager::ChangeSceneWithTransition("ResultScene");
-        }
-        if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_2))
-        {
-            SceneManager::ChangeSceneWithTransition("SelectScene");
-        }
-        if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_3))
-        {
-            SceneManager::ChangeSceneWithTransition("TutorialScene");
-        }
-        if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_0))
-        {
-            SceneManager::ChangeSceneWithTransition("Debug");
-        }
+    //     SceneManager::ChangeScene("PlayScene");
+    // }
+    //Debug
+    
+    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_1))
+    {
+        SceneManager::ChangeSceneWithTransition("ResultScene");
+    }
+    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_2))
+    {
+        SceneManager::ChangeSceneWithTransition("SelectScene");
+    }
+    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_3))
+    {
+        SceneManager::ChangeSceneWithTransition("TutorialScene");
+    }
+    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_0))
+    {
+        SceneManager::ChangeSceneWithTransition("Debug");
+    }
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_4))
     {
         SceneManager::ChangeSceneWithTransition("PlayScene");
     }
-    }
+}
 
-    void TitleScene::Draw()
+void TitleScene::Draw()
+{
+    GameDevice()->m_pFont->Draw(
+        20, 20, "TitleScene", 16, RGB(255, 0, 0));
+    CSprite spr;
+
+    // 背景画像を描画//
+    const auto& bgInfo = m_imageInfos[2];
+    spr.Draw(bgInfo.pImage, bgInfo.pos.x, bgInfo.pos.y,
+             bgInfo.imageSize.x, bgInfo.imageSize.y, bgInfo.imageSize.z, bgInfo.imageSize.w);
+
+    //ボタンのワイプ描画//
+    for (int i = 0; i < 2; i++)
     {
-        GameDevice()->m_pFont->Draw(
-            20, 20, "TitleScene", 16, RGB(255, 0, 0));
-        CSprite spr;
-
-        // 背景画像を描画//
-        const auto& bgInfo = m_imageInfos[2];
-        spr.Draw(bgInfo.pImage, bgInfo.pos.x, bgInfo.pos.y,
-                 bgInfo.imageSize.x, bgInfo.imageSize.y, bgInfo.imageSize.z, bgInfo.imageSize.w);
-
-        //ボタンの描画//
-        spr.Draw(m_imageInfos[m_selectedIndex].pImage,
-                 m_imageInfos[m_selectedIndex].pos.x, m_imageInfos[m_selectedIndex].pos.y, //描画したいいちの最小Pos//
-                 m_imageInfos[m_selectedIndex].imageSize.x, m_imageInfos[m_selectedIndex].imageSize.y, //読み込む画像の最小Pos//
-                 m_imageInfos[m_selectedIndex].imageSize.z, m_imageInfos[m_selectedIndex].imageSize.w); //読み込む画像の最大Pos//
+        const auto& info = m_imageInfos[i];
+        m_wipeAnim.Draw(spr, i, info.pImage, info.pos.x, info.pos.y, info.imageSize.z, info.imageSize.w);
     }
+}
