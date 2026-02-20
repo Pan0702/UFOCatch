@@ -12,7 +12,8 @@
 #include "../Component/Suction.h"
 #include "../Component/Walk.h"
 #include "../Component/Destroy.h"
-#include "../../Utils/MyLib.h"  
+#include "../../Utils/MyLib.h"
+#include "../../Common/ShadowObject.h"
 
 CAnimalChicken::CAnimalChicken(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos), m_areaSize(moveAreaSize)
@@ -35,7 +36,7 @@ CAnimalChicken::CAnimalChicken(const VECTOR3& iniPos, const VECTOR2& moveAreaSiz
     m_pState->Enter(CBaseState::State::WALK);
     m_pBBox = CreateBBox();
     m_pCry = new CXAudioSource(_T("data/Sound/ChickenCry.wav"));
-    m_pSpriteImage = new CSpriteImage(TEXT("data/CircleSuction.png"));
+    new CShadowObject(this, TEXT("data/CircleSuction.png"));
 }
 
 CAnimalChicken::~CAnimalChicken()
@@ -45,7 +46,6 @@ CAnimalChicken::~CAnimalChicken()
         SAFE_DELETE(state.second);
     }
     SAFE_DELETE(m_pCry);
-    SAFE_DELETE(m_pSpriteImage);
 }
 
 void CAnimalChicken::Update()
@@ -86,7 +86,7 @@ void CAnimalChicken::IsSuctionCheck()
     }
 }
 
-const VECTOR3& CAnimalChicken::SuctionSpeed() const
+VECTOR3 CAnimalChicken::SuctionSpeed() const
 {
     constexpr float suctionTime = 1.0f;
     return m_pPlayer->CalcSuctionDisplacement(suctionTime,transform.position);

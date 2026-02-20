@@ -11,6 +11,7 @@
 #include "../Component/Suction.h"
 #include "../Component/Destroy.h"
 #include "../../Utils/MyLib.h"
+#include "../../Common/ShadowObject.h"
 
 CADog::CADog(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos), m_areaSize(moveAreaSize)
@@ -24,7 +25,7 @@ CADog::CADog(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     m_pGround = ObjectManager::FindGameObject<CGround>();
     InitStates();
-    m_pSpriteImage = new CSpriteImage(TEXT("data/CircleSuction.png"));
+    new CShadowObject(this, TEXT("data/CircleSuction.png"));
     m_pBBox = CreateBBox();
 }
 
@@ -80,7 +81,7 @@ void CADog::Update()
 //     }
 // }
 
-const VECTOR3& CADog::SuctionSpeed() const
+VECTOR3 CADog::SuctionSpeed() const
 {
     constexpr float suctionTime = 1.0f;
     return m_pPlayer->CalcSuctionDisplacement(suctionTime,transform.position);

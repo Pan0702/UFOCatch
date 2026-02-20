@@ -15,7 +15,6 @@ CConeDraw::CConeDraw(float coneTopPos)
     transform.scale.y = coneTopPos;
     SetDrawOrder(-1);
 
-
 }
 
 CConeDraw::~CConeDraw()
@@ -74,42 +73,10 @@ void CCircleDraw::Update()
 
 void CCircleDraw::Draw()
 {
-    if (!m_pCircleImage  || !m_pPlayer) return;
-
-    static constexpr float GROUND_OFFSET        = 0.1f;
-    static constexpr float CIRCLE_DIAMETER_SCALE = 2.0f;
-    static constexpr float CIRCLE_DEPTH         = 1.0f;
-    static constexpr float GROUND_ROTATION      = -XM_PI / 2.0f;
-    static constexpr float CIRCLE_ALPHA         = 0.5f;
-    static constexpr float SPRITE_SIZE          = 1.0f;
+    if (!m_pCircleImage || !m_pPlayer) return;
 
     CSprite spr;
-
-    const float   radius    = m_pLevel->GetRadius();
-    const VECTOR3 playerPos = m_pPlayer->GetPos();
-    const VECTOR3 groundPos = VECTOR3(playerPos.x, GROUND_OFFSET, playerPos.z);
-
-    const MATRIX4X4 mScale       = XMMatrixScaling(radius * CIRCLE_DIAMETER_SCALE,
-                                                    radius * CIRCLE_DIAMETER_SCALE,
-                                                    CIRCLE_DEPTH);
-    const MATRIX4X4 mRotation    = XMMatrixRotationX(GROUND_ROTATION);
-    const MATRIX4X4 mTranslation = XMMatrixTranslation(groundPos.x, groundPos.y, groundPos.z);
-    const MATRIX4X4 mWorld       = mScale * mRotation * mTranslation;
-
-    const MATRIX4X4 mView = GameDevice()->m_mView;
-    const MATRIX4X4 mProj = GameDevice()->m_mProj;
-
-    const DWORD texWidth  = m_pCircleImage->m_dwImageWidth;
-    const DWORD texHeight = m_pCircleImage->m_dwImageHeight;
-
-    spr.Draw3DWithWorldMatrix(
-        m_pCircleImage,
-        mWorld, mView, mProj,
-        VECTOR2(SPRITE_SIZE, SPRITE_SIZE),
-        VECTOR2(0, 0),
-        VECTOR2(static_cast<float>(texWidth), static_cast<float>(texHeight)),
-        CIRCLE_ALPHA
-    );
+    spr.DrawWorld(m_pCircleImage, m_pPlayer->GetPos(), m_pLevel->GetRadius(),0.7f);
 }
 
 ///Debug///

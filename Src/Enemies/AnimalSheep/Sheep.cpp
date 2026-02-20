@@ -5,6 +5,7 @@
 #include "../Component/Suction.h"
 #include "../Component/Walk.h"
 #include "../../Utils/MyLib.h"
+#include "../../Common/ShadowObject.h"
 
 CSheep::CSheep(const VECTOR3& iniPos)
     : m_wasSuctioned(false)
@@ -17,7 +18,7 @@ CSheep::CSheep(const VECTOR3& iniPos)
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     InitStates();
     transform.position = iniPos;
-    m_pSpriteImage = new CSpriteImage(TEXT("data/CircleSuction.png"));
+    new CShadowObject(this, TEXT("data/CircleSuction.png"));
 }
 void CSheep::InitStates()
 {
@@ -44,7 +45,7 @@ CSheep::~CSheep()
     }
 }
 
-const VECTOR3& CSheep::SuctionSpeed() const
+VECTOR3 CSheep::SuctionSpeed() const
 {
     constexpr float suctionTime = 1.0f;
     return m_pPlayer->CalcSuctionDisplacement(suctionTime,transform.position);

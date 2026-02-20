@@ -13,7 +13,7 @@ CStageFactor::CStageFactor()
 
 void CStageFactor::SpawnObjects(float sizeX,float sizeZ)
 {
-    for (int i = 0; i < 30; ++i)
+    for (int i = 0; i < 60; ++i)
     {
        float randomX = Randomf(-sizeX, sizeX);
         float randomZ = Randomf(-sizeZ, sizeZ);

@@ -1118,9 +1118,36 @@ bool CSprite::Draw3DWithWorldMatrix(CSpriteImage* pImage, const MATRIX4X4& mWorl
     return true;
 }
 
+bool CSprite::DrawWorld(CSpriteImage* pImage, const VECTOR3& vPos, float radius, float alpha)
+{
+    static constexpr float GROUND_OFFSET         = 0.1f;
+    static constexpr float CIRCLE_DIAMETER_SCALE = 2.0f;
+    static constexpr float CIRCLE_DEPTH          = 1.0f;
+    static constexpr float GROUND_ROTATION       = -XM_PI / 2.0f;
+    static constexpr float SPRITE_SIZE           = 1.0f;
+
+    const MATRIX4X4 mScale       = XMMatrixScaling(radius * CIRCLE_DIAMETER_SCALE,
+                                                    radius * CIRCLE_DIAMETER_SCALE,
+                                                    CIRCLE_DEPTH);
+    const MATRIX4X4 mRotation    = XMMatrixRotationX(GROUND_ROTATION);
+    const MATRIX4X4 mTranslation = XMMatrixTranslation(vPos.x, GROUND_OFFSET, vPos.z);
+    const MATRIX4X4 mWorld       = mScale * mRotation * mTranslation;
+
+    return Draw3DWithWorldMatrix(
+        pImage,
+        mWorld,
+        GameDevice()->m_mView,
+        GameDevice()->m_mProj,
+        VECTOR2(SPRITE_SIZE, SPRITE_SIZE),
+        VECTOR2(0, 0),
+        VECTOR2(static_cast<float>(pImage->m_dwImageWidth), static_cast<float>(pImage->m_dwImageHeight)),
+        alpha
+    );
+}
+
 //------------------------------------------------------------------------ // -- 2018.8.10
 //
-//	?R?c?i?r???{?[?h?j?X?v???C?g?I?u?W?F?N?g??????????_?????O	
+//	?R?c?i?r???{?[?h?j?X?v???C?g?I?u?W?F?N?g??????????_?????O
 //
 //	?o?[?e?b?N?X?o?b?t?@????????`???????
 //

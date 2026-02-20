@@ -19,7 +19,7 @@ public:
     ///
     // void IsSuctionCheck();
 
-    const VECTOR3& SuctionSpeed() const;
+    VECTOR3 SuctionSpeed() const override;
 
 private:
     void InitStates();

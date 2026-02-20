@@ -2,8 +2,6 @@
 #include "EnemyBase.h"
 #include "../../Stage/Ground.h"
 #include "../../Stage/StageObject.h"
-#include "../System/EnemyManager.h"
-#include "../../Framework/AudioManager.h"
 
 namespace 
 {
@@ -170,7 +168,7 @@ std::vector<CEnemyBase*> CEnemyBase::GetNearbyEnemies() const
     return manager->GetNearbyEnemies(const_cast<CEnemyBase*>(this), pos, size);
 }
 
-void CEnemyBase::UpdateBBox()
+void CEnemyBase::UpdateBBox() const
 {
     if (m_pBBox != nullptr)
     {
@@ -246,14 +244,70 @@ void CEnemyBase::CalcApplyPushback(CEnemyBase* other)
     }
 }
 
-//------------------------------------------------------------------------
+VECTOR3 CEnemyBase::CalcSlideMove(const VECTOR3& desiredMove) const
+{
+    if (m_pBBox == nullptr) return desiredMove;
+
+
+    // ここで現在の transform を使って BBox を更新
+    m_pBBox->m_mWorld = transform.matrix();
+
+    VECTOR3 moveVec = desiredMove;
+
+    std::list<CStageObject*> stageObjects = ObjectManager::FindGameObjects<CStageObject>();
+    for (CStageObject* stage : stageObjects)
+    {
+        if (stage == nullptr || stage->GetOBB() == nullptr) continue;
+
+        VECTOR3 hitPos, hitNormal;
+        if (stage->HitOBB(m_pBBox, &hitPos, &hitNormal))
+        {
+            // OBBCollisionDetection は法線を (0,1,0) 固定で返すため hitNormal は使用不可
+            // ステージ中心 → 敵中心 の方向を壁法線の代わりに使う
+            CBBox* stageOBB = stage->GetOBB();
+            MATRIX4X4 stageCenterMat = XMMatrixTranslation(
+                stageOBB->m_fLengthX + stageOBB->m_vMin.x,
+                stageOBB->m_fLengthY + stageOBB->m_vMin.y,
+                stageOBB->m_fLengthZ + stageOBB->m_vMin.z
+            );
+            stageCenterMat = stageCenterMat * stageOBB->m_mWorld;
+            VECTOR3 stageCenter = GetPositionVector(stageCenterMat);
+
+            MATRIX4X4 enemyCenterMat = XMMatrixTranslation(
+                m_pBBox->m_fLengthX + m_pBBox->m_vMin.x,
+                m_pBBox->m_fLengthY + m_pBBox->m_vMin.y,
+                m_pBBox->m_fLengthZ + m_pBBox->m_vMin.z
+            );
+            enemyCenterMat = enemyCenterMat * m_pBBox->m_mWorld;
+            VECTOR3 enemyCenter = GetPositionVector(enemyCenterMat);
+
+            VECTOR3 awayDir = enemyCenter - stageCenter;
+            awayDir.y = 0.0f;
+            float dist = magnitude(awayDir);
+            if (dist > 0.001f)
+            {
+                awayDir = normalize(awayDir);
+                // awayDir は「木から離れる方向」= 壁法線の近似
+                // moveVec の「木に向かう成分」だけを除去する
+                float d = Dot(moveVec, awayDir);
+                if (d < 0.0f)  // 木方向に向かっているときだけ
+                {
+                    moveVec -= awayDir * d;
+                }
+            }
+        }
+    }
+    return moveVec;
+}
+
+//
 // ステージオブジェクトとの衝突判定と押し戻し処理
-//------------------------------------------------------------------------
+//
 void CEnemyBase::ResolveStageCollisions()
 {
     if (m_pBBox == nullptr) return;
 
-    // シーン内の全てのCStageObjectを取得//s
+    // シーン内の全てのCStageObjectを取得//
     std::list<CStageObject*> stageObjects = ObjectManager::FindGameObjects<CStageObject>();
 
     // 各ステージオブジェクトと衝突判定//
@@ -274,9 +328,9 @@ CComponentBase* CEnemyBase::GetComponent(CBaseState::State type) const
     return itr->second;
 }
 
-const VECTOR3& CEnemyBase::SuctionSpeed() const
+VECTOR3 CEnemyBase::SuctionSpeed() const
 {
-    return VECTOR3(0, 0, 0);
+    return {0, 0, 0};
 }
 
 void CEnemyBase::IsSuctionCheck() 
