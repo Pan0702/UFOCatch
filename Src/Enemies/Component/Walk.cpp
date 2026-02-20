@@ -128,8 +128,9 @@ void CWalk::Update()
         m_pOwner->SetRotateY(ClampRotateY(m_currentRotation));
     }
 
-    m_pOwner->AddPosition(
-        VECTOR3(0, 0, m_moveSpeed * SceneManager::DeltaTime()) * XMMatrixRotationY(m_currentRotation));
+    VECTOR3 moveVec = VECTOR3(0, 0, m_moveSpeed * SceneManager::DeltaTime()) * XMMatrixRotationY(m_currentRotation);
+    moveVec = m_pOwner->CalcSlideMove(moveVec);
+    m_pOwner->AddPosition(moveVec);
     m_totalPosZMoveAmount += m_moveSpeed * SceneManager::DeltaTime();
 
     if (m_totalPosZMoveAmount > m_moveAmount)

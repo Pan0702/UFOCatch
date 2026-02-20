@@ -14,7 +14,7 @@ private:
     ///
     void IsSuctionCheck();
 
-    const VECTOR3& SuctionSpeed() const override;
+    VECTOR3 SuctionSpeed() const override;
 
     void AddPos(const VECTOR3& pos) { transform.position = transform.position + pos; }
 

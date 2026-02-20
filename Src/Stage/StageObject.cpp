@@ -120,10 +120,8 @@ void CStageObject::ResolveEnemyCollision(CEnemyBase* pEnemy)
     VECTOR3 hitPos, hitNormal;
     if (HitOBB(pEnemy->GetBBox(), &hitPos, &hitNormal))
     {
-        // 衝突している場合、エネミーを押し戻す
-        // ステージオブジェクトの中心からエネミーの中心へのベクトルを計算
-
-        // ステージの中心
+        // OBBCollisionDetection は法線を (0,1,0) 固定で返すため hitNormal は使用不可
+        // ステージ中心 → エネミー中心 の方向で押し戻す
         MATRIX4X4 stageCenterMat = XMMatrixTranslation(
             m_pOBB->m_fLengthX + m_pOBB->m_vMin.x,
             m_pOBB->m_fLengthY + m_pOBB->m_vMin.y,
@@ -132,7 +130,6 @@ void CStageObject::ResolveEnemyCollision(CEnemyBase* pEnemy)
         stageCenterMat = stageCenterMat * m_pOBB->m_mWorld;
         VECTOR3 stageCenter = GetPositionVector(stageCenterMat);
 
-        // エネミーの中心
         CBBox* enemyBBox = pEnemy->GetBBox();
         MATRIX4X4 enemyCenterMat = XMMatrixTranslation(
             enemyBBox->m_fLengthX + enemyBBox->m_vMin.x,
@@ -142,16 +139,12 @@ void CStageObject::ResolveEnemyCollision(CEnemyBase* pEnemy)
         enemyCenterMat = enemyCenterMat * enemyBBox->m_mWorld;
         VECTOR3 enemyCenter = GetPositionVector(enemyCenterMat);
 
-        // 押し戻しベクトル（XZ平面）
         VECTOR3 pushDir = enemyCenter - stageCenter;
         pushDir.y = 0.0f;
         float dist = magnitude(pushDir);
-
         if (dist > 0.001f)
         {
             pushDir = normalize(pushDir);
-
-            // 押し戻し距離（とりあえず固定値だが、エネミー同士よりは強く押し戻す）
             static constexpr float STAGE_PUSHBACK_DIST = 0.2f;
             pEnemy->AddPosition(pushDir * STAGE_PUSHBACK_DIST);
         }

@@ -4,12 +4,15 @@
 #include "../AnimalDog/Dog.h"
 #include "../Human/Human.h"
 
+///動物を生成
+/// @param sizeX 生成する動物のXの範囲 
+/// @param sizeZ 生成する動物のZの範囲 //
 CAnimalFactor::CAnimalFactor(float sizeX,float sizeZ)
 {
     float f1 ;
     float f2;
     ObjectManager::FindGameObject<CStageFactor>()->SpawnObjects(sizeX, sizeZ);
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 50; i++)
     {
          f1 = Randomf(-sizeX,sizeX);
          f2 = Randomf(-sizeZ,sizeZ);
@@ -20,5 +23,4 @@ CAnimalFactor::CAnimalFactor(float sizeX,float sizeZ)
     new CHuman(VECTOR3(f1, 0, f2), VECTOR2(sizeX, sizeZ));
 }
 
-CAnimalFactor::~CAnimalFactor()
-{}
+CAnimalFactor::~CAnimalFactor() = default; 

@@ -19,6 +19,7 @@ public:
     // 周辺のエネミーを取得
     std::vector<CEnemyBase*> GetNearbyEnemies() const;
     
+
     CBBox* GetBBox() const { return m_pBBox; }
     void SetRotateY(float y)  { transform.rotation.y = y; }
     const VECTOR2& GetAreaSize() const { return m_areaSize; }
@@ -26,15 +27,17 @@ public:
     void AddPosition(const VECTOR3& addPos) { transform.position += addPos; }
     
     CComponentBase* GetComponent(CBaseState::State type) const;
-    virtual const VECTOR3& SuctionSpeed() const;
+    virtual VECTOR3 SuctionSpeed() const;
     void IsSuctionCheck();
+    // 壁スライディング：desiredMoveから壁方向の成分を除いた移動ベクトルを返す
+    VECTOR3 CalcSlideMove(const VECTOR3& desiredMove) const;
 protected:
     // 物理演算
     void ApplyGravity();  // 重力を適用し、地面との衝突判定を行う
     virtual bool ShouldApplyGravity() const { return true; }  // 重力を適用すべきかを判定
 
     // バウンディングボックス管理
-    void UpdateBBox();  // バウンディングボックスのワールド行列を更新
+    void UpdateBBox() const;  // バウンディングボックスのワールド行列を更新
     CBBox* CreateBBox();  // メッシュからバウンディングボックスを生成
 
     // OBB衝突判定と押し戻し処理

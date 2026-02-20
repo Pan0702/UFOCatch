@@ -146,7 +146,7 @@ void CPlayer::UpdateCameraPos()
 // @return 1回当たりの移動量
 ////////////////////
 
-const VECTOR3& CPlayer::CalcSuctionDisplacement (float moveTimeSecond, const VECTOR3& animalPos) const 
+VECTOR3 CPlayer::CalcSuctionDisplacement(float moveTimeSecond, const VECTOR3& animalPos) const
 {
     const float topPos = m_pLevel->GetConeTopPos();
     const float heightDiff = topPos - animalPos.y;

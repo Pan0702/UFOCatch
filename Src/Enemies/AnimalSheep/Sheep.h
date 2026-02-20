@@ -7,7 +7,7 @@ public:
     CSheep(const VECTOR3& iniPos = VECTOR3(0, 0, 0));
     ~CSheep();
 
-    const VECTOR3& SuctionSpeed() const;
+    VECTOR3 SuctionSpeed() const override;
 
 private:
     void InitStates();

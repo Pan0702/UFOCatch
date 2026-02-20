@@ -64,7 +64,7 @@ void CADebug::Draw()
     m_pMesh->Render(m_pAnimator, transform.matrix());
 }
 
-const VECTOR3& CADebug::SuctionSpeed() const
+VECTOR3 CADebug::SuctionSpeed() const
 {
     constexpr float suctionTime = 1.0f;
     return m_pPlayer->CalcSuctionDisplacement(suctionTime,transform.position);

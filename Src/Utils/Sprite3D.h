@@ -139,6 +139,7 @@ public:
 	bool Draw3D(const VECTOR3& vPos);																					// -- 2024.3.23
 	bool DrawLine3D(const VECTOR3& vStart, const VECTOR3& vEnd, const DWORD& colorABGR, const float& fAlpha = 1.0f);  // -- 2024.3.23
 	bool Draw3DWithWorldMatrix(CSpriteImage* pImage, const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR2& vSize, const VECTOR2& vSrcPos, const VECTOR2& vSrcSize, const float& fAlpha = 1.0f);
+	bool DrawWorld(CSpriteImage* pImage, const VECTOR3& vPos, float radius, float alpha = 1.0f);
 
 	void    SetShader();
 	void    ResetShader();
