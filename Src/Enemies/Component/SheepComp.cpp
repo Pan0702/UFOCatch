@@ -38,7 +38,7 @@ void CHerded::Update()
     if (m_walkTimer >= m_walkDuration)
     {
         m_isFinish = true;
-        m_pOwner->SetState(CBaseState::State::IDLE);
+        m_pOwner->ChangeState(CBaseState::State::IDLE);
         return;
     }
 

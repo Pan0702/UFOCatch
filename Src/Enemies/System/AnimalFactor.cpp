@@ -24,7 +24,7 @@ CAnimalFactor::CAnimalFactor(float sizeX, float sizeZ, int type)
     {
         float f1;
         float f2;
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 10; i++)
         {
             f1 = Randomf(-sizeX, sizeX);
             f2 = Randomf(-sizeZ, sizeZ);

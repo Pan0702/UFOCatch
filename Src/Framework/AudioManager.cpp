@@ -5,6 +5,7 @@ namespace {
     std::unordered_map<tstring, CXAudioSource*> audioFiles;
 }
 
+
 void AudioManager::Init()
 {
     audioFiles.clear();
@@ -57,4 +58,13 @@ void AudioManager::SetVolume(const tstring& filename, float volume)
     if (it != audioFiles.end()) {
         it->second->Volume(volume);
     }
+}
+
+void AudioStorage::InitMusic()
+{
+    AudioManager::Load("Play", _T("data/Sound/yukai.wav"));
+    AudioManager::Load("Select",_T("data/Sound/himitu.wav"));
+    AudioManager::Load("Title",_T("data/Sound/Sunny_day.wav"));
+    AudioManager::Load("Decide",_T("data/Sound/decide.wav"));
+    AudioManager::Load("Select",_T("data/Sound/select_002.wav"));
 }

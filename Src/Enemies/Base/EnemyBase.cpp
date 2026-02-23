@@ -2,11 +2,8 @@
 #include "EnemyBase.h"
 #include "../../Stage/Ground.h"
 #include "../../Stage/StageObject.h"
+#include "../System/EnemyManager.h"
 
-namespace 
-{
-    static constexpr float GROUND_CHECK_OFFSET = 0.1f;
-}
 CEnemyBase::CEnemyBase()
     : m_velocityY(0.0f)
 {
@@ -23,7 +20,7 @@ CBBox* CEnemyBase::CreateBBox()
 }
 
 
-void CEnemyBase::SetState(CBaseState::State type)
+void CEnemyBase::ChangeState(CBaseState::State type)
 {
     // 同じ状態なら何もしない
     if (m_pComponent == m_components[type]) return;
@@ -76,6 +73,7 @@ void CEnemyBase::ApplyGravity()
 
     if (m_pGround != nullptr)
     {
+        static constexpr float GROUND_CHECK_OFFSET = 0.1f;
         // 現在の位置と次の位置を使って、オフセットを考慮したレイキャストの範囲を決定 //
         const float fromY = transform.position.y + GROUND_CHECK_OFFSET;
         const float toY = nextY - GROUND_CHECK_OFFSET;
@@ -254,7 +252,15 @@ VECTOR3 CEnemyBase::CalcSlideMove(const VECTOR3& desiredMove) const
 
     VECTOR3 moveVec = desiredMove;
 
-    std::list<CStageObject*> stageObjects = ObjectManager::FindGameObjects<CStageObject>();
+    // 四分木で近傍オブジェクトのみ取得
+    VECTOR2 pos2d, size2d;
+    std::vector<CStageObject*> stageObjects;
+    CEnemyManager* manager = ObjectManager::FindGameObject<CEnemyManager>();
+    if (manager && GetBounds2D(pos2d, size2d))
+    {
+        stageObjects = manager->GetNearbyStageObjects(pos2d, size2d);
+    }
+
     for (CStageObject* stage : stageObjects)
     {
         if (stage == nullptr || stage->GetOBB() == nullptr) continue;
@@ -307,10 +313,15 @@ void CEnemyBase::ResolveStageCollisions()
 {
     if (m_pBBox == nullptr) return;
 
-    // シーン内の全てのCStageObjectを取得//
-    std::list<CStageObject*> stageObjects = ObjectManager::FindGameObjects<CStageObject>();
+    // 四分木で近傍オブジェクトのみ取得
+    CEnemyManager* manager = ObjectManager::FindGameObject<CEnemyManager>();
+    if (manager == nullptr) return;
 
-    // 各ステージオブジェクトと衝突判定//
+    VECTOR2 pos, size;
+    if (!GetBounds2D(pos, size)) return;
+
+    std::vector<CStageObject*> stageObjects = manager->GetNearbyStageObjects(pos, size);
+
     for (CStageObject* stage : stageObjects)
     {
         if (stage == nullptr) continue;
@@ -339,7 +350,7 @@ void CEnemyBase::IsSuctionCheck()
     if (pl == nullptr)return;
     if (pl->GetIsSuckUp() && pl->IsInsideSuctionCircle(transform.position))
     {
-        SetState(CBaseState::State::SUCTION);
+        ChangeState(CBaseState::State::SUCTION);
     }
 }
 

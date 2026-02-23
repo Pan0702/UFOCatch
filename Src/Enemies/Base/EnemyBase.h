@@ -12,13 +12,12 @@ class CEnemyBase : public Object3D
 public:
     CEnemyBase();
     ~CEnemyBase();
-    virtual void SetState(CBaseState::State type);
+    virtual void ChangeState(CBaseState::State type) ;
     void Update() override;
     bool GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const;
 
     // 周辺のエネミーを取得
     std::vector<CEnemyBase*> GetNearbyEnemies() const;
-    
 
     CBBox* GetBBox() const { return m_pBBox; }
     void SetRotateY(float y)  { transform.rotation.y = y; }
@@ -29,6 +28,7 @@ public:
     CComponentBase* GetComponent(CBaseState::State type) const;
     virtual VECTOR3 SuctionSpeed() const;
     void IsSuctionCheck();
+    
     // 壁スライディング：desiredMoveから壁方向の成分を除いた移動ベクトルを返す
     VECTOR3 CalcSlideMove(const VECTOR3& desiredMove) const;
 protected:

@@ -22,7 +22,7 @@ CChickenBase::~CChickenBase()
 
 void CChickenBase::NextState()
 {
-    m_pOwner->SetState(NextStatePop());
+    m_pOwner->ChangeState(NextStatePop());
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ void CChickenIdleState::Idle()
     timerCount += SceneManager::DeltaTime();
     if (timerCount > 1)
     {
-        m_pOwner->SetState(NextStatePop());
+        m_pOwner->ChangeState(NextStatePop());
     }
 }
 
@@ -82,7 +82,7 @@ void CChickenIdleState::IdleAnim()
     float frame = m_pOwner->GetAnimator()->CurrentFrame();
     if (frame >= 360.0f)
     {
-        m_pOwner->SetState(NextStatePop());
+        m_pOwner->ChangeState(NextStatePop());
     }
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -156,7 +156,7 @@ void CChickenWalkState::Update()
 
     if (m_totalPosZMoveAmount > m_moveAmount)
     {
-        m_pOwner->SetState(NextStatePop());
+        m_pOwner->ChangeState(NextStatePop());
     }
     m_pOwner->IsSuctionCheck();
 }
@@ -197,7 +197,7 @@ void CChickenSuction::Update()
         {
             if (m_pPlayer->GetTransform().position.y - 0.15f <= m_pOwner->GetTransform().position.y )
             {
-                m_pOwner->SetState(State::DESTROY);
+                m_pOwner->ChangeState(State::DESTROY);
             }
             else
             {
@@ -206,7 +206,7 @@ void CChickenSuction::Update()
         }
         else
         {
-            m_pOwner->SetState(NextStatePop());
+            m_pOwner->ChangeState(NextStatePop());
         }
     }
 }

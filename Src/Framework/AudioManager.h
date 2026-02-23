@@ -27,4 +27,10 @@ namespace AudioManager {
 
     // ボリューム設定（1.0fが標準）
     void SetVolume(const tstring& name, float volume);
-};
+}
+
+namespace AudioStorage
+{
+    void InitMusic();
+}
+

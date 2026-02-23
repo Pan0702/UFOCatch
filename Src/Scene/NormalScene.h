@@ -10,5 +10,4 @@ public:
     void Draw() override;
 
 private:
-    CXAudioSource* m_pBGM;
 };

@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "StageObject.h"
 #include "../Enemies/Base/EnemyBase.h"
 #include "../Framework/ResourceManager.h"
@@ -9,7 +10,7 @@
 // @param scale オブジェクトのサイズ
 // @param useOBB OBBを使用するか //
 ////////////////////
-CStageObject::CStageObject(const char* meshPath, const VECTOR3& pos,float scale, bool useOBB)
+CStageObject::CStageObject(const char* meshPath, const VECTOR3& pos, float scale, bool useOBB)
 {
     m_bUseOBB = useOBB;
     m_pOBB = nullptr;
@@ -64,16 +65,49 @@ void CStageObject::Update()
 //------------------------------------------------------------------------
 void CStageObject::Draw()
 {
-    if (m_pMesh)
-    {
-        m_pMesh->Render(m_pAnimator, transform.matrix());
-    }
-    
+    Object3D::Draw();
+
+
     // // デバッグ用: OBBを描画（必要に応じてコメントアウト）
     // if (m_pOBB)
     // {
     //     m_pOBB->Render();
     // }
+}
+
+bool CStageObject::GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const
+{
+    if (m_pMesh == nullptr) return false;
+
+    const VECTOR3 min = m_pMesh->m_vMin;
+    const VECTOR3 max = m_pMesh->m_vMax;
+
+    VECTOR3 corners[4] = {
+        VECTOR3(min.x, 0, min.z),
+        VECTOR3(max.x, 0, min.z),
+        VECTOR3(min.x, 0, max.z),
+        VECTOR3(max.x, 0, max.z)
+    };
+
+    MATRIX4X4 rotY = XMMatrixRotationY(transform.rotation.y);
+    MATRIX4X4 scaleM = XMMatrixScaling(transform.scale.x, transform.scale.y, transform.scale.z);
+    MATRIX4X4 mat = scaleM * rotY;
+
+    float minX = FLT_MAX, maxX = -FLT_MAX;
+    float minZ = FLT_MAX, maxZ = -FLT_MAX;
+    for (const auto& c : corners)
+    {
+        VECTOR3 t = XMVector3TransformCoord(c, mat);
+        minX = std::min(minX, t.x);
+        maxX = std::max(maxX, t.x);
+        minZ = std::min(minZ, t.z);
+        maxZ = std::max(maxZ, t.z);
+    }
+
+    outPos = VECTOR2((minX + maxX) * 0.5f + transform.position.x,
+                     (minZ + maxZ) * 0.5f + transform.position.z);
+    outSize = VECTOR2(maxX - minX, maxZ - minZ);
+    return true;
 }
 
 ////////////////////

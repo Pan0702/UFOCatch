@@ -71,10 +71,7 @@ void TitleScene::Update()
         AudioManager::Play(_T("Decide"), false);
         SceneManager::ChangeSceneWithTransition(m_text[m_selectedIndex].c_str());
     }
-    //     SceneManager::ChangeScene("PlayScene");
-    // }
     //Debug
-    
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_1))
     {
         SceneManager::ChangeSceneWithTransition("ResultScene");

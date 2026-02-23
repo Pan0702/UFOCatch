@@ -8,7 +8,6 @@
 #include "../../Common/ShadowObject.h"
 
 CSheep::CSheep(const VECTOR3& iniPos)
-    : m_wasSuctioned(false)
 {
     m_pMesh = ObjectManager::FindGameObject<CEnemyManager>()->MeshList("Sheep");
     m_pAnimator = new Animator();
@@ -55,21 +54,11 @@ VECTOR3 CSheep::SuctionSpeed() const
 
 void CSheep::Update()
 {
-    // SUCTION状態から別の状態に遷移したかチェック
-    bool isSuctionedNow = (m_pComponent == m_components.at(CBaseState::State::SUCTION));
-
-    // 吸い込まれていた状態から解放された時、IDLE状態に戻る
-    if (m_wasSuctioned && !isSuctionedNow)
+    m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
+    if (m_pPlayer != nullptr)
     {
-        // 完全に吸われてDESTROYになった場合を除く
-        if (m_pComponent != m_components.at(CBaseState::State::DESTROY))
-        {
-            SetState(CBaseState::State::IDLE);
-        }
+        m_isInConeArea = m_pPlayer->IsWithSuctionCone(transform.position);
     }
-
-    m_wasSuctioned = isSuctionedNow;
-
     CEnemyBase::Update();
 }
 

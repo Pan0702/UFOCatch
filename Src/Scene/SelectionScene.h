@@ -5,6 +5,7 @@
 class CSelectionScene : public SceneBase
 {
 public:
+    
     CSelectionScene();
     ~CSelectionScene();
 
@@ -16,7 +17,7 @@ private:
     void PlayButton();
     void LevelButton();
     void ButtonsDraw();
-
+    void InitImage();
     //Buttonに関する情報
     struct ButtomInfo
     {
@@ -27,6 +28,7 @@ private:
 
     std::vector<ButtomInfo> m_buttons;
     std::vector<std::string> m_sceneName;
+    std::vector<CSpriteImage*> m_images;
     CSpriteImage* m_pImageBackGround;
     int m_selectedIndex;
     int m_play = 0;

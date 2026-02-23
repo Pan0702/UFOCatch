@@ -1,10 +1,12 @@
 #pragma once
 #include "../../Common/Object3D.h"
 #include "ModelRegistry.h"
-#include "QuadTreeIndex.h"
+#include "EnemyQuadTree.h"
+#include "StageQuadTree.h"
 
 class CPlayer;
 class CEnemyBase;
+class CStageObject;
 class CFbxMesh;
 
 // 動物管理クラス（ファサード）
@@ -28,9 +30,17 @@ public:
     const CollisionStats& GetCollisionStats() const;
     void ResetCollisionStats() const;
 
+    // 静的ツリーをシーン初期化後に1回構築する
+    void BuildStaticTree();
+
+    // 近くの静的ステージオブジェクトを取得（StaticQuadTreeIndexに委譲）
+    std::vector<CStageObject*> GetNearbyStageObjects(
+        const VECTOR2& pos, const VECTOR2& size) const;
+
     // 各クラスへの直接アクセス（必要に応じて）
     CModelRegistry* GetModelRegistry() const { return m_pModelRegistry; }
-    CQuadTreeIndex* GetQuadTreeIndex() const { return m_pQuadTreeIndex; }
+    CEnemyQuadTree* GetQuadTreeIndex() const { return m_pQuadTreeIndex; }
+    CStageQuadTree* GetStaticQuadTreeIndex() const { return m_pStaticQuadTreeIndex; }
 
 public:
     CPlayer* m_pPlayer;
@@ -39,7 +49,8 @@ private:
     void Update() override;
 
     CModelRegistry* m_pModelRegistry;
-    CQuadTreeIndex* m_pQuadTreeIndex;
+    CEnemyQuadTree* m_pQuadTreeIndex;
+    CStageQuadTree* m_pStaticQuadTreeIndex;
 
     // 互換性のため残す（未使用）
     CFbxMesh* m_pMesh;

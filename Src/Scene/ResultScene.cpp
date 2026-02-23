@@ -31,7 +31,7 @@ CResultScene::~CResultScene()
 }
 void CResultScene::Update()
 {
-    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_T))
+    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_RETURN))
     {
         SceneManager::ChangeScene("TitleScene");
     }

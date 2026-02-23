@@ -14,23 +14,24 @@
 CNormalScene::CNormalScene()
 {
     new CStageFactor();
-    ObjectManager::FindGameObject<CStageFactor>()->SpawnObjects(40, 40,120);
+    ObjectManager::FindGameObject<CStageFactor>()->SpawnObjects(40, 40,90);
     Instantiate<CPlayerCamera>();
     SingleInstantiate<CEnemyManager>();
-    new CTimer(60);
+    ObjectManager::FindGameObject<CEnemyManager>()->BuildStaticTree();
+    new CTimer(70);
     new CPlayer(45);             
     new CAnimalFactor(30,30,1);
-    // Instantiate<CFlog>();           
+     Instantiate<CFlog>();           
     Instantiate<CVisionSystem>();
     Instantiate<CDisplayInfo>();
-    ObjectManager::FindGameObject<CGameInstance>()->Init(5000 );
-    m_pBGM = new CXAudioSource(_T("data/Sound/yukai.wav"));
-    m_pBGM->Play(1);
+    ObjectManager::FindGameObject<CGameInstance>()->Init(6000 );
+
+  AudioManager::Play(_T("Play"));
 }
 
 CNormalScene::~CNormalScene()
 {
-    m_pBGM->Stop();
+    AudioManager::Stop(_T("Play"));
 }
 
 void CNormalScene::Update()

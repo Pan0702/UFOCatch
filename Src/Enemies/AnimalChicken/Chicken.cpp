@@ -14,6 +14,9 @@
 #include "../Component/Destroy.h"
 #include "../../Utils/MyLib.h"
 #include "../../Common/ShadowObject.h"
+#include "../Human/Human.h"
+
+class CHuman;
 
 CAnimalChicken::CAnimalChicken(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos), m_areaSize(moveAreaSize)
@@ -30,7 +33,7 @@ CAnimalChicken::CAnimalChicken(const VECTOR3& iniPos, const VECTOR2& moveAreaSiz
     m_components[CBaseState::State::IDLE] = new CIdle(this,360.0f);
     m_components[CBaseState::State::WALK] = new CWalk(this, 1.2f);
     m_components[CBaseState::State::SUCTION] = new CSuction(this);
-    m_components[CBaseState::State::DESTROY] = new CDestroy(this,150,1.5f);
+    m_components[CBaseState::State::DESTROY] = new CDestroy(this,200,1.5f);
     m_pComponent = m_components[CBaseState::State::WALK];
     m_pState = new CBaseState(this);
     m_pState->Enter(CBaseState::State::WALK);
@@ -48,6 +51,26 @@ CAnimalChicken::~CAnimalChicken()
     SAFE_DELETE(m_pCry);
 }
 
+
+
+void CAnimalChicken::Cry() const
+{
+    m_pCry->Play();
+    // 距離が9以下のHumanをチキンの方に向かせる
+    auto humans = ObjectManager::FindGameObjects<CHuman>();
+    for (auto* human : humans)
+    {
+        const VECTOR3 humanPos = human->GetTransform().position;
+        const VECTOR3 dir = transform.position - humanPos;
+        const float distance = dir.x * dir.x+ dir.z * dir.z;
+        if (distance <= 180.0f)
+        {
+            const float angle = atan2f(dir.x, dir.z);
+            human->SetRotateY(angle);
+        }
+    }
+}
+
 void CAnimalChicken::Update()
 {
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
@@ -55,21 +78,16 @@ void CAnimalChicken::Update()
     {
         m_isInConeArea = m_pPlayer->IsWithSuctionCone(transform.position);
     }
-
+    
     CEnemyBase::Update();
-
-    if (m_pState != nullptr && m_pComponent == m_components[CBaseState::State::DESTROY])
+}
+void CAnimalChicken::ChangeState(CBaseState::State type)
+{
+    CEnemyBase::ChangeState(type);
+    if (m_pComponent == m_components.at(CBaseState::State::SUCTION) )
     {
-        return;
+        Cry();
     }
-    if (m_pAnimator != nullptr) // アニメーターが存在するかチェック
-    {
-        m_pAnimator->Update();
-    }
-    ResolveOBBCollisions();
-    UpdateBBox();
-
-    ResolveStageCollisions();
 }
 
 void CAnimalChicken::Draw()
@@ -82,7 +100,7 @@ void CAnimalChicken::IsSuctionCheck()
     if (m_pPlayer == nullptr)return;
     if (m_pPlayer->IsWithSuctionCone(transform.position) && m_pPlayer->GetIsSuckUp())
     {
-        SetState(CBaseState::State::SUCTION);
+        ChangeState(CBaseState::State::SUCTION);
     }
 }
 

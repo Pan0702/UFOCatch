@@ -5,8 +5,6 @@
 #include "../../Player/Player.h"
 
 
-class CChickenBase;
-
 class CAnimalChicken : public CEnemyBase
 {
 public:
@@ -19,7 +17,8 @@ public:
 
     void AddPos(const VECTOR3& pos) { transform.position = transform.position + pos; }
     CXAudioSource* GetAudio() const { return m_pCry; }
-
+    void ChangeState(CBaseState::State type) override;
+    void Cry() const;
 private:    
     void Update() override;
     void Draw() override;

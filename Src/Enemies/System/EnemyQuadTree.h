@@ -21,11 +21,11 @@ struct CollisionStats
 };
 
 // 四分木による空間インデックス
-class CQuadTreeIndex
+class CEnemyQuadTree
 {
 public:
-    CQuadTreeIndex();
-    ~CQuadTreeIndex();
+    CEnemyQuadTree();
+    ~CEnemyQuadTree();
 
     // 四分木の更新（毎フレーム呼ぶ）
     void Update();
@@ -38,7 +38,7 @@ public:
 
     // 統計情報
     const CollisionStats& GetCollisionStats() const { return m_stats; }
-    void ResetCollisionStats();
+    void ResetCollisionStats() const;
 
 private:
     void CalcCollisionStats(float elapsedMs, const std::vector<CEnemyBase*>& enemies) const;

@@ -16,5 +16,5 @@ private:
 
 private:
     CPlayer* m_pPlayer;
-    bool m_wasSuctioned;  // 前フレームで吸い込まれていたか
+    bool m_isInConeArea = false;
 };

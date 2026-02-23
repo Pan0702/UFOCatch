@@ -49,7 +49,7 @@ void CAShepherdDog::Update()
     
     if (!m_rescueQueue.empty())
     {
-        SetState(CBaseState::State::RESCUE);
+        ChangeState(CBaseState::State::RESCUE);
         CEnemyBase::Update();
         return;
     }
@@ -66,12 +66,12 @@ void CAShepherdDog::Update()
         if (isFlockScattered)
         {
             // 群れがバラバラ → COLLECTING（はぐれ羊を戻す）
-            SetState(CBaseState::State::COLLECTING);
+            ChangeState(CBaseState::State::COLLECTING);
         }
         else
         {
             // 群れがまとまっている → DRIVING（UFOから遠ざける）
-            SetState(CBaseState::State::DRIVING);
+            ChangeState(CBaseState::State::DRIVING);
         }
     }
     else
@@ -79,12 +79,12 @@ void CAShepherdDog::Update()
         // 通常時：はぐれ羊がいたら戻しに行く
         if (isFlockScattered)
         {
-            SetState(CBaseState::State::COLLECTING);
+            ChangeState(CBaseState::State::COLLECTING);
         }
         else
         {
             // 群れがまとまっている → IDLE
-            SetState(CBaseState::State::IDLE);
+            ChangeState(CBaseState::State::IDLE);
         }
     }
 
@@ -97,7 +97,7 @@ void CAShepherdDog::ChangeStateHerded(const CSheep* sheep) const
     for (const auto s : m_sheeps)
     {
         if (s == sheep)continue;
-        s->SetState(CBaseState::State::HERDED);
+        s->ChangeState(CBaseState::State::HERDED);
     }
 }
 
@@ -109,7 +109,7 @@ void CAShepherdDog::StartHerding()
 void CAShepherdDog::RescueSheep(CSheep* sheep)
 {
     // 救助対象の羊をHERDED状態に変更
-    sheep->SetState(CBaseState::State::HERDED);
+    sheep->ChangeState(CBaseState::State::HERDED);
 
     // 群れ制御を開始（まだ開始していなければ）
     if (!m_isHerding)

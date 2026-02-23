@@ -62,24 +62,8 @@ void CADog::Update()
     
     //地面との当たり判定と、ComponentのUpdateを呼び出してる
     CEnemyBase::Update();
-
-    // 削除フラグが立っている（CEnemyBase::Updateで処理がスキップされた）場合は、
-    // これ以上の処理（衝突判定など）を行わない
-    if (m_pState != nullptr && m_pComponent == m_components[CBaseState::State::DESTROY])
-    {
-        return;
-    }
-
+    
 }
-
-// void CADog::IsSuctionCheck()
-// {
-//     if (m_pPlayer == nullptr)return;
-//     if (m_pPlayer->IsWithSuctionCone(transform.position /* + VECTOR3(0, m_maxSize.y, 0)*/) && m_pPlayer->GetIsSuckUp())
-//     {
-//         SetState(CBaseState::State::SUCTION);
-//     }
-// }
 
 VECTOR3 CADog::SuctionSpeed() const
 {

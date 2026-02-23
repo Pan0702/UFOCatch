@@ -62,7 +62,7 @@ void CHuman::Update()
 
     if (m_inSight)
     {
-        SetState(CBaseState::State::FIND_PLAYER);
+        ChangeState(CBaseState::State::FIND_PLAYER);
     }
     else
     {

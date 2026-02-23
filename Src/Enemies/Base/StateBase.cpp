@@ -25,7 +25,7 @@ void CBaseState::Update()
     m_pComponent->Update();
     if (m_pComponent->IsFinish())
     {
-        m_pEnemy->SetState(NextStatePop());
+        m_pEnemy->ChangeState(NextStatePop());
     }
 }
 
@@ -42,6 +42,10 @@ CBaseState::State CBaseState::NextStatePop()
     if (suctionComponent != nullptr && suctionComponent->IsFinishSuction())
     {
         return State::DESTROY;
+    }
+     if(suctionComponent->IsFinish())
+    {
+        return State::WALK;
     }
 
     SetNextState();

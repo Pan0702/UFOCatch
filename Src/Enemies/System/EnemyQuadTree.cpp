@@ -1,9 +1,9 @@
-#include "QuadTreeIndex.h"
+#include "EnemyQuadTree.h"
 #include "../Base/EnemyBase.h"
 #include "../../Common/Object3D.h"
 #include <list>
 
-CQuadTreeIndex::CQuadTreeIndex()
+CEnemyQuadTree::CEnemyQuadTree()
     : m_pTree(nullptr), m_frameCount(0)
 {
     // 4分木の初期化（レベル3、範囲-20〜20）
@@ -13,13 +13,13 @@ CQuadTreeIndex::CQuadTreeIndex()
     m_processTimes.reserve(60);  // 60フレーム分の履歴
 }
 
-CQuadTreeIndex::~CQuadTreeIndex()
+CEnemyQuadTree::~CEnemyQuadTree()
 {
     delete m_pTree;
     m_pTree = nullptr;
 }
 
-void CQuadTreeIndex::Update()
+void CEnemyQuadTree::Update()
 {
     if (m_pTree == nullptr) return;
 
@@ -36,7 +36,7 @@ void CQuadTreeIndex::Update()
     }
 }
 
-std::vector<CEnemyBase*> CQuadTreeIndex::GetNearbyEnemies(
+std::vector<CEnemyBase*> CEnemyQuadTree::GetNearbyEnemies(
     CEnemyBase* pObj,const VECTOR2& pos,const VECTOR2& size) const
 {
     std::vector<CEnemyBase*> result;
@@ -61,7 +61,7 @@ std::vector<CEnemyBase*> CQuadTreeIndex::GetNearbyEnemies(
     return result;
 }
 
-void CQuadTreeIndex::CalcCollisionStats(float elapsedMs, const std::vector<CEnemyBase*>& enemies) const
+void CEnemyQuadTree::CalcCollisionStats(float elapsedMs, const std::vector<CEnemyBase*>& enemies) const
 {
     // 統計情報の更新
     m_processTimes.push_back(elapsedMs);
@@ -87,9 +87,6 @@ void CQuadTreeIndex::CalcCollisionStats(float elapsedMs, const std::vector<CEnem
     m_stats.totalChecks = static_cast<int>(enemies.size());
 
     // 敵の総数を取得
-    // ※ 毎フレーム全走査は重いため、概算または直近の値を使用することを検討
-    // 現状はエラー回避のため、この高コストな計算を限定的に行うか、一旦コメントアウトまたは最小限にする
-    // ここでのFindGameObjectsが、GetNearbyEnemies(全エネミーが呼ぶ)から呼ばれるため非常に重い
     static int lastEnemyCount = 0;
     static int frameDivider = 0;
     if (frameDivider++ % 60 == 0) {
@@ -113,7 +110,7 @@ void CQuadTreeIndex::CalcCollisionStats(float elapsedMs, const std::vector<CEnem
     }
 }
 
-void CQuadTreeIndex::ResetCollisionStats()
+void CEnemyQuadTree::ResetCollisionStats() const
 {
     m_stats = CollisionStats();
     m_processTimes.clear();

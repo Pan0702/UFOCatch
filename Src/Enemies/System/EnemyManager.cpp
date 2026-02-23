@@ -3,6 +3,7 @@
 #include "../AnimalDog/Dog.h"
 #include "../HUman/Human.h"
 #include "../../Core/Graphics/XAudio.h"
+#include "../../Stage/StageObject.h"
 
 namespace
 {
@@ -15,6 +16,7 @@ CEnemyManager::CEnemyManager()
     , m_pMeshCol(nullptr)
     , m_pModelRegistry(nullptr)
     , m_pQuadTreeIndex(nullptr)
+    , m_pStaticQuadTreeIndex(nullptr)
     , m_pPlayer(nullptr)
 {
     ObjectManager::DontDestroy(this);
@@ -22,7 +24,8 @@ CEnemyManager::CEnemyManager()
 
     // 各クラスを初期化
     m_pModelRegistry = new CModelRegistry();
-    m_pQuadTreeIndex = new CQuadTreeIndex();
+    m_pQuadTreeIndex = new CEnemyQuadTree();
+    m_pStaticQuadTreeIndex = new CStageQuadTree();
 }
 
 CEnemyManager::~CEnemyManager()
@@ -31,6 +34,8 @@ CEnemyManager::~CEnemyManager()
     m_pModelRegistry = nullptr;
     SAFE_DELETE(m_pQuadTreeIndex);
     m_pQuadTreeIndex = nullptr;
+    SAFE_DELETE(m_pStaticQuadTreeIndex);
+    m_pStaticQuadTreeIndex = nullptr;
 }
 
 void CEnemyManager::Update()
@@ -94,4 +99,22 @@ void CEnemyManager::ResetCollisionStats() const
     {
         m_pQuadTreeIndex->ResetCollisionStats();
     }
+}
+
+void CEnemyManager::BuildStaticTree()
+{
+    if (m_pStaticQuadTreeIndex)
+    {
+        m_pStaticQuadTreeIndex->Build();
+    }
+}
+
+std::vector<CStageObject*> CEnemyManager::GetNearbyStageObjects(
+    const VECTOR2& pos, const VECTOR2& size) const
+{
+    if (m_pStaticQuadTreeIndex)
+    {
+        return m_pStaticQuadTreeIndex->GetNearbyObjects(pos, size);
+    }
+    return {};
 }

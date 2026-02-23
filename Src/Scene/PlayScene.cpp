@@ -19,6 +19,7 @@ PlayScene::PlayScene()
     ObjectManager::FindGameObject<CStageFactor>()->SpawnObjects(30, 30,90);
     Instantiate<CPlayerCamera>();
     SingleInstantiate<CEnemyManager>();
+    ObjectManager::FindGameObject<CEnemyManager>()->BuildStaticTree();
     new CTimer(40);
     new CPlayer(25);             
     new CAnimalFactor(20,20,0);
@@ -26,13 +27,13 @@ PlayScene::PlayScene()
     Instantiate<CVisionSystem>();
     Instantiate<CDisplayInfo>();
     ObjectManager::FindGameObject<CGameInstance>()->Init(3000 );
-    m_pBGM = new CXAudioSource(_T("data/Sound/yukai.wav"));
-    m_pBGM->Play(1);
+    AudioManager::Load(_T("Play"), _T("data/Sound/yukai.wav"));
+    AudioManager::Play(_T("Play"));
 }
 
 PlayScene::~PlayScene()
 {
-    m_pBGM->Stop();
+    AudioManager::Stop(_T("Play"));
 }
 
 void PlayScene::Update()

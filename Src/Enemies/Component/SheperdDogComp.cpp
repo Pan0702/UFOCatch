@@ -245,7 +245,7 @@ void CDestroyShepherdDog::Enter()
     {
         if (sheep != nullptr)
         {
-            sheep->SetState(CBaseState::State::PANIC);
+            sheep->ChangeState(CBaseState::State::PANIC);
         }
     }
 

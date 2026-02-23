@@ -12,28 +12,10 @@ CSelectionScene::CSelectionScene()
     m_selectedIndex = 0;
     InitButtons();
     InitScene();
+    InitImage();
     AudioManager::Load("Select",_T("data/Sound/himitu.wav"));
     AudioManager::Play("Select");
 }
-//Debug用
-// void CSelectionScene::InitButtons()
-// {
-//     //PlaySceneボタン //
-//     {
-//         ButtomInfo info{};
-//         info.image = new CSpriteImage("data/Select/DOButton.png");
-//         info.sceneName = "PlayScene";
-//         m_buttons.push_back(info);
-//     }
-//
-//     //Tutorialボタン //
-//     {
-//         ButtomInfo info{};
-//         info.image = new CSpriteImage("data/Select/TutoButton.png");
-//         info.sceneName = "TutorialScene";
-//         m_buttons.push_back(info);
-//     }
-// }
 
 void CSelectionScene::InitButtons()
 {
@@ -83,9 +65,14 @@ void CSelectionScene::InitButtons()
 
 void CSelectionScene::InitScene()
 {
-    m_sceneName = { "Tutorial", "Tutorial", "Normal", "Non" };
+    m_sceneName = { "Tutorial", "Easy", "Normal", "Non" };
 }
-
+void CSelectionScene::InitImage()
+{
+    m_images.push_back(new CSpriteImage("data/Select/T.png"));
+    m_images.push_back(new CSpriteImage("data/Select/E.png"));
+    m_images.push_back(new CSpriteImage("data/Select/N.png"));
+}
 
 CSelectionScene::~CSelectionScene()
 {
@@ -157,7 +144,7 @@ void CSelectionScene::Draw()
     //背景のひょうじ //
     spr.Draw(m_pImageBackGround, 0, 0, 0, 0, imageWidthMaxSize, imageHeightMaxSize);
     ButtonsDraw();
-
+    spr.Draw(m_images[m_selectedIndex], 0, 0, 0, 0, imageWidthMaxSize, imageHeightMaxSize);
     if (m_play == 1)
     {
         VECTOR2 playSize = m_buttons[1].imageSize;
@@ -174,7 +161,7 @@ void CSelectionScene::ButtonsDraw()
     CSprite spr;
     VECTOR2 offSize = m_buttons[3].imageSize;
     VECTOR2 onSize  = m_buttons[0].imageSize;
-
+    
     for (int i = 0; i < BUTTON_COUNT; i++)
     {
         float yBase = 113.0f + (float)i * (80.0f + offSize.y);
@@ -190,3 +177,5 @@ void CSelectionScene::ButtonsDraw()
     VECTOR2 playSize = m_buttons[5].imageSize;
     spr.Draw(m_buttons[5].image, 1083, 489, 0, 0, playSize.x, playSize.y);
 }
+
+
