@@ -188,6 +188,7 @@ bool CPlayer::IsInsideSuctionCircle(const VECTOR3& targetPos) const
     return (dx * dx + dz * dz) <= (radius * radius);
 }
 
+
 void CPlayer::Draw()
 {
     CPlayerHP* hp = ObjectManager::FindGameObject<CPlayerHP>();

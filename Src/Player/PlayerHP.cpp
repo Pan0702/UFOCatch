@@ -76,7 +76,7 @@ void CPlayerHP::Update()
     //死亡したのでシーンを切り替え
     if (m_currentHp <= 0)
     {
-        ObjectManager::FindGameObject<PlayScene>()->ChangeResultScene();
+        SceneManager::ChangeSceneWithTransition("ResultScene");
     }
 }
 

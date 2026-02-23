@@ -1,0 +1,55 @@
+#include "NormalScene.h"
+
+#include "../System/GameInstance.h"
+#include "../Enemies/System/EnemyManager.h"
+#include "../Player/PCamera.h"
+#include "../Player/Player.h"
+#include "../Enemies/AnimalDog/Dog.h"
+#include "../Enemies/System/AnimalFactor.h"
+#include "../Enemies/System/Flog.h"
+#include "../System/DisplayInfo.h"
+#include "../System/VisionSystem.h"
+#include "../Stage/StageFactor.h"
+#include "../System/Timer.h"
+CNormalScene::CNormalScene()
+{
+    new CStageFactor();
+    ObjectManager::FindGameObject<CStageFactor>()->SpawnObjects(40, 40,120);
+    Instantiate<CPlayerCamera>();
+    SingleInstantiate<CEnemyManager>();
+    new CTimer(60);
+    new CPlayer(45);             
+    new CAnimalFactor(30,30,1);
+    // Instantiate<CFlog>();           
+    Instantiate<CVisionSystem>();
+    Instantiate<CDisplayInfo>();
+    ObjectManager::FindGameObject<CGameInstance>()->Init(5000 );
+    m_pBGM = new CXAudioSource(_T("data/Sound/yukai.wav"));
+    m_pBGM->Play(1);
+}
+
+CNormalScene::~CNormalScene()
+{
+    m_pBGM->Stop();
+}
+
+void CNormalScene::Update()
+{
+    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_T))
+    {
+        SceneManager::ChangeScene("TitleScene");
+    }
+    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_1))
+    {
+        SceneManager::ChangeScene("ResultScene");
+    }
+    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_2))
+    {
+        SceneManager::ChangeScene("SelectScene");
+    }
+}
+
+void CNormalScene::Draw()
+{
+    SceneBase::Draw();
+}

@@ -10,6 +10,8 @@
 #include "../Scene/TutorialScene.h"
 #include "../Enemies/AnimalChicken/Chicken.h"
 #include "../Scene/DebugScene.h"
+#include "../Scene/OIScene.h"
+#include "../Scene/NormalScene.h"
 
 SceneBase* SceneFactory::CreateFirst()
 {
@@ -27,6 +29,9 @@ SceneBase* SceneFactory::Create(const std::string& name)
 	}
 	if (name == "Easy") {
 		return new PlayScene();
+	}
+	if (name == "Normal") {
+		return new CNormalScene();
 	}
 	if (name == "PlayScene") {
 		return new PlayScene();
@@ -46,6 +51,10 @@ SceneBase* SceneFactory::Create(const std::string& name)
 	if (name == "Debug")
 	{
 		return new CDebugScene();
+	}
+	if (name == "OI")
+	{
+		return new OIScene();
 	}
 	//
 	assert(false);

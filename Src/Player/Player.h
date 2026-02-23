@@ -19,7 +19,6 @@ public:
     bool IsWithSuctionCone(const VECTOR3& targetPos) const;
     VECTOR3 CalcSuctionDisplacement(float moveTimeSecond, const VECTOR3& animalPos) const;
     bool IsInsideSuctionCircle(const VECTOR3& targetPos) const;
-    
 
     const VECTOR3& GetPos() const { return transform.position; }
     bool GetIsSuckUp()      const { return m_SuctionActive; }

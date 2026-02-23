@@ -83,7 +83,7 @@ void CSelectionScene::InitButtons()
 
 void CSelectionScene::InitScene()
 {
-    m_sceneName = { "Tutorial", "Easy", "Normal", "Non" };
+    m_sceneName = { "Tutorial", "Tutorial", "Normal", "Non" };
 }
 
 
@@ -147,6 +147,7 @@ void CSelectionScene::LevelButton()
         m_selectedIndex = newIndex;
     }
 }
+
 
 void CSelectionScene::Draw()
 {

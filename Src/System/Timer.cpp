@@ -74,5 +74,5 @@ void CTimer::Update()
 ////////////////////
 void CTimer::TimeOut()
 {
-    SceneManager::ChangeScene("ResultScene");
+    SceneManager::ChangeSceneWithTransition("ResultScene");
 }

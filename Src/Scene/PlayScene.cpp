@@ -12,16 +12,16 @@
 #include "../System/VisionSystem.h"
 #include "../Stage/StageFactor.h"
 #include "../System/Timer.h"
-#include "../Utils/MyImgui.h"
 
 PlayScene::PlayScene()
 {
-    Instantiate<CStageFactor>();
+    new CStageFactor();
+    ObjectManager::FindGameObject<CStageFactor>()->SpawnObjects(30, 30,90);
     Instantiate<CPlayerCamera>();
     SingleInstantiate<CEnemyManager>();
     new CTimer(40);
-    new CPlayer(30);             
-    new CAnimalFactor(20,20);
+    new CPlayer(25);             
+    new CAnimalFactor(20,20,0);
    // Instantiate<CFlog>();           
     Instantiate<CVisionSystem>();
     Instantiate<CDisplayInfo>();
@@ -30,7 +30,10 @@ PlayScene::PlayScene()
     m_pBGM->Play(1);
 }
 
-PlayScene::~PlayScene() = default;
+PlayScene::~PlayScene()
+{
+    m_pBGM->Stop();
+}
 
 void PlayScene::Update()
 {

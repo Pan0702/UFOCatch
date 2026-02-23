@@ -24,7 +24,7 @@ TitleScene::TitleScene()
         new CSpriteImage("data/Title/Title.jpg")));
 
     m_text.push_back("SelectScene");
-    m_text.push_back("SelectScene");
+    m_text.push_back("OI");
     m_selectedIndex = 0;
     AudioManager::Load("TitleBGM",_T("data/Sound/Sunny_day.wav"));
     AudioManager::Play(_T("TitleBGM"), true);

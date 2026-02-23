@@ -6,14 +6,15 @@
 
 CStageFactor::CStageFactor()
 {
-    new CGround("data/Ground/Prefabs/MapPlane001.mesh",VECTOR3(3.0f,3.0f,3.0f));
+    new CGround("data/Ground/Prefabs/MapPlane001.mesh",VECTOR3(5.0f,3.0f,5.0f));
     new CCubeBox("data/Ground/CubeBoxSky.mesh");
    // new CStageObject("data/Ground/Prefabs/Tree1a.mesh",VECTOR3(1.0f,0.0f,1.0f),2);
+    
 }
 
-void CStageFactor::SpawnObjects(float sizeX,float sizeZ)
+void CStageFactor::SpawnObjects(float sizeX,float sizeZ,int num)
 {
-    for (int i = 0; i < 60; ++i)
+    for (int i = 0; i < num; ++i)
     {
        float randomX = Randomf(-sizeX, sizeX);
         float randomZ = Randomf(-sizeZ, sizeZ);
