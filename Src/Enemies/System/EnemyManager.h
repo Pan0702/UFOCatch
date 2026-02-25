@@ -3,6 +3,7 @@
 #include "ModelRegistry.h"
 #include "EnemyQuadTree.h"
 #include "StageQuadTree.h"
+#include <vector>
 
 class CPlayer;
 class CEnemyBase;
@@ -21,6 +22,11 @@ public:
 
     // メッシュ取得（ModelRegistryに委譲）
     CFbxMesh* MeshList(const std::string& str) const;
+
+    // 敵リスト管理（CEnemyBaseの生成/破棄時に自動呼び出し）
+    void RegisterEnemy(CEnemyBase* enemy);
+    void UnregisterEnemy(CEnemyBase* enemy);
+    const std::vector<CEnemyBase*>& GetAllEnemies() const { return m_enemies; }
 
     // 周辺エネミー取得（QuadTreeIndexに委譲）
     std::vector<CEnemyBase*> GetNearbyEnemies(
@@ -51,6 +57,7 @@ private:
     CModelRegistry* m_pModelRegistry;
     CEnemyQuadTree* m_pQuadTreeIndex;
     CStageQuadTree* m_pStaticQuadTreeIndex;
+    std::vector<CEnemyBase*> m_enemies;
 
     // 互換性のため残す（未使用）
     CFbxMesh* m_pMesh;

@@ -27,8 +27,8 @@ public:
     CEnemyQuadTree();
     ~CEnemyQuadTree();
 
-    // 四分木の更新（毎フレーム呼ぶ）
-    void Update();
+    // 四分木の更新（毎フレーム呼ぶ、管理リストを受け取る）
+    void Update(const std::vector<CEnemyBase*>& enemies);
 
     // 周辺のエネミーを取得
     std::vector<CEnemyBase*> GetNearbyEnemies(
@@ -41,9 +41,10 @@ public:
     void ResetCollisionStats() const;
 
 private:
-    void CalcCollisionStats(float elapsedMs, const std::vector<CEnemyBase*>& enemies) const;
+    void CalcCollisionStats(float elapsedMs, const std::vector<CEnemyBase*>& enemies, int totalEnemyCount) const;
 
     CLiner4Tree<CEnemyBase>* m_pTree;
+    int m_lastEnemyCount;
 
     // 統計情報
     mutable CollisionStats m_stats;

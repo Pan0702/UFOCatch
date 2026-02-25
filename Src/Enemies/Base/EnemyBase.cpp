@@ -7,6 +7,11 @@
 CEnemyBase::CEnemyBase()
     : m_velocityY(0.0f)
 {
+    CEnemyManager* manager = ObjectManager::FindGameObject<CEnemyManager>();
+    if (manager)
+    {
+        manager->RegisterEnemy(this);
+    }
 }
 
 
@@ -32,6 +37,12 @@ void CEnemyBase::ChangeState(CBaseState::State type)
 
 CEnemyBase::~CEnemyBase()
 {
+    CEnemyManager* manager = ObjectManager::FindGameObject<CEnemyManager>();
+    if (manager)
+    {
+        manager->UnregisterEnemy(this);
+    }
+
     SAFE_DELETE(m_pBBox);
     SAFE_DELETE(m_pState);
 
@@ -39,7 +50,7 @@ CEnemyBase::~CEnemyBase()
     {
         SAFE_DELETE(component.second);
     }
-    
+
 }
 
 void CEnemyBase::Update()
