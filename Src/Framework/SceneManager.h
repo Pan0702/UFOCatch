@@ -1,7 +1,7 @@
 #pragma once
 /// <summary>
-/// �V�[���̐؂�ւ����Ǘ�����N���X
-/// ���ۂ̃V�[���̍쐬�����́ASceneFactory�ɏ����Ă�������
+/// シーンの切り替えを管理するクラス
+/// 実際のシーン作成ロジックは、SceneFactoryに記述してください
 /// </summary>
 /// <author>N.Hanai</author>
 #include <string>
@@ -13,9 +13,9 @@ class SceneBase;
 class CScreenTransition;
 
 /// <summary>
-/// ���݂̃V�[�����Ăяo���Ă���B
-/// Scene��؂�ւ��鎞�́AChangeScene()���Ăяo���΂悭�A
-/// �Ă񂾎��ɐ؂�ւ���̂ł͂Ȃ��A�����Update()�Ő؂�ւ���悤�ɂ��Ă���B
+/// 現在のシーンを呼び出し実行する。
+/// シーンを切り替える際は、ChangeScene()を呼び出せばよく、
+/// 呼んだ瞬間に切り替わるのではなく、次のUpdate()のタイミングで切り替わるように設計されている。
 /// </summary>
 namespace SceneManager {
 	void Start();
@@ -25,22 +25,22 @@ namespace SceneManager {
 	void Release();
 
 	/// <summary>
-	/// ���݂̃V�[�����擾����
+	/// 現在のシーンを取得する
 	/// </summary>
 	SceneBase* CurrentScene();
 
 	/// <summary>
-	/// ���݂̃V�[���Ƃ��ēo�^����
+	/// 現在のシーンとして登録する
 	/// </summary>
-	/// <param name="scene"></param>
+	/// <param name="scene">登録するシーンのインスタンス</param>
 	void SetCurrentScene(SceneBase* scene);
 
 	/// <summary>
-	/// �V�[����؂�ւ���B
-	/// ���ڂ����ł͐؂�ւ����A����Update()���Ă΂ꂽ�Ƃ��AScene�������ĂԑO�ɐ؂�ւ��܂��B
-	/// �V�[���̖��O�ƃN���X�̊֌W�́ASceneFactory()�ɋL�q���Ă��������B
+	/// シーンを切り替える。
+	/// 即座には切り替わらず、次にUpdate()が呼ばれた際、Sceneが更新される前に切り替わります。
+	/// シーンの名前とクラスの関係は、SceneFactory()に記述してください。
 	/// </summary>
-	/// <param name="sceneName">�V�[����</param>
+	/// <param name="sceneName">シーン名</param>
 	void ChangeScene(const std::string& sceneName);
 
 	/// <summary>
@@ -54,12 +54,12 @@ namespace SceneManager {
 	bool IsTransitioning();
 
 	/// <summary>
-	/// �O�̃t���[������̌o�ߎ��ԁi�b�j
-	/// �ʏ�A60�t���[���̏ꍇ�́A0.01667�ɂȂ邪�A�O�̏�����2�t���[������������0.0333�ɂȂ�
-	/// ����10�t���[�����x�ŁA��ƂȂ鎞�Ԍv�������Ă���̂ŁA���肷��܂ł́A�l���s����ɂȂ�܂��B
+	/// 前のフレームからの経過時間（秒）
+	/// 通常、60フレームの場合は 0.01667 になるが、処理落ち等で2フレームかかれば 0.0333 になる。
+	/// 最初の10フレーム程度は基準となる時間計算を行っているため、安定するまでは値が不規則になる。
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>経過時間（秒）</returns>
 	float DeltaTime();
-	
+    
 	void Exit();
 };

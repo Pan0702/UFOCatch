@@ -1,393 +1,323 @@
-//-----------------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------------
 //
-//  Direct3D�𗘗p���邽�߂̔ėp�R�c���C�u����         ver 4.0        2024.12.3
+//  Direct3Dを利用するための汎用3Dライブラリ         ver 4.0        2024.12.3
 // 
-//	�e��@���w�n�̃��C�u����
-//	(�p�x�̓��W�A���p)
+//  数学・幾何学系のライブラリ
+//  (角度の単位はラジアン)
 //
-//																MyMath.h
+//                                               MyMath.h
 //
 //-----------------------------------------------------------------------------
 #pragma once
 
-//�w�b�_�[�t�@�C���̃C���N���[�h
+// ヘッダーファイルのインクルード
 #include <stdio.h>
 #include <windows.h>
 
 #include <random>
 #include <tchar.h>
 #include <DirectXMath.h>
-using namespace DirectX;	// DirectXMath�̊֐����g�����߂̃l�[���X�y�[�X
+using namespace DirectX;    // DirectXMathの関数を使いやすくするための名前空間
 
 //------------------------------------------------------------------------------
 //
-//  VECTOR2, VECTOR3, VECTOR4, MATRIX4X4 �^�̒�`
-//
+//  VECTOR2, VECTOR3, VECTOR4, MATRIX4X4 型の定義
 //
 //------------------------------------------------------------------------------
 
 //
-//  VECTOR4 �^�̒�`
+//  VECTOR4 型の定義
 //
 struct VECTOR4 : public XMFLOAT4
 {
-	//�R���X�g���N�^
-	VECTOR4() = default;
-	VECTOR4(float x, float y, float z, float w)
-	{
-		this->x = x; this->y = y; this->z = z; this->w = w;
-	}
-	VECTOR4(const XMVECTOR& other) :XMFLOAT4()
-	{
-		XMVECTOR temp = other;
-		XMStoreFloat4(this, temp);
-	}
+    // コンストラクタ
+    VECTOR4() = default;
+    VECTOR4(float x, float y, float z, float w)
+    {
+       this->x = x; this->y = y; this->z = z; this->w = w;
+    }
+    VECTOR4(const XMVECTOR& other) :XMFLOAT4()
+    {
+       XMVECTOR temp = other;
+       XMStoreFloat4(this, temp);
+    }
 
-	// ���Z
-	inline bool operator == (const VECTOR4& r) const { return x == r.x && y == r.y && z == r.z && w == r.w; }
-	inline bool operator != (const VECTOR4& r) const { return x != r.x || y != r.y || z != r.z || w != r.w; }
-	inline VECTOR4 operator +(const VECTOR4& r) const { return VECTOR4(x + r.x, y + r.y, z + r.z, w + r.w); }
-	inline VECTOR4 operator -(const VECTOR4& r) const { return VECTOR4(x - r.x, y - r.y, z - r.z, w - r.w); }
-	inline VECTOR4 operator +=(const VECTOR4& r) {
-		x += r.x, y += r.y, z += r.z, w += r.w;
-		return *this;
-	}
-	inline VECTOR4 operator -=(const VECTOR4& r) {
-		x -= r.x, y -= r.y, z -= r.z, w -= r.w;
-		return *this;
-	}
-	inline VECTOR4 operator *(const float& r) const { return VECTOR4(x * r, y * r, z * r, w * r); }
-	inline VECTOR4 operator /(const float& r) const { return VECTOR4(x / r, y / r, z / r, w / r); }
-	inline VECTOR4 operator *=(const float& r) {
-		x *= r, y *= r, z *= r, w *= r;
-		return *this;
-	}
-	inline VECTOR4 operator /=(const float& r) {
-		x /= r, y /= r, z /= r, w /= r;
-		return *this;
-	}
+    // 演算子
+    inline bool operator == (const VECTOR4& r) const { return x == r.x && y == r.y && z == r.z && w == r.w; }
+    inline bool operator != (const VECTOR4& r) const { return x != r.x || y != r.y || z != r.z || w != r.w; }
+    inline VECTOR4 operator +(const VECTOR4& r) const { return VECTOR4(x + r.x, y + r.y, z + r.z, w + r.w); }
+    inline VECTOR4 operator -(const VECTOR4& r) const { return VECTOR4(x - r.x, y - r.y, z - r.z, w - r.w); }
+    inline VECTOR4 operator +=(const VECTOR4& r) {
+       x += r.x, y += r.y, z += r.z, w += r.w;
+       return *this;
+    }
+    inline VECTOR4 operator -=(const VECTOR4& r) {
+       x -= r.x, y -= r.y, z -= r.z, w -= r.w;
+       return *this;
+    }
+    inline VECTOR4 operator *(const float& r) const { return VECTOR4(x * r, y * r, z * r, w * r); }
+    inline VECTOR4 operator /(const float& r) const { return VECTOR4(x / r, y / r, z / r, w / r); }
+    inline VECTOR4 operator *=(const float& r) {
+       x *= r, y *= r, z *= r, w *= r;
+       return *this;
+    }
+    inline VECTOR4 operator /=(const float& r) {
+       x /= r, y /= r, z /= r, w /= r;
+       return *this;
+    }
 
-	inline VECTOR4 operator + () const { return *this; }
-	inline VECTOR4 operator - () const { return VECTOR4(-x, -y, -z, -w); }
+    inline VECTOR4 operator + () const { return *this; }
+    inline VECTOR4 operator - () const { return VECTOR4(-x, -y, -z, -w); }
 
 
-	// ���
-	VECTOR4& operator=(const XMVECTOR& other)
-	{
-		XMVECTOR temp = other;
-		XMStoreFloat4(this, temp);
-		return *this;
-	}
-	VECTOR4& operator=(const VECTOR4& other)
-	{
-		this->x = other.x;
-		this->y = other.y;
-		this->z = other.z;
-		this->w = other.w;
-		return *this;
-	}
+    // 代入
+    VECTOR4& operator=(const XMVECTOR& other)
+    {
+       XMVECTOR temp = other;
+       XMStoreFloat4(this, temp);
+       return *this;
+    }
+    VECTOR4& operator=(const VECTOR4& other)
+    {
+       this->x = other.x;
+       this->y = other.y;
+       this->z = other.z;
+       this->w = other.w;
+       return *this;
+    }
 
-	// �L���X�g
-	operator XMVECTOR() const {
-		return XMLoadFloat4(this);
-	}
-	operator XMFLOAT4() const {
-		return XMFLOAT4(this->x, this->y, this->z, this->w);
-	}
+    // キャスト
+    operator XMVECTOR() const {
+       return XMLoadFloat4(this);
+    }
+    operator XMFLOAT4() const {
+       return XMFLOAT4(this->x, this->y, this->z, this->w);
+    }
 };
 
 //
-//  VECTOR3 �^�̒�`
+//  VECTOR3 型の定義
 //
 struct VECTOR3 : public XMFLOAT3
 {
-	//�R���X�g���N�^
-	VECTOR3() = default;
-	VECTOR3(float x, float y, float z)
-	{
-		this->x = x; this->y = y; this->z = z;
-	}
-	VECTOR3(const XMVECTOR& other) :XMFLOAT3()
-	{
-		XMVECTOR temp = other;
-		XMStoreFloat3(this, temp);
-	}
+    // コンストラクタ
+    VECTOR3() = default;
+    VECTOR3(float x, float y, float z)
+    {
+       this->x = x; this->y = y; this->z = z;
+    }
+    VECTOR3(const XMVECTOR& other) :XMFLOAT3()
+    {
+       XMVECTOR temp = other;
+       XMStoreFloat3(this, temp);
+    }
 
-	// ���Z
-	inline bool operator == (const VECTOR3& r) const { return x == r.x && y == r.y && z == r.z; }
-	inline bool operator != (const VECTOR3& r) const { return x != r.x || y != r.y || z != r.z; }
-	inline VECTOR3 operator +(const VECTOR3& r) const { return VECTOR3(x + r.x, y + r.y, z + r.z); }
-	inline VECTOR3 operator -(const VECTOR3& r) const { return VECTOR3(x - r.x, y - r.y, z - r.z); }
-	inline VECTOR3 operator +=(const VECTOR3& r) {
-		x += r.x, y += r.y, z += r.z;
-		return *this;
-	}
-	inline VECTOR3 operator -=(const VECTOR3& r) {
-		x -= r.x, y -= r.y, z -= r.z;
-		return *this;
-	}
-	inline VECTOR3 operator *(const float& r) const { return VECTOR3(x * r, y * r, z * r); }
-	inline VECTOR3 operator /(const float& r) const { return VECTOR3(x / r, y / r, z / r); }
-	inline VECTOR3 operator *=(const float& r) {
-		x *= r, y *= r, z *= r;
-		return *this;
-	}
-	inline VECTOR3 operator /=(const float& r) {
-		x /= r, y /= r, z /= r;
-		return *this;
-	}
+    // 演算子
+    inline bool operator == (const VECTOR3& r) const { return x == r.x && y == r.y && z == r.z; }
+    inline bool operator != (const VECTOR3& r) const { return x != r.x || y != r.y || z != r.z; }
+    inline VECTOR3 operator +(const VECTOR3& r) const { return VECTOR3(x + r.x, y + r.y, z + r.z); }
+    inline VECTOR3 operator -(const VECTOR3& r) const { return VECTOR3(x - r.x, y - r.y, z - r.z); }
+    inline VECTOR3 operator +=(const VECTOR3& r) {
+       x += r.x, y += r.y, z += r.z;
+       return *this;
+    }
+    inline VECTOR3 operator -=(const VECTOR3& r) {
+       x -= r.x, y -= r.y, z -= r.z;
+       return *this;
+    }
+    inline VECTOR3 operator *(const float& r) const { return VECTOR3(x * r, y * r, z * r); }
+    inline VECTOR3 operator /(const float& r) const { return VECTOR3(x / r, y / r, z / r); }
+    inline VECTOR3 operator *=(const float& r) {
+       x *= r, y *= r, z *= r;
+       return *this;
+    }
+    inline VECTOR3 operator /=(const float& r) {
+       x /= r, y /= r, z /= r;
+       return *this;
+    }
 
-	inline VECTOR3 operator + () const { return *this; }
-	inline VECTOR3 operator - () const { return VECTOR3(-x, -y, -z); }
+    inline VECTOR3 operator + () const { return *this; }
+    inline VECTOR3 operator - () const { return VECTOR3(-x, -y, -z); }
 
 
-	// ���
-	VECTOR3& operator=(const XMVECTOR& other)
-	{
-		XMVECTOR temp = other;
-		XMStoreFloat3(this, temp);
-		return *this;
-	}
-	VECTOR3& operator=(const VECTOR3& other)
-	{
-		this->x = other.x;
-		this->y = other.y;
-		this->z = other.z;
-		return *this;
-	}
+    // 代入
+    VECTOR3& operator=(const XMVECTOR& other)
+    {
+       XMVECTOR temp = other;
+       XMStoreFloat3(this, temp);
+       return *this;
+    }
+    VECTOR3& operator=(const VECTOR3& other)
+    {
+       this->x = other.x;
+       this->y = other.y;
+       this->z = other.z;
+       return *this;
+    }
 
-	// �L���X�g
-	operator XMVECTOR() const {
-		return XMLoadFloat3(this);
-	}
-	operator XMFLOAT3() const {
-		return XMFLOAT3(this->x, this->y, this->z);
-	}
+    // キャスト
+    operator XMVECTOR() const {
+       return XMLoadFloat3(this);
+    }
+    operator XMFLOAT3() const {
+       return XMFLOAT3(this->x, this->y, this->z);
+    }
 
-	float LengthSquare() const { return this->x * this->x + this->y * this->y + this->z * this->z; }
-	float Length() const { return sqrtf(LengthSquare()); }
+    float LengthSquare() const { return this->x * this->x + this->y * this->y + this->z * this->z; }
+    float Length() const { return sqrtf(LengthSquare()); }
 };
 
 //
-//  VECTOR2 �^�̒�`
+//  VECTOR2 型の定義
 //
 struct VECTOR2 : public XMFLOAT2
 {
-	//�R���X�g���N�^
-	VECTOR2() = default;
-	VECTOR2(float x, float y)
-	{
-		this->x = x; this->y = y;
-	}
-	VECTOR2(const XMVECTOR& other) :XMFLOAT2()
-	{
-		XMVECTOR temp = other;
-		XMStoreFloat2(this, temp);
-	}
+    // コンストラクタ
+    VECTOR2() = default;
+    VECTOR2(float x, float y)
+    {
+       this->x = x; this->y = y;
+    }
+    VECTOR2(const XMVECTOR& other) :XMFLOAT2()
+    {
+       XMVECTOR temp = other;
+       XMStoreFloat2(this, temp);
+    }
 
-	// ���Z
-	inline bool operator == (const VECTOR2& r) const { return x == r.x && y == r.y; }
-	inline bool operator != (const VECTOR2& r) const { return x != r.x || y != r.y; }
-	inline VECTOR2 operator +(const VECTOR2& r) const { return VECTOR2(x + r.x, y + r.y); }
-	inline VECTOR2 operator -(const VECTOR2& r) const { return VECTOR2(x - r.x, y - r.y); }
-	inline VECTOR2 operator +=(const VECTOR2& r) {
-		x += r.x, y += r.y;
-		return *this;
-	}
-	inline VECTOR2 operator -=(const VECTOR2& r) {
-		x -= r.x, y -= r.y;
-		return *this;
-	}
+    // 演算子
+    inline bool operator == (const VECTOR2& r) const { return x == r.x && y == r.y; }
+    inline bool operator != (const VECTOR2& r) const { return x != r.x || y != r.y; }
+    inline VECTOR2 operator +(const VECTOR2& r) const { return VECTOR2(x + r.x, y + r.y); }
+    inline VECTOR2 operator -(const VECTOR2& r) const { return VECTOR2(x - r.x, y - r.y); }
+    inline VECTOR2 operator +=(const VECTOR2& r) {
+       x += r.x, y += r.y;
+       return *this;
+    }
+    inline VECTOR2 operator -=(const VECTOR2& r) {
+       x -= r.x, y -= r.y;
+       return *this;
+    }
 
-	inline VECTOR2 operator *(const float& r) const { return VECTOR2(x * r, y * r); }
-	inline VECTOR2 operator /(const float& r) const { return VECTOR2(x / r, y / r); }
-	inline VECTOR2 operator *=(const float& r) {
-		x *= r, y *= r;
-		return *this;
-	}
-	inline VECTOR2 operator /=(const float& r) {
-		x /= r, y /= r;
-		return *this;
-	}
+    inline VECTOR2 operator *(const float& r) const { return VECTOR2(x * r, y * r); }
+    inline VECTOR2 operator /(const float& r) const { return VECTOR2(x / r, y / r); }
+    inline VECTOR2 operator *=(const float& r) {
+       x *= r, y *= r;
+       return *this;
+    }
+    inline VECTOR2 operator /=(const float& r) {
+       x /= r, y /= r;
+       return *this;
+    }
 
-	inline VECTOR2 operator + () const { return *this; }
-	inline VECTOR2 operator - () const { return VECTOR2(-x, -y); }
+    inline VECTOR2 operator + () const { return *this; }
+    inline VECTOR2 operator - () const { return VECTOR2(-x, -y); }
 
-	// ���
-	VECTOR2& operator=(const XMVECTOR& other)
-	{
-		XMVECTOR temp = other;
-		XMStoreFloat2(this, temp);
-		return *this;
-	}
-	VECTOR2& operator=(const VECTOR2& other)
-	{
-		this->x = other.x;
-		this->y = other.y;
-		return *this;
-	}
+    // 代入
+    VECTOR2& operator=(const XMVECTOR& other)
+    {
+       XMVECTOR temp = other;
+       XMStoreFloat2(this, temp);
+       return *this;
+    }
+    VECTOR2& operator=(const VECTOR2& other)
+    {
+       this->x = other.x;
+       this->y = other.y;
+       return *this;
+    }
 
-	// �L���X�g
-	operator XMVECTOR() const {
-		return XMLoadFloat2(this);
-	}
-	operator XMFLOAT2() const {
-		return XMFLOAT2(this->x, this->y);
-	}
+    // キャスト
+    operator XMVECTOR() const {
+       return XMLoadFloat2(this);
+    }
+    operator XMFLOAT2() const {
+       return XMFLOAT2(this->x, this->y);
+    }
 
-	
+    
 };
 
 //
-//  MATRIX4X4 �^�̒�`
+//  MATRIX4X4 型の定義
 //
 struct MATRIX4X4 : public XMFLOAT4X4
 {
-	//�R���X�g���N�^
-	MATRIX4X4() = default;
-	MATRIX4X4(const XMMATRIX& other) :XMFLOAT4X4()
-	{
-		XMMATRIX temp = other;
-		XMStoreFloat4x4(this, temp);
-	}
-	MATRIX4X4(float in_11,
-		float in_12,
-		float in_13,
-		float in_14,
-		float in_21,
-		float in_22,
-		float in_23,
-		float in_24,
-		float in_31,
-		float in_32,
-		float in_33,
-		float in_34,
-		float in_41,
-		float in_42,
-		float in_43,
-		float in_44)
-	{
-		this->_11 = in_11;
-		this->_12 = in_12;
-		this->_13 = in_13;
-		this->_14 = in_14;
-		this->_21 = in_21;
-		this->_22 = in_22;
-		this->_23 = in_23;
-		this->_24 = in_24;
-		this->_31 = in_31;
-		this->_32 = in_32;
-		this->_33 = in_33;
-		this->_34 = in_34;
-		this->_41 = in_41;
-		this->_42 = in_42;
-		this->_43 = in_43;
-		this->_44 = in_44;
-	}
+    // コンストラクタ
+    MATRIX4X4() = default;
+    MATRIX4X4(const XMMATRIX& other) :XMFLOAT4X4()
+    {
+       XMMATRIX temp = other;
+       XMStoreFloat4x4(this, temp);
+    }
+    MATRIX4X4(float in_11, float in_12, float in_13, float in_14,
+              float in_21, float in_22, float in_23, float in_24,
+              float in_31, float in_32, float in_33, float in_34,
+              float in_41, float in_42, float in_43, float in_44)
+    {
+       this->_11 = in_11; this->_12 = in_12; this->_13 = in_13; this->_14 = in_14;
+       this->_21 = in_21; this->_22 = in_22; this->_23 = in_23; this->_24 = in_24;
+       this->_31 = in_31; this->_32 = in_32; this->_33 = in_33; this->_34 = in_34;
+       this->_41 = in_41; this->_42 = in_42; this->_43 = in_43; this->_44 = in_44;
+    }
 
-	// ���
-	inline MATRIX4X4& operator=(const XMMATRIX& other)
-	{
-		XMMATRIX temp = other;
-		XMStoreFloat4x4(this, temp);
-		return *this;
-	}
+    // 代入
+    inline MATRIX4X4& operator=(const XMMATRIX& other)
+    {
+       XMMATRIX temp = other;
+       XMStoreFloat4x4(this, temp);
+       return *this;
+    }
 
-	inline MATRIX4X4& operator=(const XMFLOAT4X4& other)
-	{
-		this->_11 = other._11;
-		this->_12 = other._12;
-		this->_13 = other._13;
-		this->_14 = other._14;
-		this->_21 = other._21;
-		this->_22 = other._22;
-		this->_23 = other._23;
-		this->_24 = other._24;
-		this->_31 = other._31;
-		this->_32 = other._32;
-		this->_33 = other._33;
-		this->_34 = other._34;
-		this->_41 = other._41;
-		this->_42 = other._42;
-		this->_43 = other._43;
-		this->_44 = other._44;
-		return *this;
-	}
+    inline MATRIX4X4& operator=(const XMFLOAT4X4& other)
+    {
+       memcpy(this, &other, sizeof(XMFLOAT4X4));
+       return *this;
+    }
 
-	inline MATRIX4X4& operator=(const MATRIX4X4& other)
-	{
-		this->_11 = other._11;
-		this->_12 = other._12;
-		this->_13 = other._13;
-		this->_14 = other._14;
-		this->_21 = other._21;
-		this->_22 = other._22;
-		this->_23 = other._23;
-		this->_24 = other._24;
-		this->_31 = other._31;
-		this->_32 = other._32;
-		this->_33 = other._33;
-		this->_34 = other._34;
-		this->_41 = other._41;
-		this->_42 = other._42;
-		this->_43 = other._43;
-		this->_44 = other._44;
-		return *this;
-	}
+    inline MATRIX4X4& operator=(const MATRIX4X4& other)
+    {
+       memcpy(this, &other, sizeof(MATRIX4X4));
+       return *this;
+    }
 
-	// ���Z
-	inline MATRIX4X4 operator *(const MATRIX4X4& r) const
-	{
-		XMMATRIX left = *this;
-		XMMATRIX right = r;
-		MATRIX4X4 ans;
-		XMStoreFloat4x4(&ans, left * right);
-		return ans;
-	}
+    // 演算子
+    inline MATRIX4X4 operator *(const MATRIX4X4& r) const
+    {
+       XMMATRIX left = *this;
+       XMMATRIX right = r;
+       MATRIX4X4 ans;
+       XMStoreFloat4x4(&ans, left * right);
+       return ans;
+    }
 
-	// �L���X�g
-	inline operator XMMATRIX() const {
-		return XMLoadFloat4x4(this);
-	}
-	inline operator XMFLOAT4X4() const {
-		XMFLOAT4X4 out;
-		out._11 = this->_11;
-		out._12 = this->_12;
-		out._13 = this->_13;
-		out._14 = this->_14;
-		out._21 = this->_21;
-		out._22 = this->_22;
-		out._23 = this->_23;
-		out._24 = this->_24;
-		out._31 = this->_31;
-		out._32 = this->_32;
-		out._33 = this->_33;
-		out._34 = this->_34;
-		out._41 = this->_41;
-		out._42 = this->_42;
-		out._43 = this->_43;
-		out._44 = this->_44;
-		return out;
-	}
+    // キャスト
+    inline operator XMMATRIX() const {
+       return XMLoadFloat4x4(this);
+    }
+    inline operator XMFLOAT4X4() const {
+       XMFLOAT4X4 out;
+       memcpy(&out, this, sizeof(XMFLOAT4X4));
+       return out;
+    }
 
 };
 
 inline const VECTOR3 operator *(const VECTOR3& vec, const MATRIX4X4& mat) {
-	return XMVector3Transform(vec, mat);
+    return XMVector3Transform(vec, mat);
 }
 
 inline const VECTOR3 operator *=(VECTOR3& vec, const MATRIX4X4& mat) {
-	vec = XMVector3Transform(vec, mat);
-	return vec;
+    vec = XMVector3Transform(vec, mat);
+    return vec;
 }
 
 inline float Dot(const VECTOR3& v1, const VECTOR3& v2) {
-	VECTOR3 d = XMVector3Dot(v1, v2);
-	return d.x;
+    VECTOR3 d = XMVector3Dot(v1, v2);
+    return d.x;
 }
 
 // -----------------------------------------------------------------------------
-// �ėp�̂R�c�Z�p���C�u����
+// 汎用の3D計算ライブラリ
 // -----------------------------------------------------------------------------
 
 MATRIX4X4 GetLookatMatrix(const VECTOR3& vHear, const VECTOR3& vLookat);
@@ -426,87 +356,85 @@ static const float DegToRad = XM_PI /180.0f;
 static const float RadToDeg = 180.0f / XM_PI;
 
 // -----------------------------------------------------------------------------
-// ����֐�
+// 補助関数
 // -----------------------------------------------------------------------------
 inline float Pow2(const float& n)
 {
-	return n * n;
+    return n * n;
 }
 
 inline float Pow(float base, int exp)
 {
-	float result = 1.0f;
-	for (int i = 0; i < exp; i++)
-	{
-		result *= base; 
-	}
-	return result;
+    float result = 1.0f;
+    for (int i = 0; i < exp; i++)
+    {
+       result *= base; 
+    }
+    return result;
 }
 
 /**
- * 与えられた2つの3D点のx座標とy座標によって形成される直角三角形の斜辺を計算します。
+ * 与えられた2つの3D点のx座標とz座標によって形成される直角三角形の斜辺を計算します。
  *
  * @param v1 最初の3Dベクトル
  * @param v2 2番目の3Dベクトル
- * @return 2つの点のx座標とy座標の差によって形成される直角三角形の斜辺の長さ
+ * @return 2つの点のx座標とz座標の差によって形成される直角三角形の斜辺の長さ
  */
 inline float CalcDistanceXZ(const VECTOR3& v1,const VECTOR3& v2)
 {
-	VECTOR2 distance = VECTOR2(v1.x - v2.x, v1.z - v2.z);
-	return sqrtf(Pow2(distance.x) + Pow2(distance.y));
+    VECTOR2 distance = VECTOR2(v1.x - v2.x, v1.z - v2.z);
+    return sqrtf(Pow2(distance.x) + Pow2(distance.y));
 }
 
 inline VECTOR3 V3abs(const VECTOR3& n)
 {
-	VECTOR3 tmp;
-	tmp.x = std::fabs(n.x);
-	tmp.y = std::fabs(n.y);
-	tmp.z = std::fabs(n.z);
-	return tmp;
+    VECTOR3 tmp;
+    tmp.x = std::fabs(n.x);
+    tmp.y = std::fabs(n.y);
+    tmp.z = std::fabs(n.z);
+    return tmp;
 }
 
 ///
-///三角形の3つの辺の長さから角度を求めます
-/// @param A はさむ辺１
-/// @param B はさむ辺２
+/// 三角形の3つの辺の長さから余弦定理を用いて角度を求めます
+/// @param A はさむ辺1
+/// @param B はさむ辺2
 /// @param C 求めたい角度の対辺
-/// @return　求めたい角度
+/// @return 求めたい角度（度数法）
 /// 
 inline float CalcCosineFormula(const float& A,const float& B, const float& C)
 {
-	if (A == 0 || B == 0)
-	{
-		return 0;
-	}
-	float formula = (Pow2(A) + Pow2(B) - Pow2(C)) / (2 * A * B);
-	return formula * RadToDeg;
-	
+    if (A == 0 || B == 0)
+    {
+       return 0;
+    }
+    float formula = (Pow2(A) + Pow2(B) - Pow2(C)) / (2 * A * B);
+    return acosf(formula) * RadToDeg;
 }
 
 inline float CalcVector2Angle(const VECTOR2& vNorm1,const VECTOR2& vNorm2)
 {
-	float angle = acosf(dot(vNorm1, vNorm2));
-	return angle * RadToDeg;
+    float angle = acosf(dot(vNorm1, vNorm2));
+    return angle * RadToDeg;
 }
 
 inline float MyRamdom(const float& min,const float& max,std::mt19937& gen)
 {
-	 std::uniform_real_distribution<float> dist(min, max);
-	float num = dist(gen);
-	return num;
+    std::uniform_real_distribution<float> dist(min, max);
+    return dist(gen);
 }
+
 inline bool IsInsideAreaXZ(const VECTOR3& pos,const VECTOR2& size)
 {
-	if ((pos.x >= -size.x and pos.x <= size.x)
-		and(pos.z >= -size.y and pos.z <= size.y))
-	{
-		return true;
-	}
-	return false;
+    if ((pos.x >= -size.x && pos.x <= size.x)
+       && (pos.z >= -size.y && pos.z <= size.y))
+    {
+       return true;
+    }
+    return false;
 }
 
 inline VECTOR2 ToVec2XZ(const VECTOR3& pos)
 {
-	VECTOR2 tmp =  VECTOR2(pos.x, pos.z);
-	return tmp;
+    return VECTOR2(pos.x, pos.z);
 }

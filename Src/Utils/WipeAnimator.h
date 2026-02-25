@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Sprite3D.h"
 #include <vector>
 

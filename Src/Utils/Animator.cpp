@@ -1,4 +1,4 @@
-#include "Animator.h"
+﻿#include "Animator.h"
 #include <fstream>
 #include "../Common/Object3D.h"
 

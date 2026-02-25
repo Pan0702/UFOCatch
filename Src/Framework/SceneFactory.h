@@ -1,8 +1,8 @@
 #pragma once
 /// <summary>
-/// SceneManager����Ăяo�����Scene���쐬����N���X
-/// SceneManager��G��Ȃ��Ă����悤�ɁA�쐬�����������ɕ������Ă���
-/// ���V�[���́A������Ŏw�肵�Ă��炤�悤�ɂ���
+/// SceneManagerから呼び出されSceneを作成するクラス
+/// SceneManagerが肥大化しないように、作成ロジックをここに分離している
+/// 各シーンは、文字列（名前）で指定して作成できるようにする
 /// </summary>
 #include <string>
 
@@ -11,15 +11,15 @@ class SceneBase;
 class SceneFactory {
 public:
 	/// <summary>
-	/// �ŏ��ɃV�[�������
+	/// 最初に実行するシーン（タイトル画面など）を作成する
 	/// </summary>
-	/// <returns>�쐬�����C���X�^���X</returns>
+	/// <returns>作成したシーンのインスタンス</returns>
 	SceneBase* CreateFirst();
 
 	/// <summary>
-	/// �w�肳�ꂽ�V�[�����쐬����
+	/// 名前を指定して特定のシーンを作成する
 	/// </summary>
-	/// <param name="name">�V�[���̖���</param>
-	/// <returns>�쐬�����C���X�^���X</returns>
+	/// <param name="name">シーンの名称</param>
+	/// <returns>作成したシーンのインスタンス</returns>
 	SceneBase* Create(const std::string& name);
 };

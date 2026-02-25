@@ -1,12 +1,12 @@
-//=============================================================================
+﻿//=============================================================================
 //
-//	ImGui���g���₷�����邽�߂̃��C�u����                Ver 2.0     2020.11.15
+//  ImGuiを使いやすくするためのライブラリ                Ver 2.0     2020.11.15
 //
-//	���̃\�[�X�t�@�C���ł́A./Libs/Imgui �t�H���_�ɓ����Ă��� imgui�V�X�e����
-//	�w�b�_�ƃ\�[�X���g�p���Ă���
-//	�܂��Aimgui��imgui_impl_win32.h/imgui_impl_win32.cpp�̓J�X�^�}�C�Y���Ă���B
+//  このソースファイルでは、./Libs/Imgui フォルダに入っている imguiシステム
+//  ヘッダーとソースを使用している。
+//  また、imguiの imgui_impl_win32.h/imgui_impl_win32.cpp をカスタマイズしている。
 //
-//																	MyImgui.cpp
+//                                                  MyImgui.cpp
 //=============================================================================
 #include  "MyImgui.h"
 
@@ -15,73 +15,73 @@
 
 
 // ============================================================================
-// MyImgui�֐�
+// MyImgui関数
 // namespace MyImgui
 // ============================================================================
 namespace MyImgui
 {
     //=============================================================================
     //
-    // MyImgui�̏�����
+    // MyImguiの初期化
     //
-    // ����
-    //   HWND       hWnd      �E�B���h�E�n���h��
+    // 引数
+    //   HWND       hWnd      ウィンドウハンドル
     //   CDirect3D* pD3D      Direct3D
-    //   int        WidthIn   �E�B���h�E�̕�
-    //   int        HeightIn  �E�B���h�E�̍���
+    //   int        WidthIn   ウィンドウの幅
+    //   int        HeightIn  ウィンドウの高さ
     //
     //-----------------------------------------------------------------------------
     void ImguiInit(HWND hWnd, CDirect3D* pD3D, int WidthIn, int HeightIn)
     {
-        // imgui�̏�����
+        // imguiの初期化
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO();
         (void)io;
 
-        //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-        //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+        //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // キーボード操作を有効化
+        //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // ゲームパッド操作を有効化
 
-        // �E�B���h�E�̐F�̐ݒ�
-        //ImGui::StyleColorsLight();    // ���邢�D�F
-        ImGui::StyleColorsClassic(); // ���̔�����
-        //ImGui::StyleColorsDark();     // ��
+        // ウィンドウの色（スタイル）の設定
+        //ImGui::StyleColorsLight();    // 明るい色
+        ImGui::StyleColorsClassic();    // 以前の標準色
+        //ImGui::StyleColorsDark();     // 暗い色（現在の標準）
 
-        // �i���jImGui_ImplWin32_Init()�́A�I���W�i���̊֐����J�X�^�}�C�Y���Ă���
+        // 【注】ImGui_ImplWin32_Init()は、オリジナルの関数をカスタマイズしている
         if (!ImGui_ImplWin32_Init(hWnd, WidthIn, HeightIn)) // -- 2020.8.7
         {
-            MessageBox(0, _T("imgui���������o���܂���"), nullptr, MB_OK);
+            MessageBox(0, _T("imgui初期化に失敗しました"), nullptr, MB_OK);
         }
         if (!ImGui_ImplDX11_Init(pD3D->m_pDevice, pD3D->m_pDeviceContext))
         {
-            MessageBox(0, _T("imgui���������o���܂���"), nullptr, MB_OK);
+            MessageBox(0, _T("imgui初期化に失敗しました"), nullptr, MB_OK);
         }
 
-        // ini�t�@�C���𐶐����Ȃ��悤��
+        // iniファイルを生成しないように設定
         io.IniFilename = nullptr;
 
-        // �t�H���g�̃p�X���擾
-        char FontPath[MAX_PATH]; // �p�X�擾�o�b�t�@
+        // フォントのパスを取得
+        char FontPath[MAX_PATH]; // パス取得バッファ
         SHGetSpecialFolderPathA(nullptr, FontPath, CSIDL_FONTS, 0);
         strcat_s(FontPath, "\\meiryo.ttc");
 
-        // ���{��t�H���g�ɑΉ�
-        //io.Fonts->AddFontFromFileTTF(FontPath, 18.0f, nullptrptr, io.Fonts->GetGlyphRangesJapanese());
+        // 日本語フォントに対応
+        //io.Fonts->AddFontFromFileTTF(FontPath, 18.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
 
-        // ���{��t�H���g�ɑΉ�(�������A���p������Default�̂܂ܕ\��)
+        // 日本語フォントに対応(英数字はDefaultのまま表示し、日本語のみマージする設定)
         ImFontConfig imgui_config;
         imgui_config.MergeMode = true;
         io.Fonts->AddFontDefault();
         io.Fonts->AddFontFromFileTTF(FontPath, 18.0f, &imgui_config, io.Fonts->GetGlyphRangesJapanese());
         io.Fonts->AddFontFromFileTTF("C:/WINDOWS/FONTS/BIZ-UDGOTHICR.TTC",
                              18.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
-        io.ImeWindowHandle = ImmGetDefaultIMEWnd(hWnd); // ���{����͑Ή����H 
-        //io.ImeWindowHandle = hWnd;                        // ���{����͑Ή����B���̂Q�H
+        
+        io.ImeWindowHandle = ImmGetDefaultIMEWnd(hWnd); // 日本語入力に対応
     }
 
     //-----------------------------------------------------------------------------
     //
-    // MyImgui�̏I������
+    // MyImguiの終了処理
     //
     //-----------------------------------------------------------------------------
     void ImguiQuit()
@@ -93,12 +93,12 @@ namespace MyImgui
 
     //-----------------------------------------------------------------------------
     //
-    // MyImgui�̕`��O����
+    // MyImguiの描画前処理
     //
     //-----------------------------------------------------------------------------
     void ImguiNewFrame()
     {
-        // �`��O����
+        // 描画前処理
         ImGui_ImplDX11_NewFrame();
         ImGui_ImplWin32_NewFrame();
 
@@ -107,15 +107,12 @@ namespace MyImgui
 
     //-----------------------------------------------------------------------------
     //
-    // MyImgui�̎��`�揈��
+    // MyImguiの実描画処理
     //
     //-----------------------------------------------------------------------------
     void ImguiRender()
     {
-        // MyImgui�̍X�V
-        //Update();              // �f���E�B���h�E�̕\��
-
-        // �`��㏈���i���`��j
+        // 描画後処理（レンダリング）
         ImGui::Render();
 
         ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -123,15 +120,15 @@ namespace MyImgui
 
     //-----------------------------------------------------------------------------
     //
-    // MyImgui�S�̂̍X�V����
+    // MyImgui全体の更新処理
     //
     //-----------------------------------------------------------------------------
     void Update()
     {
         ImGuiIO& io = ImGui::GetIO();
 
-        // �f���E�B���h�E1�\������
-        // ���̃E�B���h�EImGui::ShowDemoWindow()�́A�V�X�e���ɍŏ�����p�ӂ���Ă���f���E�B���h�E�ł���
+        // デモウィンドウ1を表示する
+        // このウィンドウは ImGui::ShowDemoWindow() というシステムに標準で用意されているものです
         static bool p_open = false;
         if (io.KeysDown[VK_F8] == 1)
         {
@@ -139,8 +136,8 @@ namespace MyImgui
         }
         if (p_open) ImGui::ShowDemoWindow(&p_open);
 
-        // �f���E�B���h�E2�\������
-        // ���̃E�B���h�E�́AMyImgui�ō쐬�����f���E�B���h�E�ł���
+        // デモウィンドウ2を表示する
+        // このウィンドウは MyImguiで独自作成したデモウィンドウです
         static bool p_open2 = false;
         if (io.KeysDown[VK_F9] == 1)
         {
@@ -152,180 +149,154 @@ namespace MyImgui
 
     //-----------------------------------------------------------------------------
     //
-    // �f���p�E�B���h�E(DemoWindow2)�̕\��
+    // デモ用ウィンドウ(DemoWindow2)の表示
     //
-    // ����
-    //		bool* p_open : �I��(����{�^��)�t���O  false�ŏI��
+    // 引数
+    //     bool* p_open : 終了(閉じるボタン)フラグ  falseで終了
     //
     //-----------------------------------------------------------------------------
     void ShowDemoWindow2(bool* p_open)
     {
-        // �w�i�ƃ^�C�g���o�[�̐F�̐ݒ�
-        // �i���jPushStyleColor()��1:1�ŏI������PopStyleColor()���K�v
-        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.2f, 0.2f, 0.7f)); // �ʏ펞�̔w�i�F
-        ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.5f, 0.1f, 0.5f)); // �ʏ펞�i�t�H�[�J�X���Ȃ��Ƃ��j�̃^�C�g���F
-        ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 0.8f));
-        // �A�N�e�B�u���i�t�H�[�J�X���������Ă���Ƃ��j�̃^�C�g���F
+        // 背景とタイトルバーの色を設定
+        // 【注】PushStyleColor()は呼び出した回数分、最後でPopStyleColor()が必要
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.2f, 0.2f, 0.7f)); // 通常時の背景色
+        ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.5f, 0.1f, 0.5f)); // 通常時（フォーカスがないとき）のタイトル色
+        ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 0.8f)); // アクティブ時（フォーカスがあるとき）のタイトル色
 
-        // �E�B���h�E�ʒu�ƃT�C�Y��ݒ肵�܂��B
-        //   ImGuiCond_Once �ɂ��A����̂ݐݒ肳��܂��B
-        //   ImGuiCond_Always �ŁA��ɐݒ肷�邱�Ƃ��ł��܂��B
+        // ウィンドウ位置とサイズを設定します。
+        //   ImGuiCond_Once により、初回のみ設定されます。
+        //   ImGuiCond_Always で、常に固定することもできます。
         ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_Once);
         ImGui::SetNextWindowSize(ImVec2(400, 600), ImGuiCond_Once);
 
-        // �e�t���[���̘g��
-        //ImGui::GetStyle().FrameRounding = 3.0f;      // �t���[���̃R�[�i�[��
-        ImGui::GetStyle().FrameBorderSize = 1.0f; // �g���̑���
-        //ImGui::GetStyle().Colors[ImGuiCol_Border] = ImVec4(1, 1, 1, 1);    // �g���̐F
-        //ImGui::GetStyle().Colors[ImGuiCol_BorderShadow] = ImVec4(0, 0, 0, 1);    // �g���̉e�̐F
+        // 各フレームの枠線設定
+        ImGui::GetStyle().FrameBorderSize = 1.0f; // 枠線の太さ
 
-        // �E�B���h�E��`�̐ݒ�
-        // �EBegin�ŃE�C���h�E�̖��O�ݒ�B�Ȃ��A���O�̓E�C���h�E���ƂɃ��j�[�N�ɂȂ�悤�ɂ��邱��
-        // �Ep_open�́A����{�^�����������Ƃ�false���Ԃ�
-        // �Eflag�́AImGuiWindowFlags_MenuBar, ImGuiWindowFlags_NoResize �Ȃ�
-        if (ImGui::Begin(u8"ImGui �f���E�C���h�E�Q�̃^�C�g���o�[", p_open))
+        // ウィンドウ描画の設定
+        // ・Beginでウィンドウの名前設定。なお、名前はウィンドウごとにユニークにすること
+        // ・p_openにより、閉じるボタンが押されたときにfalseを返す
+        if (ImGui::Begin(u8"ImGui デモウィンドウ2のタイトルバー", p_open))
         {
-            // �ŏ������傫����ݒ�   �s�v
-            //ImGui::SetWindowSize(ImVec2(400, 600), ImGuiCond_::ImGuiCond_FirstUseEver);
-
             // -----------------------------------------------
-            // �e�L�X�g�\���B�܂��ASameLine()�œ���s�ɂQ���\������
-            ImGui::Text(u8"�e�L�X�g�R���e���c��\���B");
+            // テキスト表示。SameLine()で同一行に並べて表示
+            ImGui::Text(u8"テキストコンテンツを表示。");
             ImGui::SameLine();
-            ImGui::Text(u8"�܂��A�����s�ɒǉ����邱�Ƃ��ł���");
+            ImGui::Text(u8"また、このように横に追加することもできる");
 
-            // ��؂��
+            // 区切り線
             ImGui::Separator();
 
             // --------------------------------------------------
-            // �`�F�b�N�{�b�N�X
+            // チェックボックス
             static bool chkboxflag = false;
-            ImGui::Checkbox(u8"�`�F�b�N�{�b�N�X��\������", &chkboxflag);
+            ImGui::Checkbox(u8"チェックボックスを表示する", &chkboxflag);
 
             ImGui::Separator();
 
-            // �J���[�s�b�J�[ -----------------------------------
+            // カラーピッカー -----------------------------------
 
-            ImGui::PushItemWidth(220); // ���ڂ̕���220�ɂ���B�K��PopItemWidth()�Ƒ΂ɂ���
+            ImGui::PushItemWidth(220); // 項目の幅を220にする。必ずPopItemWidth()と対にする
 
-            // �E�z�C�[���^�C�v�E�����x�o�[��\���BColorEditFlag���w�肵�Ȃ��ƃ{�[�h�^�C�v�B���̂Ƃ��́A�E�N���b�N�Ō`����I���ł���
+            // ホイールタイプ・色のアルファバーを表示。PickerHueWheelを指定しないとボードタイプ
             static float Colorpick[4] = {0};
-            ImGui::ColorPicker4(u8"�J���[�s�b�J�[", Colorpick,
-                                ImGuiColorEditFlags_::ImGuiColorEditFlags_PickerHueWheel |
-                                ImGuiColorEditFlags_::ImGuiColorEditFlags_AlphaBar);
-            //ImGui::ColorPicker4(u8"�J���[�s�b�J�[", Colorpick);
+            ImGui::ColorPicker4(u8"カラーピッカー", Colorpick,
+                                ImGuiColorEditFlags_PickerHueWheel |
+                                ImGuiColorEditFlags_AlphaBar);
 
-            ImGui::PopItemWidth(); // ���ڂ̕������ɖ߂�
+            ImGui::PopItemWidth(); // 項目の幅設定を戻す
 
             ImGui::Separator();
 
-            // �e�L�X�g�E�������͂̂��낢�� -------------------------
+            // テキスト・数値入力のいろいろ -------------------------
 
-            // ���p�p�������̓���
-            static char str[256] = {""}; // char�^
-            //ImGui::InputTextMultiline(u8"���p�p�������̓���", str, 256, ImVec2(200,50));   // �����s����
-            ImGui::InputText(u8"���p�p�������̓���", str, 256); // ��s����
+            // 英数パスワード等の入力
+            static char str[256] = {""}; // char型
+            ImGui::InputText(u8"英数文字列の入力", str, 256); // 単行入力
 
 
-            // ���{��e�L�X�g�̓���
-            // �ETCHAR�^����UUTF-8(char)�^�ɕϊ����ē��͂���
-            // �E�܂�A�@TCHAR�^��UTF-8(char)�^���i���́j��UTF-8(char)�^��TCHAR�^
-            static TCHAR tstr[256] = {_T("")}; // TCHAR�^
-            char u8str[256]; // UTF-8(char)�^
+            // 日本語テキストの入力
+            // TCHAR型を一度UTF-8(char)型に変換して入力する
+            // つまり、 TCHAR型 → UTF-8型変換 → 入力処理 → UTF-8型 → TCHAR型変換
+            static TCHAR tstr[256] = {_T("")}; // TCHAR型
+            char u8str[256]; // UTF-8(char)型
 
-            // TCHAR�^��UTF-8�^�ɕϊ�
+            // TCHAR型をUTF-8型に変換
             MyImgui::ConvertTCHARToUTF8(tstr, u8str);
 
-            // ���{��e�L�X�g����
-            //ImGui::InputTextMultiline(u8"���{��̓���", u8str, 256, ImVec2(200,50));   // �����s����
-            ImGui::InputText(u8"���{��̓���", u8str, 256); // ��s����
+            // 日本語テキスト入力
+            ImGui::InputText(u8"日本語の入力", u8str, 256); // 単行入力
 
-            // UTF-8�^��TCHAR�^�ɕϊ�
+            // UTF-8型をTCHAR型に逆変換
             MyImgui::ConvertUTF8ToTCHAR(u8str, tstr);
 
 
             ImGui::Separator();
 
 
-            // �����̓���
+            // 整数の入力
             static int su1 = 0;
-            //ImGui::DragInt(u8"�����̓���", &su1);
-            ImGui::InputInt(u8"�����̓���", &su1);
+            ImGui::InputInt(u8"整数の入力", &su1);
 
 
-            // 4�����̓���
+            // 4つの整数の入力（スライダー形式）
             static int su2[4] = {0};
-            ImGui::SliderInt4(u8"�S���l�̓���", su2, 0, 255);
+            ImGui::SliderInt4(u8"色の値(RGBA)の入力", su2, 0, 255);
 
             ImGui::Separator();
 
 
-            // �R���{�{�b�N�X�̂��낢�� ------------------------
+            // コンボボックスのいろいろ ------------------------
 
-            // �@ �R���{�{�b�N�X1
-            // �z��items�̓��e���P���ڂÂR���{�{�b�N�X�ɐݒ肵�ĕ\������
-            // �N���b�N�����ʒu�̕�����|�C���^�[���I���|�C���^�[item_current�ɐݒ肳���
+            // ① コンボボックス1 (ポインタ配列形式)
             const char* items[] = {
                 "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIII", "JJJJ", "KKKK", "LLLLLLL",
                 "MMMM", "OOOOOOO"
             };
-            static const char* item_current = items[0]; // ���ڃ��X�g�̐擪�ʒu�������I���|�C���^�[�Ƃ���.
+            static const char* item_current = items[0]; 
             if (ImGui::BeginCombo("Combo 1", item_current, 0))
-            // 2�Ԗڂ̃p�����[�^�́A�R���{���J���O�ɑI�����ꂽ�|�C���^�[�ł���.
             {
                 for (int n = 0; n < IM_ARRAYSIZE(items); n++)
                 {
                     bool is_selected = (item_current == items[n]);
-                    // ���݂̃��X�g�ʒu���A�I���|�C���^�[�ʒu�ƈ�v���Ă��邩���f����
                     if (ImGui::Selectable(items[n], is_selected))
-                        // ���X�g���R���{�{�b�N�X�ɒǉ�����B�I���ʒu�ƈ�v���Ă�����true��Ԃ�
-                        item_current = items[n]; // �I���ʒu��I���|�C���^�[�ɐݒ肷��
+                        item_current = items[n]; 
                     if (is_selected)
                         ImGui::SetItemDefaultFocus();
-                    // �R���{���J���Ƃ��̏����t�H�[�J�X��ݒ肷�� (scrolling + for keyboard navigation support in the upcoming navigation branch)
                 }
                 ImGui::EndCombo();
             }
 
-            // �A �R���{�{�b�N�X2
-            // �\�����������s(single constant string)�Œ��ڐݒ肵�ĕ\������
-            // �N���b�N�����ʒu���I���|�C���^�[item_current_2�ɐݒ肳���
-            static int item_current_2 = 1; // �����J�[�\���ʒu���P�Ƃ���
+            // ② コンボボックス2 (NULL文字区切りの単一文字列)
+            static int item_current_2 = 1; 
             ImGui::Combo("Combo 2", &item_current_2, "aaaa\0bbbb\0cccc\0dddd\0eeee\0\0");
 
-            // �B �R���{�{�b�N�X3
-            // �\���������z��i��L�A�z��items�j���g�p���ĕ\������
-            // �N���b�N�����ʒu���I���|�C���^�[item_current_2�ɐݒ肳���
-            static int item_current_3 = -1; // �����J�[�\���ʒu��I�����Ȃ��Ƃ���
+            // ③ コンボボックス3 (配列と要素数指定)
+            static int item_current_3 = -1; 
             ImGui::Combo("Combo 3", &item_current_3, items, IM_ARRAYSIZE(items));
 
             ImGui::Separator();
 
 
-            // ���X�g�{�b�N�X�̂��낢�� ---------------------------
+            // リストボックスのいろいろ ---------------------------
 
-            ImGui::PushItemWidth(100); // ���ڂ̕���100�ɂ���B�K��PopItemWidth()�Ƒ΂ɂ���
+            ImGui::PushItemWidth(100); 
 
-            // �@ ���X�g�{�b�N�X�P
-            // �z��list_item�̓��e���P���ڂÂ��X�g�{�b�N�X�ɐݒ肵�ĕ\������
-            // �N���b�N�����ʒu���I���|�C���^�[item_count�ɐݒ肳���
+            // ① リストボックス1
             const char* list_item[] = {"TTTTT", "UUUUU", "VVVVV", "WWWWW", "XXXXX", "YYYYY", "ZZZZZ"};
-            static int item_count = 0; // ���ڂ̑I���|�C���^�[�i�I���ʒu�j
+            static int item_count = 0; 
 
             if (ImGui::ListBoxHeader(u8"ListBox 1", item_count, 3))
-            // 2�Ԗڂ̃p�����[�^�́A�I�����ꂽ�|�C���^�[�ł���B3�Ԗڂ̃p�����[�^�́A�{�b�N�X�ɕ\�����鍀�ڐ��ł���B
             {
                 for (int n = 0; n < IM_ARRAYSIZE(list_item); n++)
                 {
-                    bool is_selected = (item_count == n); // ���݂̃��X�g�ʒu���A�I���|�C���^�[�ʒu�ƈ�v���Ă��邩���f����
+                    bool is_selected = (item_count == n);
                     ImGui::PushID(n);
                     if (ImGui::Selectable(list_item[n], is_selected))
-                    // ���X�g�����X�g�{�b�N�X�ɒǉ�����B�I���ʒu�ƈ�v���Ă�����true��Ԃ�
                     {
-                        item_count = n; // �I���ʒu��I���|�C���^�[�ɐݒ肷��
+                        item_count = n; 
                     }
                     if (is_selected)
-                        ImGui::SetItemDefaultFocus(); // ���X�g���J���Ƃ��̏����t�H�[�J�X��ݒ肷��
+                        ImGui::SetItemDefaultFocus();
                     ImGui::PopID();
                 }
                 ImGui::ListBoxFooter();
@@ -333,49 +304,45 @@ namespace MyImgui
 
             ImGui::SameLine();
 
-            // �A ���X�g�{�b�N�X�Q
-            // �z��list_item2�̓��e���g�p���ă��X�g�{�b�N�X��\������
-            // �N���b�N�����ʒu���I���|�C���^�[item_count2�ɐݒ肳���
+            // ② リストボックス2 (簡易版)
             const char* list_item2[] = {"MMMMM", "NNNNN", "OOOOO", "PPPPP", "QQQQQ", "RRRRR", "SSSSS"};
-            static int item_count2 = 0; // ���ڂ̑I���|�C���^�[�i�I���ʒu�j
+            static int item_count2 = 0; 
 
             ImGui::ListBox(u8"ListBox 2", &item_count2, list_item2, IM_ARRAYSIZE(list_item2), 3);
-            // 5�Ԗڂ̃p�����[�^�́A�{�b�N�X�ɕ\�����鍀�ڐ��ł���B
 
-            ImGui::PopItemWidth(); // ���ڂ̕������ɖ߂�
+            ImGui::PopItemWidth(); 
 
-            // ��؂��
+            // 区切り線
             ImGui::Separator();
 
-            ImGui::BeginChild(u8"�`���C���h�E�B���h�E", ImVec2(260, 50), true);
+            // 子ウィンドウの作成
+            ImGui::BeginChild(u8"子ウィンドウ(スクロール)", ImVec2(260, 50), true);
 
-            ImGui::Text(u8"�m���D�P");
-            ImGui::Text(u8"�m���D�Q");
-            ImGui::Text(u8"�m���D�R");
-            ImGui::Text(u8"�m���D�S");
-            ImGui::Text(u8"�m���D�T");
-            ImGui::Text(u8"�m���D�U");
-            ImGui::Text(u8"�m���D�V");
-            ImGui::Text(u8"�m���D�W");
+            ImGui::Text(u8"項目 1");
+            ImGui::Text(u8"項目 2");
+            ImGui::Text(u8"項目 3");
+            ImGui::Text(u8"項目 4");
+            ImGui::Text(u8"項目 5");
+            ImGui::Text(u8"項目 6");
+            ImGui::Text(u8"項目 7");
+            ImGui::Text(u8"項目 8");
 
             ImGui::EndChild();
             ImGui::Separator();
 
             // -------------------------------------------------
-            // �{�^������
+            // 閉じるボタン
             ImGui::Text("                                      ");
             ImGui::SameLine();
-            if (ImGui::Button(u8"�I��", ImVec2(60, 20)))
+            if (ImGui::Button(u8"閉じる", ImVec2(60, 20)))
             {
-                // �{�^�����������Ƃ��A*p_open��false��Ԃ�
                 *p_open = false;
             }
         }
 
         ImGui::End();
 
-        // �F�ݒ�(�w�i�ƃ^�C�g���o�[)�̌�n���B
-        // ��LPushStyleColor()��1:1��popStyleColor()���K�v
+        // スタイル色の変更を元に戻す
         ImGui::PopStyleColor();
         ImGui::PopStyleColor();
         ImGui::PopStyleColor();
@@ -383,93 +350,64 @@ namespace MyImgui
 
     //-----------------------------------------------------------------------------
     //
-    // UTF-8����TCHAR�ւ̕ϊ��֐�
-    //
-    // ����
-    //   char*  charIn        ���͂���UTF-8������
-    //   TCHAR* tcharOut      �ϊ����TCHAR������(Out)
+    // UTF-8からTCHARへの変換関数
     //
     //-----------------------------------------------------------------------------
     void ConvertUTF8ToTCHAR(char* charIn, TCHAR* tcharOut)
     {
 #if _UNICODE
-        // unicode�̏ꍇ
-        // UTF-8����UTF-16�ւ̕ϊ�
+        // Unicode(UTF-16)の場合
         ConvertU8ToU16(charIn, tcharOut);
-
 #else
-        // �}���`�o�C�g�����̏ꍇ
-        // �@ UTF-8����UTF-16�ւ̕ϊ�
+        // マルチバイト(Shift-JIS)の場合
         WCHAR wstr[512];
         ConvertU8ToU16(charIn, wstr);
-
-        // �A Unicode �����R�[�h(WCHAR)��������Ŏw�肵�������R�[�h�ɕϊ�����( CP_ACP �͓��{��Windows�ł̓V�t�gJIS�R�[�h )
         char mstr[512];
         WideCharToMultiByte(CP_ACP, 0, wstr, -1, mstr, 512, nullptr, nullptr);
         strcpy_s(tcharOut, strlen(mstr) + 1, mstr);
-
 #endif
     }
 
     //-----------------------------------------------------------------------------
     //
-    // TCHAR����UTF-8�ւ̕ϊ��֐�
-    //
-    // ����
-    //   TCHAR* tcharIn       ���͂���TCHAR������
-    //   char*  charOut       �ϊ����UTF-8������(Out)
+    // TCHARからUTF-8への変換関数
     //
     //-----------------------------------------------------------------------------
     void ConvertTCHARToUTF8(TCHAR* tcharIn, char* charOut)
     {
 #if _UNICODE
-        // unicode�̏ꍇ
-        // UTF-16����UTF-8�ւ̕ϊ�
+        // Unicode(UTF-16)の場合
         ConvertU16ToU8(tcharIn, charOut);
-
 #else
-        // �}���`�o�C�g�����̏ꍇ
-        // �@ ���͕�����̃}���`�o�C�g(char)�^��WCHAR�^�ɕϊ�
+        // マルチバイト(Shift-JIS)の場合
         WCHAR wstr[512] = {L'\0'};
         MultiByteToWideChar(CP_OEMCP, MB_PRECOMPOSED, tcharIn, -1, wstr, 512);
-        // �A WCHAR�^��UTF-8�ɕϊ�����
         ConvertU16ToU8(wstr, charOut);
-
 #endif
     }
 
 
     //-----------------------------------------------------------------------------
     //
-    // UTF-8����UTF-16�ւ̕ϊ��֐�
-    //
-    // ����
-    //   char*  charIn        ���͂���UTF-8������
-    //   WCHAR* wcharOut      �ϊ����UTF-16������(Out)
+    // UTF-8からUTF-16(WCHAR)への変換
     //
     //-----------------------------------------------------------------------------
     void ConvertU8ToU16(char* charIn, WCHAR* wcharOut)
     {
         std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> convt;
         std::wstring wch = convt.from_bytes(charIn);
-
         wcscpy_s(wcharOut, wch.length() + 1, (WCHAR*)wch.c_str());
     }
 
     //-----------------------------------------------------------------------------
     //
-    // UTF-16����UTF-8�ւ̕ϊ��֐�
-    //
-    // ����
-    //   WCHAR* wcharIn       ���͂���UTF-16������
-    //   char*  charOut       �ϊ����UTF-8������(Out)
+    // UTF-16(WCHAR)からUTF-8への変換
     //
     //-----------------------------------------------------------------------------
     void ConvertU16ToU8(WCHAR* wcharIn, char* charOut)
     {
         std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> convt;
         std::string ch = convt.to_bytes(wcharIn);
-
         strcpy_s(charOut, ch.length() + 1, ch.c_str());
     }
 }

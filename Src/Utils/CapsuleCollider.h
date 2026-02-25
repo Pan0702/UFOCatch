@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Object3D.h"
 #include <vector>
 
@@ -6,9 +6,9 @@ class CapsuleCollider
 {
 public:
 	struct CollInfo {
-		VECTOR3 hitPosition; // ���������ʒu
-		VECTOR3 normal; // �@��
-		VECTOR3 triangle[3]; // ���_
+		VECTOR3 hitPosition; // 衝突した位置
+		VECTOR3 normal;      // 法線
+		VECTOR3 triangle[3]; // 衝突したポリゴンの頂点座標
 	};
 
 	CapsuleCollider();

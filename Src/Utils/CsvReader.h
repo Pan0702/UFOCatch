@@ -1,9 +1,9 @@
-#pragma once
+ï»¿#pragma once
 #include <string>
 #include <vector>
 
 /// <summary>
-/// CSV‚ğ“Ç‚ŞƒNƒ‰ƒX
+/// CSVã‚’èª­ã‚€ã‚¯ãƒ©ã‚¹
 /// </summary>
 class CsvReader {
 public:
@@ -11,42 +11,42 @@ public:
 	~CsvReader();
 
 	/// <summary>
-	/// CSVƒtƒ@ƒCƒ‹‚Ìs”‚ğ•Ô‚·
+	/// CSVãƒ•ã‚¡ã‚¤ãƒ«ã®è¡Œæ•°ã‚’è¿”ã™
 	/// </summary>
-	/// <returns>s”</returns>
+	/// <returns>è¡Œæ•°</returns>
 	unsigned int GetLines();
 
 	/// <summary>
-	/// CSV‚ÌŒ…”‚ğ•Ô‚·
-	/// s‚É‚æ‚Á‚ÄŒ…”‚ª•Ï‚í‚é‰Â”\«‚ª‚ ‚é‚Ì‚ÅAˆø”‚Ås‚ğæ“¾‚·‚é
-	/// s”Ô†‚ÍAExcel‚Ì•\¦s‚Å‚Í‚È‚­A0‚©‚çw’è‚·‚é
+	/// CSVã®æ¡æ•°ã‚’è¿”ã™
+	/// è¡Œã«ã‚ˆã£ã¦æ¡æ•°ãŒå¤‰ã‚ã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹ã®ã§ã€å¼•æ•°ã§è¡Œã‚’å–å¾—ã™ã‚‹
+	/// è¡Œç•ªå·ã¯ã€Excelã®è¡¨ç¤ºè¡Œã§ã¯ãªãã€0ã‹ã‚‰æŒ‡å®šã™ã‚‹
 	/// </summary>
-	/// <param name="line">s”Ô†iExcel‚Ì•\¦s”-1)</param>
-	/// <returns>‚»‚Ìs‚ÌŒ…”</returns>
+	/// <param name="line">è¡Œç•ªå·ï¼ˆExcelã®è¡¨ç¤ºè¡Œæ•°-1)</param>
+	/// <returns>ãã®è¡Œã®æ¡æ•°</returns>
 	unsigned int GetColumns(unsigned int line);
 
 	/// <summary>
-	/// w’èˆÊ’u‚Ì•¶š—ñ‚ğæ“¾‚·‚é
+	/// æŒ‡å®šä½ç½®ã®æ–‡å­—åˆ—ã‚’å–å¾—ã™ã‚‹
 	/// </summary>
-	/// <param name="line">s</param>
-	/// <param name="column">Œ…</param>
-	/// <returns>•¶š—ñ</returns>
+	/// <param name="line">è¡Œ</param>
+	/// <param name="column">æ¡</param>
+	/// <returns>æ–‡å­—åˆ—</returns>
 	std::string GetString(unsigned int line, unsigned int column);
 
 	/// <summary>
-	/// w’èˆÊ’u‚Ì“à—e‚ğint‚Åæ“¾‚·‚é
+	/// æŒ‡å®šä½ç½®ã®å†…å®¹ã‚’intã§å–å¾—ã™ã‚‹
 	/// </summary>
-	/// <param name="line">s</param>
-	/// <param name="column">Œ…</param>
-	/// <returns>®”’l</returns>
+	/// <param name="line">è¡Œ</param>
+	/// <param name="column">æ¡</param>
+	/// <returns>æ•´æ•°å€¤</returns>
 	int GetInt(unsigned int line, unsigned int column);
 
 	/// <summary>
-	/// w’èˆÊ’u‚Ì“à—e‚ğfloat‚Åæ“¾‚·‚é
+	/// æŒ‡å®šä½ç½®ã®å†…å®¹ã‚’floatã§å–å¾—ã™ã‚‹
 	/// </summary>
-	/// <param name="line">s</param>
-	/// <param name="column">Œ…</param>
-	/// <returns>¬”’l</returns>
+	/// <param name="line">è¡Œ</param>
+	/// <param name="column">æ¡</param>
+	/// <returns>å°æ•°å€¤</returns>
 	float GetFloat(unsigned int line, unsigned int column);
 private:
 	struct LINEREC {

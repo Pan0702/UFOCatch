@@ -1,1274 +1,1274 @@
 //-----------------------------------------------------------------------------
-// DInputŠÖ” : DirectInput‚ğŠÈ’P‚É—˜—p‚·‚é‚½‚ß‚Ìƒ‰ƒCƒuƒ‰ƒŠ(–{‘Ì)
+// DInputï¿½Öï¿½ : DirectInputï¿½ï¿½ï¿½È’Pï¿½É—ï¿½ï¿½pï¿½ï¿½ï¿½é‚½ï¿½ß‚Ìƒï¿½ï¿½Cï¿½uï¿½ï¿½ï¿½ï¿½(ï¿½{ï¿½ï¿½)
 // 
-//												       ver 3.3        2024.3.23
+//                                          ver 3.3        2024.3.23
 //
-// Copyright (c) 2019 Ã‰ªY‹Æ‹Zpê–åŠwZ ƒQ[ƒ€ƒNƒŠƒGƒCƒg‰È All rights reserved.
+// Copyright (c) 2019 ï¿½Ã‰ï¿½ï¿½Yï¿½Æ‹Zï¿½pï¿½ï¿½ï¿½wï¿½Z ï¿½Qï¿½[ï¿½ï¿½ï¿½Nï¿½ï¿½ï¿½Gï¿½Cï¿½gï¿½ï¿½ All rights reserved.
 //-----------------------------------------------------------------------------
 #include <stdio.h>
 #include "DInput.h"
 
 
-// ƒOƒ[ƒoƒ‹•Ï”(ƒR[ƒ‹ƒoƒbƒNŠÖ”‚ğg—p‚·‚é‚½‚ß•K—v)
-static CDirectInput*	g_pDI = nullptr;
+// ï¿½Oï¿½ï¿½ï¿½[ï¿½oï¿½ï¿½ï¿½Ïï¿½(ï¿½Rï¿½[ï¿½ï¿½ï¿½oï¿½bï¿½Nï¿½Öï¿½ï¿½ï¿½ï¿½gï¿½pï¿½ï¿½ï¿½é‚½ï¿½ß•Kï¿½v)
+static CDirectInput*    g_pDI = nullptr;
 
 //-----------------------------------------------------------------------------
-// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+// ï¿½Rï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½Nï¿½^
 //-----------------------------------------------------------------------------
 CDirectInput::CDirectInput(void)
 {
-	ZeroMemory(this, sizeof(CDirectInput));
-	m_bInputActive = true;
+    ZeroMemory(this, sizeof(CDirectInput));
+    m_bInputActive = true;
 
-	g_pDI = this;
+    g_pDI = this;
 }
 //-----------------------------------------------------------------------------
-// ƒfƒXƒgƒ‰ƒNƒ^
+// ï¿½fï¿½Xï¿½gï¿½ï¿½ï¿½Nï¿½^
 //-----------------------------------------------------------------------------
 CDirectInput::~CDirectInput()
 {
-	EndDirectInput();
+    EndDirectInput();
 }
 //-----------------------------------------------------------------------------
-// DirectInput‚ÌŠJn
+// DirectInputï¿½ÌŠJï¿½n
 // 
-// ˆø”		HINSTANCE	hInst	ƒCƒ“ƒXƒ^ƒ“ƒXƒnƒ“ƒhƒ‹
-//			HWND		hWnd	ƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
-//			int			flag	‰Šú‰»‚·‚éƒfƒBƒoƒCƒX‚Ì‘I‘ğiINIT_KEYBOARD|INIT_MOUSE|INIT_JOYSTICKj
-//			DWORD		dwWidth	ƒEƒBƒ“ƒh‚Ì•
-//			DWORD		dwHeightƒEƒBƒ“ƒh‚Ì‚‚³
+// ï¿½ï¿½ï¿½ï¿½    HINSTANCE  hInst  ï¿½Cï¿½ï¿½ï¿½Xï¿½^ï¿½ï¿½ï¿½Xï¿½nï¿½ï¿½ï¿½hï¿½ï¿½
+//        HWND      hWnd   ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½nï¿½ï¿½ï¿½hï¿½ï¿½
+//        int          flag   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½fï¿½Bï¿½oï¿½Cï¿½Xï¿½Ì‘Iï¿½ï¿½ï¿½iINIT_KEYBOARD|INIT_MOUSE|INIT_JOYSTICKï¿½j
+//        DWORD     dwWidth    ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Ì•ï¿½
+//        DWORD     dwHeightï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Ìï¿½ï¿½ï¿½
 // 
-// –ß‚è’l	true:¬Œ÷@false:¸”s
+// ï¿½ß‚ï¿½l true:ï¿½ï¿½ï¿½ï¿½ï¿½@false:ï¿½ï¿½ï¿½s
 //-----------------------------------------------------------------------------
 bool CDirectInput::StartDirectInput(HINSTANCE hInst, HWND hWnd, int flag, DWORD dwWidth, DWORD dwHeight)
 {
-	// DirectInput8ƒIƒuƒWƒFƒNƒg‚Ìì¬
-	m_hr = DirectInput8Create(hInst, DIRECTINPUT_VERSION, IID_IDirectInput8, (VOID**)&m_pDI8, nullptr);
-	if (DI_OK != m_hr) {
-		MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : DirectInput‚ğ‰Šú‰»‚·‚é‚±‚Æ‚ª‚Å‚«‚Ü‚¹‚ñB"), nullptr, MB_OK);
-		return false;
-	}
-	m_hWnd = hWnd;
+    // DirectInput8ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½Ìì¬
+    m_hr = DirectInput8Create(hInst, DIRECTINPUT_VERSION, IID_IDirectInput8, (VOID**)&m_pDI8, nullptr);
+    if (DI_OK != m_hr) {
+       MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : DirectInputï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é‚±ï¿½Æ‚ï¿½ï¿½Å‚ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½B"), nullptr, MB_OK);
+       return false;
+    }
+    m_hWnd = hWnd;
 
-	if (flag & INIT_KEYBOARD) InitKey(hWnd);
-	if (flag & INIT_MOUSE)    InitMouse(hWnd);
-	if (flag & INIT_JOYSTICK) InitJoy(hWnd);
+    if (flag & INIT_KEYBOARD) InitKey(hWnd);
+    if (flag & INIT_MOUSE)    InitMouse(hWnd);
+    if (flag & INIT_JOYSTICK) InitJoy(hWnd);
 
-	m_ViewWidth  = (float)dwWidth;
-	m_ViewHeight = (float)dwHeight;
+    m_ViewWidth  = (float)dwWidth;
+    m_ViewHeight = (float)dwHeight;
 
-	return true;
+    return true;
 }
 //-----------------------------------------------------------------------------
-// DirectInput‚ÌI—¹
+// DirectInputï¿½ÌIï¿½ï¿½
 // 
-// –ß‚è’l	true:¬Œ÷@false:¸”s
+// ï¿½ß‚ï¿½l true:ï¿½ï¿½ï¿½ï¿½ï¿½@false:ï¿½ï¿½ï¿½s
 //-----------------------------------------------------------------------------
 bool CDirectInput::EndDirectInput(void)
 {
-	// DirectInputDevice(keyboard)‚ğ‰ğ•ú
-	if( m_pBufferKey ){
-		delete []m_pBufferKey;	// ƒoƒbƒtƒ@‚ğ‰ğ•ú
-		m_pBufferKey = nullptr;
-	}
-	if (m_pKey) {
-		m_pKey->Unacquire();
-		m_pKey->Release();
-		m_pKey = nullptr;
-	}
+    // DirectInputDevice(keyboard)ï¿½ï¿½ï¿½ï¿½ï¿½
+    if( m_pBufferKey ){
+       delete []m_pBufferKey; // ï¿½oï¿½bï¿½tï¿½@ï¿½ï¿½ï¿½ï¿½ï¿½
+       m_pBufferKey = nullptr;
+    }
+    if (m_pKey) {
+       m_pKey->Unacquire();
+       m_pKey->Release();
+       m_pKey = nullptr;
+    }
 
-	// DirectInputDevice(mouse)‚ğ‰ğ•ú
-	if( m_pBufferMouse ){
-		delete []m_pBufferMouse;	// ƒoƒbƒtƒ@‚ğ‰ğ•ú
-		m_pBufferMouse = nullptr;
-	}
-	if (m_pMouse) {
-		m_pMouse->Unacquire();
-		m_pMouse->Release();
-		m_pMouse = nullptr;
-	}
+    // DirectInputDevice(mouse)ï¿½ï¿½ï¿½ï¿½ï¿½
+    if( m_pBufferMouse ){
+       delete []m_pBufferMouse;   // ï¿½oï¿½bï¿½tï¿½@ï¿½ï¿½ï¿½ï¿½ï¿½
+       m_pBufferMouse = nullptr;
+    }
+    if (m_pMouse) {
+       m_pMouse->Unacquire();
+       m_pMouse->Release();
+       m_pMouse = nullptr;
+    }
 
-	int i, j;
-	for (i=0; i<m_nJoySum; i++) {
-		if( m_bJoyFF[i] ){
-			// DirectInputDevice(ForceFeedback Joystick)‚ğ‰ğ•ú
-			for (j=0; j<m_nJoyEFSum; j++) {
-				if( m_pJoyEffect[i][j] ){
-					m_pJoyEffect[i][j]->Unload();
-					m_pJoyEffect[i][j]->Release();
-					m_pJoyEffect[i][j] = nullptr;
-				}
-			}
+    int i, j;
+    for (i=0; i<m_nJoySum; i++) {
+       if( m_bJoyFF[i] ){
+          // DirectInputDevice(ForceFeedback Joystick)ï¿½ï¿½ï¿½ï¿½ï¿½
+          for (j=0; j<m_nJoyEFSum; j++) {
+             if( m_pJoyEffect[i][j] ){
+                m_pJoyEffect[i][j]->Unload();
+                m_pJoyEffect[i][j]->Release();
+                m_pJoyEffect[i][j] = nullptr;
+             }
+          }
 
-		}
+       }
 
-		// DirectInputDevice(joystick)‚ğ‰ğ•ú
-		if( m_pBufferJoy[i] ){
-			delete []m_pBufferJoy[i];	// ƒoƒbƒtƒ@‚ğ‰ğ•ú
-			m_pBufferJoy[i] = nullptr;
-		}
+       // DirectInputDevice(joystick)ï¿½ï¿½ï¿½ï¿½ï¿½
+       if( m_pBufferJoy[i] ){
+          delete []m_pBufferJoy[i];  // ï¿½oï¿½bï¿½tï¿½@ï¿½ï¿½ï¿½ï¿½ï¿½
+          m_pBufferJoy[i] = nullptr;
+       }
 
-		if (m_pJoy[i]) {
-			m_pJoy[i]->Unacquire();
-			m_pJoy[i]->Release();
-			m_pJoy[i] = nullptr;
-		}
-	}
+       if (m_pJoy[i]) {
+          m_pJoy[i]->Unacquire();
+          m_pJoy[i]->Release();
+          m_pJoy[i] = nullptr;
+       }
+    }
 
-	// DirectInput‚ğ‰ğ•ú
-	if (m_pDI8) {
-		m_pDI8->Release();
-		m_pDI8 = nullptr;
-	}
+    // DirectInputï¿½ï¿½ï¿½ï¿½ï¿½
+    if (m_pDI8) {
+       m_pDI8->Release();
+       m_pDI8 = nullptr;
+    }
 
-	return true;
+    return true;
 }
 //-----------------------------------------------------------------------------
-// “ü—ÍƒfƒoƒCƒX‚ÌƒAƒNƒZƒXŒ ‚Ì§Œä
+// ï¿½ï¿½ï¿½Ì“fï¿½oï¿½Cï¿½Xï¿½ÌƒAï¿½Nï¿½Zï¿½Xï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½
 //-----------------------------------------------------------------------------
 void CDirectInput::SetAcquire(void)
 {
-	int i;
+    int i;
 
-	if (m_bInputActive) {
-		if (m_pKey) m_pKey->Acquire();
-		if (m_pMouse) m_pMouse->Acquire();
-		for (i=0; i<m_nJoySum; i++) if (m_pJoy[i]) m_pJoy[i]->Acquire();
-	} else {
-		if (m_pKey) m_pKey->Unacquire();
-		if (m_pMouse) m_pMouse->Unacquire();
-		for (i=0; i<m_nJoySum; i++) if (m_pJoy[i]) m_pJoy[i]->Unacquire();
-	}
+    if (m_bInputActive) {
+       if (m_pKey) m_pKey->Acquire();
+       if (m_pMouse) m_pMouse->Acquire();
+       for (i=0; i<m_nJoySum; i++) if (m_pJoy[i]) m_pJoy[i]->Acquire();
+    } else {
+       if (m_pKey) m_pKey->Unacquire();
+       if (m_pMouse) m_pMouse->Unacquire();
+       for (i=0; i<m_nJoySum; i++) if (m_pJoy[i]) m_pJoy[i]->Unacquire();
+    }
 }
 //-----------------------------------------------------------------------------
-// ƒf[ƒ^“Ç‚İ‚İ
+// ï¿½fï¿½[ï¿½^ï¿½Ç‚İï¿½ï¿½ï¿½
 // 
-// –ß‚è’l	true:¬Œ÷@false:¸”s
+// ï¿½ß‚ï¿½l true:ï¿½ï¿½ï¿½ï¿½ï¿½@false:ï¿½ï¿½ï¿½s
 //-----------------------------------------------------------------------------
 bool CDirectInput::GetInput(void)
 {
-	if (m_pKey) GetKey();
-	if (m_pMouse) GetMouse();
-	if (m_pJoy[0]) GetJoy();
-	return true;
+    if (m_pKey) GetKey();
+    if (m_pMouse) GetMouse();
+    if (m_pJoy[0]) GetJoy();
+    return true;
 }
 //*****************************************************************************
 //*** Keyboard                                                              ***
 //*****************************************************************************
 //-----------------------------------------------------------------------------
-// KeyboardƒfƒoƒCƒX‚Ì‰Šú‰»
+// Keyboardï¿½fï¿½oï¿½Cï¿½Xï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½
 // 
-// ˆø”		HWND hWnd	ƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
+// ï¿½ï¿½ï¿½ï¿½    HWND hWnd  ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½nï¿½ï¿½ï¿½hï¿½ï¿½
 // 
-// –ß‚è’l	true:¬Œ÷@false:¸”s
+// ï¿½ß‚ï¿½l true:ï¿½ï¿½ï¿½ï¿½ï¿½@false:ï¿½ï¿½ï¿½s
 //-----------------------------------------------------------------------------
 bool CDirectInput::InitKey(HWND hWnd)
 {
-	//-----------------------------------------------------------------------------
-	// keyboardƒfƒoƒCƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒXì¬E‰Šú‰»
-	m_hr = m_pDI8->CreateDevice(GUID_SysKeyboard, &m_pKey, nullptr);
-	if (DI_OK != m_hr) {
-		MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : DirectInputDeviceEx(keyboard)‚ğ‰Šú‰»‚·‚é‚±‚Æ‚ª‚Å‚«‚Ü‚¹‚ñB"),nullptr,MB_OK);
-		return false;
-	}
-	// DirectInputƒfƒoƒCƒX‚Ìƒf[ƒ^Œ`®‚Ìİ’è
-	m_pKey->SetDataFormat(&c_dfDIKeyboard);
-	if (DI_OK != m_hr) {
-		MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : DirectInputƒfƒoƒCƒX‚Ìƒf[ƒ^Œ`®‚Ìİ’è‚É¸”s‚µ‚Ü‚µ‚½B"),nullptr,MB_OK);
-		return false;
-	}
-	// keyboardƒfƒoƒCƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚É‘Î‚·‚é‹¦’²ƒŒƒxƒ‹‚ÌŠm—§
-	m_pKey->SetCooperativeLevel(hWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND);
-	if (DI_OK != m_hr) {
-		MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : keyboardƒfƒoƒCƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚É‘Î‚·‚é‹¦’²ƒŒƒxƒ‹‚ÌŠm—§‚É¸”s‚µ‚Ü‚µ‚½B"),nullptr,MB_OK);
-		return false;
-	}
-	return SetPropertyKey();
+    //-----------------------------------------------------------------------------
+    // keyboardï¿½fï¿½oï¿½Cï¿½Xï¿½ÌƒCï¿½ï¿½ï¿½Xï¿½^ï¿½ï¿½ï¿½Xï¿½ì¬ï¿½Eï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    m_hr = m_pDI8->CreateDevice(GUID_SysKeyboard, &m_pKey, nullptr);
+    if (DI_OK != m_hr) {
+       MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : DirectInputDeviceEx(keyboard)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é‚±ï¿½Æ‚ï¿½ï¿½Å‚ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½B"),nullptr,MB_OK);
+       return false;
+    }
+    // DirectInputï¿½fï¿½oï¿½Cï¿½Xï¿½Ìƒfï¿½[ï¿½^ï¿½`ï¿½ï¿½ï¿½Ìİ’ï¿½
+    m_pKey->SetDataFormat(&c_dfDIKeyboard);
+    if (DI_OK != m_hr) {
+       MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : DirectInputï¿½fï¿½oï¿½Cï¿½Xï¿½Ìƒfï¿½[ï¿½^ï¿½`ï¿½ï¿½ï¿½Ìİ’ï¿½Éï¿½ï¿½sï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"),nullptr,MB_OK);
+       return false;
+    }
+    // keyboardï¿½fï¿½oï¿½Cï¿½Xï¿½ÌƒCï¿½ï¿½ï¿½Xï¿½^ï¿½ï¿½ï¿½Xï¿½É‘Î‚ï¿½ï¿½é‹¦ï¿½ï¿½ï¿½ï¿½ï¿½xï¿½ï¿½ï¿½ÌŠmï¿½ï¿½
+    m_pKey->SetCooperativeLevel(hWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND);
+    if (DI_OK != m_hr) {
+       MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : keyboardï¿½fï¿½oï¿½Cï¿½Xï¿½ÌƒCï¿½ï¿½ï¿½Xï¿½^ï¿½ï¿½ï¿½Xï¿½É‘Î‚ï¿½ï¿½é‹¦ï¿½ï¿½ï¿½ï¿½ï¿½xï¿½ï¿½ï¿½ÌŠmï¿½ï¿½ï¿½Éï¿½ï¿½sï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"),nullptr,MB_OK);
+       return false;
+    }
+    return SetPropertyKey();
 }
 //-----------------------------------------------------------------------------
-// ƒoƒbƒtƒ@ƒTƒCƒY‚Ìİ’è(keyboard)
+// ï¿½oï¿½bï¿½tï¿½@ï¿½Tï¿½Cï¿½Yï¿½Ìİ’ï¿½(keyboard)
 // 
-// –ß‚è’l	true:¬Œ÷@false:¸”s
+// ï¿½ß‚ï¿½l true:ï¿½ï¿½ï¿½ï¿½ï¿½@false:ï¿½ï¿½ï¿½s
 //-----------------------------------------------------------------------------
 bool CDirectInput::SetPropertyKey(void)
 {
-	m_BufferRestKey = 0;
-	m_pBufferPositionKey = nullptr;
-	m_pBufferKey = new DIDEVICEOBJECTDATA[BufferSize];	// ƒoƒbƒtƒ@‚ğŠm•Û
-	DIPROPDWORD dipdw;
-	ZeroMemory(&dipdw, sizeof(dipdw));
-	dipdw.diph.dwSize = sizeof(DIPROPDWORD);
-	dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
-	dipdw.diph.dwObj = 0;
-	dipdw.diph.dwHow = DIPH_DEVICE;
-	dipdw.dwData = BufferSize;
-	m_pKey->Unacquire();				// ˆê’UƒAƒNƒZƒXŒ ‚ğ‰ğ•ú‚·‚é
-	m_hr = m_pKey->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
-	m_pKey->Acquire();					// ƒAƒNƒZƒXŒ ‚ğ“¾‚é
-	return !FAILED(m_hr);
+    m_BufferRestKey = 0;
+    m_pBufferPositionKey = nullptr;
+    m_pBufferKey = new DIDEVICEOBJECTDATA[BufferSize]; // ï¿½oï¿½bï¿½tï¿½@ï¿½ï¿½ï¿½mï¿½ï¿½
+    DIPROPDWORD dipdw;
+    ZeroMemory(&dipdw, sizeof(dipdw));
+    dipdw.diph.dwSize = sizeof(DIPROPDWORD);
+    dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+    dipdw.diph.dwObj = 0;
+    dipdw.diph.dwHow = DIPH_DEVICE;
+    dipdw.dwData = BufferSize;
+    m_pKey->Unacquire();            // ï¿½ï¿½Uï¿½Aï¿½Nï¿½Zï¿½Xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    m_hr = m_pKey->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
+    m_pKey->Acquire();             // ï¿½Aï¿½Nï¿½Zï¿½Xï¿½ï¿½ï¿½ğ“¾‚ï¿½
+    return !FAILED(m_hr);
 }
 //-----------------------------------------------------------------------------
-// ƒL[ƒ{[ƒh‚Ìó‘Ô‚ğ“¾‚é
+// ï¿½Lï¿½[ï¿½{ï¿½[ï¿½hï¿½Ìï¿½Ô‚ğ“¾‚ï¿½
 // 
-// –ß‚è’l	true:¬Œ÷@false:¸”s
+// ï¿½ß‚ï¿½l true:ï¿½ï¿½ï¿½ï¿½ï¿½@false:ï¿½ï¿½ï¿½s
 //-----------------------------------------------------------------------------
 bool CDirectInput::GetKey(void)
 {
-	if (!m_pKey) return false;
-	if (m_pKey->GetDeviceState(sizeof(m_diKeyState), m_diKeyState) != DI_OK) {
-		m_pKey->Acquire();
-		if (FAILED(m_pKey->GetDeviceState(sizeof(m_diKeyState), m_diKeyState))) {
-			//MessageBox(nullptr,_T("DInput.cpp : GetKey() : GetDeviceState‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B") ,nullptr,MB_OK );
-			return false;
-		}
-	}
+    if (!m_pKey) return false;
+    if (m_pKey->GetDeviceState(sizeof(m_diKeyState), m_diKeyState) != DI_OK) {
+       m_pKey->Acquire();
+       if (FAILED(m_pKey->GetDeviceState(sizeof(m_diKeyState), m_diKeyState))) {
+          //MessageBox(nullptr,_T("DInput.cpp : GetKey() : GetDeviceStateï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B") ,nullptr,MB_OK );
+          return false;
+       }
+    }
 
-	m_BufferRestKey = BufferSize;
-	if (FAILED(m_pKey->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), m_pBufferKey, &m_BufferRestKey, 0))) {
-		// ¸”s‚µ‚½‚ç‚à‚¤1“x‚¾‚¯‚İ‚é
-		m_BufferRestKey = BufferSize;
-		m_pKey->Acquire();
-		if (FAILED(m_pKey->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), m_pBufferKey, &m_BufferRestKey, 0))) {
-			//MessageBox(nullptr,_T("DInput.cpp : GetKey() : GetDeviceData‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"), nullptr, MB_OK);
-			return false;
-		}
-	}
-	m_BufferRestBackupKey = m_BufferRestKey;	// “Ç‚İ‚ñ‚¾ƒoƒbƒtƒ@”‚ğ‘Ş”ğ
+    m_BufferRestKey = BufferSize;
+    if (FAILED(m_pKey->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), m_pBufferKey, &m_BufferRestKey, 0))) {
+       // ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½İ‚ï¿½
+       m_BufferRestKey = BufferSize;
+       m_pKey->Acquire();
+       if (FAILED(m_pKey->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), m_pBufferKey, &m_BufferRestKey, 0))) {
+          //MessageBox(nullptr,_T("DInput.cpp : GetKey() : GetDeviceDataï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"), nullptr, MB_OK);
+          return false;
+       }
+    }
+    m_BufferRestBackupKey = m_BufferRestKey;   // ï¿½Ç‚İï¿½ï¿½ñ‚¾ƒoï¿½bï¿½tï¿½@ï¿½ï¿½ï¿½ï¿½Ş”ï¿½
 
-	return true;
+    return true;
 }
 //-----------------------------------------------------------------------------
-// ƒL[‰Ÿ‰ºƒ`ƒFƒbƒN(keyboard)
+// ï¿½Lï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½`ï¿½Fï¿½bï¿½N(keyboard)
 // 
-// ˆø”		const int&		kmode	ƒ`ƒFƒbƒN‚·‚éƒ‚[ƒh
-//			const DWORD&	kcode	ƒ`ƒFƒbƒN‚·‚éƒL[ƒR[ƒh@
+// ï¿½ï¿½ï¿½ï¿½    const int&    kmode  ï¿½`ï¿½Fï¿½bï¿½Nï¿½ï¿½ï¿½éƒ‚ï¿½[ï¿½h
+//        const DWORD&   kcode  ï¿½`ï¿½Fï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½Lï¿½[ï¿½Rï¿½[ï¿½hï¿½@
 // 
-// –ß‚è’l	true:ƒ`ƒFƒbƒN‚n‚j@false:ƒ`ƒFƒbƒN‚m‚f
+// ï¿½ß‚ï¿½l true:ï¿½`ï¿½Fï¿½bï¿½Nï¿½nï¿½jï¿½@false:ï¿½`ï¿½Fï¿½bï¿½Nï¿½mï¿½f
 //-----------------------------------------------------------------------------
 bool CDirectInput::CheckKey(const int& kmode, const DWORD& kcode)
 {
-	if (!m_bInputActive || !m_pKey) return false;
-	switch (kmode) {
-	case KD_DAT :						// ’¼Úƒf[ƒ^(Œ»İ‚ÌƒL[‰Ÿ‰ºó‘Ô)
-		return m_diKeyState[kcode] & 0x80;
-	case KD_TRG :						// ƒL[‚ğ‰Ÿ‚µ‚½uŠÔ
-	case KD_UTRG :						// ƒL[‚ğ—£‚µ‚½uŠÔ
-		m_BufferRestKey = m_BufferRestBackupKey;	// “Ç‚İ‚ñ‚¾ƒoƒbƒtƒ@”‚Ì•œŒ³
-		m_pBufferPositionKey = m_pBufferKey;
-		while (m_BufferRestKey > 0) {
-			m_BufferRestKey--;
-			m_didodKey = m_pBufferPositionKey;
-			m_pBufferPositionKey++;
-			if (m_didodKey->dwOfs == kcode) {	//ƒL[‚Ìí—Ş
-				if (kmode == KD_TRG) {
-					if (m_didodKey->dwData) return true;
-				} else {
-					if (!(m_didodKey->dwData)) return true;
-				}
-			}
-		}
-		return false;
-	default :
-		MessageBox(nullptr, _T("DInput.cpp : CheckKey() : w’è‚µ‚½ƒL[ƒ‚[ƒh‚ªŠÔˆá‚Á‚Ä‚¢‚Ü‚·B"), nullptr, MB_OK);
-		return false;
-	}
+    if (!m_bInputActive || !m_pKey) return false;
+    switch (kmode) {
+    case KD_DAT :                 // ï¿½ï¿½ï¿½Úƒfï¿½[ï¿½^(ï¿½ï¿½ï¿½İ‚ÌƒLï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
+       return m_diKeyState[kcode] & 0x80;
+    case KD_TRG :                 // ï¿½Lï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½uï¿½ï¿½
+    case KD_UTRG :                // ï¿½Lï¿½[ï¿½ğ—£‚ï¿½ï¿½ï¿½ï¿½uï¿½ï¿½
+       m_BufferRestKey = m_BufferRestBackupKey;   // ï¿½Ç‚İï¿½ï¿½ñ‚¾ƒoï¿½bï¿½tï¿½@ï¿½ï¿½ï¿½Ì•ï¿½ï¿½ï¿½
+       m_pBufferPositionKey = m_pBufferKey;
+       while (m_BufferRestKey > 0) {
+          m_BufferRestKey--;
+          m_didodKey = m_pBufferPositionKey;
+          m_pBufferPositionKey++;
+          if (m_didodKey->dwOfs == kcode) {  //ï¿½Lï¿½[ï¿½Ìï¿½ï¿½
+             if (kmode == KD_TRG) {
+                if (m_didodKey->dwData) return true;
+             } else {
+                if (!(m_didodKey->dwData)) return true;
+             }
+          }
+       }
+       return false;
+    default :
+       MessageBox(nullptr, _T("DInput.cpp : CheckKey() : ï¿½wï¿½è‚µï¿½ï¿½ï¿½Lï¿½[ï¿½ï¿½ï¿½[ï¿½hï¿½ï¿½ï¿½Ôˆï¿½ï¿½ï¿½Ä‚ï¿½ï¿½Ü‚ï¿½ï¿½B"), nullptr, MB_OK);
+       return false;
+    }
 }
 //*****************************************************************************
 //*** Mouse                                                                 ***
 //*****************************************************************************
 //-----------------------------------------------------------------------------
-// MouseƒfƒoƒCƒX‚Ì‰Šú‰»
+// Mouseï¿½fï¿½oï¿½Cï¿½Xï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½
 // 
-// ˆø”		HWND hWnd	ƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
+// ï¿½ï¿½ï¿½ï¿½    HWND hWnd  ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½nï¿½ï¿½ï¿½hï¿½ï¿½
 // 
-// –ß‚è’l	true:¬Œ÷@false:¸”s
+// ï¿½ß‚ï¿½l true:ï¿½ï¿½ï¿½ï¿½ï¿½@false:ï¿½ï¿½ï¿½s
 //-----------------------------------------------------------------------------
 bool CDirectInput::InitMouse(HWND hWnd)
 {
-	//-----------------------------------------------------------------------------
-	// DirectInputDevice‰Šú‰»(mouse)
-	m_hr = m_pDI8->CreateDevice(GUID_SysMouse, &m_pMouse, nullptr);
-	if (DI_OK != m_hr) {
-		MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : DirectInputDeviceEx(mouse)‚ğ‰Šú‰»‚·‚é‚±‚Æ‚ª‚Å‚«‚Ü‚¹‚ñB"),nullptr,MB_OK);
-		return false;
-	}
-	if (m_pMouse->SetDataFormat(&c_dfDIMouse) != DI_OK) {
-		MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : SetDataFormatƒƒ\ƒbƒh(mouse)‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"), nullptr, MB_OK);
-		return false;
-	}
-	if (m_pMouse->SetCooperativeLevel(hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE) != DI_OK) {
-		MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : SetCooperativeLevelƒƒ\ƒbƒh(mouse)‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"), nullptr, MB_OK);
-		return false;
-	}
+    //-----------------------------------------------------------------------------
+    // DirectInputDeviceï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(mouse)
+    m_hr = m_pDI8->CreateDevice(GUID_SysMouse, &m_pMouse, nullptr);
+    if (DI_OK != m_hr) {
+       MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : DirectInputDeviceEx(mouse)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é‚±ï¿½Æ‚ï¿½ï¿½Å‚ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½B"),nullptr,MB_OK);
+       return false;
+    }
+    if (m_pMouse->SetDataFormat(&c_dfDIMouse) != DI_OK) {
+       MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : SetDataFormatï¿½ï¿½ï¿½\ï¿½bï¿½h(mouse)ï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"), nullptr, MB_OK);
+       return false;
+    }
+    if (m_pMouse->SetCooperativeLevel(hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE) != DI_OK) {
+       MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : SetCooperativeLevelï¿½ï¿½ï¿½\ï¿½bï¿½h(mouse)ï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"), nullptr, MB_OK);
+       return false;
+    }
 
-	return SetPropertyMouse();
+    return SetPropertyMouse();
 }
 //-----------------------------------------------------------------------------
-// ƒoƒbƒtƒ@ƒTƒCƒY‚Ìİ’è(mouse)
+// ï¿½oï¿½bï¿½tï¿½@ï¿½Tï¿½Cï¿½Yï¿½Ìİ’ï¿½(mouse)
 // 
-// –ß‚è’l	true:¬Œ÷@false:¸”s
+// ï¿½ß‚ï¿½l true:ï¿½ï¿½ï¿½ï¿½ï¿½@false:ï¿½ï¿½ï¿½s
 //-----------------------------------------------------------------------------
 bool CDirectInput::SetPropertyMouse(void)
 {
-	m_BufferRestMouse = 0;
-	m_pBufferPositionMouse = nullptr;
-	m_pBufferMouse = new DIDEVICEOBJECTDATA[BufferSize];	// ƒoƒbƒtƒ@‚ğŠm•Û
-	DIPROPDWORD dipdw;
-	ZeroMemory(&dipdw, sizeof(dipdw));
-	dipdw.diph.dwSize = sizeof(DIPROPDWORD);
-	dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
-	dipdw.diph.dwObj = 0;
-	dipdw.diph.dwHow = DIPH_DEVICE;
-	dipdw.dwData = BufferSize;
-	m_pMouse->Unacquire();				// ˆê’UƒAƒNƒZƒXŒ ‚ğ‰ğ•ú‚·‚é
-	m_hr = m_pMouse->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
-	m_pMouse->Acquire();					// ƒAƒNƒZƒXŒ ‚ğ“¾‚é
-	return !FAILED(m_hr);
+    m_BufferRestMouse = 0;
+    m_pBufferPositionMouse = nullptr;
+    m_pBufferMouse = new DIDEVICEOBJECTDATA[BufferSize];   // ï¿½oï¿½bï¿½tï¿½@ï¿½ï¿½ï¿½mï¿½ï¿½
+    DIPROPDWORD dipdw;
+    ZeroMemory(&dipdw, sizeof(dipdw));
+    dipdw.diph.dwSize = sizeof(DIPROPDWORD);
+    dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+    dipdw.diph.dwObj = 0;
+    dipdw.diph.dwHow = DIPH_DEVICE;
+    dipdw.dwData = BufferSize;
+    m_pMouse->Unacquire();          // ï¿½ï¿½Uï¿½Aï¿½Nï¿½Zï¿½Xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    m_hr = m_pMouse->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
+    m_pMouse->Acquire();               // ï¿½Aï¿½Nï¿½Zï¿½Xï¿½ï¿½ï¿½ğ“¾‚ï¿½
+    return !FAILED(m_hr);
 }
 //-----------------------------------------------------------------------------
-// ƒ}ƒEƒX‚Ìó‘Ô‚ğ“¾‚é
+// ï¿½}ï¿½Eï¿½Xï¿½Ìï¿½Ô‚ğ“¾‚ï¿½
 // 
-// –ß‚è’l	true:¬Œ÷@false:¸”s
+// ï¿½ß‚ï¿½l true:ï¿½ï¿½ï¿½ï¿½ï¿½@false:ï¿½ï¿½ï¿½s
 //-----------------------------------------------------------------------------
 bool CDirectInput::GetMouse(void)
 {
-	if (!m_pMouse) return false;
-	if (m_pMouse->GetDeviceState(sizeof(DIMOUSESTATE), &m_dims) != DI_OK) {
-		m_pMouse->Acquire();
-		if (FAILED(m_pMouse->GetDeviceState(sizeof(DIMOUSESTATE), &m_dims))) {
-			//MessageBox(nullptr,_T("DInput.cpp : GetMouse() : GetDeviceState‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"), nullptr, MB_OK);
-			return false;
-		}
-	}
+    if (!m_pMouse) return false;
+    if (m_pMouse->GetDeviceState(sizeof(DIMOUSESTATE), &m_dims) != DI_OK) {
+       m_pMouse->Acquire();
+       if (FAILED(m_pMouse->GetDeviceState(sizeof(DIMOUSESTATE), &m_dims))) {
+          //MessageBox(nullptr,_T("DInput.cpp : GetMouse() : GetDeviceStateï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"), nullptr, MB_OK);
+          return false;
+       }
+    }
 
-	m_BufferRestMouse = BufferSize;
-	if (FAILED(m_pMouse->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), m_pBufferMouse, &m_BufferRestMouse, 0))) {
-		// ¸”s‚µ‚½‚ç‚à‚¤1“x‚¾‚¯‚İ‚é
-		m_BufferRestMouse = BufferSize;
-		m_pMouse->Acquire();
-		if (FAILED(m_pMouse->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), m_pBufferMouse, &m_BufferRestMouse, 0))) {
-			//MessageBox(nullptr,_T("DInput.cpp : GetMouse() : GetDeviceData‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"), nullptr, MB_OK);
-			return false;
-		}
-	}
-	m_BufferRestBackupMouse = m_BufferRestMouse;	// “Ç‚İ‚ñ‚¾ƒoƒbƒtƒ@”‚ğ‘Ş”ğ
+    m_BufferRestMouse = BufferSize;
+    if (FAILED(m_pMouse->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), m_pBufferMouse, &m_BufferRestMouse, 0))) {
+       // ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½İ‚ï¿½
+       m_BufferRestMouse = BufferSize;
+       m_pMouse->Acquire();
+       if (FAILED(m_pMouse->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), m_pBufferMouse, &m_BufferRestMouse, 0))) {
+          //MessageBox(nullptr,_T("DInput.cpp : GetMouse() : GetDeviceDataï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"), nullptr, MB_OK);
+          return false;
+       }
+    }
+    m_BufferRestBackupMouse = m_BufferRestMouse;   // ï¿½Ç‚İï¿½ï¿½ñ‚¾ƒoï¿½bï¿½tï¿½@ï¿½ï¿½ï¿½ï¿½Ş”ï¿½
 
-	return true;
+    return true;
 }
 //-----------------------------------------------------------------------------
-// ƒL[‰Ÿ‰ºƒ`ƒFƒbƒN(mouse)
+// ï¿½Lï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½`ï¿½Fï¿½bï¿½N(mouse)
 // 
-// ˆø”		const int&		kmode	ƒ`ƒFƒbƒN‚·‚éƒ‚[ƒh
-//			const DWORD&	kcode	ƒ`ƒFƒbƒN‚·‚éƒL[ƒR[ƒh@
+// ï¿½ï¿½ï¿½ï¿½    const int&    kmode  ï¿½`ï¿½Fï¿½bï¿½Nï¿½ï¿½ï¿½éƒ‚ï¿½[ï¿½h
+//        const DWORD&   kcode  ï¿½`ï¿½Fï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½Lï¿½[ï¿½Rï¿½[ï¿½hï¿½@
 // 
-// –ß‚è’l	true:ƒ`ƒFƒbƒN‚n‚j@false:ƒ`ƒFƒbƒN‚m‚f
+// ï¿½ß‚ï¿½l true:ï¿½`ï¿½Fï¿½bï¿½Nï¿½nï¿½jï¿½@false:ï¿½`ï¿½Fï¿½bï¿½Nï¿½mï¿½f
 //-----------------------------------------------------------------------------
 bool CDirectInput::CheckMouse(const int& kmode, const DWORD& kcode)
 {
-	if (!m_bInputActive || !m_pMouse) return false;
+    if (!m_bInputActive || !m_pMouse) return false;
 
-	// ˆÚ“®•ûŒü‚Ìæ“¾‚Ì‚Æ‚«
-	if (kcode == DIM_LEFT || kcode == DIM_RIGHT || kcode == DIM_UP || kcode == DIM_DOWN) {
+    // ï¿½Ú“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ìæ“¾ï¿½Ì‚Æ‚ï¿½
+    if (kcode == DIM_LEFT || kcode == DIM_RIGHT || kcode == DIM_UP || kcode == DIM_DOWN) {
 
-		if (m_dims.lX > 0 && kcode == DIM_RIGHT) {
-			return true;
-		}
-		else if (m_dims.lX < 0 && kcode == DIM_LEFT) {
-			return true;
-		}
-		else if (m_dims.lY < 0 && kcode == DIM_UP) {
-			return true;
-		}
-		else if (m_dims.lY > 0 && kcode == DIM_DOWN) {
-			return true;
-		}
-		return false;
+       if (m_dims.lX > 0 && kcode == DIM_RIGHT) {
+          return true;
+       }
+       else if (m_dims.lX < 0 && kcode == DIM_LEFT) {
+          return true;
+       }
+       else if (m_dims.lY < 0 && kcode == DIM_UP) {
+          return true;
+       }
+       else if (m_dims.lY > 0 && kcode == DIM_DOWN) {
+          return true;
+       }
+       return false;
 
-	}else{ // ŠeƒL[ó‘Ô‚Ìæ“¾‚Ì‚Æ‚«
+    }else{ // ï¿½eï¿½Lï¿½[ï¿½ï¿½Ô‚Ìæ“¾ï¿½Ì‚Æ‚ï¿½
 
-		switch (kmode) {
-			case KD_DAT:						// ’¼Úƒf[ƒ^(Œ»İ‚ÌƒL[‰Ÿ‰ºó‘Ô)
-				return m_dims.rgbButtons[kcode] & 0x80;
-			case KD_TRG:						// ƒL[‚ğ‰Ÿ‚µ‚½uŠÔ
-			case KD_UTRG:						// ƒL[‚ğ—£‚µ‚½uŠÔ
-				m_BufferRestMouse = m_BufferRestBackupMouse;	// “Ç‚İ‚ñ‚¾ƒoƒbƒtƒ@”‚Ì•œŒ³
-				m_pBufferPositionMouse = m_pBufferMouse;
-				while (m_BufferRestMouse > 0) {
-					m_BufferRestMouse--;
-					m_didodMouse = m_pBufferPositionMouse;
-					m_pBufferPositionMouse++;
-					if (m_didodMouse->dwOfs == DIMOFS_BUTTON(kcode)) {	//ƒL[‚Ìí—Ş
-						if (kmode == KD_TRG) {
-							if (m_didodMouse->dwData) return true;
-						}
-						else {
-							if (!(m_didodMouse->dwData)) return true;
-						}
-					}
-				}
-				return false;
-			default:
-				MessageBox(nullptr, _T("DInput.cpp : CheckMouse() : w’è‚µ‚½ƒL[ƒ‚[ƒh‚ªŠÔˆá‚Á‚Ä‚¢‚Ü‚·B"), nullptr, MB_OK);
-				return false;
-		}
-	}
+       switch (kmode) {
+          case KD_DAT:                  // ï¿½ï¿½ï¿½Úƒfï¿½[ï¿½^(ï¿½ï¿½ï¿½İ‚ÌƒLï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
+             return m_dims.rgbButtons[kcode] & 0x80;
+          case KD_TRG:                  // ï¿½Lï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½uï¿½ï¿½
+          case KD_UTRG:                 // ï¿½Lï¿½[ï¿½ğ—£‚ï¿½ï¿½ï¿½ï¿½uï¿½ï¿½
+             m_BufferRestMouse = m_BufferRestBackupMouse;   // ï¿½Ç‚İï¿½ï¿½ñ‚¾ƒoï¿½bï¿½tï¿½@ï¿½ï¿½ï¿½Ì•ï¿½ï¿½ï¿½
+             m_pBufferPositionMouse = m_pBufferMouse;
+             while (m_BufferRestMouse > 0) {
+                m_BufferRestMouse--;
+                m_didodMouse = m_pBufferPositionMouse;
+                m_pBufferPositionMouse++;
+                if (m_didodMouse->dwOfs == DIMOFS_BUTTON(kcode)) { //ï¿½Lï¿½[ï¿½Ìï¿½ï¿½
+                   if (kmode == KD_TRG) {
+                      if (m_didodMouse->dwData) return true;
+                   }
+                   else {
+                      if (!(m_didodMouse->dwData)) return true;
+                   }
+                }
+             }
+             return false;
+          default:
+             MessageBox(nullptr, _T("DInput.cpp : CheckMouse() : ï¿½wï¿½è‚µï¿½ï¿½ï¿½Lï¿½[ï¿½ï¿½ï¿½[ï¿½hï¿½ï¿½ï¿½Ôˆï¿½ï¿½ï¿½Ä‚ï¿½ï¿½Ü‚ï¿½ï¿½B"), nullptr, MB_OK);
+             return false;
+       }
+    }
 
 }
 //-----------------------------------------------------------------------------
-// ƒ}ƒEƒXƒXƒe[ƒg‚ğ“¾‚é(mouse)
+// ï¿½}ï¿½Eï¿½Xï¿½Xï¿½eï¿½[ï¿½gï¿½ğ“¾‚ï¿½(mouse)
 //
-// –ß‚è’l	DIMOUSESTATE\‘¢‘Ì‚Ì’lBƒ}ƒEƒXƒfƒoƒCƒX‚Ìó‘Ô‚ğ•\‚·B
+// ï¿½ß‚ï¿½l DIMOUSESTATEï¿½\ï¿½ï¿½ï¿½Ì‚Ì’lï¿½Bï¿½}ï¿½Eï¿½Xï¿½fï¿½oï¿½Cï¿½Xï¿½Ìï¿½Ô‚ï¿½\ï¿½ï¿½ï¿½B
 //-----------------------------------------------------------------------------
 DIMOUSESTATE CDirectInput::GetMouseState( void )
 {
-	return  m_dims;
+    return  m_dims;
 }
 
 //-----------------------------------------------------------------------------
-// ƒ}ƒEƒXÀ•W‚ğ“¾‚é(mouse)
+// ï¿½}ï¿½Eï¿½Xï¿½ï¿½ï¿½Wï¿½ğ“¾‚ï¿½(mouse)
 //
-// ‚±‚ÌŠÖ”‚ÍDirectInput‚Å‚Í‚È‚­Windows‚ÌŠÖ”‚ğg—p‚µ‚Ä‚¢‚é
+// ï¿½ï¿½ï¿½ÌŠÖï¿½ï¿½ï¿½DirectInputï¿½Å‚Í‚È‚ï¿½Windowsï¿½ÌŠÖï¿½ï¿½ï¿½ï¿½gï¿½pï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½
 //
-// –ß‚è’l	POINT\‘¢‘Ì‚Ì’lBƒ}ƒEƒX‚Ì‚w‚xÀ•W‚ğ•\‚·B
+// ï¿½ß‚ï¿½l POINTï¿½\ï¿½ï¿½ï¿½Ì‚Ì’lï¿½Bï¿½}ï¿½Eï¿½Xï¿½Ì‚wï¿½xï¿½ï¿½ï¿½Wï¿½ï¿½\ï¿½ï¿½ï¿½B
 //-----------------------------------------------------------------------------
 POINT CDirectInput::GetMousePos(void)
 {
-	POINT pt;
-	RECT  rc;
-	float scaleX, scaleY;
-	GetCursorPos(&pt); //ƒ}ƒEƒX‚ÌŒ»İ‚ÌƒXƒNƒŠ[ƒ“À•W‚ğæ“¾‚·‚é
-	ScreenToClient(m_hWnd, &pt); // ƒNƒ‰ƒCƒAƒ“ƒgÀ•W‚É•ÏŠ·‚·‚é
+    POINT pt;
+    RECT  rc;
+    float scaleX, scaleY;
+    GetCursorPos(&pt); //ï¿½}ï¿½Eï¿½Xï¿½ÌŒï¿½ï¿½İ‚ÌƒXï¿½Nï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½Wï¿½ï¿½ï¿½æ“¾ï¿½ï¿½ï¿½ï¿½
+    ScreenToClient(m_hWnd, &pt); // ï¿½Nï¿½ï¿½ï¿½Cï¿½Aï¿½ï¿½ï¿½gï¿½ï¿½ï¿½Wï¿½É•ÏŠï¿½ï¿½ï¿½ï¿½ï¿½
 
-	// ‰æ–Ê‚ÌŠgk‚É‘Î‰‚µ‚Äƒ}ƒEƒXÀ•W‚ğŒvZ‚·‚é
-	GetClientRect(m_hWnd, &rc); // ƒNƒ‰ƒCƒAƒ“ƒg—Ìˆæ‚ÌƒTƒCƒY
-	scaleX = m_ViewWidth  / (rc.right - rc.left);	// •@”ä—¦
-	scaleY = m_ViewHeight / (rc.bottom - rc.top);	// ‚‚³”ä—¦
-	
-	pt.x = (long)(pt.x * scaleX);
-	pt.y = (long)(pt.y * scaleY);
+    // ï¿½ï¿½Ê‚ÌŠgï¿½kï¿½É‘Î‰ï¿½ï¿½ï¿½ï¿½Äƒ}ï¿½Eï¿½Xï¿½ï¿½ï¿½Wï¿½ï¿½ï¿½vï¿½Zï¿½ï¿½ï¿½ï¿½
+    GetClientRect(m_hWnd, &rc); // ï¿½Nï¿½ï¿½ï¿½Cï¿½Aï¿½ï¿½ï¿½gï¿½Ìˆï¿½ÌƒTï¿½Cï¿½Y
+    scaleX = m_ViewWidth  / (rc.right - rc.left);  // ï¿½ï¿½ï¿½@ï¿½ä—¦
+    scaleY = m_ViewHeight / (rc.bottom - rc.top);  // ï¿½ï¿½ï¿½ï¿½ï¿½ä—¦
+    
+    pt.x = (long)(pt.x * scaleX);
+    pt.y = (long)(pt.y * scaleY);
 
-	return pt;
+    return pt;
 }
 //-----------------------------------------------------------------------------
-// ƒ}ƒEƒXƒJ[ƒ\ƒ‹‚Ì•\¦E”ñ•\¦‚ğØ‚è‘Ö‚¦‚é
+// ï¿½}ï¿½Eï¿½Xï¿½Jï¿½[ï¿½\ï¿½ï¿½ï¿½Ì•\ï¿½ï¿½ï¿½Eï¿½ï¿½\ï¿½ï¿½ï¿½ï¿½Ø‚ï¿½Ö‚ï¿½ï¿½ï¿½
 //
-// ‚±‚ÌŠÖ”‚ÍDirectInput‚Å‚Í‚È‚­Windows‚ÌŠÖ”‚ğg—p‚µ‚Ä‚¢‚é
+// ï¿½ï¿½ï¿½ÌŠÖï¿½ï¿½ï¿½DirectInputï¿½Å‚Í‚È‚ï¿½Windowsï¿½ÌŠÖï¿½ï¿½ï¿½ï¿½gï¿½pï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½
 //
-// ˆø”  bool bFlag  true:ƒJ[ƒ\ƒ‹•\¦  FLASE:ƒJ[ƒ\ƒ‹”ñ•\¦
+// ï¿½ï¿½ï¿½ï¿½  bool bFlag  true:ï¿½Jï¿½[ï¿½\ï¿½ï¿½ï¿½\ï¿½ï¿½  FLASE:ï¿½Jï¿½[ï¿½\ï¿½ï¿½ï¿½ï¿½\ï¿½ï¿½
 //
-// –ß‚è’l	‚È‚µ
+// ï¿½ß‚ï¿½l ï¿½È‚ï¿½
 //-----------------------------------------------------------------------------
 void CDirectInput::ShowMouseCursor(bool bFlag)
 {
-	ShowCursor(bFlag);
+    ShowCursor(bFlag);
 }
 
 //*****************************************************************************
-//*** Joystick‚Ìˆ—                                                        ***
+//*** Joystickï¿½Ìï¿½ï¿½ï¿½                                                        ***
 //*****************************************************************************
 //-----------------------------------------------------------------------------
-// —ñ‹“ƒR[ƒ‹ƒoƒbƒNŠÖ” (Joystick)
+// ï¿½ñ‹“ƒRï¿½[ï¿½ï¿½ï¿½oï¿½bï¿½Nï¿½Öï¿½ (Joystick)
 //-----------------------------------------------------------------------------
 BOOL CALLBACK EnumJoysticksCallback(LPCDIDEVICEINSTANCE pInst, LPVOID lpvContext)
 {
-	return g_pDI->EnumJoysticksCb( pInst, lpvContext );
+    return g_pDI->EnumJoysticksCb( pInst, lpvContext );
 }
 
 //-----------------------------------------------------------------------------
-// —ñ‹“ƒR[ƒ‹ƒoƒbƒN (Joystick)‘Î‰ƒƒ\ƒbƒh
+// ï¿½ñ‹“ƒRï¿½[ï¿½ï¿½ï¿½oï¿½bï¿½N (Joystick)ï¿½Î‰ï¿½ï¿½ï¿½ï¿½\ï¿½bï¿½h
 //-----------------------------------------------------------------------------
 BOOL CDirectInput::EnumJoysticksCb(LPCDIDEVICEINSTANCE pInst, LPVOID lpvContext)
 {
-	LPDIRECTINPUTDEVICE8 pDevice = nullptr;
-	DIDEVCAPS            diDevCaps = { 0 };
+    LPDIRECTINPUTDEVICE8 pDevice = nullptr;
+    DIDEVCAPS            diDevCaps = { 0 };
 
-	m_hr = m_pDI8->CreateDevice(pInst->guidInstance, &pDevice, nullptr);
-	if (DI_OK != m_hr) return DIENUM_CONTINUE;	// Ÿ‚ÌƒfƒoƒCƒX‚ğ—ñ‹“
+    m_hr = m_pDI8->CreateDevice(pInst->guidInstance, &pDevice, nullptr);
+    if (DI_OK != m_hr) return DIENUM_CONTINUE; // ï¿½ï¿½ï¿½Ìƒfï¿½oï¿½Cï¿½Xï¿½ï¿½ï¿½
 
-	diDevCaps.dwSize = sizeof( DIDEVCAPS );
-	m_hr = pDevice->GetCapabilities( &diDevCaps );
-	if( FAILED(m_hr) ){
-		pDevice->Release();
-		pDevice = nullptr;
-		return DIENUM_CONTINUE;	// Ÿ‚ÌƒfƒoƒCƒX‚ğ—ñ‹“
-	}
+    diDevCaps.dwSize = sizeof( DIDEVCAPS );
+    m_hr = pDevice->GetCapabilities( &diDevCaps );
+    if( FAILED(m_hr) ){
+       pDevice->Release();
+       pDevice = nullptr;
+       return DIENUM_CONTINUE;    // ï¿½ï¿½ï¿½Ìƒfï¿½oï¿½Cï¿½Xï¿½ï¿½ï¿½
+    }
 
-	m_pJoy[m_nJoySum] = pDevice;
+    m_pJoy[m_nJoySum] = pDevice;
 
-	//if( diDevCaps.dwFlags == DIDC_FORCEFEEDBACK ){
-	if( pInst->guidFFDriver != GUID_NULL ){
-		m_bJoyFF[m_nJoySum] = true;		// ƒtƒH[ƒXƒtƒB[ƒhƒoƒbƒNƒWƒ‡ƒCƒXƒXƒeƒBƒbƒN
-		m_nJoyFFNum++;
-	}else{
-		m_bJoyFF[m_nJoySum] = false;	// ’Êí‚ÌƒWƒ‡ƒCƒXƒeƒBƒbƒN
-	}
+    //if( diDevCaps.dwFlags == DIDC_FORCEFEEDBACK ){
+    if( pInst->guidFFDriver != GUID_NULL ){
+       m_bJoyFF[m_nJoySum] = true;       // ï¿½tï¿½Hï¿½[ï¿½Xï¿½tï¿½Bï¿½[ï¿½hï¿½oï¿½bï¿½Nï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½Xï¿½eï¿½Bï¿½bï¿½N
+       m_nJoyFFNum++;
+    }else{
+       m_bJoyFF[m_nJoySum] = false;   // ï¿½Êï¿½ÌƒWï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½N
+    }
 
-	if (++m_nJoySum >= JOYSTICK_COUNT) return DIENUM_STOP;
-	return DIENUM_CONTINUE;
+    if (++m_nJoySum >= JOYSTICK_COUNT) return DIENUM_STOP;
+    return DIENUM_CONTINUE;
 }
 
 
 //-----------------------------------------------------------------------------
-// JoystickƒfƒoƒCƒX‚Ì‰Šú‰»
+// Joystickï¿½fï¿½oï¿½Cï¿½Xï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½
 // 
-// ˆø”		HWND hWnd	ƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
+// ï¿½ï¿½ï¿½ï¿½    HWND hWnd  ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½nï¿½ï¿½ï¿½hï¿½ï¿½
 // 
-// –ß‚è’l	true:¬Œ÷@false:¸”s
+// ï¿½ß‚ï¿½l true:ï¿½ï¿½ï¿½ï¿½ï¿½@false:ï¿½ï¿½ï¿½s
 //-----------------------------------------------------------------------------
 bool CDirectInput::InitJoy(HWND hWnd)
 {
-	//-----------------------------------------------------------------------------
-	// ƒAƒ^ƒbƒ`‰Â”\‚ÈƒfƒoƒCƒX‚ğ—ñ‹“‚·‚é(joystick)
-	m_pDI8->EnumDevices( DI8DEVCLASS_GAMECTRL, EnumJoysticksCallback, nullptr, DIEDFL_ATTACHEDONLY);
-	if(!m_pJoy[0]) {
-		//MessageBox(nullptr,_T("DInput.cpp : StartDirectInput() : joystick‚ªÚ‘±‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB"), nullptr, MB_OK);
-		return false;
-	}
-	for (int i=0; i<m_nJoySum; i++) {
-		if (!m_pJoy[i]) continue;
+    //-----------------------------------------------------------------------------
+    // ï¿½Aï¿½^ï¿½bï¿½`ï¿½Â”\ï¿½Èƒfï¿½oï¿½Cï¿½Xï¿½ï¿½ñ‹“‚ï¿½ï¿½ï¿½(joystick)
+    m_pDI8->EnumDevices( DI8DEVCLASS_GAMECTRL, EnumJoysticksCallback, nullptr, DIEDFL_ATTACHEDONLY);
+    if(!m_pJoy[0]) {
+       //MessageBox(nullptr,_T("DInput.cpp : StartDirectInput() : joystickï¿½ï¿½ï¿½Ú‘ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½B"), nullptr, MB_OK);
+       return false;
+    }
+    for (int i=0; i<m_nJoySum; i++) {
+       if (!m_pJoy[i]) continue;
 
-		m_hr = m_pJoy[i]->SetDataFormat(&c_dfDIJoystick2);
-		if (DI_OK != m_hr) {
-			MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : SetDataFormatƒƒ\ƒbƒh(joystick)‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"),nullptr,MB_OK);
-			return false;
-		}
+       m_hr = m_pJoy[i]->SetDataFormat(&c_dfDIJoystick2);
+       if (DI_OK != m_hr) {
+          MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : SetDataFormatï¿½ï¿½ï¿½\ï¿½bï¿½h(joystick)ï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"),nullptr,MB_OK);
+          return false;
+       }
 
-		if( m_nJoyFFNum > 0 ){	// ‚e‚eƒWƒ‡ƒCƒXƒeƒBƒbƒN‚ª‚P‚Â‚Å‚à‚ ‚é‚Æ‚«‚ÍA‘S•”‚ğ”r‘¼ƒ‚[ƒh‚É‚·‚é
-			m_hr = m_pJoy[i]->SetCooperativeLevel(hWnd, DISCL_FOREGROUND | DISCL_EXCLUSIVE);
-		}else{
-			m_hr = m_pJoy[i]->SetCooperativeLevel(hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
-		}
-		if (DI_OK != m_hr) {
-			MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : SetCooperativeLevelƒƒ\ƒbƒh(joystick)‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"),nullptr,MB_OK);
-			return false;
-		}
-	}
+       if( m_nJoyFFNum > 0 ){ // ï¿½eï¿½eï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½ï¿½ï¿½Pï¿½Â‚Å‚ï¿½ï¿½ï¿½ï¿½ï¿½Æ‚ï¿½ï¿½ÌAï¿½Sï¿½ï¿½ï¿½ï¿½rï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½hï¿½É‚ï¿½ï¿½ï¿½
+          m_hr = m_pJoy[i]->SetCooperativeLevel(hWnd, DISCL_FOREGROUND | DISCL_EXCLUSIVE);
+       }else{
+          m_hr = m_pJoy[i]->SetCooperativeLevel(hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+       }
+       if (DI_OK != m_hr) {
+          MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : SetCooperativeLevelï¿½ï¿½ï¿½\ï¿½bï¿½h(joystick)ï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"),nullptr,MB_OK);
+          return false;
+       }
+    }
 
-	InitJoyNormal(hWnd);	// ’ÊíƒWƒ‡ƒCƒXƒeƒBƒbƒN‚Ì‰Šú‰»
-	InitJoyFF(hWnd);		// ‚e‚eƒWƒ‡ƒCƒXƒeƒBƒbƒN‚Ì‰Šú‰»
+    InitJoyNormal(hWnd);   // ï¿½Êï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½
+    InitJoyFF(hWnd);      // ï¿½eï¿½eï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½
 
-	return true;
+    return true;
 
 }
 //-----------------------------------------------------------------------------
-// ’Êí‚ÌJoystickƒfƒoƒCƒX‚Ì‰Šú‰»
+// ï¿½Êï¿½ï¿½Joystickï¿½fï¿½oï¿½Cï¿½Xï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½
 // 
-// ˆø”		HWND hWnd	ƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
+// ï¿½ï¿½ï¿½ï¿½    HWND hWnd  ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½nï¿½ï¿½ï¿½hï¿½ï¿½
 // 
-// –ß‚è’l	true:¬Œ÷@false:¸”s
+// ï¿½ß‚ï¿½l true:ï¿½ï¿½ï¿½ï¿½ï¿½@false:ï¿½ï¿½ï¿½s
 //-----------------------------------------------------------------------------
 bool CDirectInput::InitJoyNormal(HWND hWnd)
 {
-	int  i;
+    int  i;
 
-	DIPROPRANGE diprg;
-	diprg.diph.dwSize = sizeof(diprg);
-	diprg.diph.dwHeaderSize = sizeof(diprg.diph);
-	diprg.diph.dwHow = DIPH_BYOFFSET;
-	diprg.lMin = RANGE_MIN;
-	diprg.lMax = RANGE_MAX;
+    DIPROPRANGE diprg;
+    diprg.diph.dwSize = sizeof(diprg);
+    diprg.diph.dwHeaderSize = sizeof(diprg.diph);
+    diprg.diph.dwHow = DIPH_BYOFFSET;
+    diprg.lMin = RANGE_MIN;
+    diprg.lMax = RANGE_MAX;
 
-	for (i=0; i<m_nJoySum; i++) {
-		if (!m_pJoy[i]) continue;
-		if( m_bJoyFF[i] ) continue;	// ‚e‚eƒWƒ‡ƒCƒXƒeƒBƒbƒN‚ğœ‚­ 
+    for (i=0; i<m_nJoySum; i++) {
+       if (!m_pJoy[i]) continue;
+       if( m_bJoyFF[i] ) continue;    // ï¿½eï¿½eï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 
-		diprg.diph.dwObj = DIJOFS_X;
-		m_hr = m_pJoy[i]->SetProperty(DIPROP_RANGE, &diprg.diph);
-		if (DI_OK != m_hr) {
-			MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : SetPropertyƒƒ\ƒbƒh(joystick:DIJOFS_X)‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"),nullptr,MB_OK);
-			return false;
-		}
+       diprg.diph.dwObj = DIJOFS_X;
+       m_hr = m_pJoy[i]->SetProperty(DIPROP_RANGE, &diprg.diph);
+       if (DI_OK != m_hr) {
+          MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : SetPropertyï¿½ï¿½ï¿½\ï¿½bï¿½h(joystick:DIJOFS_X)ï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"),nullptr,MB_OK);
+          return false;
+       }
 
-		diprg.diph.dwObj = DIJOFS_Y;
-		m_hr = m_pJoy[i]->SetProperty(DIPROP_RANGE, &diprg.diph);
-		if (DI_OK != m_hr) {
-			MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : SetPropertyƒƒ\ƒbƒh(joystick:DIJOFS_Y)‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"),nullptr,MB_OK);
-			return false;
-		}
-	}
+       diprg.diph.dwObj = DIJOFS_Y;
+       m_hr = m_pJoy[i]->SetProperty(DIPROP_RANGE, &diprg.diph);
+       if (DI_OK != m_hr) {
+          MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : SetPropertyï¿½ï¿½ï¿½\ï¿½bï¿½h(joystick:DIJOFS_Y)ï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"),nullptr,MB_OK);
+          return false;
+       }
+    }
 
-	return SetPropertyJoy();
+    return SetPropertyJoy();
 }
 //-----------------------------------------------------------------------------
-// ’Êí‚Ìjoystick‚Ìƒoƒbƒtƒ@ƒTƒCƒY‚Ìİ’è(joystick)
+// ï¿½Êï¿½ï¿½joystickï¿½Ìƒoï¿½bï¿½tï¿½@ï¿½Tï¿½Cï¿½Yï¿½Ìİ’ï¿½(joystick)
 // 
-// –ß‚è’l	true:¬Œ÷@false:¸”s
+// ï¿½ß‚ï¿½l true:ï¿½ï¿½ï¿½ï¿½ï¿½@false:ï¿½ï¿½ï¿½s
 //-----------------------------------------------------------------------------
 bool CDirectInput::SetPropertyJoy(void)
 {
-	m_BufferRestJoy = 0;
-	m_pBufferPositionJoy = nullptr;
-	for (int i=0; i<m_nJoySum; i++) {
-		if (!m_pJoy[i]) continue;
-		if( m_bJoyFF[i] ) continue;	// ‚e‚eƒWƒ‡ƒCƒXƒeƒBƒbƒN‚ğœ‚­
+    m_BufferRestJoy = 0;
+    m_pBufferPositionJoy = nullptr;
+    for (int i=0; i<m_nJoySum; i++) {
+       if (!m_pJoy[i]) continue;
+       if( m_bJoyFF[i] ) continue;    // ï¿½eï¿½eï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-		m_pBufferJoy[i] = new DIDEVICEOBJECTDATA[BufferSize];	// ƒoƒbƒtƒ@‚ğŠm•Û
-		DIPROPDWORD dipdw;
-		ZeroMemory(&dipdw, sizeof(dipdw));
-		dipdw.diph.dwSize = sizeof(DIPROPDWORD);
-		dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
-		dipdw.diph.dwObj = 0;
-		dipdw.diph.dwHow = DIPH_DEVICE;
-		dipdw.dwData = BufferSize;
-		m_pJoy[i]->Unacquire();				// ˆê’UƒAƒNƒZƒXŒ ‚ğ‰ğ•ú‚·‚é
-		m_hr = m_pJoy[i]->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
-		m_pJoy[i]->Acquire();					// ƒAƒNƒZƒXŒ ‚ğ“¾‚é
-		if (FAILED(m_hr)) return !FAILED(m_hr);
-	}
-	return true;
+       m_pBufferJoy[i] = new DIDEVICEOBJECTDATA[BufferSize];  // ï¿½oï¿½bï¿½tï¿½@ï¿½ï¿½ï¿½mï¿½ï¿½
+       DIPROPDWORD dipdw;
+       ZeroMemory(&dipdw, sizeof(dipdw));
+       dipdw.diph.dwSize = sizeof(DIPROPDWORD);
+       dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+       dipdw.diph.dwObj = 0;
+       dipdw.diph.dwHow = DIPH_DEVICE;
+       dipdw.dwData = BufferSize;
+       m_pJoy[i]->Unacquire();             // ï¿½ï¿½Uï¿½Aï¿½Nï¿½Zï¿½Xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+       m_hr = m_pJoy[i]->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
+       m_pJoy[i]->Acquire();              // ï¿½Aï¿½Nï¿½Zï¿½Xï¿½ï¿½ï¿½ğ“¾‚ï¿½
+       if (FAILED(m_hr)) return !FAILED(m_hr);
+    }
+    return true;
 }
 //-----------------------------------------------------------------------------
-// ForceFeedback JoystickƒfƒoƒCƒX‚Ì‰Šú‰»
+// ForceFeedback Joystickï¿½fï¿½oï¿½Cï¿½Xï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½
 // 
-// ˆø”		HWND hWnd	ƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
+// ï¿½ï¿½ï¿½ï¿½    HWND hWnd  ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½nï¿½ï¿½ï¿½hï¿½ï¿½
 // 
-// –ß‚è’l	true:¬Œ÷@false:¸”s
+// ï¿½ß‚ï¿½l true:ï¿½ï¿½ï¿½ï¿½ï¿½@false:ï¿½ï¿½ï¿½s
 //-----------------------------------------------------------------------------
 bool CDirectInput::InitJoyFF(HWND hWnd)
 {
-	int  i;
+    int  i;
 
-	DIPROPRANGE dipr;
-	dipr.diph.dwSize = sizeof(DIPROPRANGE);
-	dipr.diph.dwHeaderSize = sizeof(dipr.diph);
-	dipr.diph.dwHow = DIPH_BYOFFSET;
-	dipr.lMin = RANGE_MIN;				// negative to the left/top
-	dipr.lMax = RANGE_MAX;				// positive to the right/bottom
+    DIPROPRANGE dipr;
+    dipr.diph.dwSize = sizeof(DIPROPRANGE);
+    dipr.diph.dwHeaderSize = sizeof(dipr.diph);
+    dipr.diph.dwHow = DIPH_BYOFFSET;
+    dipr.lMin = RANGE_MIN;          // negative to the left/top
+    dipr.lMax = RANGE_MAX;          // positive to the right/bottom
 
-	for (i=0; i<m_nJoySum; i++) {
-		if (!m_pJoy[i]) continue;
-		if( !m_bJoyFF[i] ) continue;	// ’ÊíƒWƒ‡ƒCƒXƒeƒBƒbƒN‚ğœ‚­
+    for (i=0; i<m_nJoySum; i++) {
+       if (!m_pJoy[i]) continue;
+       if( !m_bJoyFF[i] ) continue;   // ï¿½Êï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-		m_pJoy[i]->Unacquire();
+       m_pJoy[i]->Unacquire();
 
-		// X²”ÍˆÍ‚Ìİ’è
-		dipr.diph.dwObj = DIJOFS_X;
-		if (m_pJoy[i]->SetProperty(DIPROP_RANGE, &dipr.diph) != DI_OK) {
-			MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : SetProperty(X²”ÍˆÍ(RANGE):FFJoystick)‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"), nullptr, MB_OK);
-			return false;
-		}
+       // Xï¿½ï¿½ï¿½ÍˆÍ‚Ìİ’ï¿½
+       dipr.diph.dwObj = DIJOFS_X;
+       if (m_pJoy[i]->SetProperty(DIPROP_RANGE, &dipr.diph) != DI_OK) {
+          MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : SetProperty(Xï¿½ï¿½ï¿½Íˆï¿½(RANGE):FFJoystick)ï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"), nullptr, MB_OK);
+          return false;
+       }
 
-		// Y²”ÍˆÍ‚Ìİ’è
-		dipr.diph.dwObj = DIJOFS_Y;
-		if (m_pJoy[i]->SetProperty(DIPROP_RANGE, &dipr.diph) != DI_OK) {
-			MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : SetProperty(Y²”ÍˆÍ(RANGE):FFJoystick)‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"), nullptr, MB_OK);
-			return false;
-		}
-	}
+       // Yï¿½ï¿½ï¿½ÍˆÍ‚Ìİ’ï¿½
+       dipr.diph.dwObj = DIJOFS_Y;
+       if (m_pJoy[i]->SetProperty(DIPROP_RANGE, &dipr.diph) != DI_OK) {
+          MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : SetProperty(Yï¿½ï¿½ï¿½Íˆï¿½(RANGE):FFJoystick)ï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"), nullptr, MB_OK);
+          return false;
+       }
+    }
 
-	// deadzone‚Ìİ’è
-	DIPROPDWORD dipdw;
-	dipdw.diph.dwSize = sizeof(DIPROPDWORD);
-	dipdw.diph.dwHeaderSize = sizeof(dipdw.diph);
-	dipdw.diph.dwHow = DIPH_BYOFFSET;
-	dipdw.dwData = DEADZONE;
+    // deadzoneï¿½Ìİ’ï¿½
+    DIPROPDWORD dipdw;
+    dipdw.diph.dwSize = sizeof(DIPROPDWORD);
+    dipdw.diph.dwHeaderSize = sizeof(dipdw.diph);
+    dipdw.diph.dwHow = DIPH_BYOFFSET;
+    dipdw.dwData = DEADZONE;
 
-	for (i=0; i<m_nJoySum; i++) {
-		if (!m_pJoy[i]) continue;
-		if( !m_bJoyFF[i] ) continue;	// ’ÊíƒWƒ‡ƒCƒXƒeƒBƒbƒN‚ğœ‚­
+    for (i=0; i<m_nJoySum; i++) {
+       if (!m_pJoy[i]) continue;
+       if( !m_bJoyFF[i] ) continue;   // ï¿½Êï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-		// X²”ÍˆÍ‚Ìİ’è
-		dipdw.diph.dwObj = DIJOFS_X;
-		if (m_pJoy[i]->SetProperty(DIPROP_DEADZONE, &dipdw.diph) != DI_OK) {
-			MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : SetProperty(X²”ÍˆÍ(DEADZONE):FFJoystick)‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"), nullptr, MB_OK);
-			return false;
-		}
+       // Xï¿½ï¿½ï¿½ÍˆÍ‚Ìİ’ï¿½
+       dipdw.diph.dwObj = DIJOFS_X;
+       if (m_pJoy[i]->SetProperty(DIPROP_DEADZONE, &dipdw.diph) != DI_OK) {
+          MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : SetProperty(Xï¿½ï¿½ï¿½Íˆï¿½(DEADZONE):FFJoystick)ï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"), nullptr, MB_OK);
+          return false;
+       }
 
-		// Y²”ÍˆÍ‚Ìİ’è
-		dipdw.diph.dwObj = DIJOFS_Y;
-		if (m_pJoy[i]->SetProperty(DIPROP_DEADZONE, &dipdw.diph) != DI_OK) {
-			MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : SetProperty(Y²”ÍˆÍ(RANGE):FFJoystick)‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"), nullptr, MB_OK);
-			return false;
-		}
-	}
+       // Yï¿½ï¿½ï¿½ÍˆÍ‚Ìİ’ï¿½
+       dipdw.diph.dwObj = DIJOFS_Y;
+       if (m_pJoy[i]->SetProperty(DIPROP_DEADZONE, &dipdw.diph) != DI_OK) {
+          MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : SetProperty(Yï¿½ï¿½ï¿½Íˆï¿½(RANGE):FFJoystick)ï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"), nullptr, MB_OK);
+          return false;
+       }
+    }
 
-	// ©“®ƒZƒ“ƒ^ƒŠƒ“ƒO
-	for (i=0; i<m_nJoySum; i++) {
-		if (!m_pJoy[i]) continue;
-		if( !m_bJoyFF[i] ) continue;	// ’ÊíƒWƒ‡ƒCƒXƒeƒBƒbƒN‚ğœ‚­
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Zï¿½ï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½O
+    for (i=0; i<m_nJoySum; i++) {
+       if (!m_pJoy[i]) continue;
+       if( !m_bJoyFF[i] ) continue;   // ï¿½Êï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-		dipdw.diph.dwSize = sizeof(DIPROPDWORD);
-		dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
-		dipdw.diph.dwObj = 0;
-		dipdw.diph.dwHow = DIPH_DEVICE;
-		//dipdw.dwData = DIPROPAUTOCENTER_ON;
-		dipdw.dwData = DIPROPAUTOCENTER_OFF;	// ©“®ƒZƒ“ƒ^ƒŠƒ“ƒO–³Œø
-		m_hr = m_pJoy[i]->SetProperty(DIPROP_AUTOCENTER, &dipdw.diph);
-		if (FAILED(m_hr)) {
-			MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : SetProperty(©“®ƒZƒ“ƒ^ƒŠƒ“ƒO):FFJoystick)‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"),nullptr,MB_OK);
-			return false;
-		}
-	}
+       dipdw.diph.dwSize = sizeof(DIPROPDWORD);
+       dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+       dipdw.diph.dwObj = 0;
+       dipdw.diph.dwHow = DIPH_DEVICE;
+       //dipdw.dwData = DIPROPAUTOCENTER_ON;
+       dipdw.dwData = DIPROPAUTOCENTER_OFF;   // ï¿½ï¿½ï¿½ï¿½ï¿½Zï¿½ï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½
+       m_hr = m_pJoy[i]->SetProperty(DIPROP_AUTOCENTER, &dipdw.diph);
+       if (FAILED(m_hr)) {
+          MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : SetProperty(ï¿½ï¿½ï¿½ï¿½ï¿½Zï¿½ï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½O):FFJoystick)ï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"),nullptr,MB_OK);
+          return false;
+       }
+    }
 
-	m_BufferRestJoy = 0;
-	m_pBufferPositionJoy = nullptr;
+    m_BufferRestJoy = 0;
+    m_pBufferPositionJoy = nullptr;
 
-	for (i=0; i<m_nJoySum; i++) {
-		if (!m_pJoy[i]) continue;
-		if( !m_bJoyFF[i] ) continue;	// ’ÊíƒWƒ‡ƒCƒXƒeƒBƒbƒN‚ğœ‚­
+    for (i=0; i<m_nJoySum; i++) {
+       if (!m_pJoy[i]) continue;
+       if( !m_bJoyFF[i] ) continue;   // ï¿½Êï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-		m_pBufferJoy[i] = new DIDEVICEOBJECTDATA[BufferSize];	// ƒoƒbƒtƒ@‚ğŠm•Û
-		ZeroMemory(&dipdw, sizeof(dipdw));
-		dipdw.diph.dwSize = sizeof(DIPROPDWORD);
-		dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
-		dipdw.diph.dwObj = 0;
-		dipdw.diph.dwHow = DIPH_DEVICE;
-		dipdw.dwData = BufferSize;
-		// •œ‹A’l‚Íƒ`ƒFƒbƒN‚µ‚È‚¢(DI_POLLEDDEVICE‚ª•Ô‚é)
-		m_pJoy[i]->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
+       m_pBufferJoy[i] = new DIDEVICEOBJECTDATA[BufferSize];  // ï¿½oï¿½bï¿½tï¿½@ï¿½ï¿½ï¿½mï¿½ï¿½
+       ZeroMemory(&dipdw, sizeof(dipdw));
+       dipdw.diph.dwSize = sizeof(DIPROPDWORD);
+       dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+       dipdw.diph.dwObj = 0;
+       dipdw.diph.dwHow = DIPH_DEVICE;
+       dipdw.dwData = BufferSize;
+       // ï¿½ï¿½ï¿½Aï¿½lï¿½Ì“`ï¿½Fï¿½bï¿½Nï¿½ï¿½ï¿½È‚ï¿½(DI_POLLEDDEVICEï¿½ï¿½ï¿½Ô‚ï¿½)
+       m_pJoy[i]->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
 
-		if (m_pJoy[i]->Acquire() != DI_OK) {
-			//CreateJoyEffectStandard(); // ‚È‚º‚©‰º‚Æ“ñd‚É‚È‚Á‚Ä‚¢‚½‚Ì‚Åíœ‚µ‚½
-			;
-		}
+       if (m_pJoy[i]->Acquire() != DI_OK) {
+          //CreateJoyEffectStandard(); // ï¿½È‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ“ï¿½dï¿½É‚È‚ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½Ì‚Åíœï¿½ï¿½ï¿½ï¿½
+          ;
+       }
 
-		// get the device capabilities
-		DIDEVCAPS didc;
-		didc.dwSize = sizeof(DIDEVCAPS);
-		if (m_pJoy[i]->GetCapabilities(&didc) != DI_OK) {
-			MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : GetCapabilities(ForceFeedback Joystick)‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"), nullptr, MB_OK);
-			return false;
-		}
+       // get the device capabilities
+       DIDEVCAPS didc;
+       didc.dwSize = sizeof(DIDEVCAPS);
+       if (m_pJoy[i]->GetCapabilities(&didc) != DI_OK) {
+          MessageBox(nullptr, _T("DInput.cpp : StartDirectInput() : GetCapabilities(ForceFeedback Joystick)ï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"), nullptr, MB_OK);
+          return false;
+       }
 
-		// •W€‚Ì‚e‚eŒø‰Ê‚ğİ’è‚·‚é
-		if (didc.dwFlags & DIDC_FORCEFEEDBACK) {
-			//MessageBox(nullptr,_T("DInput.cpp : StartDirectInput() : ForceFeedback device found.\n"), nullptr, MB_OK); // -- 2018.8.27
-			if (!CreateJoyEffectStandard()) {
-				MessageBox(nullptr,_T("DInput.cpp : StartDirectInput() : CreateEffect(ForceFeedback Joystick)‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"), nullptr, MB_OK);
-				return false;
-			}
-		}
-	}
+       // ï¿½Wï¿½ï¿½ï¿½Ì‚eï¿½eï¿½ï¿½ï¿½Ê‚ï¿½İ’è‚·ï¿½ï¿½
+       if (didc.dwFlags & DIDC_FORCEFEEDBACK) {
+          //MessageBox(nullptr,_T("DInput.cpp : StartDirectInput() : ForceFeedback device found.\n"), nullptr, MB_OK); // -- 2018.8.27
+          if (!CreateJoyEffectStandard()) {
+             MessageBox(nullptr,_T("DInput.cpp : StartDirectInput() : CreateEffect(ForceFeedback Joystick)ï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"), nullptr, MB_OK);
+             return false;
+          }
+       }
+    }
 
-	return true;
+    return true;
 }
 
 //-----------------------------------------------------------------------------
-// ƒWƒ‡ƒCƒXƒeƒBƒbƒN‚ÌŒ»İ‚ÌƒL[‰Ÿ‰ºƒ`ƒFƒbƒN(’¼Úƒf[ƒ^)
+// ï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½ÌŒï¿½ï¿½İ‚ÌƒLï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½`ï¿½Fï¿½bï¿½N(ï¿½ï¿½ï¿½Úƒfï¿½[ï¿½^)
 // 
-// ˆø”		DWORD	kcode	ƒ`ƒFƒbƒN‚·‚éƒL[ƒR[ƒh
-//			int		nSum	ƒWƒ‡ƒCƒXƒeƒBƒbƒN”Ô†BÈ—ª’l‚ÍJOY_PLAYER1
+// ï¿½ï¿½ï¿½ï¿½    DWORD  kcode  ï¿½`ï¿½Fï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½Lï¿½[ï¿½Rï¿½[ï¿½h
+//        int       nSum   ï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½Ôï¿½ï¿½Bï¿½È—ï¿½ï¿½lï¿½ï¿½JOY_PLAYER1
 // 
-// –ß‚è’l	true:ƒ`ƒFƒbƒN‚n‚j@false:ƒ`ƒFƒbƒN‚m‚f
+// ï¿½ß‚ï¿½l true:ï¿½`ï¿½Fï¿½bï¿½Nï¿½nï¿½jï¿½@false:ï¿½`ï¿½Fï¿½bï¿½Nï¿½mï¿½f
 //-----------------------------------------------------------------------------
 bool CDirectInput::CheckJoyImm(DWORD kcode, int nSum)
 {
-	if (DIJ_LEFT > kcode) {
-		return m_js[nSum].rgbButtons[kcode] & 0x80;
-	} else {
-		switch (kcode) {	// ã‰º¶‰E‚ÍAƒfƒWƒ^ƒ‹iDIJ_VOLUMEŒÀŠEj‚Å”»’f
-		case DIJ_LEFT :		// DIF_LEFT‚à“¯ˆêƒR[ƒh
-			return m_js[nSum].lX < (-1 * DIJ_VOLUME);
-		case DIJ_RIGHT :	// DIF_RIGHT‚à“¯ˆêƒR[ƒh
-			return m_js[nSum].lX > DIJ_VOLUME;
-		case DIJ_UP :		// DIF_UP‚à“¯ˆêƒR[ƒh
-			return m_js[nSum].lY < (-1 * DIJ_VOLUME);
-		case DIJ_DOWN :		// DIF_DOWN‚à“¯ˆêƒR[ƒh
-			return m_js[nSum].lY > DIJ_VOLUME;
-		default :
-			MessageBox(nullptr, _T("DInput.cpp : CheckJoystickImm() : kcode‚Ìw’è‚ªŠÔˆá‚Á‚Ä‚¢‚Ü‚·B"), nullptr, MB_OK);
-			return false;
-		}
-	}
+    if (DIJ_LEFT > kcode) {
+       return m_js[nSum].rgbButtons[kcode] & 0x80;
+    } else {
+       switch (kcode) {   // ï¿½ã‰ºï¿½ï¿½ï¿½Eï¿½ÌAï¿½fï¿½Wï¿½^ï¿½ï¿½ï¿½iDIJ_VOLUMEï¿½ï¿½ï¿½Eï¿½jï¿½Å”ï¿½ï¿½f
+       case DIJ_LEFT :       // DIF_LEFTï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Rï¿½[ï¿½h
+          return m_js[nSum].lX < (-1 * DIJ_VOLUME);
+       case DIJ_RIGHT :   // DIF_RIGHTï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Rï¿½[ï¿½h
+          return m_js[nSum].lX > DIJ_VOLUME;
+       case DIJ_UP :     // DIF_UPï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Rï¿½[ï¿½h
+          return m_js[nSum].lY < (-1 * DIJ_VOLUME);
+       case DIJ_DOWN :       // DIF_DOWNï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Rï¿½[ï¿½h
+          return m_js[nSum].lY > DIJ_VOLUME;
+       default :
+          MessageBox(nullptr, _T("DInput.cpp : CheckJoystickImm() : kcodeï¿½Ìwï¿½è‚ªï¿½Ôˆï¿½ï¿½ï¿½Ä‚ï¿½ï¿½Ü‚ï¿½ï¿½B"), nullptr, MB_OK);
+          return false;
+       }
+    }
 }
 //-----------------------------------------------------------------------------
-// ƒWƒ‡ƒCƒXƒeƒBƒbƒN‚Ìó‘Ô‚ğ“¾‚é
+// ï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½Ìï¿½Ô‚ğ“¾‚ï¿½
 // 
-// –ß‚è’l	true:¬Œ÷@false:¸”s
+// ï¿½ß‚ï¿½l true:ï¿½ï¿½ï¿½ï¿½ï¿½@false:ï¿½ï¿½ï¿½s
 //-----------------------------------------------------------------------------
 bool CDirectInput::GetJoy(void)
 {
-	for (int i=0; i<m_nJoySum; i++) {
-		if (!m_pJoy[i]) return false;
-		m_pJoy[i]->Poll();
-		m_pJoy[i]->GetDeviceState(sizeof(DIJOYSTATE2), &m_js[i]);
+    for (int i=0; i<m_nJoySum; i++) {
+       if (!m_pJoy[i]) return false;
+       m_pJoy[i]->Poll();
+       m_pJoy[i]->GetDeviceState(sizeof(DIJOYSTATE2), &m_js[i]);
 
-		m_BufferRestJoy = BufferSize;
-		m_hr = m_pJoy[i]->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), m_pBufferJoy[i], &m_BufferRestJoy, 0);
-		if (FAILED(m_hr)) {				// ¸”s‚µ‚½‚ç1“x‚¾‚¯ƒŠƒgƒ‰ƒC
-			m_BufferRestJoy = BufferSize;
-			m_pJoy[i]->Acquire();
-			m_hr = m_pJoy[i]->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), m_pBufferJoy[i], &m_BufferRestJoy, 0);
-			if (FAILED(m_hr)) {
-				//MessageBox(nullptr,_T("DInput.cpp : GetJoy() : GetDeviceData‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"),nullptr,MB_OK);
-				return false;
-			}
-		}
-		m_BufferRestBackupJoy[i] = m_BufferRestJoy;	// “Ç‚İ‚ñ‚¾ƒoƒbƒtƒ@”‚ğ‘Ş”ğ
-	}
-	return true;
+       m_BufferRestJoy = BufferSize;
+       m_hr = m_pJoy[i]->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), m_pBufferJoy[i], &m_BufferRestJoy, 0);
+       if (FAILED(m_hr)) {             // ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½gï¿½ï¿½ï¿½C
+          m_BufferRestJoy = BufferSize;
+          m_pJoy[i]->Acquire();
+          m_hr = m_pJoy[i]->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), m_pBufferJoy[i], &m_BufferRestJoy, 0);
+          if (FAILED(m_hr)) {
+             //MessageBox(nullptr,_T("DInput.cpp : GetJoy() : GetDeviceDataï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"),nullptr,MB_OK);
+             return false;
+          }
+       }
+       m_BufferRestBackupJoy[i] = m_BufferRestJoy;    // ï¿½Ç‚İï¿½ï¿½ñ‚¾ƒoï¿½bï¿½tï¿½@ï¿½ï¿½ï¿½ï¿½Ş”ï¿½
+    }
+    return true;
 }
 //-----------------------------------------------------------------------------
-// Joystick ã‰º¶‰E‚Ì§Œäƒ`ƒFƒbƒN(joystick)
+// Joystick ï¿½ã‰ºï¿½ï¿½ï¿½Eï¿½Ìï¿½ï¿½ï¿½`ï¿½Fï¿½bï¿½N(joystick)
 // 
-// ˆø”		int		kmode	ƒ`ƒFƒbƒN‚·‚éƒ‚[ƒh
-//			DWORD	kcode	ƒ`ƒFƒbƒN‚·‚éƒL[ƒR[ƒh@
-//			int		nSum	ƒWƒ‡ƒCƒXƒeƒBƒbƒN”Ô†BÈ—ª’l‚ÍJOY_PLAYER1
+// ï¿½ï¿½ï¿½ï¿½    int       kmode  ï¿½`ï¿½Fï¿½bï¿½Nï¿½ï¿½ï¿½éƒ‚ï¿½[ï¿½h
+//        DWORD  kcode  ï¿½`ï¿½Fï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½Lï¿½[ï¿½Rï¿½[ï¿½hï¿½@
+//        int       nSum   ï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½Ôï¿½ï¿½Bï¿½È—ï¿½ï¿½lï¿½ï¿½JOY_PLAYER1
 // 
-// –ß‚è’l	true:ƒ`ƒFƒbƒN‚n‚j@false:ƒ`ƒFƒbƒN‚m‚f
+// ï¿½ß‚ï¿½l true:ï¿½`ï¿½Fï¿½bï¿½Nï¿½nï¿½jï¿½@false:ï¿½`ï¿½Fï¿½bï¿½Nï¿½mï¿½f
 //-----------------------------------------------------------------------------
 bool CDirectInput::CheckUpDownLeftRight(int kmode, DWORD kcode, int nSum)
 {
-	if (m_didodJoy[nSum]->dwOfs == 4) {	// Y²(ã‰º)?
-		switch (kcode) {
-		case DIJ_UP :
-			if (kmode == KD_TRG) {
-				if ((long)m_didodJoy[nSum]->dwData < (-1 * DIJ_VOLUME)) return true;
-			} else {
-				if (!((long)m_didodJoy[nSum]->dwData < (-1 * DIJ_VOLUME))) return true;
-			}
-			break;
-		case DIJ_DOWN :
-			if (kmode == KD_TRG) {
-				if ((long)m_didodJoy[nSum]->dwData > DIJ_VOLUME) return true;
-			} else {
-				if (!((long)m_didodJoy[nSum]->dwData > DIJ_VOLUME)) return true;
-			}
-		}
-	} else {
-		if (m_didodJoy[nSum]->dwOfs == 0) {	// X²(¶‰E)?
-			switch (kcode) {
-			case DIJ_LEFT :
-				if (kmode == KD_TRG) {
-					if ((long)m_didodJoy[nSum]->dwData < (-1 * DIJ_VOLUME)) return true;
-				} else {
-					if (!((long)m_didodJoy[nSum]->dwData < (-1 * DIJ_VOLUME))) return true;
-				}
-				break;
-			case DIJ_RIGHT :
-				if (kmode == KD_TRG) {
-					if ((long)m_didodJoy[nSum]->dwData > DIJ_VOLUME) return true;
-				} else {
-					if (!((long)m_didodJoy[nSum]->dwData > DIJ_VOLUME)) return true;
-				}
-			}
-		}
-	}
-	return false;
+    if (m_didodJoy[nSum]->dwOfs == 4) {    // Yï¿½ï¿½(ï¿½ã‰º)?
+       switch (kcode) {
+       case DIJ_UP :
+          if (kmode == KD_TRG) {
+             if ((long)m_didodJoy[nSum]->dwData < (-1 * DIJ_VOLUME)) return true;
+          } else {
+             if (!((long)m_didodJoy[nSum]->dwData < (-1 * DIJ_VOLUME))) return true;
+          }
+          break;
+       case DIJ_DOWN :
+          if (kmode == KD_TRG) {
+             if ((long)m_didodJoy[nSum]->dwData > DIJ_VOLUME) return true;
+          } else {
+             if (!((long)m_didodJoy[nSum]->dwData > DIJ_VOLUME)) return true;
+          }
+       }
+    } else {
+       if (m_didodJoy[nSum]->dwOfs == 0) {    // Xï¿½ï¿½(ï¿½ï¿½ï¿½E)?
+          switch (kcode) {
+          case DIJ_LEFT :
+             if (kmode == KD_TRG) {
+                if ((long)m_didodJoy[nSum]->dwData < (-1 * DIJ_VOLUME)) return true;
+             } else {
+                if (!((long)m_didodJoy[nSum]->dwData < (-1 * DIJ_VOLUME))) return true;
+             }
+             break;
+          case DIJ_RIGHT :
+             if (kmode == KD_TRG) {
+                if ((long)m_didodJoy[nSum]->dwData > DIJ_VOLUME) return true;
+             } else {
+                if (!((long)m_didodJoy[nSum]->dwData > DIJ_VOLUME)) return true;
+             }
+          }
+       }
+    }
+    return false;
 }
 
 //-----------------------------------------------------------------------------
-// ƒL[‰Ÿ‰ºƒ`ƒFƒbƒN(joystick) 
+// ï¿½Lï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½`ï¿½Fï¿½bï¿½N(joystick) 
 // 
-// ˆø”		const int&		kmode	ƒ`ƒFƒbƒN‚·‚éƒ‚[ƒh
-//			const DWORD&	kcode	ƒ`ƒFƒbƒN‚·‚éƒL[ƒR[ƒh@
-//			int		nSum	ƒWƒ‡ƒCƒXƒeƒBƒbƒN”Ô†BÈ—ª’l‚ÍJOY_PLAYER1
+// ï¿½ï¿½ï¿½ï¿½    const int&    kmode  ï¿½`ï¿½Fï¿½bï¿½Nï¿½ï¿½ï¿½éƒ‚ï¿½[ï¿½h
+//        const DWORD&   kcode  ï¿½`ï¿½Fï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½Lï¿½[ï¿½Rï¿½[ï¿½hï¿½@
+//        int       nSum   ï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½Ôï¿½ï¿½Bï¿½È—ï¿½ï¿½lï¿½ï¿½JOY_PLAYER1
 // 
-// –ß‚è’l	true:ƒ`ƒFƒbƒN‚n‚j@false:ƒ`ƒFƒbƒN‚m‚f
+// ï¿½ß‚ï¿½l true:ï¿½`ï¿½Fï¿½bï¿½Nï¿½nï¿½jï¿½@false:ï¿½`ï¿½Fï¿½bï¿½Nï¿½mï¿½f
 //-----------------------------------------------------------------------------
 bool CDirectInput::CheckJoy(const int& kmode, const DWORD& kcode, int nSum)
 {
-	if (!m_bInputActive || !m_pJoy[nSum]) return false;
+    if (!m_bInputActive || !m_pJoy[nSum]) return false;
 
 
-	switch (kmode) {
-	case KD_DAT :						// ’¼Úƒf[ƒ^(Œ»İ‚ÌƒL[‰Ÿ‰ºó‘Ô)
-		return CheckJoyImm(kcode, nSum);
-	case KD_TRG :						// ƒL[‚ğ‰Ÿ‚µ‚½uŠÔ
-	case KD_UTRG :						// ƒL[‚ğ—£‚µ‚½uŠÔ
-		m_BufferRestJoy = m_BufferRestBackupJoy[nSum];	// “Ç‚İ‚ñ‚¾ƒoƒbƒtƒ@”‚Ì•œŒ³
-		m_pBufferPositionJoy = m_pBufferJoy[nSum];
-		while (m_BufferRestJoy > 0) {
-			m_BufferRestJoy--;
-			m_didodJoy[nSum] = m_pBufferPositionJoy;
-			m_pBufferPositionJoy++;
+    switch (kmode) {
+    case KD_DAT :                 // ï¿½ï¿½ï¿½Úƒfï¿½[ï¿½^(ï¿½ï¿½ï¿½İ‚ÌƒLï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
+       return CheckJoyImm(kcode, nSum);
+    case KD_TRG :                 // ï¿½Lï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½uï¿½ï¿½
+    case KD_UTRG :                // ï¿½Lï¿½[ï¿½ğ—£‚ï¿½ï¿½ï¿½ï¿½uï¿½ï¿½
+       m_BufferRestJoy = m_BufferRestBackupJoy[nSum]; // ï¿½Ç‚İï¿½ï¿½ñ‚¾ƒoï¿½bï¿½tï¿½@ï¿½ï¿½ï¿½Ì•ï¿½ï¿½ï¿½
+       m_pBufferPositionJoy = m_pBufferJoy[nSum];
+       while (m_BufferRestJoy > 0) {
+          m_BufferRestJoy--;
+          m_didodJoy[nSum] = m_pBufferPositionJoy;
+          m_pBufferPositionJoy++;
 #if 0
-				TCHAR chBuffer[128];
-				_stprintf(chBuffer, _T("DInput.cpp : CheckNJoy() : cdwOfs=%ld, dwData=%ld\n"), m_didodJoy[nSum]->dwOfs, m_didodJoy[nSum]->dwData);
-				ErrorMessage(chBuffer);
+             TCHAR chBuffer[128];
+             _stprintf(chBuffer, _T("DInput.cpp : CheckNJoy() : cdwOfs=%ld, dwData=%ld\n"), m_didodJoy[nSum]->dwOfs, m_didodJoy[nSum]->dwData);
+             ErrorMessage(chBuffer);
 #endif
-			if (kcode >= DIJ_LEFT && kcode <= DIJ_DOWN) {
-				return CheckUpDownLeftRight(kmode, kcode, nSum);
-			} else {
-				if (m_didodJoy[nSum]->dwOfs == (DIJOFS_BUTTON(kcode))) {	//ƒL[‚Ìí—Ş
-					if (kmode == KD_TRG) {
-						if (m_didodJoy[nSum]->dwData) return true;
-					} else {
-						if (!(m_didodJoy[nSum]->dwData)) return true;
-					}
-				}
-			}
-		}
-		return false;
-	default :
-		MessageBox(nullptr, _T("DInput.cpp : CheckJoy() : w’è‚µ‚½ƒL[ƒ‚[ƒh‚ªŠÔˆá‚Á‚Ä‚¢‚Ü‚·B"), nullptr, MB_OK);
-		return false;
-	}
+          if (kcode >= DIJ_LEFT && kcode <= DIJ_DOWN) {
+             return CheckUpDownLeftRight(kmode, kcode, nSum);
+          } else {
+             if (m_didodJoy[nSum]->dwOfs == (DIJOFS_BUTTON(kcode))) {   //ï¿½Lï¿½[ï¿½Ìï¿½ï¿½
+                if (kmode == KD_TRG) {
+                   if (m_didodJoy[nSum]->dwData) return true;
+                } else {
+                   if (!(m_didodJoy[nSum]->dwData)) return true;
+                }
+             }
+          }
+       }
+       return false;
+    default :
+       MessageBox(nullptr, _T("DInput.cpp : CheckJoy() : ï¿½wï¿½è‚µï¿½ï¿½ï¿½Lï¿½[ï¿½ï¿½ï¿½[ï¿½hï¿½ï¿½ï¿½Ôˆï¿½ï¿½ï¿½Ä‚ï¿½ï¿½Ü‚ï¿½ï¿½B"), nullptr, MB_OK);
+       return false;
+    }
 }
 //-----------------------------------------------------------------------------
-// ƒtƒH[ƒXƒtƒB[ƒhƒoƒbƒNƒfƒBƒoƒCƒX‚©‚Ç‚¤‚©‚ğƒ`ƒFƒbƒN‚·‚é(joystick) 
+// ï¿½tï¿½Hï¿½[ï¿½Xï¿½tï¿½Bï¿½[ï¿½hï¿½oï¿½bï¿½Nï¿½fï¿½Bï¿½oï¿½Cï¿½Xï¿½ï¿½ï¿½Ç‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½`ï¿½Fï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½(joystick) 
 //
-// ˆø”		int nSum		ƒWƒ‡ƒCƒXƒeƒBƒbƒN”Ô†BÈ—ª’l‚ÍJOY_PLAYER1
+// ï¿½ï¿½ï¿½ï¿½    int nSum      ï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½Ôï¿½ï¿½Bï¿½È—ï¿½ï¿½lï¿½ï¿½JOY_PLAYER1
 //
-// –ß‚è’l	true:ƒtƒH[ƒXƒtƒB[ƒhƒoƒbƒNƒfƒBƒoƒCƒX@false:ˆê”ÊƒfƒBƒoƒCƒX
+// ï¿½ß‚ï¿½l true:ï¿½tï¿½Hï¿½[ï¿½Xï¿½tï¿½Bï¿½[ï¿½hï¿½oï¿½bï¿½Nï¿½fï¿½Bï¿½oï¿½Cï¿½Xï¿½@false:ï¿½ï¿½Êƒfï¿½Bï¿½oï¿½Cï¿½X
 //-----------------------------------------------------------------------------
 bool CDirectInput::IfJoyFF(int nSum)
 {
-	if(!m_pJoy[nSum]) return false;
-	if( m_bJoyFF[nSum] ){	// ForceFeedback Joystick‚©‚Ç‚¤‚©
-		return true;
-	}else{
-		return false;
-	}
+    if(!m_pJoy[nSum]) return false;
+    if( m_bJoyFF[nSum] ){  // ForceFeedback Joystickï¿½ï¿½ï¿½Ç‚ï¿½ï¿½ï¿½
+       return true;
+    }else{
+       return false;
+    }
 }
 //-----------------------------------------------------------------------------
-// ƒWƒ‡ƒCƒXƒeƒBƒbƒN‚ÌƒXƒe[ƒg‚ğ“¾‚é
+// ï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½ÌƒXï¿½eï¿½[ï¿½gï¿½ğ“¾‚ï¿½
 //
-// ˆø”		int nSum		ƒWƒ‡ƒCƒXƒeƒBƒbƒN”Ô†BÈ—ª’l‚ÍJOY_PLAYER1
+// ï¿½ï¿½ï¿½ï¿½    int nSum      ï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½Ôï¿½ï¿½Bï¿½È—ï¿½ï¿½lï¿½ï¿½JOY_PLAYER1
 //
-// –ß‚è’l	DIJOYSTATE2\‘¢‘Ì‚Ì’lBŠg’£‹@”\‚ğ‚ÂƒWƒ‡ƒCƒXƒeƒBƒbƒN ƒfƒoƒCƒX‚Ìó‘Ô‚ğ•\‚·B
-//			“Á‚ÉALONG lX;@LONG lY;@‚Í•ûŒüƒL[‚ÌƒAƒiƒƒO’l‚ğ•\‚·B
+// ï¿½ß‚ï¿½l DIJOYSTATE2ï¿½\ï¿½ï¿½ï¿½Ì‚Ì’lï¿½Bï¿½gï¿½ï¿½ï¿½@ï¿½\ï¿½ï¿½ï¿½ï¿½ï¿½ÂƒWï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½N ï¿½fï¿½oï¿½Cï¿½Xï¿½Ìï¿½Ô‚ï¿½\ï¿½ï¿½ï¿½B
+//        ï¿½ï¿½ï¿½ÉALONG lX;ï¿½@LONG lY;ï¿½@ï¿½Í•ï¿½ï¿½ï¿½ï¿½Lï¿½[ï¿½ÌƒAï¿½iï¿½ï¿½ï¿½Oï¿½lï¿½ï¿½\ï¿½ï¿½ï¿½B
 //-----------------------------------------------------------------------------
 DIJOYSTATE2 CDirectInput::GetJoyState(int nSum)
 {
-	return m_js[nSum];
+    return m_js[nSum];
 }
 //-----------------------------------------------------------------------------
-// Ú‘±‚³‚ê‚Ä‚¢‚éƒWƒ‡ƒCƒXƒeƒBƒbƒN‚Ì”‚ğ“¾‚é              // -- 2018.8.27
+// ï¿½Ú‘ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½Ìï¿½ï¿½ğ“¾‚ï¿½              // -- 2018.8.27
 //
-// ˆø”		‚È‚µ
+// ï¿½ï¿½ï¿½ï¿½    ï¿½È‚ï¿½
 //
-// –ß‚è’l	int Ú‘±‚³‚ê‚Ä‚¢‚éƒWƒ‡ƒCƒXƒeƒBƒbƒN‚Ì”
+// ï¿½ß‚ï¿½l int ï¿½Ú‘ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½Ìï¿½
 //-----------------------------------------------------------------------------
 int CDirectInput::GetJoyNum(void)
 {
-	return m_nJoySum;
+    return m_nJoySum;
 }
 
 /*
 //-----------------------------------------------------------------------------
-// •W€Œø‰Ê‚Ì¶¬ (for ForceFeedback Joystick)
+// ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½Ê‚Ìï¿½ï¿½ï¿½ (for ForceFeedback Joystick)
 //                                                             !! OLD  !!
-// iEF_BOUNCE¤EF_FIRE¤EF_EXPLODE‚Ì‚R‚Â‚ÌŒø‰Ê‚ğ¶¬‚·‚éj
+// ï¿½iEF_BOUNCEï¿½EF_FIREï¿½EF_EXPLODEï¿½Ì‚Rï¿½Â‚ÌŒï¿½ï¿½Ê‚ğ¶ï¿½ï¿½ï¿½ï¿½ï¿½j
 //-----------------------------------------------------------------------------
 bool CDirectInput::CreateJoyEffectStandard(void)
 {
-	DIEFFECT diEffect;
-	DIENVELOPE diEnvelope;
-	DWORD rgdwAxes[2];
-	LONG rglDirections[2];
-	DICONSTANTFORCE dicf;
-	DIPERIODIC dipf;
-	int i;
+    DIEFFECT diEffect;
+    DIENVELOPE diEnvelope;
+    DWORD rgdwAxes[2];
+    LONG rglDirections[2];
+    DICONSTANTFORCE dicf;
+    DIPERIODIC dipf;
+    int i;
 
-	ZeroMemory(&diEffect, sizeof(DIEFFECT));
-	ZeroMemory(&diEnvelope, sizeof(DIENVELOPE));
+    ZeroMemory(&diEffect, sizeof(DIEFFECT));
+    ZeroMemory(&diEnvelope, sizeof(DIENVELOPE));
 
-	// these fields are the same for all effects we will be creating
-	diEffect.dwSize = sizeof(DIEFFECT);
-	diEffect.dwSamplePeriod = 0;		// use default sample period
-	diEffect.dwTriggerButton = DIEB_NOTRIGGER;
-	diEffect.dwTriggerRepeatInterval = 0;
-	diEffect.rgdwAxes = rgdwAxes;
-	diEffect.rglDirection = rglDirections;
-	diEffect.dwGain = FF_BODYBUILDER;
+    // these fields are the same for all effects we will be creating
+    diEffect.dwSize = sizeof(DIEFFECT);
+    diEffect.dwSamplePeriod = 0;      // use default sample period
+    diEffect.dwTriggerButton = DIEB_NOTRIGGER;
+    diEffect.dwTriggerRepeatInterval = 0;
+    diEffect.rgdwAxes = rgdwAxes;
+    diEffect.rglDirection = rglDirections;
+    diEffect.dwGain = FF_BODYBUILDER;
 
-	for (i = 0; i<m_nJoySum; i++) {
-		if (!m_pJoy[i]) continue;
-		if (!m_bJoyFF[i]) continue;	// ’ÊíƒWƒ‡ƒCƒXƒeƒBƒbƒN‚ğœ‚­
+    for (i = 0; i<m_nJoySum; i++) {
+       if (!m_pJoy[i]) continue;
+       if (!m_bJoyFF[i]) continue;    // ï¿½Êï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 
-		// BOUNCEƒGƒtƒFƒNƒg‚Ì¶¬
-		if (m_pJoyEffect[i][EF_BOUNCE]) {
-			m_pJoyEffect[i][EF_BOUNCE]->Release();
-			m_pJoyEffect[i][EF_BOUNCE] = nullptr;
-		}
+       // BOUNCEï¿½Gï¿½tï¿½Fï¿½Nï¿½gï¿½Ìï¿½ï¿½ï¿½
+       if (m_pJoyEffect[i][EF_BOUNCE]) {
+          m_pJoyEffect[i][EF_BOUNCE]->Release();
+          m_pJoyEffect[i][EF_BOUNCE] = nullptr;
+       }
 
-		dicf.lMagnitude = 10000;
+       dicf.lMagnitude = 10000;
 
-		rgdwAxes[0] = DIJOFS_X;
-		rgdwAxes[1] = DIJOFS_Y;
-		rglDirections[0] = 0;
-		rglDirections[1] = 0;
+       rgdwAxes[0] = DIJOFS_X;
+       rgdwAxes[1] = DIJOFS_Y;
+       rglDirections[0] = 0;
+       rglDirections[1] = 0;
 
-		diEffect.dwFlags = DIEFF_OBJECTOFFSETS | DIEFF_POLAR;
-		diEffect.dwDuration = 200000;
-		diEffect.cAxes = 2;
-		diEffect.lpEnvelope = nullptr;
-		diEffect.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
-		diEffect.lpvTypeSpecificParams = &dicf;
+       diEffect.dwFlags = DIEFF_OBJECTOFFSETS | DIEFF_POLAR;
+       diEffect.dwDuration = 200000;
+       diEffect.cAxes = 2;
+       diEffect.lpEnvelope = nullptr;
+       diEffect.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
+       diEffect.lpvTypeSpecificParams = &dicf;
 
-		if (m_pJoy[i]->CreateEffect(GUID_ConstantForce, &diEffect, &m_pJoyEffect[i][EF_BOUNCE], nullptr) != DI_OK) {
-			MessageBox(nullptr, _T("DInput.cpp : CreateEffect() : CreateEffect(Bounce)‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"), nullptr, MB_OK);
-			return false;
-		}
+       if (m_pJoy[i]->CreateEffect(GUID_ConstantForce, &diEffect, &m_pJoyEffect[i][EF_BOUNCE], nullptr) != DI_OK) {
+          MessageBox(nullptr, _T("DInput.cpp : CreateEffect() : CreateEffect(Bounce)ï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"), nullptr, MB_OK);
+          return false;
+       }
 
-		// FIREƒGƒtƒFƒNƒg‚Ì¶¬
-		if (m_pJoyEffect[i][EF_FIRE]) {
-			m_pJoyEffect[i][EF_FIRE]->Release();
-			m_pJoyEffect[i][EF_FIRE] = nullptr;
-		}
+       // FIREï¿½Gï¿½tï¿½Fï¿½Nï¿½gï¿½Ìï¿½ï¿½ï¿½
+       if (m_pJoyEffect[i][EF_FIRE]) {
+          m_pJoyEffect[i][EF_FIRE]->Release();
+          m_pJoyEffect[i][EF_FIRE] = nullptr;
+       }
 
-		dicf.lMagnitude = 10000;
+       dicf.lMagnitude = 10000;
 
-		rgdwAxes[0] = DIJOFS_Y;
-		rglDirections[0] = 1;
+       rgdwAxes[0] = DIJOFS_Y;
+       rglDirections[0] = 1;
 
-		diEffect.dwFlags = DIEFF_OBJECTOFFSETS | DIEFF_CARTESIAN;
-		diEffect.dwDuration = 20000;
-		diEffect.cAxes = 1;
-		diEffect.lpEnvelope = nullptr;
-		diEffect.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
-		diEffect.lpvTypeSpecificParams = &dicf;
+       diEffect.dwFlags = DIEFF_OBJECTOFFSETS | DIEFF_CARTESIAN;
+       diEffect.dwDuration = 20000;
+       diEffect.cAxes = 1;
+       diEffect.lpEnvelope = nullptr;
+       diEffect.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
+       diEffect.lpvTypeSpecificParams = &dicf;
 
-		if (m_pJoy[i]->CreateEffect(GUID_ConstantForce, &diEffect, &m_pJoyEffect[i][EF_FIRE], nullptr) != DI_OK) {
-			MessageBox(nullptr, _T("DInput.cpp : CreateEffect() : CreateEffect(Fire)‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"), nullptr, MB_OK);
-			return false;
-		}
+       if (m_pJoy[i]->CreateEffect(GUID_ConstantForce, &diEffect, &m_pJoyEffect[i][EF_FIRE], nullptr) != DI_OK) {
+          MessageBox(nullptr, _T("DInput.cpp : CreateEffect() : CreateEffect(Fire)ï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"), nullptr, MB_OK);
+          return false;
+       }
 
-		// EXPLODEƒGƒtƒFƒNƒg‚Ì¶¬
-		if (m_pJoyEffect[i][EF_EXPLODE]) {
-			m_pJoyEffect[i][EF_EXPLODE]->Release();
-			m_pJoyEffect[i][EF_EXPLODE] = nullptr;
-		}
+       // EXPLODEï¿½Gï¿½tï¿½Fï¿½Nï¿½gï¿½Ìï¿½ï¿½ï¿½
+       if (m_pJoyEffect[i][EF_EXPLODE]) {
+          m_pJoyEffect[i][EF_EXPLODE]->Release();
+          m_pJoyEffect[i][EF_EXPLODE] = nullptr;
+       }
 
-		diEnvelope.dwSize = sizeof(DIENVELOPE);
-		diEnvelope.dwAttackLevel = 0;
-		diEnvelope.dwAttackTime = 0;
-		diEnvelope.dwFadeLevel = 0;
-		diEnvelope.dwFadeTime = 1000000;
+       diEnvelope.dwSize = sizeof(DIENVELOPE);
+       diEnvelope.dwAttackLevel = 0;
+       diEnvelope.dwAttackTime = 0;
+       diEnvelope.dwFadeLevel = 0;
+       diEnvelope.dwFadeTime = 1000000;
 
-		dipf.dwMagnitude = 10000;
-		dipf.lOffset = 0;
-		dipf.dwPhase = 0;
-		dipf.dwPeriod = 100000;
+       dipf.dwMagnitude = 10000;
+       dipf.lOffset = 0;
+       dipf.dwPhase = 0;
+       dipf.dwPeriod = 100000;
 
-		rgdwAxes[0] = DIJOFS_X;
-		rglDirections[0] = 0;
+       rgdwAxes[0] = DIJOFS_X;
+       rglDirections[0] = 0;
 
-		diEffect.dwFlags = DIEFF_OBJECTOFFSETS | DIEFF_CARTESIAN;
-		diEffect.dwDuration = 1000000;
-		diEffect.cAxes = 1;
-		diEffect.lpEnvelope = &diEnvelope;
-		diEffect.cbTypeSpecificParams = sizeof(DIPERIODIC);
-		diEffect.lpvTypeSpecificParams = &dipf;
+       diEffect.dwFlags = DIEFF_OBJECTOFFSETS | DIEFF_CARTESIAN;
+       diEffect.dwDuration = 1000000;
+       diEffect.cAxes = 1;
+       diEffect.lpEnvelope = &diEnvelope;
+       diEffect.cbTypeSpecificParams = sizeof(DIPERIODIC);
+       diEffect.lpvTypeSpecificParams = &dipf;
 
-		if (m_pJoy[i]->CreateEffect(GUID_Square, &diEffect, &m_pJoyEffect[i][EF_EXPLODE], nullptr) != DI_OK) {
-			MessageBox(nullptr, _T("DInput.cpp : CreateEffect() : CreateEffect(Explode)‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"), nullptr, MB_OK);
-			return false;
-		}
+       if (m_pJoy[i]->CreateEffect(GUID_Square, &diEffect, &m_pJoyEffect[i][EF_EXPLODE], nullptr) != DI_OK) {
+          MessageBox(nullptr, _T("DInput.cpp : CreateEffect() : CreateEffect(Explode)ï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"), nullptr, MB_OK);
+          return false;
+       }
 
-		m_nJoyEFSum = 3;	// •W€Œø‰Ê‚ª‚R‚Â“o˜^‚³‚ê‚½
+       m_nJoyEFSum = 3;   // ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½Ê‚ï¿½ï¿½Rï¿½Â“oï¿½^ï¿½ï¿½ï¿½ê‚½
 
-	}
+    }
 
-	return true;
+    return true;
 }
 */
 
 //-----------------------------------------------------------------------------
-// •W€Œø‰Ê‚Ì¶¬ (for ForceFeedback Joystick)                  // -- 2018.8.27
+// ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½Ê‚Ìï¿½ï¿½ï¿½ (for ForceFeedback Joystick)                  // -- 2018.8.27
 //
-// iEF_BOUNCE¤EF_FIRE¤EF_EXPLODE‚Ì‚R‚Â‚ÌŒø‰Ê‚ğ¶¬‚·‚éj
+// ï¿½iEF_BOUNCEï¿½EF_FIREï¿½EF_EXPLODEï¿½Ì‚Rï¿½Â‚ÌŒï¿½ï¿½Ê‚ğ¶ï¿½ï¿½ï¿½ï¿½ï¿½j
 //-----------------------------------------------------------------------------
 bool CDirectInput::CreateJoyEffectStandard(void)
 {
-	DIEFFECT diEffect;
-	DIENVELOPE diEnvelope;
-	DWORD rgdwAxes[2] = { 0,0 };
-	LONG rglDirections[2] = { 0,0 };
-	DICONSTANTFORCE dicf = { 0 };
-	DIPERIODIC dipf = { 0 };
-	int i;
+    DIEFFECT diEffect;
+    DIENVELOPE diEnvelope;
+    DWORD rgdwAxes[2] = { 0,0 };
+    LONG rglDirections[2] = { 0,0 };
+    DICONSTANTFORCE dicf = { 0 };
+    DIPERIODIC dipf = { 0 };
+    int i;
 
 
-	for ( i=0; i<m_nJoySum; i++) {
-		if (!m_pJoy[i]) continue;
-		if( !m_bJoyFF[i] ) continue;	// ’ÊíƒWƒ‡ƒCƒXƒeƒBƒbƒN‚ğœ‚­
+    for ( i=0; i<m_nJoySum; i++) {
+       if (!m_pJoy[i]) continue;
+       if( !m_bJoyFF[i] ) continue;   // ï¿½Êï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-		// ƒGƒtƒFƒNƒg‚Ì‰Šú‰»
-		ZeroMemory(&diEffect, sizeof(DIEFFECT));
-		ZeroMemory(&diEnvelope, sizeof(DIENVELOPE));
+       // ï¿½Gï¿½tï¿½Fï¿½Nï¿½gï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½
+       ZeroMemory(&diEffect, sizeof(DIEFFECT));
+       ZeroMemory(&diEnvelope, sizeof(DIENVELOPE));
 
-		// these fields are the same for all effects we will be creating
-		diEffect.dwSize = sizeof(DIEFFECT);
-		diEffect.dwSamplePeriod = 0;		// use default sample period
-		diEffect.dwTriggerButton = DIEB_NOTRIGGER;
-		diEffect.dwTriggerRepeatInterval = 0;
-		diEffect.rgdwAxes = rgdwAxes;           // rgdwAxes”z—ñ‚ÌƒAƒhƒŒƒXİ’è
-		diEffect.rglDirection = rglDirections;  // rglDirections”z—ñ‚ÌƒAƒhƒŒƒXİ’è
-		//diEffect.dwGain = FF_BODYBUILDER;    // ‹­‚³@100%
-		diEffect.dwGain = FF_ADULT;    // ‹­‚³@75%                    // -- 2023.1.3
+       // these fields are the same for all effects we will be creating
+       diEffect.dwSize = sizeof(DIEFFECT);
+       diEffect.dwSamplePeriod = 0;      // use default sample period
+       diEffect.dwTriggerButton = DIEB_NOTRIGGER;
+       diEffect.dwTriggerRepeatInterval = 0;
+       diEffect.rgdwAxes = rgdwAxes;           // rgdwAxesï¿½zï¿½ï¿½ÌƒAï¿½hï¿½ï¿½ï¿½Xï¿½İ’ï¿½
+       diEffect.rglDirection = rglDirections;  // rglDirectionsï¿½zï¿½ï¿½ÌƒAï¿½hï¿½ï¿½ï¿½Xï¿½İ’ï¿½
+       //diEffect.dwGain = FF_BODYBUILDER;    // ï¿½ï¿½ï¿½ï¿½ï¿½@100%
+       diEffect.dwGain = FF_ADULT;    // ï¿½ï¿½ï¿½ï¿½ï¿½@75%                    // -- 2023.1.3
 
-		// BOUNCEƒGƒtƒFƒNƒg‚Ì¶¬
-		if (m_pJoyEffect[i][EF_BOUNCE]) {
-			m_pJoyEffect[i][EF_BOUNCE]->Release();
-			m_pJoyEffect[i][EF_BOUNCE] = nullptr;
-		}
+       // BOUNCEï¿½Gï¿½tï¿½Fï¿½Nï¿½gï¿½Ìï¿½ï¿½ï¿½
+       if (m_pJoyEffect[i][EF_BOUNCE]) {
+          m_pJoyEffect[i][EF_BOUNCE]->Release();
+          m_pJoyEffect[i][EF_BOUNCE] = nullptr;
+       }
 
-		dicf.lMagnitude = 10000;
+       dicf.lMagnitude = 10000;
 
-		rgdwAxes[0] = DIJOFS_X;
-		rgdwAxes[1] = DIJOFS_Y;
-		rglDirections[0] = 0;
-		rglDirections[1] = 0;
+       rgdwAxes[0] = DIJOFS_X;
+       rgdwAxes[1] = DIJOFS_Y;
+       rglDirections[0] = 0;
+       rglDirections[1] = 0;
 
-		diEffect.dwFlags = DIEFF_OBJECTOFFSETS | DIEFF_POLAR;
-		diEffect.dwDuration = 200000;
-		diEffect.cAxes = 2;
-		diEffect.lpEnvelope = nullptr;
-		diEffect.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
-		diEffect.lpvTypeSpecificParams = &dicf;
+       diEffect.dwFlags = DIEFF_OBJECTOFFSETS | DIEFF_POLAR;
+       diEffect.dwDuration = 200000;
+       diEffect.cAxes = 2;
+       diEffect.lpEnvelope = nullptr;
+       diEffect.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
+       diEffect.lpvTypeSpecificParams = &dicf;
 
-		if (m_pJoy[i]->CreateEffect(GUID_ConstantForce, &diEffect, &m_pJoyEffect[i][EF_BOUNCE], nullptr) != DI_OK) {
-			MessageBox(nullptr, _T("DInput.cpp : CreateEffect() : CreateEffect(Bounce)‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"), nullptr, MB_OK);
-			return false;
-		}
+       if (m_pJoy[i]->CreateEffect(GUID_ConstantForce, &diEffect, &m_pJoyEffect[i][EF_BOUNCE], nullptr) != DI_OK) {
+          MessageBox(nullptr, _T("DInput.cpp : CreateEffect() : CreateEffect(Bounce)ï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"), nullptr, MB_OK);
+          return false;
+       }
 
-		// FIREƒGƒtƒFƒNƒg‚Ì¶¬
-		if (m_pJoyEffect[i][EF_FIRE]) {
-			m_pJoyEffect[i][EF_FIRE]->Release();
-			m_pJoyEffect[i][EF_FIRE] = nullptr;
-		}
+       // FIREï¿½Gï¿½tï¿½Fï¿½Nï¿½gï¿½Ìï¿½ï¿½ï¿½
+       if (m_pJoyEffect[i][EF_FIRE]) {
+          m_pJoyEffect[i][EF_FIRE]->Release();
+          m_pJoyEffect[i][EF_FIRE] = nullptr;
+       }
 
-		dicf.lMagnitude = 3000;   // -- 2018.8.27
+       dicf.lMagnitude = 3000;   // -- 2018.8.27
 
-		rgdwAxes[0] = DIJOFS_Y;
-		rgdwAxes[1] = 0;          // -- 2018.8.27
-		rglDirections[0] = 1;
-		rglDirections[1] = 0;     // -- 2018.8.27
+       rgdwAxes[0] = DIJOFS_Y;
+       rgdwAxes[1] = 0;          // -- 2018.8.27
+       rglDirections[0] = 1;
+       rglDirections[1] = 0;     // -- 2018.8.27
 
-		diEffect.dwFlags = DIEFF_OBJECTOFFSETS | DIEFF_CARTESIAN;
-		//diEffect.dwDuration = 20000;
-		diEffect.dwDuration = 200000;           // -- 2023.1.3
-		diEffect.cAxes = 2;       // -- 2018.8.27
-		diEffect.lpEnvelope = nullptr;
-		diEffect.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
-		diEffect.lpvTypeSpecificParams = &dicf;
+       diEffect.dwFlags = DIEFF_OBJECTOFFSETS | DIEFF_CARTESIAN;
+       //diEffect.dwDuration = 20000;
+       diEffect.dwDuration = 200000;           // -- 2023.1.3
+       diEffect.cAxes = 2;       // -- 2018.8.27
+       diEffect.lpEnvelope = nullptr;
+       diEffect.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
+       diEffect.lpvTypeSpecificParams = &dicf;
 
-		if (m_pJoy[i]->CreateEffect(GUID_ConstantForce, &diEffect, &m_pJoyEffect[i][EF_FIRE], nullptr) != DI_OK) {
-			MessageBox(nullptr, _T("DInput.cpp : CreateEffect() : CreateEffect(Fire)‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"), nullptr, MB_OK);
-			return false;
-		}
-		
-		// EXPLODEƒGƒtƒFƒNƒg‚Ì¶¬
-		if(m_pJoyEffect[i][EF_EXPLODE]) {
-			m_pJoyEffect[i][EF_EXPLODE]->Release();
-			m_pJoyEffect[i][EF_EXPLODE] = nullptr;
-		}
+       if (m_pJoy[i]->CreateEffect(GUID_ConstantForce, &diEffect, &m_pJoyEffect[i][EF_FIRE], nullptr) != DI_OK) {
+          MessageBox(nullptr, _T("DInput.cpp : CreateEffect() : CreateEffect(Fire)ï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"), nullptr, MB_OK);
+          return false;
+       }
+       
+       // EXPLODEï¿½Gï¿½tï¿½Fï¿½Nï¿½gï¿½Ìï¿½ï¿½ï¿½
+       if(m_pJoyEffect[i][EF_EXPLODE]) {
+          m_pJoyEffect[i][EF_EXPLODE]->Release();
+          m_pJoyEffect[i][EF_EXPLODE] = nullptr;
+       }
 
-		diEnvelope.dwSize = sizeof(DIENVELOPE);
-		diEnvelope.dwAttackLevel = 0;
-		diEnvelope.dwAttackTime = 0;
-		diEnvelope.dwFadeLevel = 0;
-		diEnvelope.dwFadeTime = 1000000;
+       diEnvelope.dwSize = sizeof(DIENVELOPE);
+       diEnvelope.dwAttackLevel = 0;
+       diEnvelope.dwAttackTime = 0;
+       diEnvelope.dwFadeLevel = 0;
+       diEnvelope.dwFadeTime = 1000000;
 
-		dipf.dwMagnitude = 10000;
-		dipf.lOffset = 0;
-		dipf.dwPhase = 0;
-		dipf.dwPeriod = 100000;
+       dipf.dwMagnitude = 10000;
+       dipf.lOffset = 0;
+       dipf.dwPhase = 0;
+       dipf.dwPeriod = 100000;
 
-		rgdwAxes[0] = DIJOFS_X;
-		rgdwAxes[1] = 0;        // -- 2018.8.27
-		rglDirections[0] = 0;
-		rglDirections[1] = 0;   // -- 2018.8.27
+       rgdwAxes[0] = DIJOFS_X;
+       rgdwAxes[1] = 0;        // -- 2018.8.27
+       rglDirections[0] = 0;
+       rglDirections[1] = 0;   // -- 2018.8.27
 
-		diEffect.dwFlags = DIEFF_OBJECTOFFSETS | DIEFF_CARTESIAN;
-		//diEffect.dwDuration = 1000000;
-		diEffect.dwDuration = 2000000;     // -- 2023.1.3
-		diEffect.cAxes = 1;
-		diEffect.lpEnvelope = &diEnvelope;
-		diEffect.cbTypeSpecificParams = sizeof(DIPERIODIC);
-		diEffect.lpvTypeSpecificParams = &dipf;
+       diEffect.dwFlags = DIEFF_OBJECTOFFSETS | DIEFF_CARTESIAN;
+       //diEffect.dwDuration = 1000000;
+       diEffect.dwDuration = 2000000;     // -- 2023.1.3
+       diEffect.cAxes = 1;
+       diEffect.lpEnvelope = &diEnvelope;
+       diEffect.cbTypeSpecificParams = sizeof(DIPERIODIC);
+       diEffect.lpvTypeSpecificParams = &dipf;
 
-		if (m_pJoy[i]->CreateEffect(GUID_Square, &diEffect, &m_pJoyEffect[i][EF_EXPLODE], nullptr) != DI_OK) {
-			MessageBox(nullptr, _T("DInput.cpp : CreateEffect() : CreateEffect(Explode)‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"), nullptr, MB_OK);
-			return false;
-		}
+       if (m_pJoy[i]->CreateEffect(GUID_Square, &diEffect, &m_pJoyEffect[i][EF_EXPLODE], nullptr) != DI_OK) {
+          MessageBox(nullptr, _T("DInput.cpp : CreateEffect() : CreateEffect(Explode)ï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"), nullptr, MB_OK);
+          return false;
+       }
 
-		m_nJoyEFSum = 3;	// •W€Œø‰Ê‚ª‚R‚Â“o˜^‚³‚ê‚½
+       m_nJoyEFSum = 3;   // ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½Ê‚ï¿½ï¿½Rï¿½Â“oï¿½^ï¿½ï¿½ï¿½ê‚½
 
-	}
+    }
 
-	return true;
+    return true;
 }
 //-----------------------------------------------------------------------------
-// ForceFeedbackŒø‰Ê—ñ‹“‚ÌƒR[ƒ‹ƒoƒbƒNŠÖ”  (for ForceFeedback Joystick)
+// ForceFeedbackï¿½ï¿½ï¿½Ê—ñ‹“‚ÌƒRï¿½[ï¿½ï¿½ï¿½oï¿½bï¿½Nï¿½Öï¿½  (for ForceFeedback Joystick)
 //-----------------------------------------------------------------------------
 BOOL CALLBACK EnumEffectsInFileProc(LPCDIFILEEFFECT lpdife, LPVOID pvRef )
 {
-	
-	return g_pDI->EnumEffectsInFileCb( lpdife,  pvRef );
+    
+    return g_pDI->EnumEffectsInFileCb( lpdife,  pvRef );
 
 }
 //-----------------------------------------------------------------------------
-// ForceFeedbackŒø‰Ê—ñ‹“‚ÌƒR[ƒ‹ƒoƒbƒN(for ForceFeedback Joystic)‘Î‰‚Ìƒƒ\ƒbƒh  
+// ForceFeedbackï¿½ï¿½ï¿½Ê—ñ‹“‚ÌƒRï¿½[ï¿½ï¿½ï¿½oï¿½bï¿½N(for ForceFeedback Joystic)ï¿½Î‰ï¿½ï¿½Ìƒï¿½ï¿½\ï¿½bï¿½h  
 //-----------------------------------------------------------------------------
 BOOL CDirectInput::EnumEffectsInFileCb(LPCDIFILEEFFECT lpdife, LPVOID pvRef )
 {
-	HRESULT hr;
+    HRESULT hr;
 
-	hr = m_pJoy[m_nJoyEFI]->CreateEffect( lpdife->GuidEffect, lpdife->lpDiEffect,
-												&m_pJoyEffect[m_nJoyEFI][m_nJoyEFSum], nullptr );
-	if( DI_OK != hr){
-		MessageBox(nullptr, _T("DInput.cpp : EnumEffectsInFileProc() : CreateEffect()‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"), nullptr, MB_OK);
-		return DIENUM_CONTINUE;	// Ÿ‚ÌƒfƒoƒCƒX‚ğ—ñ‹“
-	}
+    hr = m_pJoy[m_nJoyEFI]->CreateEffect( lpdife->GuidEffect, lpdife->lpDiEffect,
+                                     &m_pJoyEffect[m_nJoyEFI][m_nJoyEFSum], nullptr );
+    if( DI_OK != hr){
+       MessageBox(nullptr, _T("DInput.cpp : EnumEffectsInFileProc() : CreateEffect()ï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"), nullptr, MB_OK);
+       return DIENUM_CONTINUE;    // ï¿½ï¿½ï¿½Ìƒfï¿½oï¿½Cï¿½Xï¿½ï¿½ï¿½
+    }
 
-	if( ++m_nJoyEFSum >=  JOY_EF_COUNT) return DIENUM_STOP;
-	return DIENUM_CONTINUE;
+    if( ++m_nJoyEFSum >=  JOY_EF_COUNT) return DIENUM_STOP;
+    return DIENUM_CONTINUE;
 
 }
 
 //-----------------------------------------------------------------------------
-// ForceFeedback‚ÌŒø‰Ê‚Ì“Ç‚İ‚İ (for ForceFeedback Joy)
+// ForceFeedbackï¿½ÌŒï¿½ï¿½Ê‚Ì“Ç‚İï¿½ï¿½ï¿½ (for ForceFeedback Joy)
 // 
-// ˆø”		TCHAR* szFName	Œø‰Êƒtƒ@ƒCƒ‹–¼
-//			int nEffectNo	Œø‰Ê”Ô†i–ß‚è’lj@
-//			int nNum		ˆê‚Â‚ÌŒø‰Ê‚ÌŒÂ”i–ß‚è’lj
+// ï¿½ï¿½ï¿½ï¿½    TCHAR* szFName ï¿½ï¿½ï¿½Êƒtï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½
+//        int nEffectNo  ï¿½ï¿½ï¿½Ê”Ôï¿½ï¿½iï¿½ß‚ï¿½lï¿½jï¿½@
+//        int nNum      ï¿½ï¿½Â‚ÌŒï¿½ï¿½Ê‚ÌŒÂï¿½ï¿½iï¿½ß‚ï¿½lï¿½j
 // 
-// –ß‚è’l	true:¬Œ÷@false:¸”s
+// ï¿½ß‚ï¿½l true:ï¿½ï¿½ï¿½ï¿½ï¿½@false:ï¿½ï¿½ï¿½s
 //-----------------------------------------------------------------------------
 bool CDirectInput::ReadJoyEffect(const TCHAR* szFName, int &nEffectNo, int &nNum)
 {
-	int  i, nWSum, nMaxSum;
+    int  i, nWSum, nMaxSum;
 
-	nMaxSum = nWSum = m_nJoyEFSum;
-	nEffectNo = 0;
-	nNum   = 0;
+    nMaxSum = nWSum = m_nJoyEFSum;
+    nEffectNo = 0;
+    nNum   = 0;
 
-	for ( i=0; i<m_nJoySum; i++) {
-		if( !m_pJoy[i] ) continue;
-		if( !m_bJoyFF[i] )    continue;		// ’ÊíƒWƒ‡ƒCƒXƒeƒBƒbƒN‚ğœ‚­
+    for ( i=0; i<m_nJoySum; i++) {
+       if( !m_pJoy[i] ) continue;
+       if( !m_bJoyFF[i] )    continue;       // ï¿½Êï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-		m_nJoyEFSum = nWSum;
-		m_nJoyEFI   = i;
+       m_nJoyEFSum = nWSum;
+       m_nJoyEFI   = i;
 
-		if( m_pJoy[i]->EnumEffectsInFile( szFName, EnumEffectsInFileProc, nullptr, DIFEF_MODIFYIFNEEDED ) != DI_OK ){
-			MessageBox(nullptr, _T("DInput.cpp : ReadJoyEffect() : EnumEffectsInFile()‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"), nullptr, MB_OK);
-			return false;
-		}
-		if( m_nJoyEFSum > nMaxSum )  nMaxSum = m_nJoyEFSum;
-	}
-	m_nJoyEFSum = nMaxSum;
-	nEffectNo   = nWSum;
-	nNum        = m_nJoyEFSum - nEffectNo;
+       if( m_pJoy[i]->EnumEffectsInFile( szFName, EnumEffectsInFileProc, nullptr, DIFEF_MODIFYIFNEEDED ) != DI_OK ){
+          MessageBox(nullptr, _T("DInput.cpp : ReadJoyEffect() : EnumEffectsInFile()ï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"), nullptr, MB_OK);
+          return false;
+       }
+       if( m_nJoyEFSum > nMaxSum )  nMaxSum = m_nJoyEFSum;
+    }
+    m_nJoyEFSum = nMaxSum;
+    nEffectNo   = nWSum;
+    nNum        = m_nJoyEFSum - nEffectNo;
 
-	return true;
+    return true;
 }
 
 //-----------------------------------------------------------------------------
-// ForceFeedback‚ÌŒø‰Ê‰‰‘t
+// ForceFeedbackï¿½ÌŒï¿½ï¿½Ê‰ï¿½ï¿½t
 // 
-// ˆø”		int nEffectNo	Œø‰Ê”Ô†(ReadJoyEffectŠÖ”‚Ì–ß‚è’l‚ğg—p‚·‚é)@
-//			int nNum		ˆê‚Â‚ÌŒø‰Ê‚ÌŒÂ”(ReadJoyEffectŠÖ”‚Ì–ß‚è’l‚ğg—p‚·‚é)BÈ—ª’l‚Í‚P
-//			int nSum		ƒWƒ‡ƒCƒXƒeƒBƒbƒN”Ô†BÈ—ª’l‚ÍJOY_PLAYER1
+// ï¿½ï¿½ï¿½ï¿½    int nEffectNo  ï¿½ï¿½ï¿½Ê”Ôï¿½(ReadJoyEffectï¿½Öï¿½ï¿½Ì–ß‚ï¿½lï¿½ï¿½ï¿½gï¿½pï¿½ï¿½ï¿½ï¿½)ï¿½@
+//        int nNum      ï¿½ï¿½Â‚ÌŒï¿½ï¿½Ê‚ÌŒÂï¿½(ReadJoyEffectï¿½Öï¿½ï¿½Ì–ß‚ï¿½lï¿½ï¿½ï¿½gï¿½pï¿½ï¿½ï¿½ï¿½)ï¿½Bï¿½È—ï¿½ï¿½lï¿½Í‚P
+//        int nSum      ï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½Ôï¿½ï¿½Bï¿½È—ï¿½ï¿½lï¿½ï¿½JOY_PLAYER1
 // 
-// –ß‚è’l	true:¬Œ÷@false:¸”s
+// ï¿½ß‚ï¿½l true:ï¿½ï¿½ï¿½ï¿½ï¿½@false:ï¿½ï¿½ï¿½s
 //-----------------------------------------------------------------------------
 bool CDirectInput::PlayJoyEffect(int nEffectNo, int nNum, int nSum)
 {
-	int  i;
+    int  i;
 
-	if( !m_bJoyFF[nSum] ) return false;	// ’ÊíƒWƒ‡ƒCƒXƒeƒBƒbƒN‚ğœ‚­
+    if( !m_bJoyFF[nSum] ) return false;    // ï¿½Êï¿½Wï¿½ï¿½ï¿½Cï¿½Xï¿½eï¿½Bï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-	for( i = 0; i < nNum; i++ ){
-		if (m_pJoyEffect[nSum][nEffectNo+i]) {
-			if (m_pJoyEffect[nSum][nEffectNo+i]->Start(1, 0) != DI_OK) {
-				MessageBox(nullptr, _T("DInput.cpp : PlayJoyEffect() : Start(Joy effect)‚ªˆÙíI—¹‚µ‚Ü‚µ‚½B"), nullptr, MB_OK);
-				return false;
-			}
-		}
-	}
-	return true;
+    for( i = 0; i < nNum; i++ ){
+       if (m_pJoyEffect[nSum][nEffectNo+i]) {
+          if (m_pJoyEffect[nSum][nEffectNo+i]->Start(1, 0) != DI_OK) {
+             MessageBox(nullptr, _T("DInput.cpp : PlayJoyEffect() : Start(Joy effect)ï¿½ï¿½ï¿½Ùï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"), nullptr, MB_OK);
+             return false;
+          }
+       }
+    }
+    return true;
 }

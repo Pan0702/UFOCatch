@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <cmath>
 
 inline float EaseOutQuint(const float& t)

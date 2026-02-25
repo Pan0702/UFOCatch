@@ -1,4 +1,4 @@
-#include "ScreenTransition.h"
+﻿#include "ScreenTransition.h"
 #include "../Utils/Sprite3D.h"
 
 CScreenTransition::CScreenTransition()

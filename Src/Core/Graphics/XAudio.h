@@ -1,7 +1,7 @@
 // =========================================================================================
 //
-//  ‚w‚`‚•‚„‚‰‚‚Q@
-//																   ver 3.3        2024.3.23
+//  æ³¢å½¢ã‚ªãƒ¼ãƒ‡ã‚£ã‚ªç®¡ç†
+//                                                  ver 3.3        2024.3.23
 // =========================================================================================
 
 #pragma once
@@ -13,64 +13,64 @@
 #include <xaudio2.h>
 #include <tchar.h>
 
-#define AUDIO_LOOP         1          // ƒ‹[ƒvÄ¶
-#define AUDIO_SOURCE_MAX  10          // “¯‚ÉÄ¶‚·‚é“¯ˆêƒI[ƒfƒBƒIƒ\[ƒX‚ÌÅ‘å”
+#define AUDIO_LOOP         1          // ãƒ«ãƒ¼ãƒ—å†ç”Ÿãƒ•ãƒ©ã‚°
+#define AUDIO_SOURCE_MAX  10          // åŒæ™‚ã«å†ç”Ÿå¯èƒ½ãªã‚ªãƒ¼ãƒ‡ã‚£ã‚ªã‚½ãƒ¼ã‚¹ã®æœ€å¤§æ•°
 
 // 
-//  XAudio ƒ}ƒXƒ^[ƒNƒ‰ƒX	
-//  ƒAƒvƒŠ‚Éˆê‚Â•K—v
+//  XAudio ãƒã‚¹ã‚¿ãƒ¼ã‚¯ãƒ©ã‚¹   
+//  ã‚¢ãƒ—ãƒªã«ä¸€ã¤å¿…è¦
 // 
 class CXAudio
 {
 private:
-	// ƒƒ“ƒo•Ï”
-	HWND                    m_hWnd;
-	IXAudio2*               m_pXAudio2;
-	IXAudio2MasteringVoice* m_pMasteringVoice;
+    // ãƒ¡ãƒ³ãƒå¤‰æ•°
+    HWND                    m_hWnd;
+    IXAudio2* m_pXAudio2;
+    IXAudio2MasteringVoice* m_pMasteringVoice;
 
 public:
-	// ƒƒ\ƒbƒh
-	HRESULT     InitAudio(HWND);
-	CXAudio();
-	~CXAudio();
-	IXAudio2* XAudio2() { return m_pXAudio2; }
+    // ãƒ¡ã‚½ãƒƒãƒ‰
+    HRESULT     InitAudio(HWND);
+    CXAudio();
+    ~CXAudio();
+    IXAudio2* XAudio2() { return m_pXAudio2; }
 };
 
 // 
-//  XAudio ƒ\[ƒXƒ{ƒCƒXƒNƒ‰ƒX	
-//  ˆê‚Â‚ÌƒTƒEƒ“ƒhi‚v‚`‚uj‚Éˆê‚Â•K—v
+//  XAudio ã‚½ãƒ¼ã‚¹ãƒœã‚¤ã‚¹ã‚¯ãƒ©ã‚¹   
+//  ä¸€ã¤ã®ã‚µã‚¦ãƒ³ãƒ‰ï¼ˆéŸ³è‰²ï¼‰ã«ä¸€ã¤å¿…è¦
 // 
 class CXAudioSource
 {
 private:
-	CXAudio*				m_pXAudio;			// XAudio ƒ}ƒXƒ^[ƒNƒ‰ƒXƒAƒhƒŒƒX	
-	bool					m_bWav;				// ƒ\[ƒX‚ª‚v‚‚–‚…ƒtƒ@ƒCƒ‹‚©@true:XAudio(WAV)@false:MCI(MP3‚âMID) 
-	TCHAR                   m_szAliasName[256]; // Mci‚Ì•Ê–¼‚ª“ü‚é
+    CXAudio* m_pXAudio;         // XAudio ãƒã‚¹ã‚¿ãƒ¼ã‚¯ãƒ©ã‚¹ã®ã‚¢ãƒ‰ãƒ¬ã‚¹   
+    bool                m_bWav;            // ã‚½ãƒ¼ã‚¹ãŒWAVãƒ•ã‚¡ã‚¤ãƒ«ã‹å¦ã‹ true:XAudio(WAV) false:MCI(MP3ã‚„MID) 
+    TCHAR               m_szAliasName[256]; // MCIå†ç”Ÿç”¨ã®ãƒ‡ãƒã‚¤ã‚¹åˆ¥å
 
-	DWORD                   m_dwSourceIndex;					//	ƒI[ƒfƒBƒIƒ\[ƒXƒCƒ“ƒfƒbƒNƒX
-	DWORD                   m_dwSourceNum;						//	ƒI[ƒfƒBƒIƒ\[ƒX‚ÌŒÂ”	
-	IXAudio2SourceVoice*    m_pSourceVoice[AUDIO_SOURCE_MAX];  // ƒI[ƒfƒBƒIƒ\[ƒX
-	BYTE*                   m_pWavBuffer[AUDIO_SOURCE_MAX];    // ”gŒ`ƒf[ƒ^iƒtƒH[ƒ}ƒbƒg“™‚ğŠÜ‚Ü‚È‚¢Aƒˆ‚É”gŒ`ƒf[ƒ^‚Ì‚İj
-	DWORD                   m_dwWavSize[AUDIO_SOURCE_MAX];     // ”gŒ`ƒf[ƒ^‚ÌƒTƒCƒY
+    DWORD                m_dwSourceIndex;               // ã‚ªãƒ¼ãƒ‡ã‚£ã‚ªã‚½ãƒ¼ã‚¹ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
+    DWORD                m_dwSourceNum;                 // ã‚ªãƒ¼ãƒ‡ã‚£ã‚ªã‚½ãƒ¼ã‚¹ã®å€‹æ•°   
+    IXAudio2SourceVoice* m_pSourceVoice[AUDIO_SOURCE_MAX]; // ã‚ªãƒ¼ãƒ‡ã‚£ã‚ªã‚½ãƒ¼ã‚¹æœ¬ä½“
+    BYTE* m_pWavBuffer[AUDIO_SOURCE_MAX];   // æ³¢å½¢ãƒ‡ãƒ¼ã‚¿ï¼ˆãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã‚’å«ã¾ãªã„ç´”ç²‹ãªæ³¢å½¢ãƒ‡ãƒ¼ã‚¿ï¼‰
+    DWORD                m_dwWavSize[AUDIO_SOURCE_MAX];    // æ³¢å½¢ãƒ‡ãƒ¼ã‚¿ã®ã‚µã‚¤ã‚º
 public:
-	HRESULT      Load(const TCHAR* szFileName, DWORD dwNum=1);
-	HRESULT      LoadAudio(const TCHAR* szFileName, DWORD dwNum);
-	HRESULT      LoadAudioSub(const TCHAR* szFileName, DWORD dwIndex);
-	HRESULT      LoadMci(const TCHAR* szFileName);
-	void         Play(int loop=0);
-	void         PlayAudio(int loop=0);
-	void         PlayMci(int loop=0);
-	void         Stop();
-	void         StopAudio();
-	void         StopMci();
-	void         Volume(float fVol);
-	void         VolumeAudio(float fVol);
-	void         VolumeMci(int nVol);
-	
-	CXAudioSource();
-	CXAudioSource(const TCHAR* szFileName, DWORD dwNum = 1);
-	CXAudioSource(CXAudio*	pXAudio);
-	CXAudioSource(CXAudio*	pXAudio, const TCHAR* szFileName, DWORD dwNum=1);
-	~CXAudioSource();
+    HRESULT      Load(const TCHAR* szFileName, DWORD dwNum=1);
+    HRESULT      LoadAudio(const TCHAR* szFileName, DWORD dwNum);
+    HRESULT      LoadAudioSub(const TCHAR* szFileName, DWORD dwIndex);
+    HRESULT      LoadMci(const TCHAR* szFileName);
+    void         Play(int loop=0);
+    void         PlayAudio(int loop=0);
+    void         PlayMci(int loop=0);
+    void         Stop();
+    void         StopAudio();
+    void         StopMci();
+    void         Volume(float fVol);
+    void         VolumeAudio(float fVol);
+    void         VolumeMci(int nVol);
+    
+    CXAudioSource();
+    CXAudioSource(const TCHAR* szFileName, DWORD dwNum = 1);
+    CXAudioSource(CXAudio* pXAudio);
+    CXAudioSource(CXAudio* pXAudio, const TCHAR* szFileName, DWORD dwNum=1);
+    ~CXAudioSource();
 
 };

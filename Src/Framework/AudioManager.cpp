@@ -2,15 +2,18 @@
 #include <unordered_map>
 
 namespace {
+    // 登録名をキーに音声ソースを管理するマップ
     std::unordered_map<tstring, CXAudioSource*> audioFiles;
 }
 
 
+// マップをクリア（リソースの解放は行わない）
 void AudioManager::Init()
 {
     audioFiles.clear();
 }
 
+// 全音声リソースを解放してマップをクリア
 void AudioManager::Reset()
 {
     for (auto& pair : audioFiles) {
@@ -19,6 +22,8 @@ void AudioManager::Reset()
     audioFiles.clear();
 }
 
+// 音声ファイルをロードして名前で登録する
+// 同じ名前が既に登録済みの場合はロードせずそのまま返す
 CXAudioSource* AudioManager::Load(const tstring& name, const tstring& filepath, DWORD sourceNum)
 {
     if (audioFiles.find(name) == audioFiles.end()) {
@@ -29,6 +34,8 @@ CXAudioSource* AudioManager::Load(const tstring& name, const tstring& filepath, 
     return audioFiles[name];
 }
 
+// 指定した名前の音声を再生する
+// loop=true でループ再生
 void AudioManager::Play(const tstring& name, bool loop)
 {
     auto it = audioFiles.find(name);
@@ -37,6 +44,7 @@ void AudioManager::Play(const tstring& name, bool loop)
     }
 }
 
+// 指定した名前の音声を停止する
 void AudioManager::Stop(const tstring& filename)
 {
     auto it = audioFiles.find(filename);
@@ -45,6 +53,7 @@ void AudioManager::Stop(const tstring& filename)
     }
 }
 
+// 登録されている全音声を停止する
 void AudioManager::StopAll()
 {
     for (auto& pair : audioFiles) {
@@ -52,6 +61,7 @@ void AudioManager::StopAll()
     }
 }
 
+// 指定した名前の音声のボリュームを設定する（1.0f が標準）
 void AudioManager::SetVolume(const tstring& filename, float volume)
 {
     auto it = audioFiles.find(filename);
@@ -60,11 +70,12 @@ void AudioManager::SetVolume(const tstring& filename, float volume)
     }
 }
 
+// ゲームで使用するBGM・SEをまとめてロードする
 void AudioStorage::InitMusic()
 {
-    AudioManager::Load("Play", _T("data/Sound/yukai.wav"));
-    AudioManager::Load("Select",_T("data/Sound/himitu.wav"));
-    AudioManager::Load("Title",_T("data/Sound/Sunny_day.wav"));
-    AudioManager::Load("Decide",_T("data/Sound/decide.wav"));
-    AudioManager::Load("Select",_T("data/Sound/select_002.wav"));
+    AudioManager::Load("Play",   _T("data/Sound/yukai.wav"));
+    AudioManager::Load("Select", _T("data/Sound/himitu.wav"));
+    AudioManager::Load("Title",  _T("data/Sound/Sunny_day.wav"));
+    AudioManager::Load("Decide", _T("data/Sound/decide.wav"));
+    AudioManager::Load("Select", _T("data/Sound/select_002.wav"));
 }

@@ -1,4 +1,4 @@
-#include "csvReader.h"
+Ôªø#include "csvReader.h"
 #include <fstream>
 #include <assert.h>
 
@@ -9,7 +9,7 @@ CsvReader::CsvReader(std::string filename)
 	std::ifstream ifs(filename);
 	if (!ifs) return;
 
-	// BOM SkipÇ∑ÇÈ
+	// BOM Skip„Åô„Çã
 	unsigned char BOMS[] = { 0xEF, 0xBB, 0xBF };
 	bool found = true;
 	for (int i = 0; i < 3; i++) {
@@ -21,7 +21,7 @@ CsvReader::CsvReader(std::string filename)
 	if (!found)
 		ifs.seekg(std::ios_base::beg);
 
-	// ÉfÅ[É^Çì«Çﬁ
+	// „Éá„Éº„Çø„ÇíË™≠„ÇÄ
 	std::string lineStr;
 	while (getline(ifs, lineStr)) {
 		while (true) {
@@ -43,7 +43,7 @@ CsvReader::CsvReader(std::string filename)
 				it++;
 		}
 
-		// çsì‡Ç,Ç≈êÿÇËï™ÇØÇÈ
+		// Ë°åÂÜÖ„Çí,„ÅßÂàá„ÇäÂàÜ„Åë„Çã
 		LINEREC lineRecord;
 		int top = 0;
 		bool indq = false;

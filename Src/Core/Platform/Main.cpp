@@ -1,10 +1,10 @@
 //=============================================================================
-//		�R�c�Q�[���v���O�����@�@�@�@�@�@               ver 3.2        2023.1.31
+//     3Dゲームプログラム                     ver 3.2        2023.1.31
 //
-//		�E�B���h�E�Y�̎又��
-//																Main.cpp
+//     ウィンドウ系の処理
+//                                               Main.cpp
 //=============================================================================
-#define _CRTDBG_MAPALLOC
+#define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
 #include <locale.h>
 #include "MainControl.h"
@@ -14,52 +14,52 @@
 #include "../../Utils/resource.h"
 
 
-//�O���[�o���ϐ�(�R�[���o�b�N�֐��̂��ߕK�v)
-static CMain*	g_pMain = nullptr;		// ���C���N���X
+// グローバル変数 (コールバック関数のために必要)
+static CMain* g_pMain = nullptr;    // メインクラスのインスタンス
 
 //------------------------------------------------------------------------
 //
-//	�A�v���P�[�V�����̃G���g���[�֐� 	
+//  アプリケーションのエントリポイント関数     
 //
-//  HINSTANCE hInstance      // ���݂̃C���X�^���X�̃n���h��
-//  HINSTANCE hPrevInstance  // �ȑO�̃C���X�^���X�̃n���h��
-//  LPTSTR    lpCmdLine          // �R�}���h���C��
-//  INT       nCmdShow             // �\�����
+//  HINSTANCE hInstance      // 現在のインスタンスのハンドル
+//  HINSTANCE hPrevInstance  // 以前のインスタンスのハンドル
+//  LPTSTR    lpCmdLine      // コマンドライン引数
+//  INT       nCmdShow       // 表示設定
 //
-//	�߂�l INT
-//		�֐������b�Z�[�W���[�v�ɓ���O�ɏI������ꍇ�́A0 
+//  戻り値 INT
+//     メッセージループに入る前に終了した場合は 0
 //
 //------------------------------------------------------------------------
-INT WINAPI _tWinMain(HINSTANCE hInstance,HINSTANCE,LPTSTR,INT)
+INT WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, INT)
 {
-	// ���������[�N�̃`�F�b�N���s���@�|�|�|�|�|�|    
-	// �S�Ẵ��|�[�g�o�͂��f�B�o�b�O�E�B���h�E�ɑ���
-	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
-	_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
-	_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_DEBUG);
-	// �v���O�����̍ŏ��ŃR�[�����邱�Ƃɂ���āA�I������_CrtDumpMemoryLeaks�֐����R�[������
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+    // メモリリークのチェックを行う設定 -----------------------
+    // すべてのレポート出力をデバッグウィンドウに送る
+    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
+    _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
+    _CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_DEBUG);
+    // プログラムの最初で設定することで、終了時に _CrtDumpMemoryLeaks を自動で呼び出す
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	// ���P�[���̐ݒ�
-	// ���C�h�����̏ꍇ�A���P�[�����w�肵�Ȃ��ƁA�����������R�[�h�ɂȂ�Ȃ�
-	_tsetlocale(LC_ALL, _T(""));
+    // ロケールの設定
+    // ワイド文字列を使用する場合、ロケールを指定しないと日本語が正しくコード変換されない
+    _tsetlocale(LC_ALL, _T(""));
 
-	CMain*	pMain = new CMain;	// ���C���N���X�̐���
-	g_pMain = pMain;			// �R�[�o�b�N�֐��̂��߂ɃO���[�o���Ƀ��C���N���X�̃|�C���^��u��
+    CMain* pMain = new CMain; // メインクラスの生成
+    g_pMain = pMain;         // コールバック関数のためにグローバルにポインタを置く
 
-	if(SUCCEEDED(pMain->InitWindow(hInstance,0,0,WINDOW_WIDTH, WINDOW_HEIGHT,APP_NAME))) // Window�̏�����
-	{
-		if (SUCCEEDED(pMain->Init()))		// ����������
-		{
-			pMain->MessageLoop();			// ���b�Z�[�W���[�v����
-		}
-	}
+    if(SUCCEEDED(pMain->InitWindow(hInstance, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, APP_NAME))) // ウィンドウの初期化
+    {
+       if (SUCCEEDED(pMain->Init()))     // ゲーム初期化
+       {
+          pMain->MessageLoop();         // メッセージループ開始
+       }
+    }
 
-	// �I������
-	pMain->Quit();
-	delete pMain;
+    // 終了処理
+    pMain->Quit();
+    delete pMain;
 
-	return 0;
+    return 0;
 }
 
 void CMain::GameThreadFunc()
@@ -68,405 +68,262 @@ void CMain::GameThreadFunc()
 
 //------------------------------------------------------------------------
 //
-//	OS���Ăяo���E�B���h�E�v���V�[�W���[
-//	�i���ۂ̏�����CMain�N���X��MsgProc�v���V�[�W���[�ŏ����j	
+//  OSから呼び出されるウィンドウプロシージャ
+//  (実際の処理は CMainクラスの MsgProc で行います)  
 //
-//  HWND hWnd         �E�B���h�E�n���h��
-//  UINT iMsg         ���b�Z�[�W
+//  HWND hWnd         ウィンドウハンドル
+//  UINT iMsg         メッセージ
 //  WPARAM wParam     WPARAM
 //  LPARAM lParam     LPARAM
 //
-//	�߂�l LRESULT
-//		DefWindowProc�̖߂�l
+//  戻り値 LRESULT
+//     DefWindowProc の戻り値
 //
 //------------------------------------------------------------------------
-LRESULT CALLBACK WndProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)
+LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	return g_pMain->MsgProc(hWnd,uMsg,wParam,lParam);
+    return g_pMain->MsgProc(hWnd, uMsg, wParam, lParam);
 }
 
 // ============================================================================================
 //
-// CMain ���C���N���X�̏���
+// CMain メインクラスの処理
 //
 // ============================================================================================
 //------------------------------------------------------------------------
 //
-//	CMain ���C���N���X�̃R���X�g���N�^	
-//
-//  �����@�Ȃ�
+//  CMain コンストラクタ  
 //
 //------------------------------------------------------------------------
 CMain::CMain()
 {
-	ZeroMemory(this, sizeof(CMain));
+    ZeroMemory(this, sizeof(CMain));
 
-	m_bLoopFlag = true;		// false�ɂȂ�ƁA���[�v�𔲂��ăv���O�����I��
-	m_MainLoopTime = 1000000.0 / 60;  // ���[�v�X�s�[�h 1/60Sec(�}�C�N���b1000000.0/60)
-	//m_MainLoopTime = 0;  // ���[�v�X�s�[�h 1/60Sec(�}�C�N���b1000000.0/60)
-
+    m_bLoopFlag = true;              // falseになるとループを抜けてプログラム終了
+    m_MainLoopTime = 1000000.0 / 60; // ループスピード 1/60Sec (マイクロ秒単位)
 }
 
 //------------------------------------------------------------------------
 //
-//	CMain ���C���N���X�̃f�X�g���N�^	
+//  CMain デストラクタ    
 //
 //------------------------------------------------------------------------
 CMain::~CMain()
 {
-	SAFE_DELETE(m_pGMain);  // �Q�[�����C���N���X�̍폜
+    SAFE_DELETE(m_pGMain);  // ゲームメインクラスの削除
 }
 
 //------------------------------------------------------------------------
 //
-//	�E�B���h�E�̍쐬	
-//
-//  HINSTANCE hInstance    �C���X�^���X�n���h��
-//  INT iX                 �E�B���h�E����ʒu�@�w���W(��ɂO)
-//  INT iY                 �E�B���h�E����ʒu�@�x���W(��ɂO)
-//  INT iWidth             �E�B���h�E�̕�
-//  INT iHeight            �E�B���h�E�̍���
-//  LPCTSTR WindowName     �E�B���h�E��
-//
-//	�߂�l HRESULT
-//		S_OK	= ����
-//		E_FAIL	= �ُ�
+//  ウィンドウの作成  
 //
 //------------------------------------------------------------------------
 HRESULT CMain::InitWindow(HINSTANCE hInstance,
-		                      INT iX,INT iY,INT iWidth,INT iHeight,LPCTSTR WindowName)
+                             INT iX, INT iY, INT iWidth, INT iHeight, LPCTSTR WindowName)
 {
-	 m_hInstance = hInstance;
+     m_hInstance = hInstance;
 
-	// �E�B���h�E�̒�`
-	WNDCLASSEX  wc;
-	ZeroMemory(&wc,sizeof(wc));
-	wc.cbSize = sizeof(wc);
-	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc = WndProc;
-	wc.hInstance = hInstance;
-	wc.hIcon = LoadIcon(hInstance,  MAKEINTRESOURCE(IDI_MAIN_ICON));
-	wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH)GetStockObject(LTGRAY_BRUSH);
-	wc.lpszClassName = WindowName;
-	wc.lpszMenuName = nullptr;
-	RegisterClassEx(&wc);
+    // ウィンドウクラスの定義
+    WNDCLASSEX  wc;
+    ZeroMemory(&wc, sizeof(wc));
+    wc.cbSize = sizeof(wc);
+    wc.style = CS_HREDRAW | CS_VREDRAW;
+    wc.lpfnWndProc = WndProc;
+    wc.hInstance = hInstance;
+    wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_MAIN_ICON));
+    wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
+    wc.hbrBackground = (HBRUSH)GetStockObject(LTGRAY_BRUSH);
+    wc.lpszClassName = WindowName;
+    wc.lpszMenuName = nullptr;
+    RegisterClassEx(&wc);
 
-	// �E�B���h�E�̑傫�����擾(���j���[�͊܂߂Ȃ�)
-	RECT rc = { 0, 0, iWidth, iHeight };
-	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, false);
+    // ウィンドウサイズの計算（クライアント領域を指定サイズにする）
+    RECT rc = { 0, 0, iWidth, iHeight };
+    AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, false);
 
-	// �E�B���h�E�̍쐬(�E�B���h�E���[�h)
-	m_hWnd = CreateWindowEx(0, WindowName, WindowName,
-		WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top,
-		(HWND)nullptr, (HMENU)nullptr,
-		hInstance, (LPVOID)nullptr);
+    // ウィンドウの作成
+    m_hWnd = CreateWindowEx(0, WindowName, WindowName,
+       WS_OVERLAPPEDWINDOW,
+       CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top,
+       (HWND)nullptr, (HMENU)nullptr,
+       hInstance, (LPVOID)nullptr);
 
-	if(!m_hWnd) 
-	{
-		MessageBox(0, _T("Window���쐬�ł��܂���"), nullptr, MB_OK);
-		return E_FAIL;
-	}
-	//�E�C���h�E�̕\��
-	ShowWindow(m_hWnd, SW_SHOW);
-	UpdateWindow(m_hWnd) ;
+    if(!m_hWnd) 
+    {
+       MessageBox(0, _T("ウィンドウを作成できませんでした"), nullptr, MB_OK);
+       return E_FAIL;
+    }
+    // ウィンドウの表示
+    ShowWindow(m_hWnd, SW_SHOW);
+    UpdateWindow(m_hWnd);
 
-	return S_OK;
+    return S_OK;
 }
 //------------------------------------------------------------------------
 //
-//	�E�B���h�E�v���V�[�W���[	
-//
-//  HWND hWnd         �E�B���h�E�n���h��
-//  UINT iMsg         ���b�Z�[�W
-//  WPARAM wParam     WPARAM
-//  LPARAM lParam     LPARAM
-//
-//	�߂�l LRESULT
-//		DefWindowProc�̖߂�l
+//  ウィンドウプロシージャ（メッセージ処理）
 //
 //------------------------------------------------------------------------
-LRESULT CMain::MsgProc(HWND hWnd,UINT iMsg,WPARAM wParam,LPARAM lParam)
+LRESULT CMain::MsgProc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
-	switch(iMsg)
-	{
-		case WM_KEYDOWN:
-		switch((char)wParam)
-		{
-			case VK_ESCAPE://ESC�L�[�ŏI��
-					PostQuitMessage(0);
-					break;
+    switch(iMsg)
+    {
+       case WM_KEYDOWN:
+       switch((char)wParam)
+       {
+          case VK_ESCAPE: // ESCキーで終了
+                PostQuitMessage(0);
+                break;
+       }
+       break;
+       case WM_DESTROY:
+             PostQuitMessage(0);
+             break;
+    }
 
-		}
-		break;
-		case WM_DESTROY:
-				PostQuitMessage(0);
-				break;
-	}
+    // ImGui のメッセージ処理
+    ImGui_ImplWin32_WndProcHandler(hWnd, iMsg, wParam, lParam);
 
-	// imGui�̑���
-	ImGui_ImplWin32_WndProcHandler(hWnd, iMsg, wParam, lParam);           // -- 2020.8.7
-
-	return DefWindowProc (hWnd, iMsg, wParam, lParam);
+    return DefWindowProc (hWnd, iMsg, wParam, lParam);
 }
 
-//------------------------------------------------------------------------ // -- 2020.1.15
+//------------------------------------------------------------------------
 //
-//	���b�Z�[�W���[�v
+//  メッセージループ
 //
-//	�A�v���P�[�V�����̃��[�v�������s��
-//	���̂Ƃ��A���[�v�̎��ԊǗ������邽�߂ɃE�F�C�g�������s��(1/60Sec)
-//	�Ȃ��A���L�̂悤�ɃE�F�C�g�������@��I���ł���
+//  アプリケーションのメインループを実行。
+//  1/60秒ごとに更新を行うためにウェイト処理を入れることが可能。
 //
-//	?@�@�A�v���P�[�V�����ŃE�F�C�g���|������@
-//		QueryPerformanceCounterty�֐����g�p���ă}�C�N���b�P�ʂ̃E�F�C�g���|����
-//		MessageProcess���\�b�h��m_MainLoopTime�����o���g�p����
-//		GameMain.cpp����Present���\�b�h�̈�����(0, 0)�Ƃ���
-//
-//	?A�@�A�v���P�[�V�����ł̓E�F�C�g���|���Ȃ����@
-//		�A�v���P�[�V�����ł̓E�F�C�g���|�����APresent���\�b�h��Vsync�ɓ���������B
-//		���̏ꍇ�AMessageProcess���\�b�h��m_MainLoopTime�����o�͎g�p���Ȃ�)
-//		GameMain.cpp����Present���\�b�h�̈�����(1, 0)�Ƃ���(Vsync�Ή�)
-//
-// �����@�Ȃ�
-//
-//	�߂�l �Ȃ�
+//  ① アプリケーション側でウェイトをかける方法
+//     QueryPerformanceCounter を使用してマイクロ秒単位で待機。
+//  ② アプリケーション側でウェイトをかけない方法 (Vsync同期)
+//     描画（Present）時に垂直同期を待つ設定にする。
 //
 //------------------------------------------------------------------------
 void CMain::MessageLoop()
 {
-
-/*
-	// ImGui
-	{
-		IMGUI_CHECKVERSION();
-		ImGui::CreateContext();
-		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
-		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;       // Enable Gamepad Controls
-
-		ImGuiStyle& style = ImGui::GetStyle();
-
-		ImGui_ImplWin32_Init(m_hWnd, WINDOW_WIDTH, WINDOW_HEIGHT);
-//		ImGui_ImplDX11_Init((ID3D11Device*)DxLib::GetUseDirect3D11Device(), (ID3D11DeviceContext*)DxLib::GetUseDirect3D11DeviceContext());
-	}
-*/
-
-#if 0
-	// 
-	// �A�v���P�[�V�����ŃE�F�C�g���|������@
-	// 
-	MSG  msg = { 0 };
-	ZeroMemory(&msg, sizeof(msg));
-	LARGE_INTEGER StartTime, EndTime, Frq;
-	QueryPerformanceFrequency(&Frq);   // �J�E���g�A�b�v���g���̎擾
-	double MicroSec = 1000000.0 / (double)Frq.QuadPart;   // �J�E���g���ԁi�}�C�N���b�P�ʁj�̎擾
-	double ElapsedTime;
-	QueryPerformanceCounter(&StartTime);		// ���[�v�J�n����
-
-	while (msg.message != WM_QUIT && m_bLoopFlag)	// ���b�Z�[�W���擾���Ă���ԌJ��Ԃ�
-	{
-		//imgui	�A�b�v�f�[�g�̍ŏ��ɌĂ�
-		//ImGui_ImplDX11_NewFrame();
-		//ImGui_ImplWin32_NewFrame();
-		//ImGui::NewFrame();
-
-		m_pGMain->Update();
-		m_pGMain->Draw();
-
-		DispFps();	 // ��������\��
-
-		float timer = MainControl::RefreshTimer();
-		if (timer > 0.0f) {
-			do {										// ���[�v���ԑҋ@�i�Œ��x�͒ʂ�j
-				if (!MessageProcess(&msg))				// ���b�Z�[�W�̏���
-				{
-					m_bLoopFlag = false;				// WM_QUIT ���b�Z�[�W���擾�����ꍇ
-					break;
-				}
-				QueryPerformanceCounter(&EndTime);		// ���[�v�I������
-				ElapsedTime = (EndTime.QuadPart - StartTime.QuadPart) * MicroSec;  // �o�ߎ���(�}�C�N���b)
-			} while (ElapsedTime < timer*1000000.0f);		// �S�̂̃E�F�C�g����(�}�C�N���b)
-			StartTime = EndTime;
-		}
-		else {
-			if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
-			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
-			QueryPerformanceCounter(&StartTime);		// ���[�v�J�n����
-		}
-
-		//imgui �`��
-		//ImGui::Render();
-		//ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-
-	}
-#endif
-
-
-#if 0	
-	// 
-	// �A�v���P�[�V�����ŃE�F�C�g���|������@
-	// 
-	MSG  msg = { 0 };
-	ZeroMemory(&msg, sizeof(msg));
-	LARGE_INTEGER StartTime, EndTime, Frq;
-	QueryPerformanceFrequency(&Frq);   // �J�E���g�A�b�v���g���̎擾
-	double MicroSec = 1000000.0 / (double)Frq.QuadPart;   // �J�E���g���ԁi�}�C�N���b�P�ʁj�̎擾
-	double ElapsedTime;
-
-	while (msg.message != WM_QUIT && m_bLoopFlag)	// ���b�Z�[�W���擾���Ă���ԌJ��Ԃ�
-	{
-		QueryPerformanceCounter(&StartTime);		// ���[�v�J�n����
-
-		Loop();										// �A�v���P�[�V�����̃��[�v����
-
-		do {										// ���[�v���ԑҋ@�i�Œ��x�͒ʂ�j
-			if (!MessageProcess(&msg))				// ���b�Z�[�W�̏���
-			{
-				m_bLoopFlag = false;				// WM_QUIT ���b�Z�[�W���擾�����ꍇ
-				break;
-			}
-			QueryPerformanceCounter(&EndTime);		// ���[�v�I������
-			ElapsedTime = (EndTime.QuadPart - StartTime.QuadPart) * MicroSec;  // �o�ߎ���(�}�C�N���b)
-		} while (ElapsedTime < m_MainLoopTime);		// �S�̂̃E�F�C�g����(�}�C�N���b)
-	}
-#endif
-
+    // 現在のコード構成では、MainControl::RefreshTimer() の設定により動作が変わる
 #if 1
-	//
-	// �A�v���P�[�V�����ł̓E�F�C�g���|���Ȃ����@
-	//
-	MSG  msg = { 0 };
-	ZeroMemory(&msg, sizeof(msg));
+    MSG  msg = { 0 };
+    ZeroMemory(&msg, sizeof(msg));
+    LARGE_INTEGER StartTime, EndTime, Frq;
+    QueryPerformanceFrequency(&Frq);   // 周波数の取得
+    double MicroSec = 1000000.0 / (double)Frq.QuadPart;   // 1カウントあたりのマイクロ秒
+    double ElapsedTime;
+    QueryPerformanceCounter(&StartTime);      // ループ開始時間
 
-	while (msg.message != WM_QUIT && m_bLoopFlag)	// ���b�Z�[�W���擾���Ă���ԌJ��Ԃ�
-	{
-		m_pGMain->Update();
-		m_pGMain->Draw();
+    while (msg.message != WM_QUIT && m_bLoopFlag)
+    {
+       // ゲームの更新と描画
+       m_pGMain->Update();
+       m_pGMain->Draw();
 
-		DispFps();	 // ��������\��
+       // FPS表示
+       DispFps();
 
-		if( PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE) )
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-		else{
-//			Loop();									// �A�v���P�[�V�����̃��[�v����
-		}
-	}
+       float timer = MainControl::RefreshTimer();
+       if (timer > 0.0f) {
+          // 自前でウェイトをかける処理（タイマー指定時）
+          do {
+             if (!MessageProcess(&msg)) 
+             {
+                m_bLoopFlag = false; // WM_QUIT受信
+                break;
+             }
+             QueryPerformanceCounter(&EndTime);
+             ElapsedTime = (EndTime.QuadPart - StartTime.QuadPart) * MicroSec;
+          } while (ElapsedTime < timer * 1000000.0f); // 設定時間までループ
+          StartTime = EndTime;
+       }
+       else {
+          // Vsync 等に任せる場合、またはメッセージ主導
+          if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+          {
+             TranslateMessage(&msg);
+             DispatchMessage(&msg);
+          }
+          QueryPerformanceCounter(&StartTime);
+       }
+    }
 #endif
 }
 
 //------------------------------------------------------------------------
 //
-//	���b�Z�[�W����
-//
-// MSG* pMsg      ���b�Z�[�W
-//
-//	�߂�l bool
-//     WM_QUIT �ȊO�̃��b�Z�[�W���擾�����ꍇ:true
-//     WM_QUIT ���b�Z�[�W���擾�����ꍇ      :false
+//  メッセージプロセス（メッセージが溜まっている間の処理）
 //
 //------------------------------------------------------------------------
 bool CMain::MessageProcess(MSG* pMsg)
 {
-	while ((pMsg->message != WM_QUIT && m_bLoopFlag) &&
-		PeekMessage(pMsg, nullptr, 0, 0, PM_REMOVE))    // ���b�Z�[�W���擾���Ă���ԌJ��Ԃ�
-	{
-		TranslateMessage(pMsg);
-		DispatchMessage(pMsg);
-	}
+    while ((pMsg->message != WM_QUIT && m_bLoopFlag) &&
+       PeekMessage(pMsg, nullptr, 0, 0, PM_REMOVE))
+    {
+       TranslateMessage(pMsg);
+       DispatchMessage(pMsg);
+    }
 
-	if (pMsg->message == WM_QUIT || m_bLoopFlag == false)
-	{
-		return false;
-	}
-	else {
-		return true;
-	}
+    if (pMsg->message == WM_QUIT || m_bLoopFlag == false)
+    {
+       return false;
+    }
+    else {
+       return true;
+    }
 }
 
 //------------------------------------------------------------------------
 //
-//	�A�v���P�[�V�����̏���������
-//
-// �����@�Ȃ�
-//
-//	�߂�l HRESULT
-//		S_OK	= ����
-//		E_FAIL	= �ُ�
+//  初期化処理
 //
 //------------------------------------------------------------------------
 HRESULT CMain::Init()
 {
-	m_pGMain = new CGameMain( this ); // �Q�[�����C���N���X�̐���
-	m_pGMain->Init();                 // �Q�[�����C���N���X�̏�����
+    m_pGMain = new CGameMain( this ); // ゲームメインクラスの生成
+    m_pGMain->Init();                 // ゲーム初期化
 
-	return S_OK;
+    return S_OK;
 }
 
 //------------------------------------------------------------------------
 //
-//	�A�v���P�[�V�����̃��C�����[�v����
-//
-// �����@�Ȃ�
-//
-//	�߂�l �Ȃ�
+//  メインループ処理（簡易呼び出し用）
 //
 //------------------------------------------------------------------------
 void CMain::Loop()
 {
-	m_pGMain->Draw();
-	m_pGMain->Update();
-
-	// ��������\��
-	DispFps();
+    m_pGMain->Draw();
+    m_pGMain->Update();
+    DispFps();
 }
 
 //------------------------------------------------------------------------
 //
-//	�A�v���P�[�V�����̏I������
-//
-// �����@�Ȃ�
-//
-//	�߂�l �Ȃ�
+//  終了処理
 //
 //------------------------------------------------------------------------
 void CMain::Quit()
 {
-	m_pGMain->Quit();
-
+    m_pGMain->Quit();
 }
 
 //------------------------------------------------------------------------
 //
-//	�^�C�g���o�[�ɂ�������\��
-//
-// �����@�Ȃ�
-//
-//	�߂�l �Ȃ�
+//  タイトルバーにFPSを表示
 //
 //------------------------------------------------------------------------
 void CMain::DispFps()
 {
-	static DWORD time = 0;
-	static int frame = 0;
-	frame++;
-	TCHAR str[50];
-	_stprintf_s(str, _T("    fps=%d"), frame);
-	if (timeGetTime() - time > 1000) {
-		time = timeGetTime();
-		frame = 0;
-		TCHAR AppName[256] = { 0 };
-		GetClassName(m_hWnd, AppName, sizeof(AppName) / sizeof(TCHAR));
-		_tcscat_s(AppName, str);
-		SetWindowText(m_hWnd, AppName);
-	}
-
+    static DWORD time = 0;
+    static int frame = 0;
+    frame++;
+    TCHAR str[50];
+    _stprintf_s(str, _T("    fps=%d"), frame);
+    if (timeGetTime() - time > 1000) {
+       time = timeGetTime();
+       frame = 0;
+       TCHAR AppName[256] = { 0 };
+       GetClassName(m_hWnd, AppName, sizeof(AppName) / sizeof(TCHAR));
+       _tcscat_s(AppName, str);
+       SetWindowText(m_hWnd, AppName);
+    }
 }
-

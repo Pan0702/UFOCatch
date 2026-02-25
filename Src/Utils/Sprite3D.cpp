@@ -1,9 +1,9 @@
-// ========================================================================================
+﻿// ========================================================================================
 //
-// ?R?c?p??X?v???C?g?????                                        ver 3.3        2024.10.5
+// 3Dおよび2Dスプライト描画ライブラリ                                ver 3.3        2024.10.5
 //
-//   ?|???S????\??????�yX?B?E????\?????
-//   Sprite3D.cpp Direct3D.h ???�yX?????�%???
+//   ポリゴンでの画像表示、およびライン・矩形表示を行います
+//   Sprite3D.cpp Direct3D.h などと連携して動作します
 //
 //                                                                             Sprite3D.cpp
 // ========================================================================================
@@ -22,9 +22,9 @@ CSpriteImage::CSpriteImage(const TCHAR* TName) : CSpriteImage(GameDevice()->m_pS
 
 //------------------------------------------------------------------------
 //
-//	?X?v???C?g?C???[?W??R???X?g???N?^	
+//  スプライトイメージのコンストラクタ  
 //
-//  ?????@CShader* pShader
+//  引数：CShader* pShader
 //
 //------------------------------------------------------------------------
 CSpriteImage::CSpriteImage(CShader* pShader)
@@ -36,10 +36,10 @@ CSpriteImage::CSpriteImage(CShader* pShader)
 
 //------------------------------------------------------------------------
 //
-//	?X?v???C?g?C???[?W??R???X?g???N?^	
+//  スプライトイメージのコンストラクタ  
 //
-//	CShader* pShader
-//  const TCHAR*   TName  ?X?v???C?g?t?@?C????
+//  CShader* pShader
+//  const TCHAR* TName  スプライトファイル名
 //
 //------------------------------------------------------------------------
 CSpriteImage::CSpriteImage(CShader* pShader, const TCHAR* TName)
@@ -52,7 +52,7 @@ CSpriteImage::CSpriteImage(CShader* pShader, const TCHAR* TName)
 
 //------------------------------------------------------------------------
 //
-//	?X?v???C?g?C???[?W??f?X?g???N?^	
+//  スプライトイメージのデストラクタ    
 //
 //------------------------------------------------------------------------
 CSpriteImage::~CSpriteImage()
@@ -61,15 +61,15 @@ CSpriteImage::~CSpriteImage()
 }
 
 //------------------------------------------------------------------------
-//	?X?v???C?g?C???[?W???????	
+//  スプライトイメージの読み込み  
 //
-//	?w?????X?v???C?g?t?@?C??????C???[?W???????
+//  指定されたスプライトファイルからイメージを読み込む
 //
-//  const TCHAR*   TName  ?X?v???C?g?t?@?C????
+//  const TCHAR* TName  スプライトファイル名
 //
-//	???l HRESULT
-//		S_OK	= ????
-//		E_FAIL	= ?t?@?C?????????�?????
+//  戻り値 HRESULT
+//     S_OK   = 成功
+//     E_FAIL = ファイルが見つからない等の失敗
 //------------------------------------------------------------------------
 HRESULT CSpriteImage::Load(const TCHAR* TName)
 {
@@ -87,9 +87,9 @@ CSprite::CSprite() : CSprite(GameDevice()->m_pShader)
 
 //------------------------------------------------------------------------
 //
-//	?X?v???C?g??R???X?g???N?^	
+//  スプライトのコンストラクタ  
 //
-//  ?????@CShader* pShader
+//  引数：CShader* pShader
 //
 //------------------------------------------------------------------------
 CSprite::CSprite(CShader* pShader)
@@ -103,10 +103,10 @@ CSprite::CSprite(CShader* pShader)
 
 //------------------------------------------------------------------------
 //                                                         // -- 2017.10.9
-//	?X?v???C?g??R???X?g???N?^	
+//  スプライトのコンストラクタ  
 //
-//  ????
-//  CSpriteImage* pImage      ?X?v???C?g?C???[?W?|?C???^
+//  引数
+//  CSpriteImage* pImage      スプライトイメージポインタ
 //
 //------------------------------------------------------------------------
 CSprite::CSprite(CSpriteImage* pImage)
@@ -121,13 +121,13 @@ CSprite::CSprite(CSpriteImage* pImage)
 
 //------------------------------------------------------------------------
 //
-//	?X?v???C?g??R???X?g???N?^	
+//  スプライトのコンストラクタ  
 //
-//  CSpriteImage*        pImage      ?X?v???C?g?C???[?W?|?C???^
-//  const DWORD&         srcX        ?p?^?[???????@?w???W
-//  const DWORD&         srcY        ?p?^?[???????@?x???W
-//  const DWORD&         srcwidth    ?p?^?[?????
-//  const DWORD&         srcheight   ?p?^?[???????
+//  CSpriteImage* pImage      スプライトイメージポインタ
+//  const DWORD&         srcX        切り取り元の開始位置X座標
+//  const DWORD&         srcY        切り取り元の開始位置Y座標
+//  const DWORD&         srcwidth    切り取り元の幅
+//  const DWORD&         srcheight   切り取り元の高さ
 //
 //------------------------------------------------------------------------
 CSprite::CSprite(CSpriteImage* pImage, const DWORD& srcX, const DWORD& srcY, const DWORD& srcwidth,
@@ -143,15 +143,15 @@ CSprite::CSprite(CSpriteImage* pImage, const DWORD& srcX, const DWORD& srcY, con
 
 //------------------------------------------------------------------------
 //
-//	?X?v???C?g??R???X?g???N?^	
+//  スプライトのコンストラクタ  
 //
-//  CSpriteImage*        pImage      ?X?v???C?g?C???[?W?|?C???^
-//  const DWORD&         srcX        ?p?^?[???????@?w???W
-//  const DWORD&         srcY        ?p?^?[???????@?x???W
-//  const DWORD&         srcwidth    ?p?^?[?????
-//  const DWORD&         srcheight   ?p?^?[???????
-//  const DWORD&         destwidth   ?\?????
-//  const DWORD&         destheight  ?\???????
+//  CSpriteImage* pImage      スプライトイメージポインタ
+//  const DWORD&         srcX        切り取り元の開始位置X座標
+//  const DWORD&         srcY        切り取り元の開始位置Y座標
+//  const DWORD&         srcwidth    切り取り元の幅
+//  const DWORD&         srcheight   切り取り元の高さ
+//  const DWORD&         destwidth   表示幅
+//  const DWORD&         destheight  表示高さ
 //
 //------------------------------------------------------------------------
 CSprite::CSprite(CSpriteImage* pImage, const DWORD& srcX, const DWORD& srcY, const DWORD& srcwidth,
@@ -167,7 +167,7 @@ CSprite::CSprite(CSpriteImage* pImage, const DWORD& srcX, const DWORD& srcY, con
 
 //------------------------------------------------------------------------
 //
-//	?X?v???C?g??f?X?g???N?^	
+//  スプライトのデストラクタ    
 //
 //------------------------------------------------------------------------
 CSprite::~CSprite()
@@ -175,14 +175,14 @@ CSprite::~CSprite()
     SAFE_RELEASE(m_pVertexBufferSprite);
     SAFE_RELEASE(m_pVertexBufferLine);
     SAFE_RELEASE(m_pVertexBufferRect);
-    SAFE_RELEASE(m_pVertexBufferBillSprite); // 3DSprite
+    SAFE_RELEASE(m_pVertexBufferBillSprite); // 3DSprite用
 }
 
 //------------------------------------------------------------------------
 //                                                         // -- 2017.10.9
-//	?X?v???C?g??C???[?W??????	
+//  スプライトのイメージを設定  
 //
-//  CSpriteImage* pImage      ?X?v???C?g?C???[?W?|?C???^
+//  CSpriteImage* pImage      スプライトイメージポインタ
 //
 //------------------------------------------------------------------------
 void CSprite::SetImage(CSpriteImage* pImage)
@@ -192,17 +192,17 @@ void CSprite::SetImage(CSpriteImage* pImage)
 
 //------------------------------------------------------------------------
 //
-//	?X?v???C?g??C???[?W???u?A?????????????	
+//  スプライトのイメージ位置、サイズ情報を更新する 
 //
-//  CSpriteImage*        pImage      ?X?v???C?g?C???[?W?|?C???^
-//  const DWORD&         srcX        ?p?^?[???????@?w???W
-//  const DWORD&         srcY        ?p?^?[???????@?x???W
-//  const DWORD&         srcwidth    ?p?^?[?????
-//  const DWORD&         srcheight   ?p?^?[???????
+//  CSpriteImage* pImage      スプライトイメージポインタ
+//  const DWORD&         srcX        切り取り元の開始位置X座標
+//  const DWORD&         srcY        切り取り元の開始位置Y座標
+//  const DWORD&         srcwidth    切り取り元の幅
+//  const DWORD&         srcheight   切り取り元の高さ
 //
-//	???l HRESULT
-//		S_OK	= ????
-//		E_FAIL	= ???
+//  戻り値 HRESULT
+//     S_OK   = 成功
+//     E_FAIL = 失敗
 //
 //------------------------------------------------------------------------
 HRESULT CSprite::SetSrc(CSpriteImage* pImage, const DWORD& srcX, const DWORD& srcY, const DWORD& srcwidth,
@@ -214,19 +214,19 @@ HRESULT CSprite::SetSrc(CSpriteImage* pImage, const DWORD& srcX, const DWORD& sr
 
 //------------------------------------------------------------------------
 //
-//	?X?v???C?g??C???[?W???u?A?????????????	
+//  スプライトのイメージ位置、サイズ情報を更新する 
 //
-//  CSpriteImage*        pImage      ?X?v???C?g?C???[?W?|?C???^
-//  const DWORD&         srcX        ?p?^?[???????@?w???W
-//  const DWORD&         srcY        ?p?^?[???????@?x???W
-//  const DWORD&         srcwidth    ?p?^?[?????
-//  const DWORD&         srcheight   ?p?^?[???????
-//  const DWORD&         destwidth   ?\?????
-//  const DWORD&         destheight  ?\???????
+//  CSpriteImage* pImage      スプライトイメージポインタ
+//  const DWORD&         srcX        切り取り元の開始位置X座標
+//  const DWORD&         srcY        切り取り元の開始位置Y座標
+//  const DWORD&         srcwidth    切り取り元の幅
+//  const DWORD&         srcheight   切り取り元の高さ
+//  const DWORD&         destwidth   表示幅
+//  const DWORD&         destheight  表示高さ
 //
-//	???l HRESULT
-//		S_OK	= ????
-//		E_FAIL	= ???
+//  戻り値 HRESULT
+//     S_OK   = 成功
+//     E_FAIL = 失敗
 //
 //------------------------------------------------------------------------
 HRESULT CSprite::SetSrc(CSpriteImage* pImage, const DWORD& srcX, const DWORD& srcY, const DWORD& srcwidth,
@@ -238,16 +238,16 @@ HRESULT CSprite::SetSrc(CSpriteImage* pImage, const DWORD& srcX, const DWORD& sr
 
 //------------------------------------------------------------------------
 //
-//	?X?v???C?g??C???[?W???u?A?????????????	
+//  スプライトのイメージ位置、サイズ情報を更新する 
 //
-//  const DWORD&         srcX        ?p?^?[???????@?w???W
-//  const DWORD&         srcY        ?p?^?[???????@?x???W
-//  const DWORD&         srcwidth    ?p?^?[?????
-//  const DWORD&         srcheight   ?p?^?[???????
+//  const DWORD&         srcX        切り取り元の開始位置X座標
+//  const DWORD&         srcY        切り取り元の開始位置Y座標
+//  const DWORD&         srcwidth    切り取り元の幅
+//  const DWORD&         srcheight   切り取り元の高さ
 //
-//	???l HRESULT
-//		S_OK	= ????
-//		E_FAIL	= ???
+//  戻り値 HRESULT
+//     S_OK   = 成功
+//     E_FAIL = 失敗
 //
 //------------------------------------------------------------------------
 HRESULT CSprite::SetSrc(const DWORD& srcX, const DWORD& srcY, const DWORD& srcwidth, const DWORD& srcheight)
@@ -257,24 +257,24 @@ HRESULT CSprite::SetSrc(const DWORD& srcX, const DWORD& srcY, const DWORD& srcwi
 
 //------------------------------------------------------------------------
 //
-//	?X?v???C?g??C???[?W???u?A?????????????	
+//  スプライトのイメージ位置、サイズ情報を更新する 
 //
-//  const DWORD&         srcX        ?p?^?[???????@?w???W
-//  const DWORD&         srcY        ?p?^?[???????@?x???W
-//  const DWORD&         srcwidth    ?p?^?[?????
-//  const DWORD&         srcheight   ?p?^?[???????
-//  const DWORD&         destwidth   ?\?????
-//  const DWORD&         destheight  ?\???????
+//  const DWORD&         srcX        切り取り元の開始位置X座標
+//  const DWORD&         srcY        切り取り元の開始位置Y座標
+//  const DWORD&         srcwidth    切り取り元の幅
+//  const DWORD&         srcheight   切り取り元の高さ
+//  const DWORD&         destwidth   表示幅
+//  const DWORD&         destheight  表示高さ
 //
-//	???l HRESULT
-//		S_OK	= ????
-//		E_FAIL	= ???
+//  戻り値 HRESULT
+//     S_OK   = 成功
+//     E_FAIL = 失敗
 //
 //------------------------------------------------------------------------
 HRESULT CSprite::SetSrc(const DWORD& srcX, const DWORD& srcY, const DWORD& srcwidth, const DWORD& srcheight,
                         const DWORD& destwidth, const DWORD& destheight)
 {
-    // ?X?v???C?g?p??�|???S?????????A?o?[?e?b?N?X?o?b?t?@????????
+    // スプライト用のポリゴンを作成し、頂点バッファを更新する
     m_dwSrcX = srcX;
     m_dwSrcY = srcY;
     m_dwSrcWidth = srcwidth;
@@ -282,34 +282,31 @@ HRESULT CSprite::SetSrc(const DWORD& srcX, const DWORD& srcY, const DWORD& srcwi
     m_dwDestWidth = destwidth;
     m_dwDestHeight = destheight;
 
-    //?o?[?e?b?N?X?o?b?t?@?[??
-    //?C???�??�??Bz?l???P?????????B?N???b?v????z=1??�H????????????B??????????`?��?????B
+    // 頂点バッファデータ
+    // インデックス構成：z値は1.0で固定（プロジェクション変換後にz=1になるよう調整）。描画順に注意。
     SpriteVertex vertices[] =
     {
-        VECTOR3(0, (float)m_dwDestHeight, 0),
-        VECTOR2((float)m_dwSrcX / m_pImage->m_dwImageWidth,
-                (float)(m_dwSrcY + m_dwSrcHeight) / m_pImage->m_dwImageHeight), //???_1  ????
-        VECTOR3(0, 0, 0),
-        VECTOR2((float)m_dwSrcX / m_pImage->m_dwImageWidth, (float)m_dwSrcY / m_pImage->m_dwImageHeight),
-        //???_2?@????  // -- 2024.3.23
-        VECTOR3((float)m_dwDestWidth, (float)m_dwDestHeight, 0),
-        VECTOR2((float)(m_dwSrcX + m_dwSrcWidth) / m_pImage->m_dwImageWidth,
-                (float)(m_dwSrcY + m_dwSrcHeight) / m_pImage->m_dwImageHeight), //???_3?@?E??  // -- 2024.3.23
-        VECTOR3((float)m_dwDestWidth, 0, 0),
-        VECTOR2((float)(m_dwSrcX + m_dwSrcWidth) / m_pImage->m_dwImageWidth,
-                (float)m_dwSrcY / m_pImage->m_dwImageHeight), //???_4?@?E??
+        { VECTOR3(0, (float)m_dwDestHeight, 0),
+          VECTOR2((float)m_dwSrcX / m_pImage->m_dwImageWidth,
+                  (float)(m_dwSrcY + m_dwSrcHeight) / m_pImage->m_dwImageHeight) }, // 頂点1：左下
+        { VECTOR3(0, 0, 0),
+          VECTOR2((float)m_dwSrcX / m_pImage->m_dwImageWidth, (float)m_dwSrcY / m_pImage->m_dwImageHeight) }, // 頂点2：左上
+        { VECTOR3((float)m_dwDestWidth, (float)m_dwDestHeight, 0),
+          VECTOR2((float)(m_dwSrcX + m_dwSrcWidth) / m_pImage->m_dwImageWidth,
+                  (float)(m_dwSrcY + m_dwSrcHeight) / m_pImage->m_dwImageHeight) }, // 頂点3：右下
+        { VECTOR3((float)m_dwDestWidth, 0, 0),
+          VECTOR2((float)(m_dwSrcX + m_dwSrcWidth) / m_pImage->m_dwImageWidth,
+                  (float)m_dwSrcY / m_pImage->m_dwImageHeight) }, // 頂点4：右上
     };
 
-    // ?o?[?e?b?N?X?o?b?t?@?????�H???�x????????`?F?b?N????
+    // 頂点バッファが未作成か、あるいは更新が必要かをチェック
     if (m_pVertexBufferSprite == nullptr)
     {
-        // ?V?K??????
+        // 新規作成
         D3D11_BUFFER_DESC bd;
-        //bd.Usage          = D3D11_USAGE_DEFAULT;
         bd.Usage = D3D11_USAGE_DYNAMIC;
         bd.ByteWidth = sizeof(SpriteVertex) * 4;
         bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-        //bd.CPUAccessFlags = 0;
         bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
         bd.MiscFlags = 0;
 
@@ -317,17 +314,17 @@ HRESULT CSprite::SetSrc(const DWORD& srcX, const DWORD& srcY, const DWORD& srcwi
         InitData.pSysMem = vertices;
         if (FAILED(m_pD3D->m_pDevice->CreateBuffer(&bd, &InitData, &m_pVertexBufferSprite)))
         {
-            MessageBox(0, _T("Sprite.cpp ?o?[?e?b?N?X?o?b?t?@?[?????s"), nullptr, MB_OK);
+            MessageBox(0, _T("Sprite.cpp 頂点バッファ作成失敗"), nullptr, MB_OK);
             return E_FAIL;
         }
     }
     else
     {
-        // ???�H???�x?????A?o?[?e?b?N?X?o?b?t?@???????????????
+        // 作成済みの場合は、内容のみ更新（動的な書き換え）
         D3D11_MAPPED_SUBRESOURCE msr;
         if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pVertexBufferSprite, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr)))
         {
-            memcpy(msr.pData, vertices, sizeof(SpriteVertex) * 4); // 4???_???R?s?[
+            memcpy(msr.pData, vertices, sizeof(SpriteVertex) * 4); // 4頂点分コピー
             m_pD3D->m_pDeviceContext->Unmap(m_pVertexBufferSprite, 0);
         }
     }
@@ -337,18 +334,16 @@ HRESULT CSprite::SetSrc(const DWORD& srcX, const DWORD& srcY, const DWORD& srcwi
 
 //------------------------------------------------------------------------
 //
-//	?X?v???C?g??????????_?????O
+//  スプライトを指定位置にレンダリング
 //
-//  CSpriteImage* pImage      ?X?v???C?g?C???[?W?|?C???^
-//  const float&         posX        ?\????u?????@?w???W
-//  const float&         posY        ?\????u?????@?x???W
-//  const DWORD&         srcX        ?p?^?[???????@?w???W
-//  const DWORD&         srcY        ?p?^?[???????@?x???W
-//  const DWORD&         srcwidth    ?p?^?[?????
-//  const DWORD&         srcheight   ?p?^?[???????
-//  const float&         fAlpha      ?????x
-//
-//	???l  ???
+//  CSpriteImage* pImage      スプライトイメージポインタ
+//  const float&         posX        表示位置X座標
+//  const float&         posY        表示位置Y座標
+//  const DWORD&         srcX        切り取り元X座標
+//  const DWORD&         srcY        切り取り元Y座標
+//  const DWORD&         srcwidth    切り取り元の幅
+//  const DWORD&         srcheight   切り取り元の高さ
+//  const float&         fAlpha      透明度
 //
 //------------------------------------------------------------------------
 void CSprite::Draw(CSpriteImage* pImage, const float& posX, const float& posY, const DWORD& srcX, const DWORD& srcY,
@@ -363,20 +358,19 @@ void CSprite::Draw(CSpriteImage* pImage, const float& posX, const float& posY, c
 
 //------------------------------------------------------------------------
 //
-//  ���ץ饤������
+//  スプライト描画
 //
-//  CSpriteImage* pImage      ���ץ饤�Ȳ����ݥ���
-//  const float&         posX        ɽ�����֤�X��ɸ
-//  const float&         posY        ɽ�����֤�Y��ɸ
-//  const DWORD&         srcX        �ѥ������X��ɸ
-//  const DWORD&         srcY        �ѥ������Y��ɸ
-//  const DWORD&         srcwidth    �ѥ��������
-//  const DWORD&         srcheight   �ѥ�����ι⤵
-//  const DWORD&         destwidth   ɽ������
-//  const DWORD&         destheight  ɽ���ι⤵
-//  const float&         fAlpha      Ʃ����
+//  CSpriteImage* pImage      スプライト画像ポインタ
+//  const float&         posX        表示位置のX座標
+//  const float&         posY        表示位置のY座標
+//  const DWORD&         srcX        切り取り元のX座標
+//  const DWORD&         srcY        切り取り元のY座標
+//  const DWORD&         srcwidth    切り取り元の幅
+//  const DWORD&         srcheight   切り取り元の高さ
+//  const DWORD&         destwidth   表示幅
+//  const DWORD&         destheight  表示高さ
+//  const float&         fAlpha      透明度
 //
-//  �����  �ʤ�
 //------------------------------------------------------------------------
 void CSprite::Draw(CSpriteImage* pImage, const float& posX, const float& posY, const DWORD& srcX, const DWORD& srcY,
                    const DWORD& srcwidth, const DWORD& srcheight, const DWORD& destwidth, const DWORD& destheight,
@@ -391,17 +385,15 @@ void CSprite::Draw(CSpriteImage* pImage, const float& posX, const float& posY, c
 
 //------------------------------------------------------------------------
 //
-//	?X?v???C?g??????????_?????O
+//  スプライトを指定位置にレンダリング
 //
-//  CSpriteImage* pImage      ?X?v???C?g?C???[?W?|?C???^
-//  const MATRIX4X4&    mWorld      ?\????u????[???h?}?g???b?N?X
-//  const DWORD&         srcX        ?p?^?[???????@?w???W
-//  const DWORD&         srcY        ?p?^?[???????@?x???W
-//  const DWORD&         srcwidth    ?p?^?[?????
-//  const DWORD&         srcheight   ?p?^?[???????
-//  const float&         fAlpha      ?????x
-//
-//	???l  ???
+//  CSpriteImage* pImage      スプライトイメージポインタ
+//  const MATRIX4X4&    mWorld      表示位置用ワールドマトリックス
+//  const DWORD&         srcX        切り取り元X座標
+//  const DWORD&         srcY        切り取り元Y座標
+//  const DWORD&         srcwidth    切り取り元の幅
+//  const DWORD&         srcheight   切り取り元の高さ
+//  const float&         fAlpha      透明度
 //
 //------------------------------------------------------------------------
 void CSprite::Draw(CSpriteImage* pImage, const MATRIX4X4& mWorld, const DWORD& srcX, const DWORD& srcY,
@@ -416,19 +408,17 @@ void CSprite::Draw(CSpriteImage* pImage, const MATRIX4X4& mWorld, const DWORD& s
 
 //------------------------------------------------------------------------
 //
-//	?X?v???C?g??????????_?????O
+//  スプライトを指定位置にレンダリング
 //
-//  CSpriteImage* pImage      ?X?v???C?g?C???[?W?|?C???^
-//  const MATRIX4X4&    mWorld      ?\????u????[???h?}?g???b?N?X
-//  const DWORD&         srcX        ?p?^?[???????@?w???W
-//  const DWORD&         srcY        ?p?^?[???????@?x???W
-//  const DWORD&         srcwidth    ?p?^?[?????
-//  const DWORD&         srcheight   ?p?^?[???????
-//  const DWORD&         destwidth   ?\?????
-//  const DWORD&         destheight  ?\???????
-//  const float&         fAlpha      ?????x
-//
-//	???l  ???
+//  CSpriteImage* pImage      スプライトイメージポインタ
+//  const MATRIX4X4&    mWorld      表示位置用ワールドマトリックス
+//  const DWORD&         srcX        切り取り元X座標
+//  const DWORD&         srcY        切り取り元Y座標
+//  const DWORD&         srcwidth    切り取り元の幅
+//  const DWORD&         srcheight   切り取り元の高さ
+//  const DWORD&         destwidth   表示幅
+//  const DWORD&         destheight  表示高さ
+//  const float&         fAlpha      透明度
 //
 //------------------------------------------------------------------------
 void CSprite::Draw(CSpriteImage* pImage, const MATRIX4X4& mWorld, const DWORD& srcX, const DWORD& srcY,
@@ -444,12 +434,10 @@ void CSprite::Draw(CSpriteImage* pImage, const MATRIX4X4& mWorld, const DWORD& s
 
 //------------------------------------------------------------------------
 //
-//	?X?v???C?g??????????_?????O
+//  スプライトを指定位置にレンダリング
 //
-//  const float&         posX     ?\????u?????@?w???W
-//  const float&         posY     ?\????u?????@?x???W
-//
-//	???l  ???
+//  const float&         posX     表示位置X座標
+//  const float&         posY     表示位置Y座標
 //
 //------------------------------------------------------------------------
 void CSprite::Draw(const float& posX, const float& posY)
@@ -462,76 +450,72 @@ void CSprite::Draw(const float& posX, const float& posY)
 
 //------------------------------------------------------------------------
 //
-//	?X?v???C?g??????????_?????O?@?T?u???
+//  スプライトを指定位置にレンダリング（サブルーチン）
 //
-//  const MATRIX4X4&    mWorld   ?\????u????[???h?}?g???b?N?X
-//
-//	???l  ???
+//  const MATRIX4X4&    mWorld   表示位置用ワールドマトリックス
 //
 //------------------------------------------------------------------------
 void CSprite::Draw(const MATRIX4X4& mWorld)
 {
-    //?g?p????V?F?[?_?[??Z?b?g
+    // 使用するシェーダーをセット
     SetShader();
 
-    //?o?[?e?b?N?X?o?b?t?@?[???Z?b?g
+    // 頂点バッファをセット
     UINT stride = sizeof(SpriteVertex);
     UINT offset = 0;
     m_pD3D->m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBufferSprite, &stride, &offset);
 
-    //?V?F?[?_?[??R???X?^???g?o?b?t?@?[??e??f?[?^??n??
+    // シェーダーの定数バッファへ各種データを渡す
     D3D11_MAPPED_SUBRESOURCE pData;
     CONSTANT_BUFFER_SPRITE cb;
     if (SUCCEEDED(
         m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferSprite3D, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
     {
-        //???[???h?s???n??
+        // ワールド行列を渡す
         cb.mW = XMMatrixTranspose(mWorld);
 
-        //?r???[?|?[?g?T?C?Y??n???i?N???C?A???g???????c?j
+        // ビューポートサイズを渡す（スクリーン座標計算用）
         cb.ViewPortWidth = (float)m_pD3D->m_dwWindowWidth;
         cb.ViewPortHeight = (float)m_pD3D->m_dwWindowHeight;
         cb.vUVOffset.x = (float)m_ofX / m_pImage->m_dwImageWidth;
         cb.vUVOffset.y = (float)m_ofY / m_pImage->m_dwImageHeight;
         cb.vColor = m_vDiffuse; // -- 2020.1.24
-        cb.vMatInfo = VECTOR4(1, 0, 0, 0); // ?e?N?X?`???L??
+        cb.vMatInfo = VECTOR4(1, 0, 0, 0); // テクスチャあり
         memcpy_s(pData.pData, pData.RowPitch, (void*)(&cb), sizeof(cb));
         m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferSprite3D, 0);
     }
 
-    //?e?N?X?`???[???V?F?[?_?[??n??
+    // テクスチャをシェーダーへ渡す
     m_pD3D->m_pDeviceContext->PSSetShaderResources(0, 1, &m_pImage->m_pTexture);
 
-    //?v???~?e?B?u???????_?????O
+    // プリミティブをレンダリング（4頂点のトライアングルストリップ）
     m_pD3D->m_pDeviceContext->Draw(4, 0);
 
-    //	?V?F?[?_?[???????Z?b?g
+    // シェーダー設定をリセット
     ResetShader();
 }
 
 //------------------------------------------------------------------------
 //
-//	???C????????????_?????O?@?T?u???                                         // -- 2017.10.9
+//  ラインを指定位置にレンダリング（サブルーチン）                                         // -- 2017.10.9
 //
-//  ?i????A?F?????x??m_vDiffuse???g?p???�%?????B??????????w??�H???j
+//  （注意：色と透明度は m_vDiffuse を使用せず、引数で指定されたものを使用）
 //
-//  const float& StartX     ???C???`??@?J?n?w???W
-//  const float& StartY     ???C???`??@?J?n?x???W
-//  const float& EndX       ???C???`??@?I???w???W
-//  const float& EndY       ???C???`??@?I???x???W
-//  const DWORD& WidthIn    ???C????????i?P???j
-//  const DWORD& colorABGR  ???F?@colorABGR??AABGR??w??B??F???F??(0x00ffffff)  ??????RGB(1,1,1)
-//  const float& fAlpha     ?????x?i????l??1.0f?j
-//
-//	???l  ???
+//  const float& StartX     ライン描画の開始X座標
+//  const float& StartY     ライン描画の開始Y座標
+//  const float& EndX       ライン描画の終了X座標
+//  const float& EndY       ライン描画の終了Y座標
+//  const DWORD& WidthIn    ラインの太さ（ピクセル）
+//  const DWORD& colorABGR  ライン色（0xAABBGR形式）
+//  const float& fAlpha     透明度（初期値1.0f）
 //
 //------------------------------------------------------------------------
 void CSprite::DrawLine(const float& StartX, const float& StartY, const float& EndX, const float& EndY,
                        const DWORD& WidthIn, const DWORD& colorABGR, const float& fAlpha)
 {
-    DWORD Width = WidthIn; // ???C???????
+    DWORD Width = WidthIn; // ラインの太さ
 
-    // ?????????????????�%??????????`?ذ???
+    // 画面外に完全に外れている場合は描画処理を行わない（クリッピング）
     if ((StartX < 0 && EndX < 0) || (StartY < 0 && EndY < 0) ||
         (StartX > m_pD3D->m_dwWindowWidth && EndX > m_pD3D->m_dwWindowWidth) ||
         (StartY > m_pD3D->m_dwWindowHeight && EndY > m_pD3D->m_dwWindowHeight))
@@ -539,26 +523,23 @@ void CSprite::DrawLine(const float& StartX, const float& StartY, const float& En
         return;
     }
 
-    //?g?p????V?F?[?_?[??Z?b?g
+    // 使用するシェーダーをセット
     SetShader();
 
-    // ???|???S???o?[?e?b?N?X?o?b?t?@?[??
+    // ライン用の頂点バッファデータ
     SpriteVertex vertices[] =
     {
-        {VECTOR3(StartX, StartY, 0), VECTOR2(0, 0)}, //???_1
-        {VECTOR3(EndX, EndY, 0), VECTOR2(0, 0)} //???_2
+        {VECTOR3(StartX, StartY, 0), VECTOR2(0, 0)}, // 頂点1
+        {VECTOR3(EndX, EndY, 0), VECTOR2(0, 0)}      // 頂点2
     };
 
-    // ?o?[?e?b?N?X?o?b?t?@?????�H???�x????????`?F?b?N????
+    // 頂点バッファが未作成かチェックし、動的に更新
     if (m_pVertexBufferLine == nullptr)
     {
-        // ?V?K??????
         D3D11_BUFFER_DESC bd;
-        //bd.Usage          = D3D11_USAGE_DEFAULT;
         bd.Usage = D3D11_USAGE_DYNAMIC;
         bd.ByteWidth = sizeof(SpriteVertex) * 2;
         bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-        //bd.CPUAccessFlags = 0;
         bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
         bd.MiscFlags = 0;
 
@@ -566,142 +547,127 @@ void CSprite::DrawLine(const float& StartX, const float& StartY, const float& En
         InitData.pSysMem = vertices;
         if (FAILED(m_pD3D->m_pDevice->CreateBuffer(&bd, &InitData, &m_pVertexBufferLine)))
         {
-            MessageBox(0, _T("Sprite.cpp ?o?[?e?b?N?X?o?b?t?@?[LINE ?????s"), nullptr, MB_OK);
+            MessageBox(0, _T("Sprite.cpp 頂点バッファ作成失敗(LINE)"), nullptr, MB_OK);
             return;
         }
     }
     else
     {
-        // ???�H???�x?????A?o?[?e?b?N?X?o?b?t?@???????????????
         D3D11_MAPPED_SUBRESOURCE msr;
         if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pVertexBufferLine, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr)))
         {
-            memcpy(msr.pData, vertices, sizeof(SpriteVertex) * 2); // 2???_???R?s?[
+            memcpy(msr.pData, vertices, sizeof(SpriteVertex) * 2);
             m_pD3D->m_pDeviceContext->Unmap(m_pVertexBufferLine, 0);
         }
     }
 
+    // 色データの変換
     VECTOR4 color;
-    color.x = ((colorABGR & 0x000000ff) >> 0) / (float)255; // R
-    color.y = ((colorABGR & 0x0000ff00) >> 8) / (float)255; // G
-    color.z = ((colorABGR & 0x00ff0000) >> 16) / (float)255; // B
+    color.x = ((colorABGR & 0x000000ff) >> 0) / 255.0f; // R
+    color.y = ((colorABGR & 0x0000ff00) >> 8) / 255.0f; // G
+    color.z = ((colorABGR & 0x00ff0000) >> 16) / 255.0f; // B
     color.w = fAlpha; // A
 
-    //?o?[?e?b?N?X?o?b?t?@?[???Z?b?g
     UINT stride = sizeof(SpriteVertex);
     UINT offset = 0;
     m_pD3D->m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBufferLine, &stride, &offset);
 
-    //?v???~?e?B?u?E?g?|???W?[???Z?b?g
+    // プリミティブトポロジーをラインリストに変更
     m_pD3D->m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-    //?e?N?X?`???[??????V?F?[?_?[??n??
+    
+    // ライン描画時はテクスチャを使用しない
     ID3D11ShaderResourceView* Nothing[1] = {0};
     m_pD3D->m_pDeviceContext->PSSetShaderResources(0, 1, Nothing);
 
-    //???[???h?s??
     MATRIX4X4 mWorld;
 
-    // ??????@?????????
-    // (??????????????�$???`?�~?�{??????`???????????�{??)
+    // --- ラインの太さを出すための計算 ---
+    // ラインに垂直なベクトル（法線）を求め、位置をずらしながら重ねて描画する
     VECTOR2 vNrm, vDif = VECTOR2(EndX - StartX, EndY - StartY), vLen;
     vNrm.x = vDif.y;
-    vNrm.y = vDif.x * -1;
+    vNrm.y = vDif.x * -1; // 垂直ベクトルを作成
 
-    vLen = XMVector2Length(vNrm);
-    vNrm.x = vNrm.x / vLen.x;
-    vNrm.y = vNrm.y / vLen.x;
+    XMVECTOR vNrmVec = XMLoadFloat2(&vNrm);
+    XMVECTOR vLenVec = XMVector2Length(vNrmVec);
+    XMStoreFloat2(&vLen, vLenVec);
+    
+    if (vLen.x > 0.0f) {
+        vNrm.x /= vLen.x;
+        vNrm.y /= vLen.x;
+    }
 
     if (Width < 1) Width = 1;
 
-    // ??????????`????J????
+    // 太さの分だけずらしてループ描画
     for (DWORD i = 0; i < Width; i++)
     {
-        // ???[???h?s????????
         mWorld = XMMatrixIdentity();
 
-        // ??????????�$???\?????�{??????
+        // 交互に法線方向へずらす
+        float offsetScale = 0.8f * i * 0.5f;
         if (i % 2 == 0)
         {
-            mWorld._41 = vNrm.x * 0.8f * i * 0.5f;
-            mWorld._42 = vNrm.y * 0.8f * i * 0.5f;
+            mWorld._41 = vNrm.x * offsetScale;
+            mWorld._42 = vNrm.y * offsetScale;
         }
         else
         {
-            mWorld._41 = -vNrm.x * 0.8f * i * 0.5f;
-            mWorld._42 = -vNrm.y * 0.8f * i * 0.5f;
+            mWorld._41 = -vNrm.x * offsetScale;
+            mWorld._42 = -vNrm.y * offsetScale;
         }
 
-        //?V?F?[?_?[??R???X?^???g?o?b?t?@?[??e??f?[?^??n??
         D3D11_MAPPED_SUBRESOURCE pData;
         CONSTANT_BUFFER_SPRITE cb;
-        if (SUCCEEDED(
-            m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferSprite3D, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
+        if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferSprite3D, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
         {
-            //???[???h?s???n??
             cb.mW = XMMatrixTranspose(mWorld);
-
-            //?r???[?|?[?g?T?C?Y??n???i?N???C?A???g???????c?j
             cb.ViewPortWidth = (float)m_pD3D->m_dwWindowWidth;
             cb.ViewPortHeight = (float)m_pD3D->m_dwWindowHeight;
-            cb.vUVOffset.x = 0;
-            cb.vUVOffset.y = 0;
+            cb.vUVOffset = VECTOR2(0, 0);
             cb.vColor = color;
-            cb.vMatInfo = VECTOR4(0, 0, 0, 0); // ?e?N?X?`?????
+            cb.vMatInfo = VECTOR4(0, 0, 0, 0); // テクスチャなしフラグ
             memcpy_s(pData.pData, pData.RowPitch, (void*)(&cb), sizeof(cb));
             m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferSprite3D, 0);
         }
-        //?v???~?e?B?u???????_?????O
         m_pD3D->m_pDeviceContext->Draw(2, 0);
     }
 
-    //?v???~?e?B?u?E?g?|???W?[???Z?b?g
+    // トポロジーを元に戻す
     m_pD3D->m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-
-    //	?V?F?[?_?[???????Z?b?g
     ResetShader();
 }
 
 //------------------------------------------------------------------------
 //                                                         // -- 2018.3.20
-//	?l?p?`??????????_?????O?@?T?u???
+//  矩形のレンダリング（サブルーチン）
 //
-//  ?i????A?F?????x??m_vDiffuse???g?p???�%?????B??????????w??�H???j
-//
-//  const float& posX       ?l?p?`?`??@?J?n?w???W
-//  const float& posY       ?l?p?`?`??@?J?n?x???W
-//  const DWORD& width      ?l?p?`???
-//  const DWORD& height     ?l?p?`?????
-//  const DWORD& colorABGR  ?`??F?@colorABGR??AABGR??w??B??F???F??(0x00ffffff)   ??????RGB(1,1,1)
-//  const float& fAlpha     ?????x?i????l??1.0f?j
-//
-//	???l  ???
+//  const float& posX       矩形表示位置X
+//  const float& posY       矩形表示位置Y
+//  const DWORD& width      矩形幅
+//  const DWORD& height     矩形高さ
+//  const DWORD& colorABGR  描画色
+//  const float& fAlpha     透明度
 //
 //------------------------------------------------------------------------
 void CSprite::DrawRect(const float& posX, const float& posY, const DWORD& width, const DWORD& height,
                        const DWORD& colorABGR, const float& fAlpha)
 {
-    //?g?p????V?F?[?_?[??Z?b?g
     SetShader();
 
-    // ?o?[?e?b?N?X?o?b?t?@?[??
     SpriteVertex vertices[] =
     {
-        {VECTOR3(0, (float)height, 0), VECTOR2(0, 0)}, //???_1  ????
-        {VECTOR3(0, 0, 0), VECTOR2(0, 0)}, //???_3?@????    // -- 2024.3.23
-        {VECTOR3((float)width, (float)height, 0), VECTOR2(0, 0)}, //???_2?@?E??    // -- 2024.3.231
-        {VECTOR3((float)width, 0, 0), VECTOR2(0, 0)}, //???_4?@?E??
+        {VECTOR3(0, (float)height, 0), VECTOR2(0, 0)}, // 左下
+        {VECTOR3(0, 0, 0), VECTOR2(0, 0)},             // 左上
+        {VECTOR3((float)width, (float)height, 0), VECTOR2(0, 0)}, // 右下
+        {VECTOR3((float)width, 0, 0), VECTOR2(0, 0)},  // 右上
     };
 
-    // ?o?[?e?b?N?X?o?b?t?@?????�H???�x????????`?F?b?N????
     if (m_pVertexBufferRect == nullptr)
     {
-        // ?V?K??????
         D3D11_BUFFER_DESC bd;
-        //bd.Usage          = D3D11_USAGE_DEFAULT;
         bd.Usage = D3D11_USAGE_DYNAMIC;
-        bd.ByteWidth = sizeof(SpriteVertex) * 4; // 4???_??
+        bd.ByteWidth = sizeof(SpriteVertex) * 4;
         bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-        //bd.CPUAccessFlags = 0;
         bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
         bd.MiscFlags = 0;
 
@@ -709,80 +675,70 @@ void CSprite::DrawRect(const float& posX, const float& posY, const DWORD& width,
         InitData.pSysMem = vertices;
         if (FAILED(m_pD3D->m_pDevice->CreateBuffer(&bd, &InitData, &m_pVertexBufferRect)))
         {
-            MessageBox(0, _T("Sprite.cpp ?o?[?e?b?N?X?o?b?t?@?[RECT ?????s"), nullptr, MB_OK);
+            MessageBox(0, _T("Sprite.cpp 頂点バッファ作成失敗(RECT)"), nullptr, MB_OK);
             return;
         }
     }
     else
     {
-        // ???�H???�x?????A?o?[?e?b?N?X?o?b?t?@???????????????
         D3D11_MAPPED_SUBRESOURCE msr;
         if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pVertexBufferRect, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr)))
         {
-            memcpy(msr.pData, vertices, sizeof(SpriteVertex) * 4); // 4???_???R?s?[
+            memcpy(msr.pData, vertices, sizeof(SpriteVertex) * 4);
             m_pD3D->m_pDeviceContext->Unmap(m_pVertexBufferRect, 0);
         }
     }
 
     VECTOR4 color;
-    color.x = ((colorABGR & 0x000000ff) >> 0) / (float)255; // R
-    color.y = ((colorABGR & 0x0000ff00) >> 8) / (float)255; // G
-    color.z = ((colorABGR & 0x00ff0000) >> 16) / (float)255; // B
-    color.w = fAlpha; // A
+    color.x = ((colorABGR & 0x000000ff) >> 0) / 255.0f;
+    color.y = ((colorABGR & 0x0000ff00) >> 8) / 255.0f;
+    color.z = ((colorABGR & 0x00ff0000) >> 16) / 255.0f;
+    color.w = fAlpha;
 
-    //?o?[?e?b?N?X?o?b?t?@?[???Z?b?g
     UINT stride = sizeof(SpriteVertex);
     UINT offset = 0;
     m_pD3D->m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBufferRect, &stride, &offset);
 
-    //?v???~?e?B?u?E?g?|???W?[???Z?b?g
-    m_pD3D->m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-
-    //?e?N?X?`???[??????V?F?[?_?[??n??
     ID3D11ShaderResourceView* Nothing[1] = {0};
     m_pD3D->m_pDeviceContext->PSSetShaderResources(0, 1, Nothing);
 
-    //?V?F?[?_?[??R???X?^???g?o?b?t?@?[??e??f?[?^??n??
     D3D11_MAPPED_SUBRESOURCE pData;
     CONSTANT_BUFFER_SPRITE cb;
-    if (SUCCEEDED(
-        m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferSprite3D, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
+    if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferSprite3D, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
     {
-        //???[???h?s???n??
         cb.mW = XMMatrixTranspose(XMMatrixTranslation(posX, posY, 0.0f));
-
-        //?r???[?|?[?g?T?C?Y??n???i?N???C?A???g???????c?j
         cb.ViewPortWidth = (float)m_pD3D->m_dwWindowWidth;
         cb.ViewPortHeight = (float)m_pD3D->m_dwWindowHeight;
-        cb.vUVOffset.x = 0;
-        cb.vUVOffset.y = 0;
+        cb.vUVOffset = VECTOR2(0, 0);
         cb.vColor = color;
-        cb.vMatInfo = VECTOR4(0, 0, 0, 0); // ?e?N?X?`?????
+        cb.vMatInfo = VECTOR4(0, 0, 0, 0); 
         memcpy_s(pData.pData, pData.RowPitch, (void*)(&cb), sizeof(cb));
         m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferSprite3D, 0);
     }
-    //?v???~?e?B?u???????_?????O
     m_pD3D->m_pDeviceContext->Draw(4, 0);
 
-    //	?V?F?[?_?[???????Z?b?g
     ResetShader();
 }
+
+//------------------------------------------------------------------------
+//  円形のスプライト描画（自作関数）
+//
+//  シェーダー側のピクセル描画で円形マスクをかける処理を想定
+//------------------------------------------------------------------------
 void CSprite::DrawCircle(CSpriteImage* pImage, float posX, float posY, DWORD srcX, DWORD srcY, DWORD srcWid,
-                         DWORD srcHei, float startRad,float endRad, float fAlpha)
+                         DWORD srcHei, float startRad, float endRad, float fAlpha)
 {
-    // 円形スプライトレスポン用として、UV座標は0～1の範囲で固定する
     m_pImage = pImage;
 
-    // UV座標を0～1に固定（シェーダー側で円計算に使用するため）
+    // UV座標を0～1に固定（シェーダー側で円の計算に使用するため、テクスチャ全体を1つの円とみなす）
     SpriteVertex vertices[] =
     {
-        {VECTOR3(0, static_cast<float>(srcHei), 0), VECTOR2(0.0f, 1.0f)},  // 左下
-        {VECTOR3(0, 0, 0), VECTOR2(0.0f, 0.0f)},                          // 左上
-        {VECTOR3(static_cast<float>(srcWid), static_cast<float>(srcHei), 0), VECTOR2(1.0f, 1.0f)},  // 右下
-        {VECTOR3(static_cast<float>(srcWid), 0, 0), VECTOR2(1.0f, 0.0f)},  // 右上
+        {VECTOR3(0, (float)srcHei, 0), VECTOR2(0.0f, 1.0f)}, // 左下
+        {VECTOR3(0, 0, 0), VECTOR2(0.0f, 0.0f)},             // 左上
+        {VECTOR3((float)srcWid, (float)srcHei, 0), VECTOR2(1.0f, 1.0f)}, // 右下
+        {VECTOR3((float)srcWid, 0, 0), VECTOR2(1.0f, 0.0f)},  // 右上
     };
 
-    // 頂点バッファを更新
     if (m_pVertexBufferSprite)
     {
         D3D11_MAPPED_SUBRESOURCE mapResource;
@@ -793,112 +749,98 @@ void CSprite::DrawCircle(CSpriteImage* pImage, float posX, float posY, DWORD src
         }
     }
 
-    // シェーダーをセット
     SetShader();
 
-    // 頂点バッファをセット
     UINT stride = sizeof(SpriteVertex);
     UINT offset = 0;
-    // ワールド行列の作成
     MATRIX4X4 mWorld = XMMatrixTranslation(posX, posY, 0.0f);
     m_pD3D->m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBufferSprite, &stride, &offset);
 
-    // シェーダーの定数バッファに各データを渡す
     D3D11_MAPPED_SUBRESOURCE pData;
-    CONSTANT_BUFFER_SPRITE     cb;
-    if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(
-        m_pShader->m_pConstantBufferSprite3D,0,D3D11_MAP_WRITE_DISCARD,0,&pData)))
+    CONSTANT_BUFFER_SPRITE cb;
+    if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferSprite3D, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
     {
         cb.mW = XMMatrixTranspose(mWorld);
-        cb.ViewPortWidth = static_cast<float>(m_pD3D->m_dwWindowWidth);
-        cb.ViewPortHeight = static_cast<float>(m_pD3D->m_dwWindowHeight);
-
-        // UVオフセット
-        cb.vUVOffset.x = 0;
-        cb.vUVOffset.y = 0;
+        cb.ViewPortWidth = (float)m_pD3D->m_dwWindowWidth;
+        cb.ViewPortHeight = (float)m_pD3D->m_dwWindowHeight;
+        cb.vUVOffset = VECTOR2(0, 0);
+        cb.vColor = VECTOR4(1, 1, 1, fAlpha);
         
-        // カラー
-        cb.vColor = VECTOR4(1,1,1,fAlpha);
-        
-        // 円の描画情報
-        cb.vMatInfo.x = 1;          // 円形マスクあり
-        cb.vMatInfo.y = startRad;   // 開始ラジアン
-        cb.vMatInfo.z = endRad;     // 終了ラジアン
-        cb.vMatInfo.w = 1;          // 円形モードON
+        // --- 円形描画のための特殊情報 ---
+        cb.vMatInfo.x = 1.0f;     // 円形マスク有効フラグ
+        cb.vMatInfo.y = startRad; // 扇形の開始角度
+        cb.vMatInfo.z = endRad;   // 扇形の終了角度
+        cb.vMatInfo.w = 1.0f;     // 円形モードON
         
         memcpy_s(pData.pData, pData.RowPitch, (void*)(&cb), sizeof(cb));
         m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferSprite3D, 0);
     }
     
-    // テクスチャをシェーダーに渡す
     m_pD3D->m_pDeviceContext->PSSetShaderResources(0, 1, &m_pImage->m_pTexture);
-
-    // 描画
     m_pD3D->m_pDeviceContext->Draw(4, 0);
+
     ResetShader();
 }
-
 //------------------------------------------------------------------------
 //
-//	?`??O??V?F?[?_?[?????Z?b?g
+//  描画前にシェーダーをセット
 //
-//  ?????@?@???
+//  引数：なし
 //
-//	???l  ???
+//  戻り値：なし
 //
 //------------------------------------------------------------------------
 void CSprite::SetShader()
 {
-    //?g?p????V?F?[?_?[??Z?b?g
+    // 使用する頂点シェーダー・ピクセルシェーダーをセット
     m_pD3D->m_pDeviceContext->VSSetShader(m_pShader->m_pSprite3D_VS, nullptr, 0);
     m_pD3D->m_pDeviceContext->PSSetShader(m_pShader->m_pSprite3D_PS, nullptr, 0);
 
-
-    //????R???X?^???g?o?b?t?@?[?????V?F?[?_?[??g????
+    // 各種シェーダーで使う定数バッファを登録
     m_pD3D->m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferSprite3D);
     m_pD3D->m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferSprite3D);
-    //???_?C???v?b?g???C?A?E?g???Z?b?g
+    
+    // 頂点インプットレイアウトをセット
     m_pD3D->m_pDeviceContext->IASetInputLayout(m_pShader->m_pSprite3D_VertexLayout);
 
-    //?v???~?e?B?u?E?g?|???W?[???Z?b?g
+    // プリミティブ・トポロジーをセット（スプライトなのでトライアングルストリップ）
     m_pD3D->m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
-    // ?T???v???[???Z?b?g
+    // サンプラー（線形補間）をセット
     m_pD3D->m_pDeviceContext->PSSetSamplers(0, 1, &m_pD3D->m_pSampleLinear);
 
-    // ?u?????f?B???O????            // -- 2019.8.18
+    // ブレンドステートの切り替え
     UINT mask = 0xffffffff;
     if (m_nBlend == 1)
     {
-        // 1:????F??u?????f?B???O????
+        // 1: アルファブレンド（半透明描画）
         m_pD3D->m_pDeviceContext->OMSetBlendState(m_pD3D->m_pBlendStateTrapen, nullptr, mask);
     }
     else if (m_nBlend == 2)
     {
-        // 2:???Z??????u?????f?B???O????
+        // 2: 加算合成（エフェクト等）
         m_pD3D->m_pDeviceContext->OMSetBlendState(m_pD3D->m_pBlendStateAdd, nullptr, mask);
     }
 
-    //Z?o?b?t?@??????
+    // Zバッファ（深度テスト）を一時的にオフにする（2D描画の場合など）
     m_pD3D->SetZBuffer(false); // -- 2019.4.19
 }
 
 //------------------------------------------------------------------------
 //
-//	?`????V?F?[?_?[???????Z?b?g
+//  描画後にシェーダー設定をリセット
 //
-//  ?????@?@???
+//  引数：なし
 //
-//	???l  ???
+//  戻り値：なし
 //
 //------------------------------------------------------------------------
 void CSprite::ResetShader()
 {
-    //Z?o?b?t?@??L????
+    // Zバッファを有効に戻す
     m_pD3D->SetZBuffer(true); // -- 2019.4.19
 
-
-    // ????u?????f?B???O????
+    // ブレンドステートを通常に戻す
     UINT mask = 0xffffffff;
     m_pD3D->m_pDeviceContext->OMSetBlendState(m_pD3D->m_pBlendStateTrapen, nullptr, mask);
 }
@@ -906,19 +848,19 @@ void CSprite::ResetShader()
 
 //------------------------------------------------------------------------ // -- 2018.8.10
 //
-//	?R?c?i?r???{?[?h?j?X?v???C?g??o?[?e?B?N?X?o?b?t?@??	
+//  3Dビルボード（常にカメラを向く）スプライトの頂点バッファ設定
 //
-//  CSpriteImage* pImage
-//  const float& fDestWidth         ?\????
-//  const float& fDestHeight        ?\??????
-//  const DWORD& dwSrcX
-//  const DWORD& dwSrcY
-//  const DWORD& dwSrcWidth
-//  const DWORD& dwSrcHeigh
+//  CSpriteImage* pImage      画像リソース
+//  const float& fDestWidth   表示幅
+//  const float& fDestHeight  表示高さ
+//  const DWORD& dwSrcX       切り取り元座標X
+//  const DWORD& dwSrcY       切り取り元座標Y
+//  const DWORD& dwSrcWidth   切り取り幅
+//  const DWORD& dwSrcHeight  切り取り高さ
 //
-//	???l HRESULT
-//		S_OK	= ????
-//		E_FAIL	= ???
+//  戻り値 HRESULT
+//     S_OK   = 成功
+//     E_FAIL = 失敗
 //
 //------------------------------------------------------------------------
 HRESULT CSprite::SetSrc3D(CSpriteImage* pImage, const float& fDestWidth, const float& fDestHeight, const DWORD& dwSrcX,
@@ -930,24 +872,13 @@ HRESULT CSprite::SetSrc3D(CSpriteImage* pImage, const float& fDestWidth, const f
 
 //------------------------------------------------------------------------ // -- 2018.9.30
 //
-//	?R?c?i?r???{?[?h?j?X?v???C?g??o?[?e?B?N?X?o?b?t?@??	
-//
-//  const float& fDestWidth         ?\????
-//  const float& fDestHeight        ?\??????
-//  const DWORD& dwSrcX
-//  const DWORD& dwSrcY
-//  const DWORD& dwSrcWidth
-//  const DWORD& dwSrcHeigh
-//
-//	???l HRESULT
-//		S_OK	= ????
-//		E_FAIL	= ???
+//  3Dビルボードスプライトの頂点バッファ設定（実体）
 //
 //------------------------------------------------------------------------
 HRESULT CSprite::SetSrc3D(const float& fDestWidth, const float& fDestHeight, const DWORD& dwSrcX, const DWORD& dwSrcY,
                           const DWORD& dwSrcWidth, const DWORD& dwSrcHeight)
 {
-    // ?r???{?[?h?e?N?X?`???p??�|???S?????????A?o?[?e?b?N?X?o?b?t?@????????
+    // ビルボード用のポリゴン計算（中心座標を基準に作成）
     m_dwSrcX = dwSrcX;
     m_dwSrcY = dwSrcY;
     m_dwSrcWidth = dwSrcWidth;
@@ -958,30 +889,26 @@ HRESULT CSprite::SetSrc3D(const float& fDestWidth, const float& fDestHeight, con
     DWORD dwImageWidth = m_pImage->m_dwImageWidth;
     DWORD dwImageHeight = m_pImage->m_dwImageHeight;
 
-    //?o?[?e?b?N?X?o?b?t?@?[??(??????????W?�W??B??_??|???S??????S?_)
+    // 頂点配列の作成（ローカル座標系の原点を中心にする）
     SpriteVertex vertices[] =
     {
-        VECTOR3(-m_fDestWidth / 2, m_fDestHeight / 2, 0),
-        VECTOR2((float)(m_dwSrcX + m_dwSrcWidth) / dwImageWidth, (float)m_dwSrcY / dwImageHeight), //???_1  ????
-        VECTOR3(-m_fDestWidth / 2, -m_fDestHeight / 2, 0),
-        VECTOR2((float)(m_dwSrcX + m_dwSrcWidth) / dwImageWidth, (float)(m_dwSrcY + m_dwSrcHeight) / dwImageHeight),
-        //???_2?@????	// -- 2024.3.23
-        VECTOR3(m_fDestWidth / 2, m_fDestHeight / 2, 0),
-        VECTOR2((float)m_dwSrcX / dwImageWidth, (float)m_dwSrcY / dwImageHeight), //???_3?@?E??	// -- 2024.3.2
-        VECTOR3(m_fDestWidth / 2, -m_fDestHeight / 2, 0),
-        VECTOR2((float)m_dwSrcX / dwImageWidth, (float)(m_dwSrcY + m_dwSrcHeight) / dwImageHeight), //???_4?@?E??
+        { VECTOR3(-m_fDestWidth / 2, m_fDestHeight / 2, 0),
+          VECTOR2((float)(m_dwSrcX + m_dwSrcWidth) / dwImageWidth, (float)m_dwSrcY / dwImageHeight) }, // 左上
+        { VECTOR3(-m_fDestWidth / 2, -m_fDestHeight / 2, 0),
+          VECTOR2((float)(m_dwSrcX + m_dwSrcWidth) / dwImageWidth, (float)(m_dwSrcY + m_dwSrcHeight) / dwImageHeight) }, // 左下
+        { VECTOR3(m_fDestWidth / 2, m_fDestHeight / 2, 0),
+          VECTOR2((float)m_dwSrcX / dwImageWidth, (float)m_dwSrcY / dwImageHeight) }, // 右上
+        { VECTOR3(m_fDestWidth / 2, -m_fDestHeight / 2, 0),
+          VECTOR2((float)m_dwSrcX / dwImageWidth, (float)(m_dwSrcY + m_dwSrcHeight) / dwImageHeight) }, // 右下
     };
 
-    // ?o?[?e?b?N?X?o?b?t?@?????�H???�x????????`?F?b?N????
+    // 頂点バッファの新規作成または動的更新
     if (m_pVertexBufferBillSprite == nullptr)
     {
-        // ?V?K??????
         D3D11_BUFFER_DESC bd;
-        //bd.Usage = D3D11_USAGE_DEFAULT;
         bd.Usage = D3D11_USAGE_DYNAMIC;
         bd.ByteWidth = sizeof(SpriteVertex) * 4;
         bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-        //bd.CPUAccessFlags = 0;
         bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
         bd.MiscFlags = 0;
 
@@ -994,11 +921,10 @@ HRESULT CSprite::SetSrc3D(const float& fDestWidth, const float& fDestHeight, con
     }
     else
     {
-        // ???�H???�x?????A?o?[?e?b?N?X?o?b?t?@???????????????
         D3D11_MAPPED_SUBRESOURCE msr;
         if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pVertexBufferBillSprite, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr)))
         {
-            memcpy(msr.pData, vertices, sizeof(SpriteVertex) * 4); // 4???_???R?s?[
+            memcpy(msr.pData, vertices, sizeof(SpriteVertex) * 4);
             m_pD3D->m_pDeviceContext->Unmap(m_pVertexBufferBillSprite, 0);
         }
     }
@@ -1006,37 +932,39 @@ HRESULT CSprite::SetSrc3D(const float& fDestWidth, const float& fDestHeight, con
     return S_OK;
 }
 
-//------------------------------------------------------------------------ // -- 204.3.23
+//------------------------------------------------------------------------ // -- 2024.3.23
 //
-//	?R?c?i?r???{?[?h?j?X?v???C?g?I?u?W?F?N?g??????????_?????O	
+//  3Dビルボードオブジェクトのレンダリング
 //
 // -----------------------------------------------------------------------
 bool CSprite::Draw3D(CSpriteImage* pImage, const VECTOR3& vPos, const VECTOR2& vSize, const VECTOR2& vSrcPos,
-                     const VECTOR2& vSrcSize, const float& fAlpha) // -- 2024.3.23
+                     const VECTOR2& vSrcSize, const float& fAlpha)
 {
     return Draw3D(pImage, vPos, GameDevice()->m_mView, GameDevice()->m_mProj, GameDevice()->m_vEyePt, vSize, vSrcPos,
                   vSrcSize, fAlpha);
 }
 
 bool CSprite::Draw3D(const VECTOR3& vPos, const VECTOR2& vSize, const VECTOR2& vSrcPos, const VECTOR2& vSrcSize,
-                     const float& fAlpha) // -- 2024.3.23
+                     const float& fAlpha)
 {
     return Draw3D(vPos, GameDevice()->m_mView, GameDevice()->m_mProj, GameDevice()->m_vEyePt, vSize, vSrcPos, vSrcSize,
                   fAlpha);
 }
 
-bool CSprite::Draw3D(const VECTOR3& vPos) // -- 2024.3.23
+bool CSprite::Draw3D(const VECTOR3& vPos)
 {
     return Draw3D(vPos, GameDevice()->m_mView, GameDevice()->m_mProj, GameDevice()->m_vEyePt);
 }
 
 bool CSprite::DrawLine3D(const VECTOR3& vStart, const VECTOR3& vEnd, const DWORD& colorABGR, const float& fAlpha)
-// -- 2024.3.23
 {
     return DrawLine3D(vStart, vEnd, GameDevice()->m_mView, GameDevice()->m_mProj, GameDevice()->m_vEyePt, colorABGR,
                       fAlpha);
 }
 
+//------------------------------------------------------------------------
+// 3D空間にワールド行列（向き・スケール等）を指定して描画
+//------------------------------------------------------------------------
 bool CSprite::Draw3DWithWorldMatrix(CSpriteImage* pImage, const MATRIX4X4& mWorld, const MATRIX4X4& mView,
                                     const MATRIX4X4& mProj, const VECTOR2& vSize, const VECTOR2& vSrcPos,
                                     const VECTOR2& vSrcSize, const float& fAlpha)
@@ -1045,7 +973,7 @@ bool CSprite::Draw3DWithWorldMatrix(CSpriteImage* pImage, const MATRIX4X4& mWorl
 
     if (m_pImage == nullptr) return false;
 
-    // �С��ƥå����Хåե������
+    // 頂点バッファのリセットと情報の更新
     SetSrc3D(vSize.x, vSize.y, (DWORD)vSrcPos.x, (DWORD)vSrcPos.y, (DWORD)vSrcSize.x, (DWORD)vSrcSize.y);
     m_ofX = 0;
     m_ofY = 0;
@@ -1053,16 +981,16 @@ bool CSprite::Draw3DWithWorldMatrix(CSpriteImage* pImage, const MATRIX4X4& mWorl
 
     if (m_pVertexBufferBillSprite == nullptr) return false;
 
-    // �����������Υ��å� (�ӥ�ܡ����ѤǤϤʤ��̾��ĺ�����������������)
+    // ビルボード用シェーダーをセット（ただし、この関数では独自の行列計算を使用）
     m_pD3D->m_pDeviceContext->VSSetShader(m_pShader->m_pSprite3D_VS_BILL, nullptr, 0);
     m_pD3D->m_pDeviceContext->PSSetShader(m_pShader->m_pSprite3D_PS, nullptr, 0);
 
-    // �С��ƥå����Хåե����򥻥å�
+    // 頂点バッファをバインド
     UINT stride = sizeof(SpriteVertex);
     UINT offset = 0;
     m_pD3D->m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBufferBillSprite, &stride, &offset);
 
-    // �֥��ǥ��󥰤�����
+    // ブレンドステートのセット
     UINT mask = 0xffffffff;
     if (m_nBlend == 1)
     {
@@ -1073,10 +1001,10 @@ bool CSprite::Draw3DWithWorldMatrix(CSpriteImage* pImage, const MATRIX4X4& mWorl
         m_pD3D->m_pDeviceContext->OMSetBlendState(m_pD3D->m_pBlendStateAdd, nullptr, mask);
     }
 
-    // ZTest/ZWrite無効のデプスステンシルステートを設定（常に描画、背景が見える）
+    // デプスステンシル（Zテスト）の設定
     m_pD3D->m_pDeviceContext->OMSetDepthStencilState(m_pD3D->m_pDepthStencilStateNoZTest, 0);
 
-    // �����������Υ��󥹥���ȥХåե����˳Ƽ�ǡ������Ϥ�
+    // 定数バッファの更新
     D3D11_MAPPED_SUBRESOURCE pData;
     CONSTANT_BUFFER_SPRITE cb;
     ZeroMemory(&cb, sizeof(cb));
@@ -1084,53 +1012,55 @@ bool CSprite::Draw3DWithWorldMatrix(CSpriteImage* pImage, const MATRIX4X4& mWorl
     if (SUCCEEDED(
         m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferSprite3D, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
     {
-        // �� �������ݥ����: �ӥ�ܡ��ɹ���ǤϤʤ������ꤵ�줿���ɹ�������
+        // ビルボード計算ではなく、引数のワールド行列、ビュー、プロジェクションを直接合成
         cb.mWVP = XMMatrixTranspose(mWorld * mView * mProj);
 
         cb.vUVOffset.x = (float)m_ofX / m_pImage->m_dwImageWidth;
         cb.vUVOffset.y = (float)m_ofY / m_pImage->m_dwImageHeight;
         cb.vColor = m_vDiffuse;
-        cb.vMatInfo = VECTOR4(1, 0, 0, 0); // �ƥ�������ͭ��
+        cb.vMatInfo = VECTOR4(1, 0, 0, 0); // テクスチャ使用フラグ
 
         memcpy_s(pData.pData, pData.RowPitch, (void*)(&cb), sizeof(cb));
         m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferSprite3D, 0);
     }
 
-    // ���Υ��󥹥���ȥХåե�����ɤΥ����������ǻȤ���
+    // 関連リソースのセット
     m_pD3D->m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferSprite3D);
     m_pD3D->m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferSprite3D);
-    // ĺ������ץåȥ쥤�����Ȥ򥻥å�
     m_pD3D->m_pDeviceContext->IASetInputLayout(m_pShader->m_pSprite3D_VertexLayout);
-    // �ץ�ߥƥ��֡��ȥݥ������򥻥å�
     m_pD3D->m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-    // �ƥ������㡼�򥷥����������Ϥ�
     m_pD3D->m_pDeviceContext->PSSetSamplers(0, 1, &m_pD3D->m_pSampleLinear);
     m_pD3D->m_pDeviceContext->PSSetShaderResources(0, 1, &m_pImage->m_pTexture);
-    // �ץ�ߥƥ��֤�������
+    
+    // プリミティブ描画
     m_pD3D->m_pDeviceContext->Draw(4, 0);
 
-    // �̾�Υ֥��ǥ��󥰤��᤹
+    // 設定を元に戻す
     m_pD3D->m_pDeviceContext->OMSetBlendState(m_pD3D->m_pBlendStateTrapen, nullptr, mask);
-
-    // デフォルトのデプスステンシルステートに戻す
     m_pD3D->m_pDeviceContext->OMSetDepthStencilState(m_pD3D->m_pDepthStencilStateDefault, 0);
 
     return true;
 }
-
+//------------------------------------------------------------------------
+// 3D空間の地面などにスプライトを配置して描画する
+// (キャラクターの足元の影や、魔法陣などの表示に使用)
+//------------------------------------------------------------------------
 bool CSprite::DrawWorld(CSpriteImage* pImage, const VECTOR3& vPos, float radius, float alpha)
 {
-    static constexpr float GROUND_OFFSET         = 0.1f;
-    static constexpr float CIRCLE_DIAMETER_SCALE = 2.0f;
+    static constexpr float GROUND_OFFSET         = 0.1f;    // 地面との重なりによるチラつき（Zファイティング）防止
+    static constexpr float CIRCLE_DIAMETER_SCALE = 2.0f;    // 半径を直径に変換
     static constexpr float CIRCLE_DEPTH          = 1.0f;
-    static constexpr float GROUND_ROTATION       = -XM_PI / 2.0f;
+    static constexpr float GROUND_ROTATION       = -XM_PI / 2.0f; // X軸で-90度回転させて地面と平行にする
     static constexpr float SPRITE_SIZE           = 1.0f;
 
+    // スケール・回転・平行移動行列を作成
     const MATRIX4X4 mScale       = XMMatrixScaling(radius * CIRCLE_DIAMETER_SCALE,
                                                     radius * CIRCLE_DIAMETER_SCALE,
                                                     CIRCLE_DEPTH);
     const MATRIX4X4 mRotation    = XMMatrixRotationX(GROUND_ROTATION);
-    const MATRIX4X4 mTranslation = XMMatrixTranslation(vPos.x, GROUND_OFFSET, vPos.z);
+    const MATRIX4X4 mTranslation = XMMatrixTranslation(vPos.x, vPos.y + GROUND_OFFSET, vPos.z);
+    
+    // 行列を合成してワールド行列を作成
     const MATRIX4X4 mWorld       = mScale * mRotation * mTranslation;
 
     return Draw3DWithWorldMatrix(
@@ -1147,24 +1077,22 @@ bool CSprite::DrawWorld(CSpriteImage* pImage, const VECTOR3& vPos, float radius,
 
 //------------------------------------------------------------------------ // -- 2018.8.10
 //
-//	?R?c?i?r???{?[?h?j?X?v???C?g?I?u?W?F?N?g??????????_?????O
+//  3D空間（ビルボード）にスプライトオブジェクトをレンダリング
 //
-//	?o?[?e?b?N?X?o?b?t?@????????`???????
+//  頂点バッファを更新してから描画を行います。
 //
-//	????
-//		CSpriteImage* pImage   ?X?v???C?g?C???[?W
-//		const VECTOR3& vPos       ?\????u
-//		const MATRIX4X4& mView       ?r???[?}?g???b?N?X
-//		const MATRIX4X4& mProj       ?v???W?F?N?V?????}?g???b?N?X
-//		const VECTOR3& vEye       ???_??u
-//		const VECTOR2& vSize      ?\???T?C?Y
-//		const VECTOR2& vSrcPos    ?p?^?[?????u
-//		const VECTOR2& vSrcSize   ?p?^?[???????
-//		const float& fAlpha           ?????x?i????�j
+//  引数：
+//     CSpriteImage* pImage   スプライト画像
+//     const VECTOR3& vPos       表示位置
+//     const MATRIX4X4& mView    ビュー行列
+//     const MATRIX4X4& mProj    投影行列
+//     const VECTOR3& vEye       視点座標
+//     const VECTOR2& vSize      表示サイズ
+//     const VECTOR2& vSrcPos    切り取り位置
+//     const VECTOR2& vSrcSize   切り取りサイズ
+//     const float& fAlpha       透明度（初期値1.0f）
 //
-//	???l bool
-//		true      ?\???p??
-//		false     ?\???I??
+//  戻り値 bool：成功ならtrue
 //
 //------------------------------------------------------------------------
 bool CSprite::Draw3D(CSpriteImage* pImage, const VECTOR3& vPos, const MATRIX4X4& mView, const MATRIX4X4& mProj,
@@ -1178,88 +1106,70 @@ bool CSprite::Draw3D(CSpriteImage* pImage, const VECTOR3& vPos, const MATRIX4X4&
 
 //------------------------------------------------------------------------ // -- 2019.8.18
 //
-//	?R?c?i?r???{?[?h?j?X?v???C?g?I?u?W?F?N?g??????????_?????O	
-//
-//	?o?[?e?b?N?X?o?b?t?@????????`???????
-//
-//	????
-//		const VECTOR3& vPos       ?\????u
-//		const MATRIX4X4& mView    ?r???[?}?g???b?N?X
-//		const MATRIX4X4& mProj    ?v???W?F?N?V?????}?g???b?N?X
-//		const VECTOR3& vEye       ???_??u
-//		const VECTOR2& vSize      ?\???T?C?Y
-//		const VECTOR2& vSrcPos    ?p?^?[?????u
-//		const VECTOR2& vSrcSize   ?p?^?[???????
-//		const float& fAlpha       ?????x?i????�j
-//
-//	???l bool
-//		true      ?\???p??
-//		false     ?\???I??
+//  3D空間（ビルボード）にスプライトオブジェクトをレンダリング
 //
 //------------------------------------------------------------------------
 bool CSprite::Draw3D(const VECTOR3& vPos, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vEye,
                      const VECTOR2& vSize, const VECTOR2& vSrcPos, const VECTOR2& vSrcSize, const float& fAlpha)
 {
-    // ?C???[?W??????????`?ذ???
+    // 画像がセットされていない場合は描画を中止
     if (m_pImage == nullptr) return false;
 
-    // ?\???r???{?[?h???????o?[?e?b?N?X?o?b?t?@????????
+    // 表示用のビルボード用頂点バッファを更新
     SetSrc3D(vSize.x, vSize.y, (DWORD)vSrcPos.x, (DWORD)vSrcPos.y, (DWORD)vSrcSize.x, (DWORD)vSrcSize.y);
     m_ofX = 0;
     m_ofY = 0;
     m_vDiffuse.w = fAlpha; // -- 2020.1.24
+    
     return Draw3D(vPos, mView, mProj, vEye);
 }
 
 //------------------------------------------------------------------------ // -- 2018.8.10
 //
-//	?R?c?i?r???{?[?h?j?X?v???C?g?I?u?W?F?N?g??????????_?????O	
+//  3D空間（ビルボード）にスプライトオブジェクトをレンダリング
 //
-//	??????�x??o?[?e?b?N?X?o?b?t?@???g?p????`???????
+//  設定済みの頂点バッファを使用して描画を行います。
 //
-//	????
-//		const VECTOR3&   vPos       ?\????u
-//		const MATRIX4X4& mView      ?r???[?}?g???b?N?X
-//		const MATRIX4X4& mProj      ?v???W?F?N?V?????}?g???b?N?X
-//		const VECTOR3&   vEye       ???_??u
+//  引数：
+//     const VECTOR3&   vPos       表示位置
+//     const MATRIX4X4& mView      ビュー行列
+//     const MATRIX4X4& mProj      投影行列
+//     const VECTOR3&   vEye       視点座標
 //
-//	???l bool
-//		true      ?\???p??
-//		false     ?\???I??
+//  戻り値 bool：成功ならtrue
 //
 //------------------------------------------------------------------------
 bool CSprite::Draw3D(const VECTOR3& vPos, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vEye)
 {
-    // ?C???[?W???????????o?[?e?b?N?X?o?b?t?@????????�%?????????`?ذ???
+    // リソースが足りない場合は描画不可
     if (m_pImage == nullptr || m_pVertexBufferBillSprite == nullptr) return false;
 
-    //?r???{?[?h??A???_?????????[???h?g?????X?t?H?[?????????
+    // ビルボード計算：視点方向を向くワールド行列を取得
     MATRIX4X4 mWorld = GetLookatMatrix(vPos, vEye);
 
-    //?g?p????V?F?[?_?[??Z?b?g
+    // シェーダーをセット
     m_pD3D->m_pDeviceContext->VSSetShader(m_pShader->m_pSprite3D_VS_BILL, nullptr, 0);
     m_pD3D->m_pDeviceContext->PSSetShader(m_pShader->m_pSprite3D_PS, nullptr, 0);
 
-    //?o?[?e?b?N?X?o?b?t?@?[???Z?b?g
+    // 頂点バッファをセット
     UINT stride = sizeof(SpriteVertex);
     UINT offset = 0;
-    
     m_pD3D->m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBufferBillSprite, &stride, &offset);
 
-    // ?u?????f?B???O????            // -- 2019.8.18
+    // ブレンドステートの設定
     UINT mask = 0xffffffff;
     if (m_nBlend == 1)
     {
-        // 1:????F??u?????f?B???O????
+        // 半透明ブレンド
         m_pD3D->m_pDeviceContext->OMSetBlendState(m_pD3D->m_pBlendStateTrapen, nullptr, mask);
     }
     else if (m_nBlend == 2)
     {
-        // 2:???Z??????u?????f?B???O????
+        // 加算合成
         m_pD3D->m_pDeviceContext->OMSetBlendState(m_pD3D->m_pBlendStateAdd, nullptr, mask);
     }
 
-    //?V?F?[?_?[??R???X?^???g?o?b?t?@?[??e??f?[?^??n??
+    // 定数バッファの書き換え
     D3D11_MAPPED_SUBRESOURCE pData;
     CONSTANT_BUFFER_SPRITE cb;
     ZeroMemory(&cb, sizeof(cb));
@@ -1267,82 +1177,75 @@ bool CSprite::Draw3D(const VECTOR3& vPos, const MATRIX4X4& mView, const MATRIX4X
     if (SUCCEEDED(
         m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferSprite3D, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
     {
-        //???[???h?A?J?????A??e?s??A?e?N?X?`???[?I?t?Z?b?g??n??
+        // WVP（ワールド・ビュー・投影）行列を転置してセット
         cb.mWVP = XMMatrixTranspose(mWorld * mView * mProj);
 
-        cb.vUVOffset.x = (float)m_ofX / m_pImage->m_dwImageWidth; // ?p?^?[?????u?w??????????i?e?N?X?`?????W?j
-        cb.vUVOffset.y = (float)m_ofY / m_pImage->m_dwImageHeight; // ?p?^?[?????u?x??????????i?e?N?X?`?????W?j
+        // UVアニメーション等のオフセット設定
+        cb.vUVOffset.x = (float)m_ofX / m_pImage->m_dwImageWidth;
+        cb.vUVOffset.y = (float)m_ofY / m_pImage->m_dwImageHeight;
         cb.vColor = m_vDiffuse; // -- 2020.1.24
-        cb.vMatInfo = VECTOR4(1, 0, 0, 0); // ?e?N?X?`???L??
+        cb.vMatInfo = VECTOR4(1, 0, 0, 0); // テクスチャ有効化フラグ
 
         memcpy_s(pData.pData, pData.RowPitch, (void*)(&cb), sizeof(cb));
         m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferSprite3D, 0);
     }
-    //????R???X?^???g?o?b?t?@?[?????V?F?[?_?[??g????
+
+    // 定数バッファ、レイアウト、トポロジー、サンプラー、テクスチャのバインド
     m_pD3D->m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferSprite3D);
     m_pD3D->m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferSprite3D);
-    //???_?C???v?b?g???C?A?E?g???Z?b?g
     m_pD3D->m_pDeviceContext->IASetInputLayout(m_pShader->m_pSprite3D_VertexLayout);
-    //?v???~?e?B?u?E?g?|???W?[???Z?b?g
     m_pD3D->m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-    //?e?N?X?`???[???V?F?[?_?[??n??
     m_pD3D->m_pDeviceContext->PSSetSamplers(0, 1, &m_pD3D->m_pSampleLinear);
     m_pD3D->m_pDeviceContext->PSSetShaderResources(0, 1, &m_pImage->m_pTexture);
-    //?v???~?e?B?u???????_?????O
+
+    // 描画
     m_pD3D->m_pDeviceContext->Draw(4, 0);
 
-    // ????u?????f?B???O????
+    // ブレンドステートを通常（透過）に戻す
     m_pD3D->m_pDeviceContext->OMSetBlendState(m_pD3D->m_pBlendStateTrapen, nullptr, mask);
 
     return true;
-}
-
-//------------------------------------------------------------------------ // -- 2018.8.10
+}//------------------------------------------------------------------------ // -- 2018.8.10
 //
-//	?R?c???C????????????_?????O	
+//  3D空間へのラインレンダリング
 //
-//	??????�x??o?[?e?b?N?X?o?b?t?@???g?p????`???????
+//  設定済みの頂点バッファを使用して描画を行います。
 //
-//  ?i????A?F?????x??m_vDiffuse???g?p???�%?????B??????????w??�H???j
+//  （注意：色と透明度は m_vDiffuse を使用せず、引数で指定されたものを使用）
 //
-//	????
-//		const VECTOR3& vStart     ???C????n?_??u
-//		const VECTOR3& vEnd       ???C????I?_??u
-//		const MATRIX4X4& mView    ?r???[?}?g???b?N?X
-//		const MATRIX4X4& mProj    ?v???W?F?N?V?????}?g???b?N?X
-//		const VECTOR3& vEye       ???_??u
-//		const DWORD& colorABGR    ???F?@colorABGR??AABGR??w??B??F???F??(0x00ffffff)  ??????RGB(255,255,255)
-//		const float& fAlpha       ?????x(????l?P)
+//  引数：
+//     const VECTOR3& vStart     ラインの開始位置
+//     const VECTOR3& vEnd       ラインの終了位置
+//     const MATRIX4X4& mView    ビュー行列
+//     const MATRIX4X4& mProj    投影行列
+//     const VECTOR3& vEye       視点座標
+//     const DWORD& colorABGR    描画色（0xAABBGR形式）
+//     const float& fAlpha       透明度（初期値1.0f）
 //
-//	???l bool
-//		true      ?\???p??
-//		false     ?\???I??
+//  戻り値 bool：成功ならtrue
 //
 //------------------------------------------------------------------------
 bool CSprite::DrawLine3D(const VECTOR3& vStart, const VECTOR3& vEnd, const MATRIX4X4& mView, const MATRIX4X4& mProj,
                          const VECTOR3& vEye, const DWORD& colorABGR, const float& fAlpha)
 {
-    //?g?p????V?F?[?_?[??Z?b?g
+    // 使用するシェーダーをセット
     m_pD3D->m_pDeviceContext->VSSetShader(m_pShader->m_pSprite3D_VS_BILL, nullptr, 0);
     m_pD3D->m_pDeviceContext->PSSetShader(m_pShader->m_pSprite3D_PS, nullptr, 0);
 
-    // ???|???S???o?[?e?b?N?X?o?b?t?@?[??
+    // ライン用の頂点配列
     SpriteVertex vertices[] =
     {
-        {VECTOR3(vStart.x, vStart.y, vStart.z), VECTOR2(0, 0)}, //???_1
-        {VECTOR3(vEnd.x, vEnd.y, vEnd.z), VECTOR2(0, 0)} //???_2
+        {VECTOR3(vStart.x, vStart.y, vStart.z), VECTOR2(0, 0)}, // 頂点1
+        {VECTOR3(vEnd.x, vEnd.y, vEnd.z), VECTOR2(0, 0)}       // 頂点2
     };
 
-    // ?o?[?e?b?N?X?o?b?t?@?????�H???�x????????`?F?b?N????
+    // 頂点バッファが未作成なら新規作成、作成済みならMap/Unmapで更新
     if (m_pVertexBufferLine == nullptr)
     {
-        // ?V?K??????
         D3D11_BUFFER_DESC bd;
-        //bd.Usage          = D3D11_USAGE_DEFAULT;
         bd.Usage = D3D11_USAGE_DYNAMIC;
         bd.ByteWidth = sizeof(SpriteVertex) * 2;
         bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-        //bd.CPUAccessFlags = 0;
         bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
         bd.MiscFlags = 0;
 
@@ -1350,69 +1253,63 @@ bool CSprite::DrawLine3D(const VECTOR3& vStart, const VECTOR3& vEnd, const MATRI
         InitData.pSysMem = vertices;
         if (FAILED(m_pD3D->m_pDevice->CreateBuffer(&bd, &InitData, &m_pVertexBufferLine)))
         {
-            MessageBox(0, _T("Sprite3D.cpp ?o?[?e?b?N?X?o?b?t?@?[LINE ?????s"), nullptr, MB_OK);
+            MessageBox(0, _T("Sprite3D.cpp 頂点バッファ作成失敗(LINE3D)"), nullptr, MB_OK);
             return false;
         }
     }
     else
     {
-        // ???�H???�x?????A?o?[?e?b?N?X?o?b?t?@???????????????
         D3D11_MAPPED_SUBRESOURCE msr;
         if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pVertexBufferLine, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr)))
         {
-            memcpy(msr.pData, vertices, sizeof(SpriteVertex) * 2); // 2???_???R?s?[
+            memcpy(msr.pData, vertices, sizeof(SpriteVertex) * 2);
             m_pD3D->m_pDeviceContext->Unmap(m_pVertexBufferLine, 0);
         }
     }
 
-    // ???F??w??
+    // 色データの正規化 (0~255 -> 0.0~1.0)
     VECTOR4 color;
-    color.x = ((colorABGR & 0x000000ff) >> 0) / (float)255; // R
-    color.y = ((colorABGR & 0x0000ff00) >> 8) / (float)255; // G
-    color.z = ((colorABGR & 0x00ff0000) >> 16) / (float)255; // B
-    color.w = fAlpha; // A    // -- 2020.1.24
+    color.x = ((colorABGR & 0x000000ff) >> 0) / 255.0f; // R
+    color.y = ((colorABGR & 0x0000ff00) >> 8) / 255.0f; // G
+    color.z = ((colorABGR & 0x00ff0000) >> 16) / 255.0f; // B
+    color.w = fAlpha; // A
 
-    //?o?[?e?b?N?X?o?b?t?@?[???Z?b?g
+    // バッファをセット
     UINT stride = sizeof(SpriteVertex);
     UINT offset = 0;
     m_pD3D->m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBufferLine, &stride, &offset);
-
-    //???_?C???v?b?g???C?A?E?g???Z?b?g
     m_pD3D->m_pDeviceContext->IASetInputLayout(m_pShader->m_pSprite3D_VertexLayout);
 
-    //?v???~?e?B?u?E?g?|???W?[???Z?b?g
+    // プリミティブ・トポロジーをラインリストに設定
     m_pD3D->m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
-    //?e?N?X?`???[??????V?F?[?_?[??n??
+    // テクスチャは無効
     ID3D11ShaderResourceView* Nothing[1] = {0};
     m_pD3D->m_pDeviceContext->PSSetShaderResources(0, 1, Nothing);
 
-    //???[???h?s??
+    // 行列計算（ライン自体の位置は頂点座標で持っているため、ワールド行列は単位行列）
     MATRIX4X4 mWorld = XMMatrixIdentity();
 
-    //?V?F?[?_?[??R???X?^???g?o?b?t?@?[??e??f?[?^??n??
     D3D11_MAPPED_SUBRESOURCE pData;
     CONSTANT_BUFFER_SPRITE cb;
     if (SUCCEEDED(
         m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferSprite3D, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
     {
-        //???[???h?A?J?????A??e?s??A?e?N?X?`???[?I?t?Z?b?g??n??
+        // ビュー・投影行列を合成して転送
         cb.mWVP = XMMatrixTranspose(mWorld * mView * mProj);
 
-        cb.vUVOffset.x = 0;
-        cb.vUVOffset.y = 0;
-        cb.vColor = color; // ???F
-        cb.vMatInfo = VECTOR4(0, 0, 0, 0); // ?e?N?X?`?????
+        cb.vUVOffset = VECTOR2(0, 0);
+        cb.vColor = color;
+        cb.vMatInfo = VECTOR4(0, 0, 0, 0); // テクスチャなしモード
 
         memcpy_s(pData.pData, pData.RowPitch, (void*)(&cb), sizeof(cb));
         m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferSprite3D, 0);
     }
 
-    //????R???X?^???g?o?b?t?@?[?????V?F?[?_?[??g????
     m_pD3D->m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferSprite3D);
     m_pD3D->m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferSprite3D);
 
-    //?v???~?e?B?u???????_?????O
+    // 描画実行（2頂点）
     m_pD3D->m_pDeviceContext->Draw(2, 0);
 
     return true;
@@ -1420,15 +1317,14 @@ bool CSprite::DrawLine3D(const VECTOR3& vStart, const VECTOR3& vEnd, const MATRI
 
 // ========================================================================================
 //
-// ?t?H???g?e?N?X?`???[?????
-//
+// フォントテクスチャ描画クラス
 //
 // ========================================================================================
 //------------------------------------------------------------------------
 //
-//	?t?H???g?e?N?X?`???[??R???X?g???N?^	
+//  フォントテクスチャのコンストラクタ    
 //
-//  ?????@CShader* pShader
+//  引数：CShader* pShader
 //
 //------------------------------------------------------------------------
 CFontTexture::CFontTexture(CShader* pShader)
@@ -1443,40 +1339,36 @@ CFontTexture::CFontTexture(CShader* pShader)
     }
 
     /*
-    // ?????�-???????t?H???g?????I??g????�y?????
-    // ?v???O???????I???????t?H???g????????
+    // 外部のTTFフォントファイルを読み込んで利用する場合
     DESIGNVECTOR design;
     if (AddFontResourceEx(
-    TEXT("Fonts/????t?H???g??.ttf"),
-    FR_PRIVATE,
-    &design) == nullptr)
+        TEXT("Fonts/外部フォント名.ttf"),
+        FR_PRIVATE,
+        &design) == nullptr)
     {
-    MessageBox(0, _T("Sprite.cpp ?t?H???g????????s???????"), _T(""), MB_OK);
+        MessageBox(0, _T("Sprite.cpp フォント読み込みに失敗しました"), _T(""), MB_OK);
     }
     */
 
-    // 3D?e?L?X?g   // -- 2018.8.10
+    // 3Dテキスト表示用設定
     m_fDestWidth = 0.0f;
     m_fDestHeight = 0.0f;
 }
 
 //------------------------------------------------------------------------
 //
-//	?t?H???g?e?N?X?`???[??f?X?g???N?^	
+//  フォントテクスチャのデストラクタ  
 //
 //------------------------------------------------------------------------
 CFontTexture::~CFontTexture()
 {
     /*
-    // ????????t?H???g?????????
+    // 読み込んだ外部フォントを解除
     DESIGNVECTOR design;
-    if (RemoveFontResourceEx(
-    TEXT("Fonts/????t?H???g??.ttf"),
-    FR_PRIVATE,
-    &design) == nullptr)
-    {
-    MessageBox(0, _T("Sprite.cpp ?t?H???g????????s???????"), _T(""), MB_OK);
-    }
+    RemoveFontResourceEx(
+        TEXT("Fonts/外部フォント名.ttf"),
+        FR_PRIVATE,
+        &design);
     */
 
     for (DWORD i = 0; i < TEXT_DATA_MAX; i++)
@@ -1488,54 +1380,49 @@ CFontTexture::~CFontTexture()
 }
 
 //------------------------------------------------------------------------
-// ?e?L?X?g??????t???b?V??
+// テキストデータのインデックスリフレッシュ
 // 
-// ?@?@?\??????e?L?X?g?????A??s?�$?TextData?????????
-// ?@?@??????t???b?V????A???C?????[?v??�.?�Ws???K?v??????
+//   表示するテキスト情報をクリアし、配列のインデックスを先頭に戻します。
+//   毎フレームの描画ループの最初で呼び出す必要があります。
 //
-//  ?????@?@???
-//
-//	???l  ???
+//  引数：なし
+//  戻り値：なし
 //
 //------------------------------------------------------------------------
 void CFontTexture::Refresh()
 {
     m_Idx = 0;
 }
-
 //------------------------------------------------------------------------
 //
-//	?e?L?X?g?\???p??o?[?e?b?N?X?o?b?t?@?[???B
-//	?P?s??????????m?????
+//  テキスト表示用の頂点バッファを作成（更新）
+//  1行分の四角形ポリゴンを生成します。
 //
-//  const DWORD& dwWidth    ?\?????i?P?s????????j
-//  const DWORD& dwHeight   ?\???????i?P??????????j
+//  const DWORD& dwWidth    表示幅（1行の長さ）
+//  const DWORD& dwHeight   表示高さ（フォントの高さ）
 //
-//	???l  ???
+//  戻り値：なし
 //
 //------------------------------------------------------------------------ 
 void CFontTexture::CreateVB(const DWORD& dwWidth, const DWORD& dwHeight)
 {
-    // ?o?[?e?b?N?X?o?b?t?@?[??????C???�??�??B
-    // z?l???P????????????B?N???b?v????z=1??�H????????????B??????????`?��?????B
+    // 頂点バッファデータを作成。z値は1.0で固定。
+    // トライアングルストリップ形式（左下、左上、右下、右上）
     SpriteVertex vertices[] =
     {
-        VECTOR3(0, (float)dwHeight, 0), VECTOR2(0, 1), //???_1  ????
-        VECTOR3(0, 0, 0), VECTOR2(0, 0), //???_3?@????     // -- 2024.3.23
-        VECTOR3((float)dwWidth, (float)dwHeight, 0), VECTOR2(1, 1), //???_2?@?E??     // -- 2024.3.23
-        VECTOR3((float)dwWidth, 0, 0), VECTOR2(1, 0) //???_4?@?E??
+        { VECTOR3(0, (float)dwHeight, 0),         VECTOR2(0, 1) }, // 頂点1：左下
+        { VECTOR3(0, 0, 0),                       VECTOR2(0, 0) }, // 頂点2：左上
+        { VECTOR3((float)dwWidth, (float)dwHeight, 0), VECTOR2(1, 1) }, // 頂点3：右下
+        { VECTOR3((float)dwWidth, 0, 0),          VECTOR2(1, 0) }  // 頂点4：右上
     };
 
-    // ?o?[?e?b?N?X?o?b?t?@?????�H???�x????????`?F?b?N????
+    // 頂点バッファが未作成の場合は新規作成、作成済みの場合はMapで更新
     if (m_TextData[m_Idx].m_pVertexBufferFont == nullptr)
     {
-        // ?V?K??????
         D3D11_BUFFER_DESC bd;
-        //bd.Usage          = D3D11_USAGE_DEFAULT;
         bd.Usage = D3D11_USAGE_DYNAMIC;
         bd.ByteWidth = sizeof(SpriteVertex) * 4;
         bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-        //bd.CPUAccessFlags = 0;
         bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
         bd.MiscFlags = 0;
 
@@ -1543,18 +1430,17 @@ void CFontTexture::CreateVB(const DWORD& dwWidth, const DWORD& dwHeight)
         InitData.pSysMem = vertices;
         if (FAILED(m_pD3D->m_pDevice->CreateBuffer(&bd, &InitData, &m_TextData[m_Idx].m_pVertexBufferFont)))
         {
-            MessageBox(0, _T("Sprite.cpp ?o?[?e?b?N?X?o?b?t?@?[?????s"), nullptr, MB_OK);
+            MessageBox(0, _T("Sprite.cpp フォント用頂点バッファ作成失敗"), nullptr, MB_OK);
             return;
         }
     }
     else
     {
-        // ???�H???�x?????A?o?[?e?b?N?X?o?b?t?@???????????????
         D3D11_MAPPED_SUBRESOURCE msr;
         if (SUCCEEDED(
             m_pD3D->m_pDeviceContext->Map(m_TextData[m_Idx].m_pVertexBufferFont, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr)))
         {
-            memcpy(msr.pData, vertices, sizeof(SpriteVertex) * 4); // 4???_???R?s?[
+            memcpy(msr.pData, vertices, sizeof(SpriteVertex) * 4);
             m_pD3D->m_pDeviceContext->Unmap(m_TextData[m_Idx].m_pVertexBufferFont, 0);
         }
     }
@@ -1562,19 +1448,15 @@ void CFontTexture::CreateVB(const DWORD& dwWidth, const DWORD& dwHeight)
 
 //------------------------------------------------------------------------
 //
-//	?e?L?X?g??`??
+//  テキストの描画（スクリーン座標指定）
 //
-//	?E???W?w???????????
-//
-//  float posX         ?\????u?@????@?w???W
-//  float posY         ?\????u?@????@?x???W
-//  const TCHAR* szText       ?\??????e?L?X?g
-//  int fontsize       ?t?H???g?T?C?Y
-//  DWORD colorABGR    ?????F?@colorABGR??AABGR??w??B??F???F??(0x00ffffff)
-//  float fAlpha       ?????x?i????�j
-//  const TCHAR* szFontName   ?t?H???g???i????�j
-//
-//	???l  ???
+//  float posX         表示位置X座標
+//  float posY         表示位置Y座標
+//  const TCHAR* szText       表示する文字列
+//  int fontsize       フォントサイズ
+//  DWORD colorABGR    表示色（0xAABBGR形式）
+//  float fAlpha       透明度（初期値1.0f）
+//  const TCHAR* szFontName   フォント名（省略可）
 //
 //------------------------------------------------------------------------ 
 void CFontTexture::Draw(float posX, float posY, const TCHAR* szText, int fontsize, DWORD colorABGR, float fAlpha,
@@ -1588,242 +1470,179 @@ void CFontTexture::Draw(float posX, float posY, const TCHAR* szText, int fontsiz
 
 //------------------------------------------------------------------------
 //
-//	?e?L?X?g??`??
+//  テキストの描画（ワールド行列指定）
 //
-//	?E???[???h?}?g???b?N?X??????????
-//
-//  MATRIX4X4 mWorld  ?\????u?@????@???[???h?}?g???b?N?X
-//  const TCHAR* szText       ?\??????e?L?X?g
-//  int fontsize       ?t?H???g?T?C?Y
-//  DWORD colorABGR    ?????F?@colorABGR??AABGR??w??B??F???F??(0x00ffffff)
-//  float fAlpha       ?????x?i????�j
-//  const TCHAR* szFontName   ?t?H???g???i????�j
-//
-//	???l  ???
+//  MATRIX4X4 mWorld  表示位置用ワールドマトリックス
+//  const TCHAR* szText       表示する文字列
+//  int fontsize       フォントサイズ
+//  DWORD colorABGR    表示色
+//  float fAlpha       透明度
+//  const TCHAR* szFontName   フォント名
 //
 //------------------------------------------------------------------------ 
 void CFontTexture::Draw(MATRIX4X4 mWorld, const TCHAR* szText, int fontsize, DWORD colorABGR, float fAlpha,
                         const TCHAR* szFontName)
 {
-    // ??????????????`?ذ???
-    if (szText[0] == _T('\0')) return; // -- 2017.11.22
+    // 文字列が空の場合は描画しない
+    if (szText[0] == _T('\0')) return;
 
-    //
-    // ?O???�H?u???????F?A?T?C?Y?v???P?????E????????m_TextData?z???????�%?????
-    // ???f?[?^??????????????????`?F?b?N????
-    //
-    // ?@?@????????A???�H???�x??t?H???g?e?N?X?`???[???g?p????
-    // ?A?@??????????????A?t?H???g?e?N?X?`???[????????s??
-    // ?@?@?i?t?H???g?e?N?X?`???[??????????????d?????????�(j
-
+    // 前回のデータと比較し、変更がある場合のみテクスチャを再生成する
+    // (文字列、サイズ、色、透明度が変わっていなければ既存のテクスチャを再利用)
     if (m_TextData[m_Idx].m_szText == nullptr || _tcscmp(m_TextData[m_Idx].m_szText, szText) != 0 ||
         m_TextData[m_Idx].m_iFontsize != fontsize || m_TextData[m_Idx].m_dwColor != colorABGR || m_TextData[m_Idx].
-        m_fAlpha != fAlpha) // ???�x????????????H
+        m_fAlpha != fAlpha)
     {
-        // ????????�yX??????????
         SAFE_DELETE_ARRAY(m_TextData[m_Idx].m_szText);
-        m_TextData[m_Idx].m_szText = new TCHAR[_tcslen(szText) + 1]; // TCHAR??A?P???????Q?o?C?g  // -- 2018.12.28
-        m_TextData[m_Idx].m_dwKbn = 0; // 2D?t?H???g
+        m_TextData[m_Idx].m_szText = new TCHAR[_tcslen(szText) + 1];
+        m_TextData[m_Idx].m_dwKbn = 0; // 2Dフォントフラグ
         _tcscpy_s(m_TextData[m_Idx].m_szText, _tcslen(szText) + 1, szText);
-        // ?????????                           // -- 2018.12.28
-        m_TextData[m_Idx].m_iFontsize = fontsize; // ?t?H???g?T?C?Y????
-        m_TextData[m_Idx].m_dwColor = colorABGR; // ?F????
-        m_TextData[m_Idx].m_fAlpha = fAlpha; // ?????x????
 
-        // ?t?H???g?e?N?X?`???[???(2D?t?H???g??)            // -- 2018.8.10
+        m_TextData[m_Idx].m_iFontsize = fontsize;
+        m_TextData[m_Idx].m_dwColor = colorABGR;
+        m_TextData[m_Idx].m_fAlpha = fAlpha;
+
+        // フォントテクスチャの作成実行
         CreateTex(0, 0, 0, szText, fontsize, colorABGR, szFontName);
     }
 
-    // ?o???��?????e?N?X?`?????g????`????s??
-
-    //?g?p????V?F?[?_?[??Z?b?g
+    // 描画ステートの設定
     SetShader();
 
-    //?o?[?e?b?N?X?o?b?t?@?[???Z?b?g
+    // 作成済みの頂点バッファをセット
     UINT stride = sizeof(SpriteVertex);
     UINT offset = 0;
     m_pD3D->m_pDeviceContext->IASetVertexBuffers(0, 1, &m_TextData[m_Idx].m_pVertexBufferFont, &stride, &offset);
 
-    //?V?F?[?_?[??R???X?^???g?o?b?t?@?[??e??f?[?^??n??
+    // 定数バッファの更新
     D3D11_MAPPED_SUBRESOURCE pData;
     CONSTANT_BUFFER_SPRITE cb;
     if (SUCCEEDED(
         m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferSprite3D, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
     {
-        //???[???h?s???n??
         cb.mW = XMMatrixTranspose(mWorld);
-
-        //?r???[?|?[?g?T?C?Y??n???i?N???C?A???g???????c?j
         cb.ViewPortWidth = (float)m_pD3D->m_dwWindowWidth;
         cb.ViewPortHeight = (float)m_pD3D->m_dwWindowHeight;
-        cb.vUVOffset.x = 0;
-        cb.vUVOffset.y = 0;
-        cb.vColor = VECTOR4(1, 1, 1, 1); // -- 2020.1.24
-        cb.vColor.w = m_TextData[m_Idx].m_fAlpha;
-        cb.vMatInfo = VECTOR4(1, 0, 0, 0); // ?e?N?X?`???L??
+        cb.vUVOffset = VECTOR2(0, 0);
+        cb.vColor = VECTOR4(1, 1, 1, m_TextData[m_Idx].m_fAlpha);
+        cb.vMatInfo = VECTOR4(1, 0, 0, 0); // テクスチャ有効
+
         memcpy_s(pData.pData, pData.RowPitch, (void*)(&cb), sizeof(cb));
         m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferSprite3D, 0);
     }
 
-    //?e?N?X?`???[???V?F?[?_?[??n??
+    // テクスチャ（SRV）をセットして描画
     m_pD3D->m_pDeviceContext->PSSetShaderResources(0, 1, &m_TextData[m_Idx].m_pResourceView);
-
-    //?v???~?e?B?u???????_?????O
     m_pD3D->m_pDeviceContext->Draw(4, 0);
 
-    //	?V?F?[?_?[???????Z?b?g
+    // ステートを元に戻す
     ResetShader();
 
-    // ???????TextData?z???Y?????P?????B
+    // 次の描画のためにインデックスを進める
     m_Idx++;
     if (m_Idx >= TEXT_DATA_MAX)
     {
-        MessageBox(
-            0, _T(
-                "??????t?H???g?e?N?X?`????�V???????????B\nReflesh()???????�%???????B\n?????TEXT_DATA_MAX?????�%????????B"),
-            _T(""), MB_OK);
+        MessageBox(0, _T("描画可能なテキスト数の上限(TEXT_DATA_MAX)を超えました。\nRefresh()の呼び出し位置、または最大数設定を確認してください。"), _T("Error"), MB_OK);
         m_Idx--;
     }
 }
 
-
 //------------------------------------------------------------------------
 //
-//	?`??O??V?F?[?_?[?????Z?b?g
-//
-//  ?????@?@???
-//
-//	???l  ???
+//  描画開始時のシェーダー設定
 //
 //------------------------------------------------------------------------
 void CFontTexture::SetShader()
 {
-    //?g?p????V?F?[?_?[??Z?b?g
     m_pD3D->m_pDeviceContext->VSSetShader(m_pShader->m_pSprite3D_VS, nullptr, 0);
     m_pD3D->m_pDeviceContext->PSSetShader(m_pShader->m_pSprite3D_PS, nullptr, 0);
 
-
-    //????R???X?^???g?o?b?t?@?[?????V?F?[?_?[??g????
     m_pD3D->m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferSprite3D);
     m_pD3D->m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferSprite3D);
-    //???_?C???v?b?g???C?A?E?g???Z?b?g
     m_pD3D->m_pDeviceContext->IASetInputLayout(m_pShader->m_pSprite3D_VertexLayout);
-
-    //?v???~?e?B?u?E?g?|???W?[???Z?b?g
     m_pD3D->m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-
-    // ?T???v???[???Z?b?g
     m_pD3D->m_pDeviceContext->PSSetSamplers(0, 1, &m_pD3D->m_pSampleLinear);
 
-    // ????F??u?????f?B???O????
+    // 半透明ブレンドを有効化
     UINT mask = 0xffffffff;
     m_pD3D->m_pDeviceContext->OMSetBlendState(m_pD3D->m_pBlendStateTrapen, nullptr, mask);
 
-    //Z?o?b?t?@??????
-    m_pD3D->SetZBuffer(false); // -- 2019.4.19
+    // テキストは最前面に描画するためZバッファ無効化
+    m_pD3D->SetZBuffer(false); 
 }
 
 //------------------------------------------------------------------------
 //
-//	?`????V?F?[?_?[???????Z?b?g
-//
-//  ?????@?@???
-//
-//	???l  ???
+//  描画終了時のシェーダーリセット
 //
 //------------------------------------------------------------------------
 void CFontTexture::ResetShader()
 {
-    //Z?o?b?t?@??L????
-    m_pD3D->SetZBuffer(true); // -- 2019.4.19
+    m_pD3D->SetZBuffer(true); 
 
-
-    // ????u?????f?B???O????
     UINT mask = 0xffffffff;
     m_pD3D->m_pDeviceContext->OMSetBlendState(m_pD3D->m_pBlendStateTrapen, nullptr, mask);
 }
-
 //------------------------------------------------------------------------
 //
-//	?t?H???g?e?N?X?`???[???
+//  フォントテクスチャの作成
 //
-//	?EGDI????t?H???g??O???t?B?b?N?X???�'A?e?N?X?`???[????????
-//	?@???????e?N?X?`???[??Am_TextData[m_Idx]?z???i?[????
+//  GDIを用いてフォントをグラフィックスデバイスに描き、テクスチャ化する
+//  作成したテクスチャは m_TextData[m_Idx] 配列に格納される
 //
-//  const DWORD&  dwKbn        ?? 0:?Q?c?t?H???g?@1:?R?c?t?H???g  // -- 2018.8.10
-//  const float&  fDestWidth  ?R?c?t?H???g  ?\????                 // -- 2018.8.10
-//  const float&  fDestHeight ?R?c?t?H???g  ?\??????               // -- 2018.8.10
-//  const TCHAR* text         ?\??????e?L?X?g
-//  const int& fontsize       ?t?H???g?T?C?Y
-//  const DWORD& colorABGR    ?????F?@colorABGR??AABGR??w??B??F???F??(0x00ffffff)
-//  const TCHAR* szFontName   ?t?H???g???inullptr?�H??�j
+//  const DWORD&  dwKbn        区分 0:2Dフォント  1:3Dフォント  // -- 2018.8.10
+//  const float&  fDestWidth  3D表示時の幅                      // -- 2018.8.10
+//  const float&  fDestHeight 3D表示時の高さ                    // -- 2018.8.10
+//  const TCHAR* text         表示するテキスト
+//  const int&    fontsize     フォントサイズ
+//  const DWORD&  colorABGR    表示色（0xAABBGR形式）
+//  const TCHAR* fontname     フォント名（nullptrの場合はデフォルト）
 //
-//	???l  ???
-//
+//  戻り値：なし
 //------------------------------------------------------------------------ 
 void CFontTexture::CreateTex(const DWORD& dwKbn, const float& fDestWidth, const float& fDestHeight, const TCHAR* text,
                              const int& fontsize, const DWORD& colorABGR, const TCHAR* fontname)
 {
-    // ?t?H???g?????
+    // フォントの設定
     LOGFONT lf = {
         fontsize,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
+        0, 0, 0, 0, 0, 0, 0,
         SHIFTJIS_CHARSET,
         OUT_TT_ONLY_PRECIS,
         CLIP_DEFAULT_PRECIS,
         PROOF_QUALITY,
         FIXED_PITCH | FF_MODERN,
-        //TEXT("?c?e??????")
-        TEXT("?l?r ?o?S?V?b?N")
-        //TEXT("?l?r ?S?V?b?N")
-        //TEXT("HGP?n?p?p?????")
-        //TEXT("HGP?n?p?p????UB")
+        TEXT("ＭＳ ゴシック") // デフォルトフォント名
     };
+    
     if (fontname != nullptr)
-        _tcscpy_s(lf.lfFaceName, sizeof(lf.lfFaceName) / sizeof(TCHAR), fontname); // ?t?H???g??????
+        _tcscpy_s(lf.lfFaceName, sizeof(lf.lfFaceName) / sizeof(TCHAR), fontname);
 
     HFONT hFont = CreateFontIndirect(&lf);
     if (!(hFont))
     {
-        MessageBox(0, _T("Sprite.cpp ?e?N?X?`???p??t?H???g?????�H??????"), _T(""), MB_OK);
+        MessageBox(0, _T("Sprite.cpp テクスチャ用フォント作成失敗"), _T(""), MB_OK);
     }
 
-
-    // ??????O???t?B?b?N?????
-
-    DWORD dwTextlen = (DWORD)_tcslen(text); // ???????i?o?C?g???�H????j  // -- 2018.12.28
+    // 文字列のサイズ計測とグリフ情報の取得
+    DWORD dwTextlen = (DWORD)_tcslen(text);
     DWORD dwTextHeight = 0;
     DWORD dwTextWidth = 0;
     DWORD dwAllWidth = 0;
-    DWORD dwAllWidth2 = 0; // -- 2022.11.8
+    DWORD dwAllWidth2 = 0; 
     FontData* pFontData = new FontData[dwTextlen];
 
-    // ?f?o?C?X?R???e?L?X?g?��
-    // ?f?o?C?X??t?H???g?????????????GetGlyphOutline?????G???[????
+    // デバイスコンテキストを取得し、フォントを適用
     HDC hdc = GetDC(nullptr);
     HFONT oldFont = (HFONT)SelectObject(hdc, hFont);
 
-
     for (DWORD i = 0; i < dwTextlen; i++)
     {
-        // ?????R?[?h?��
         UINT code = 0;
-
 #if _UNICODE
-        // unicode????A?????R?[?h??P??????C?h??????UINT?�u?
         code = (UINT)*(text + i);
 #else
-        // ?}???`?o?C?g????????A
-        // 1?o?C?g??????R?[?h?????1?o?C?g???UINT?�u??A
-        // 2?o?C?g??????R?[?h?????[?ڨ?R?[?h]*256 + [?????R?[?h]
         BYTE* c = (BYTE*)(text + i);
-        if (IsDBCSLeadByte(*c)) // 2?o?C?g??????ڨ?R?[?h???????
+        if (IsDBCSLeadByte(*c))
         {
             code = (BYTE)c[0] << 8 | (BYTE)c[1];
             i++;
@@ -1834,202 +1653,143 @@ void CFontTexture::CreateTex(const DWORD& dwKbn, const float& fDestWidth, const 
         }
 #endif
 
-        // ?t?H???g?r?b?g?}?b?v?��
+        // グリフ情報の取得
         GetTextMetrics(hdc, &(pFontData + i)->TM);
         CONST MAT2 Mat = {{0, 1}, {0, 0}, {0, 0}, {0, 1}};
         DWORD size = GetGlyphOutline(hdc, code, GGO_GRAY4_BITMAP, &(pFontData + i)->GM, 0, nullptr, &Mat);
-        // ?o?b?t?@?T?C?Y????????�%??�R
-        if (size == 0) // ?t?H???g?f?[?^????  2017.4.15
+        
+        if (size == 0) 
         {
-            (pFontData + i)->ptr = nullptr; // ?t?H???g?f?[?^?????????  2017.4.15
+            (pFontData + i)->ptr = nullptr;
         }
         else
         {
             (pFontData + i)->ptr = new BYTE[size];
             GetGlyphOutline(hdc, code, GGO_GRAY4_BITMAP, &(pFontData + i)->GM, size, (pFontData + i)->ptr, &Mat);
         }
+        
         if ((int)dwTextWidth < (pFontData + i)->GM.gmCellIncX) dwTextWidth = (pFontData + i)->GM.gmCellIncX;
-        // ?P???????
-        if ((int)dwTextHeight < (pFontData + i)->TM.tmHeight) dwTextHeight = (pFontData + i)->TM.tmHeight;
-        // ?P?????????
-        if ((int)dwTextHeight < (pFontData + i)->GM.gmBlackBoxY) dwTextHeight = (pFontData + i)->GM.gmBlackBoxY;
-        // ?P???????????t?H???g?r?b?g?}?b?v????????????    // -- 2022.11.8
-        dwAllWidth += (pFontData + i)->GM.gmCellIncX; // ??????S???????i?h?b?g???j
+        if (dwTextHeight < (DWORD)(pFontData + i)->TM.tmHeight) dwTextHeight = (pFontData + i)->TM.tmHeight;
+        if (dwTextHeight < (DWORD)(pFontData + i)->GM.gmBlackBoxY) dwTextHeight = (pFontData + i)->GM.gmBlackBoxY;
+        
+        dwAllWidth += (pFontData + i)->GM.gmCellIncX;
         dwAllWidth2 += (pFontData + i)->GM.gmBlackBoxX + (4 - ((pFontData + i)->GM.gmBlackBoxX % 4)) % 4;
-        // ?t?H???g?r?b?g?}?b?v???  // -- 2022.11.8
     }
 
-    if (dwAllWidth < dwAllWidth2)
-    // ??????S???????i?h?b?g???j??t?H???g?r?b?g?}?b?v???????????�Me?N?X?`???????  // -- 2022.11.8
-    {
-        dwAllWidth = dwAllWidth2;
-    }
+    if (dwAllWidth < dwAllWidth2) dwAllWidth = dwAllWidth2;
 
-    // ?f?o?C?X?R???e?L?X?g??t?H???g?n???h????J??
     SelectObject(hdc, oldFont);
     DeleteObject(hFont);
     ReleaseDC(nullptr, hdc);
 
-    // ----------------------------------------------------
-    // ??????t?H???g?r?b?g?}?b?v??????�Mo?[?e?b?N?X?o?b?t?@?[??
-    if (dwKbn == 0) // -- 2018.8.10
-    {
-        CreateVB(dwAllWidth, dwTextHeight); // 2D?t?H???g
-    }
-    else
-    {
-        CreateVB3D(fDestWidth, fDestHeight); // 3D?t?H???g
-    }
+    // 区分に応じて頂点バッファを作成
+    if (dwKbn == 0) CreateVB(dwAllWidth, dwTextHeight);
+    else CreateVB3D(fDestWidth, fDestHeight);
 
-    // ----------------------------------------------------
-    // ????????�\?e?N?X?`????
-    // CPU???????????�H???e?N?X?`??????
-
-    ID3D11Texture2D* pTexture2D; // 2?c?e?N?X?`??
-
+    // D3D11 動的テクスチャの作成
+    ID3D11Texture2D* pTexture2D;
     D3D11_TEXTURE2D_DESC desc;
     memset(&desc, 0, sizeof(desc));
-    desc.Width = dwAllWidth; // ??????P?s???????
-    desc.Height = dwTextHeight; // ??????????�V?l
+    desc.Width = dwAllWidth;
+    desc.Height = dwTextHeight;
     desc.MipLevels = 1;
     desc.ArraySize = 1;
-    desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // RGBA(255,255,255,255)?^?C?v
+    desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     desc.SampleDesc.Count = 1;
-    desc.Usage = D3D11_USAGE_DYNAMIC; // ???I?i??????????�{???K?{?????j
-    desc.BindFlags = D3D11_BIND_SHADER_RESOURCE; // ?V?F?[?_???\?[?X????�0g??
-    desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE; // CPU????A?N?Z?X???�0???????OK
+    desc.Usage = D3D11_USAGE_DYNAMIC;
+    desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
     if (FAILED(m_pD3D->m_pDevice->CreateTexture2D(&desc, 0, &pTexture2D)))
     {
-        MessageBox(0, _T("Sprite.cpp ?e?N?X?`???p??t?H???g?????�H??????"), _T(""), MB_OK);
+        MessageBox(0, _T("Sprite.cpp フォントテクスチャ生成失敗"), _T(""), MB_OK);
     }
 
-
+    // テクスチャをロックしてフォントビットマップを書き込む
     D3D11_MAPPED_SUBRESOURCE hMappedResource;
-
-    if (FAILED(m_pD3D->m_pDeviceContext->Map(
-        pTexture2D,
-        0,
-        D3D11_MAP_WRITE_DISCARD,
-        0,
-        &hMappedResource)))
+    if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &hMappedResource)))
     {
-        MessageBox(0, _T("Sprite.cpp ?e?N?X?`???}?b?v  ?t?H???g  ???s"), _T(""), MB_OK);
-    }
+        BYTE* pBits = (BYTE*)hMappedResource.pData;
+        ZeroMemory(pBits, hMappedResource.RowPitch * dwTextHeight);
 
-
-    // ???????e?N?X?`???i?r???[?j??t?H???g????????????
-    BYTE* pBits = (BYTE*)hMappedResource.pData;
-    ZeroMemory(pBits, hMappedResource.RowPitch * dwTextHeight);
-
-    DWORD dwAllWidthWk = 0;
-    for (DWORD i = 0; i < dwTextlen; i++)
-    {
-        // ?t?H???g???????????
-        // iOfs_x, iOfs_y : ?????o????u(????)
-        // iBmp_w, iBmp_h : ?t?H???g?r?b?g?}?b?v?????
-        // Level : ???l??i?K (GGO_GRAY4_BITMAP????17?i?K)
-        int iOfs_x = (pFontData + i)->GM.gmptGlyphOrigin.x;
-        int iOfs_y = (pFontData + i)->TM.tmAscent - (pFontData + i)->GM.gmptGlyphOrigin.y;
-        int iBmp_w = (pFontData + i)->GM.gmBlackBoxX + (4 - ((pFontData + i)->GM.gmBlackBoxX % 4)) % 4;
-        int iBmp_h = (pFontData + i)->GM.gmBlackBoxY;
-        if (iOfs_x < 0) iOfs_x = 0; // -- 2022.11.8
-        if (iOfs_y < 0) iOfs_y = 0; // -- 2022.11.8
-        int Level = 17;
-        int x, y;
-        DWORD Alpha, Color;
-
-        for (y = iOfs_y; y < iOfs_y + iBmp_h; y++)
+        DWORD dwAllWidthWk = 0;
+        for (DWORD i = 0; i < dwTextlen; i++)
         {
-            for (x = iOfs_x; x < iOfs_x + iBmp_w; x++)
+            int iOfs_x = (pFontData + i)->GM.gmptGlyphOrigin.x;
+            int iOfs_y = (pFontData + i)->TM.tmAscent - (pFontData + i)->GM.gmptGlyphOrigin.y;
+            int iBmp_w = (pFontData + i)->GM.gmBlackBoxX + (4 - ((pFontData + i)->GM.gmBlackBoxX % 4)) % 4;
+            int iBmp_h = (pFontData + i)->GM.gmBlackBoxY;
+            if (iOfs_x < 0) iOfs_x = 0;
+            if (iOfs_y < 0) iOfs_y = 0;
+            int Level = 17; // GGO_GRAY4_BITMAPの階調レベル
+
+            for (int y = iOfs_y; y < iOfs_y + iBmp_h; y++)
             {
-                if ((pFontData + i)->ptr == nullptr) // ?t?H???g?f?[?^?????????  2017.4.15
+                if ((DWORD)y >= dwTextHeight) break;
+                for (int x = iOfs_x; x < iOfs_x + iBmp_w; x++)
                 {
-                    Alpha = 0; // ?????F?????
-                }
-                else
-                {
-                    Alpha = (255 * (pFontData + i)->ptr[x - iOfs_x + iBmp_w * (y - iOfs_y)]) / (Level - 1);
-                }
-                Color = colorABGR | (Alpha << 24);
+                    DWORD Alpha, Color;
+                    if ((pFontData + i)->ptr == nullptr)
+                    {
+                        Alpha = 0;
+                    }
+                    else
+                    {
+                        // 階調値を255スケールに変換
+                        Alpha = (255 * (pFontData + i)->ptr[(x - iOfs_x) + iBmp_w * (y - iOfs_y)]) / (Level - 1);
+                    }
+                    Color = (colorABGR & 0x00ffffff) | (Alpha << 24);
 
-                memcpy((BYTE*)pBits + hMappedResource.RowPitch * y + 4 * (x + dwAllWidthWk), &Color, sizeof(DWORD));
+                    memcpy((BYTE*)pBits + hMappedResource.RowPitch * y + 4 * (x + dwAllWidthWk), &Color, sizeof(DWORD));
+                }
             }
+            dwAllWidthWk += (pFontData + i)->GM.gmCellIncX;
         }
-        dwAllWidthWk += (pFontData + i)->GM.gmCellIncX; // ?P???????i???
+        m_pD3D->m_pDeviceContext->Unmap(pTexture2D, 0);
     }
 
-    m_pD3D->m_pDeviceContext->Unmap(pTexture2D, 0);
+    // シェーダーリソースビューの作成
+    SAFE_RELEASE(m_TextData[m_Idx].m_pResourceView);
+    m_pD3D->m_pDevice->CreateShaderResourceView(pTexture2D, nullptr, &m_TextData[m_Idx].m_pResourceView);
 
-
-    // ?e?N?X?`???????��????
-    D3D11_TEXTURE2D_DESC texDesc;
-    pTexture2D->GetDesc(&texDesc);
-
-    // ShaderResourceView???????????
-    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-    ZeroMemory(&srvDesc, sizeof(srvDesc));
-    srvDesc.Format = texDesc.Format;
-    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-    srvDesc.Texture2D.MostDetailedMip = 0;
-    srvDesc.Texture2D.MipLevels = texDesc.MipLevels;
-
-    SAFE_RELEASE(m_TextData[m_Idx].m_pResourceView); // ?Q????~?????�c?
-
-    // ?V?F?[?_?[???\?[?X?r???[???
-    if (FAILED(m_pD3D->m_pDevice->CreateShaderResourceView(pTexture2D, &srvDesc, &m_TextData[m_Idx].m_pResourceView)))
-    {
-        MessageBox(0, _T("Sprite.cpp ?t?H???g?p?@ShaderResourceView??????s???????"), nullptr, MB_OK);
-    }
-
-    // ???????????\?[?X????
     SAFE_RELEASE(pTexture2D);
-
-    for (DWORD i = 0; i < dwTextlen; i++)
-    {
-        SAFE_DELETE_ARRAY((pFontData + i)->ptr);
-    }
+    for (DWORD i = 0; i < dwTextlen; i++) SAFE_DELETE_ARRAY((pFontData + i)->ptr);
     SAFE_DELETE_ARRAY(pFontData);
 }
 
 
 //------------------------------------------------------------------------ // -- 2018.8.10
 //
-//	?R?c?i?r???{?[?h?j?t?H???g??o?[?e?B?N?X?o?b?t?@??	
+//  3Dビルボードフォント用の頂点バッファ設定
 //
-//  const float& fDestWidth         ?\????
-//  const float& fDestHeight        ?\??????
+//  const float& fDestWidth         表示幅
+//  const float& fDestHeight        表示高さ
 //
-//	???l HRESULT
-//		S_OK	= ????
-//		E_FAIL	= ???
-//
+//  戻り値 HRESULT
+//     S_OK   = 成功
+//     E_FAIL = 失敗
 //------------------------------------------------------------------------
 HRESULT CFontTexture::CreateVB3D(const float& fDestWidth, const float& fDestHeight)
 {
-    // ?r???{?[?h?e?N?X?`???p??�|???S?????????A?o?[?e?b?N?X?o?b?t?@????????
+    // ビルボード用ポリゴンの設定（中心を基準に作成）
     m_fDestWidth = fDestWidth;
     m_fDestHeight = fDestHeight;
 
-    //?o?[?e?b?N?X?o?b?t?@?[??(??????????W?�W?)
+    // 頂点配列（トライアングルストリップ形式）
     SpriteVertex vertices[] =
     {
-        VECTOR3(-m_fDestWidth / 2, m_fDestHeight / 2, 0), VECTOR2(1, 0), // ???_1  ????
-        VECTOR3(-m_fDestWidth / 2, -m_fDestHeight / 2, 0), VECTOR2(1, 1), // ???_2?@????    // -- 2024.3.23
-        VECTOR3(m_fDestWidth / 2, m_fDestHeight / 2, 0), VECTOR2(0, 0), // ???_3?@?E??    // -- 2024.3.231
-        VECTOR3(m_fDestWidth / 2, -m_fDestHeight / 2, 0), VECTOR2(0, 1), // ???_4?@?E??
+        { VECTOR3(-m_fDestWidth / 2,  m_fDestHeight / 2, 0), VECTOR2(0, 0) }, // 左上
+        { VECTOR3(-m_fDestWidth / 2, -m_fDestHeight / 2, 0), VECTOR2(0, 1) }, // 左下
+        { VECTOR3( m_fDestWidth / 2,  m_fDestHeight / 2, 0), VECTOR2(1, 0) }, // 右上
+        { VECTOR3( m_fDestWidth / 2, -m_fDestHeight / 2, 0), VECTOR2(1, 1) }, // 右下
     };
 
-    // ?o?[?e?b?N?X?o?b?t?@?????�H???�x????????`?F?b?N????
     if (m_TextData[m_Idx].m_pVertexBufferFont == nullptr)
     {
-        // ?V?K??????
         D3D11_BUFFER_DESC bd;
-        //bd.Usage = D3D11_USAGE_DEFAULT;
         bd.Usage = D3D11_USAGE_DYNAMIC;
         bd.ByteWidth = sizeof(SpriteVertex) * 4;
         bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-        //bd.CPUAccessFlags = 0;
         bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
         bd.MiscFlags = 0;
 
@@ -2037,110 +1797,101 @@ HRESULT CFontTexture::CreateVB3D(const float& fDestWidth, const float& fDestHeig
         InitData.pSysMem = vertices;
         if (FAILED(m_pD3D->m_pDevice->CreateBuffer(&bd, &InitData, &m_TextData[m_Idx].m_pVertexBufferFont)))
         {
-            MessageBox(0, _T("Sprite.cpp ?o?[?e?b?N?X?o?b?t?@?[3D?????s"), nullptr, MB_OK);
+            MessageBox(0, _T("Sprite.cpp フォント用3D頂点バッファ作成失敗"), nullptr, MB_OK);
             return E_FAIL;
         }
     }
     else
     {
-        // ???�H???�x?????A?o?[?e?b?N?X?o?b?t?@???????????????
         D3D11_MAPPED_SUBRESOURCE msr;
-        if (SUCCEEDED(
-            m_pD3D->m_pDeviceContext->Map(m_TextData[m_Idx].m_pVertexBufferFont, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr)))
+        if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_TextData[m_Idx].m_pVertexBufferFont, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr)))
         {
-            memcpy(msr.pData, vertices, sizeof(SpriteVertex) * 4); // 4???_???R?s?[
+            memcpy(msr.pData, vertices, sizeof(SpriteVertex) * 4);
             m_pD3D->m_pDeviceContext->Unmap(m_TextData[m_Idx].m_pVertexBufferFont, 0);
         }
     }
 
     return S_OK;
 }
-
 //------------------------------------------------------------------------ // -- 2024.3.23
 //
-//	?R?c?i?r???{?[?h?j?t?H???g?I?u?W?F?N?g??????????_?????O	
+//  3Dビルボードフォントオブジェクトのレンダリング
 //
 //------------------------------------------------------------------------ 
 bool CFontTexture::Draw3D(const VECTOR3& vPos, const TCHAR* szText, const VECTOR2& vSize, const DWORD& colorABGR,
                           const float& fAlpha, const TCHAR* szFontName)
 {
+    // 現在のビュー、プロジェクション、視点座標を使用して描画
     return Draw3D(vPos, GameDevice()->m_mView, GameDevice()->m_mProj, GameDevice()->m_vEyePt, szText, vSize, colorABGR,
                   fAlpha, szFontName);
 }
 
 //------------------------------------------------------------------------ // -- 2018.8.10
 //
-//	?R?c?i?r???{?[?h?j?t?H???g?I?u?W?F?N?g??????????_?????O	
+//  3Dビルボードフォントオブジェクトのレンダリング（詳細設定）
 //
-//	????
-//		const VECTOR3& vPos     ?\????u
-//		const MATRIX4X4& mView  ?r???[?}?g???b?N?X
-//		const MATRIX4X4& mProj  ?v???W?F?N?V?????}?g???b?N?X
-//		const VECTOR3& vEye     ???_??u
-//		const TCHAR* szText     ?\??????e?L?X?g
-//		const VECTOR2& vSize    ?\???T?C?Y
-//		const DWORD& colorABGR   ?????F?@colorABGR??AABGR??w??B??F???F??(0x00ffffff)
-//		const float& fAlpha      ?????x?i????�j
-//		const TCHAR* szFontNam  ?t?H???g???i????�j
+//  引数：
+//     const VECTOR3& vPos     表示座標
+//     const MATRIX4X4& mView  ビューマトリックス
+//     const MATRIX4X4& mProj  プロジェクションマトリックス
+//     const VECTOR3& vEye     視点座標
+//     const TCHAR* szText     表示する文字列
+//     const VECTOR2& vSize    表示サイズ（x:幅 y:高さ）
+//     const DWORD& colorABGR   表示色（0xAABBGR）
+//     const float& fAlpha      透明度
+//     const TCHAR* szFontName フォント名
 //
-//	???l bool
-//		true      ?\???p??
-//		false     ?\???I??
+//  戻り値 bool：表示成功ならtrue
 //
 //------------------------------------------------------------------------
 bool CFontTexture::Draw3D(const VECTOR3& vPos, const MATRIX4X4& mView, const MATRIX4X4& mProj, const VECTOR3& vEye,
                           const TCHAR* szText, const VECTOR2& vSize, const DWORD& colorABGR, const float& fAlpha,
                           const TCHAR* szFontName)
 {
-    if (szText[0] == _T('\0')) return false; // ??????????????`?ذ???
+    // 文字列が空の場合は描画をスキップ
+    if (szText[0] == _T('\0')) return false;
 
-    //
-    // ?O???�H?u???????F?A?T?C?Y?v???P?????E????????m_TextData?z???????�%?????
-    // ???f?[?^??????????????????`?F?b?N????
-    //
-    // ?@?@????????A???�H???�x??t?H???g?e?N?X?`???[???g?p????
-    // ?A?@??????????????A?t?H???g?e?N?X?`???[????????s??
-    // ?@?@?i?t?H???g?e?N?X?`???[??????????????d?????????�(j
-
+    // 前回の描画データ（文字列、サイズ、色、透明度）と比較し、
+    // 変更がある場合、または初めて描画する場合にテクスチャを再生成する。
+    // ※ 3Dフォントの場合は m_dwKbn = 1 を使用
     DWORD fontsize = (DWORD)vSize.y * 100;
 
     if (m_TextData[m_Idx].m_dwKbn != 1 || m_TextData[m_Idx].m_szText == nullptr || _tcscmp(
             m_TextData[m_Idx].m_szText, szText) != 0 ||
         m_TextData[m_Idx].m_iFontsize != fontsize || m_TextData[m_Idx].m_dwColor != colorABGR || m_TextData[m_Idx].
-        m_fAlpha != fAlpha) // ???�x????????????H
+        m_fAlpha != fAlpha)
     {
-        // ????????�yX??????????
+        // 既存の文字列バッファを削除して新しく確保
         SAFE_DELETE_ARRAY(m_TextData[m_Idx].m_szText);
-        m_TextData[m_Idx].m_szText = new TCHAR[_tcslen(szText) + 1]; // TCHAR??A?P???????Q?o?C?g  // -- 2018.12.28
-        m_TextData[m_Idx].m_dwKbn = 1; // 3D?t?H???g
-        _tcscpy_s(m_TextData[m_Idx].m_szText, _tcslen(szText) + 1, szText); // ?????????
-        m_TextData[m_Idx].m_iFontsize = fontsize; // ?t?H???g?T?C?Y????
-        m_TextData[m_Idx].m_dwColor = colorABGR; // ?F????
-        m_TextData[m_Idx].m_fAlpha = fAlpha; // ?????x????
+        m_TextData[m_Idx].m_szText = new TCHAR[_tcslen(szText) + 1];
+        m_TextData[m_Idx].m_dwKbn = 1; // 3Dフォント区分
+        _tcscpy_s(m_TextData[m_Idx].m_szText, _tcslen(szText) + 1, szText);
 
-        // ?t?H???g?e?N?X?`???[???(3D?t?H???g??)
+        m_TextData[m_Idx].m_iFontsize = fontsize;
+        m_TextData[m_Idx].m_dwColor = colorABGR;
+        m_TextData[m_Idx].m_fAlpha = fAlpha;
+
+        // 指定条件でフォントテクスチャを作成
         CreateTex(1, vSize.x, vSize.y, szText, fontsize, colorABGR, szFontName);
     }
 
-    // ?o???��?????e?N?X?`?????g????`????s??
-
-    //?r???{?[?h??A???_?????????[???h?g?????X?t?H?[?????????
+    // ビルボード計算：視点方向を向くワールド行列を生成
     MATRIX4X4 mWorld = GetLookatMatrix(vPos, vEye);
 
-    //?g?p????V?F?[?_?[??Z?b?g
+    // シェーダーをセット（ビルボード用VSを使用）
     m_pD3D->m_pDeviceContext->VSSetShader(m_pShader->m_pSprite3D_VS_BILL, nullptr, 0);
     m_pD3D->m_pDeviceContext->PSSetShader(m_pShader->m_pSprite3D_PS, nullptr, 0);
 
-    //?o?[?e?b?N?X?o?b?t?@?[???Z?b?g
+    // 頂点バッファをセット
     UINT stride = sizeof(SpriteVertex);
     UINT offset = 0;
     m_pD3D->m_pDeviceContext->IASetVertexBuffers(0, 1, &m_TextData[m_Idx].m_pVertexBufferFont, &stride, &offset);
 
-    // ?????F??u?????f?B???O????
+    // 半透明ブレンドを有効化
     UINT mask = 0xffffffff;
     m_pD3D->m_pDeviceContext->OMSetBlendState(m_pD3D->m_pBlendStateTrapen, nullptr, mask);
 
-    //?V?F?[?_?[??R???X?^???g?o?b?t?@?[??e??f?[?^??n??
+    // 定数バッファのMap
     D3D11_MAPPED_SUBRESOURCE pData;
     CONSTANT_BUFFER_SPRITE cb;
     ZeroMemory(&cb, sizeof(cb));
@@ -2148,42 +1899,40 @@ bool CFontTexture::Draw3D(const VECTOR3& vPos, const MATRIX4X4& mView, const MAT
     if (SUCCEEDED(
         m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferSprite3D, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
     {
-        //???[???h?A?J?????A??e?s??A?e?N?X?`???[?I?t?Z?b?g??n??
+        // 転置した合成行列（WVP）をセット
         cb.mWVP = XMMatrixTranspose(mWorld * mView * mProj);
 
         cb.vUVOffset.x = 0;
         cb.vUVOffset.y = 0;
-        cb.vColor = VECTOR4(1, 1, 1, 1); // -- 2020.1.24
+        cb.vColor = VECTOR4(1, 1, 1, 1);
         cb.vColor.w = fAlpha;
-        cb.vMatInfo = VECTOR4(1, 0, 0, 0); // ?e?N?X?`???L??
+        cb.vMatInfo = VECTOR4(1, 0, 0, 0); // テクスチャ使用モード
 
         memcpy_s(pData.pData, pData.RowPitch, (void*)(&cb), sizeof(cb));
         m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferSprite3D, 0);
     }
-    //????R???X?^???g?o?b?t?@?[?????V?F?[?_?[??g????
+    
+    // シェーダーリソースのセットと描画
     m_pD3D->m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferSprite3D);
     m_pD3D->m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferSprite3D);
-    //???_?C???v?b?g???C?A?E?g???Z?b?g
     m_pD3D->m_pDeviceContext->IASetInputLayout(m_pShader->m_pSprite3D_VertexLayout);
-    //?v???~?e?B?u?E?g?|???W?[???Z?b?g
     m_pD3D->m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-    //?e?N?X?`???[???V?F?[?_?[??n??
     m_pD3D->m_pDeviceContext->PSSetSamplers(0, 1, &m_pD3D->m_pSampleLinear);
     m_pD3D->m_pDeviceContext->PSSetShaderResources(0, 1, &m_TextData[m_Idx].m_pResourceView);
-    //?v???~?e?B?u???????_?????O
+    
     m_pD3D->m_pDeviceContext->Draw(4, 0);
 
-    // ????u?????f?B???O????
+    // ブレンドステートをリセット
     m_pD3D->m_pDeviceContext->OMSetBlendState(m_pD3D->m_pBlendStateTrapen, nullptr, mask);
 
-    // ???????TextData?z???Y?????P?????B
+    // テキスト管理配列のインデックスを進める
     m_Idx++;
     if (m_Idx >= TEXT_DATA_MAX)
     {
         MessageBox(
             0, _T(
-                "??????t?H???g?e?N?X?`????�V???????????B\nReflesh()???????�%???????B\n?????TEXT_DATA_MAX?????�%????????B"),
-            _T(""), MB_OK);
+                "テキストデータの最大数(TEXT_DATA_MAX)を超えました。\nRefresh()の呼び出し位置、または最大数設定を確認してください。"),
+            _T("Error"), MB_OK);
         m_Idx--;
     }
 
