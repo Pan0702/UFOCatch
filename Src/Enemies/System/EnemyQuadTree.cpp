@@ -1,10 +1,9 @@
 #include "EnemyQuadTree.h"
 #include "../Base/EnemyBase.h"
 #include "../../Common/Object3D.h"
-#include <list>
 
 CEnemyQuadTree::CEnemyQuadTree()
-    : m_pTree(nullptr), m_frameCount(0)
+    : m_pTree(nullptr), m_lastEnemyCount(0), m_frameCount(0)
 {
     // 4分木の初期化（レベル3、範囲-20〜20）
     m_pTree = new CLiner4Tree<CEnemyBase>(3, VECTOR4(-20, -20, 20, 20));
@@ -19,14 +18,14 @@ CEnemyQuadTree::~CEnemyQuadTree()
     m_pTree = nullptr;
 }
 
-void CEnemyQuadTree::Update()
+void CEnemyQuadTree::Update(const std::vector<CEnemyBase*>& enemies)
 {
     if (m_pTree == nullptr) return;
 
+    m_lastEnemyCount = static_cast<int>(enemies.size());
     m_pTree->AllClear();
 
-    std::list<CEnemyBase*> enemies = ObjectManager::FindGameObjects<CEnemyBase>();
-    for (auto enemy : enemies)
+    for (auto* enemy : enemies)
     {
         VECTOR2 pos, size;
         if (enemy->GetBounds2D(pos, size))
@@ -56,12 +55,12 @@ std::vector<CEnemyBase*> CEnemyQuadTree::GetNearbyEnemies(
     auto endTime = std::chrono::high_resolution_clock::now();
     float elapsedMs = std::chrono::duration<float, std::milli>(endTime - startTime).count();
 
-    CalcCollisionStats(elapsedMs, result);
+    CalcCollisionStats(elapsedMs, result, m_lastEnemyCount);
 
     return result;
 }
 
-void CEnemyQuadTree::CalcCollisionStats(float elapsedMs, const std::vector<CEnemyBase*>& enemies) const
+void CEnemyQuadTree::CalcCollisionStats(float elapsedMs, const std::vector<CEnemyBase*>& enemies, int totalEnemyCount) const
 {
     // 統計情報の更新
     m_processTimes.push_back(elapsedMs);
@@ -86,15 +85,8 @@ void CEnemyQuadTree::CalcCollisionStats(float elapsedMs, const std::vector<CEnem
     // 判定回数の統計
     m_stats.totalChecks = static_cast<int>(enemies.size());
 
-    // 敵の総数を取得
-    static int lastEnemyCount = 0;
-    static int frameDivider = 0;
-    if (frameDivider++ % 60 == 0) {
-         std::list<CEnemyBase*> allEnemies = ObjectManager::FindGameObjects<CEnemyBase>();
-         lastEnemyCount = static_cast<int>(allEnemies.size());
-    }
-    
-    m_stats.enemyCount = lastEnemyCount;
+    // 敵の総数（EnemyManagerの管理リストから取得済み）
+    m_stats.enemyCount = totalEnemyCount;
 
     // 総当たりの場合の判定回数（自分以外の全敵）
     m_stats.potentialChecks = m_stats.enemyCount > 0 ? m_stats.enemyCount - 1 : 0;

@@ -38,12 +38,31 @@ CEnemyManager::~CEnemyManager()
     m_pStaticQuadTreeIndex = nullptr;
 }
 
+void CEnemyManager::RegisterEnemy(CEnemyBase* enemy)
+{
+    m_enemies.push_back(enemy);
+}
+
+void CEnemyManager::UnregisterEnemy(CEnemyBase* enemy)
+{
+    // swap-and-pop で O(1) 削除
+    for (size_t i = 0; i < m_enemies.size(); ++i)
+    {
+        if (m_enemies[i] == enemy)
+        {
+            m_enemies[i] = m_enemies.back();
+            m_enemies.pop_back();
+            return;
+        }
+    }
+}
+
 void CEnemyManager::Update()
 {
-    // QuadTreeIndexを更新
+    // QuadTreeIndexを更新（管理リストを渡す）
     if (m_pQuadTreeIndex)
     {
-        m_pQuadTreeIndex->Update();
+        m_pQuadTreeIndex->Update(m_enemies);
     }
 }
 
