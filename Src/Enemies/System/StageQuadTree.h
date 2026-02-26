@@ -13,7 +13,7 @@ public:
     ~CStageQuadTree();
 
     // シーンのステージオブジェクト生成後に1回呼ぶ
-    void Build();
+    void Build() const;
 
     // 近くの静的オブジェクトを取得
     std::vector<CStageObject*> GetNearbyObjects(

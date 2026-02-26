@@ -15,7 +15,7 @@ CStageQuadTree::~CStageQuadTree()
     m_pTree = nullptr;
 }
 
-void CStageQuadTree::Build()
+void CStageQuadTree::Build() const
 {
     if (m_pTree == nullptr) return;
 
