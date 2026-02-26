@@ -12,7 +12,7 @@
 
 
 CHuman::CHuman(const VECTOR3& pos, const VECTOR2& areaSize)
-    : m_AreaSize(areaSize)
+    : m_AreaSize(areaSize), m_pFunShape(nullptr)
 {
     transform.position = pos;
     m_pMesh = ObjectManager::FindGameObject<CEnemyManager>()->MeshList("Human");
@@ -43,6 +43,11 @@ CHuman::~CHuman()
         state.second = nullptr;
     }
     m_components.clear();
+    if (m_pFunShape != nullptr)
+    {
+        ObjectManager::DeleteGameObject(m_pFunShape);
+        m_pFunShape = nullptr;
+    }
 }
 void CHuman::Update()
 {
