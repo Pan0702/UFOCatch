@@ -1,5 +1,6 @@
 #include "Human.h"
 #include "FunShape.h"
+#include "../../Player/Player.h"
 #include "../../Player/PlayerHP.h"
 #include "../../System/VisionSystem.h"
 #include "../System/EnemyManager.h"
@@ -43,7 +44,6 @@ CHuman::~CHuman()
     }
     m_components.clear();
 }
-
 void CHuman::Update()
 {
     CEnemyBase::Update();
@@ -75,6 +75,8 @@ void CHuman::Update()
     // ステージオブジェクトとの衝突判定と押し戻し（最後に実行）
     ResolveStageCollisions();
 }
+
+
 
 
 void CHuman::Draw()

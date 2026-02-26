@@ -76,7 +76,8 @@ void CCircleDraw::Draw()
     if (!m_pCircleImage || !m_pPlayer) return;
 
     CSprite spr;
-    spr.DrawWorld(m_pCircleImage, m_pPlayer->GetPos(), m_pLevel->GetRadius(),0.7f);
+    VECTOR3 plPos = m_pPlayer->GetPos();
+    spr.DrawWorld(m_pCircleImage, VECTOR3(plPos.x,0,plPos.z), m_pLevel->GetRadius(),0.7f);
 }
 
 ///Debug///

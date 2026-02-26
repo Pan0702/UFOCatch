@@ -43,7 +43,7 @@ CBaseState::State CBaseState::NextStatePop()
     {
         return State::DESTROY;
     }
-     if(suctionComponent->IsFinish())
+    if(suctionComponent != nullptr && suctionComponent->IsFinish())
     {
         return State::WALK;
     }
