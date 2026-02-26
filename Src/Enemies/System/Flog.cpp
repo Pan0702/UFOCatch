@@ -1,6 +1,6 @@
 #include "Flog.h"
 
-void CFlog::RemoveFromArray(const CSheep* sheep)
+void CFlog::RemoveFromArray(CSheep* sheep)
 {
     // Swap and Pop方式で高速削除
     for (size_t i = 0; i < m_allSheep.size(); ++i)
@@ -12,8 +12,8 @@ void CFlog::RemoveFromArray(const CSheep* sheep)
             // 最後を削除
             m_allSheep.pop_back();
 
-            // メモリ解放
-            SAFE_DELETE(sheep);
+            // ObjectManager経由で解放（updateObjects/drawObjectsからも除去される）
+            ObjectManager::DeleteGameObject(sheep);
             break;
         }
     }

@@ -25,7 +25,7 @@ public:
     float GetFlockRadius() const { return m_flockRadius; }
 
 private:
-    void RemoveFromArray(const CSheep* sheep);
+    void RemoveFromArray(CSheep* sheep);
 
     std::vector<CSheep*> m_allSheep;
     std::vector<CAShepherdDog*> m_shepherdDogs;
