@@ -33,7 +33,7 @@ namespace SceneManager {
 	/// 現在のシーンとして登録する
 	/// </summary>
 	/// <param name="scene">登録するシーンのインスタンス</param>
-	void SetCurrentScene(SceneBase* scene);
+	void SetCurrentScene(std::unique_ptr<SceneBase> scene);
 
 	/// <summary>
 	/// シーンを切り替える。

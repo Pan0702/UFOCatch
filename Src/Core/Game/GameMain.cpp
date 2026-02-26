@@ -139,8 +139,8 @@ HRESULT CGameMain::Init()
     SceneManager::Start();
     ObjectManager::Start();
 
-    // メイン制御：フレームレートの固定設定 (1/60s)
-    MainControl::UseFrameTimer(1.0f / 60.0f);
+    // メイン制御：
+    MainControl::UseRefreshMessage();
 
     return S_OK;
 }

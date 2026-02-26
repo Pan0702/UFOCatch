@@ -18,7 +18,7 @@ CTutorialHuman::CTutorialHuman(const VECTOR3& pos)
     m_pMesh->Load("data/NewAnimal/Human/Human.mesh");
     m_pMesh->LoadAnimation(A_IDEL, "data/NewAnimal/Human/Human_Idle.anmx", false);
 
-    m_pAnimator = new Animator();
+    m_pAnimator = std::make_unique<Animator>();
     m_pAnimator->SetModel(m_pMesh);
     m_pAnimator->Play(A_IDEL);
 
@@ -27,9 +27,7 @@ CTutorialHuman::CTutorialHuman(const VECTOR3& pos)
 }
 
 
-CTutorialHuman::~CTutorialHuman()
-{
-}
+CTutorialHuman::~CTutorialHuman() = default;
 
 void CTutorialHuman::Update()
 {

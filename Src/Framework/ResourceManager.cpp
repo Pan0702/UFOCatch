@@ -3,7 +3,7 @@
 #include <fstream>
 
 namespace {
-    std::unordered_map<std::string, CFbxMesh*> fbxFiles;
+    std::unordered_map<std::string, std::unique_ptr<CFbxMesh>> fbxFiles;
 };
 
 void ResourceManager::Init()
@@ -13,19 +13,19 @@ void ResourceManager::Init()
 
 void ResourceManager::Reset()
 {
-    for (auto f : fbxFiles) {
-        delete f.second;
+    for (auto& f : fbxFiles) {
+        f.second.reset();
     }
     fbxFiles.clear();
 }
 
-CFbxMesh* ResourceManager::LoadFbx(std::string filename)
+CFbxMesh* ResourceManager::LoadFbx(const std::string& filename)
 {
     if (fbxFiles.find(filename) == fbxFiles.end()) {
-        CFbxMesh* mesh = new CFbxMesh();
+        auto mesh = std::make_unique<CFbxMesh>();
         assert(mesh);
         mesh->Load(filename.c_str());
-        fbxFiles[filename] = mesh;
+        fbxFiles[filename] = std::move(mesh);
     }
-    return fbxFiles[filename];
+    return fbxFiles[filename].get();
 }

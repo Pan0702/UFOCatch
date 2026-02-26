@@ -11,5 +11,5 @@ public:
 private:
     void Draw() override;
     void Update() override;
-    CSpriteImage* m_pSpriteImage;
+    std::unique_ptr<CSpriteImage> m_pSpriteImage;
 };

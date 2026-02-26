@@ -11,8 +11,8 @@ namespace
 {
     std::string currentName;
     std::string nextName;
-    SceneBase* currentScene;
-    SceneFactory* factory;
+    std::unique_ptr<SceneBase> currentScene;
+    std::unique_ptr<SceneFactory> factory;
 
     // トランジション
     std::unique_ptr<CScreenTransition> transition;
@@ -63,7 +63,7 @@ void SceneManager::Start()
     nextName = "";
     currentName = "";
 
-    factory = new SceneFactory();
+    factory =  std::make_unique<SceneFactory>();
     transition = std::make_unique<CScreenTransition>();
     currentScene = factory->CreateFirst();
 }
@@ -80,8 +80,7 @@ void SceneManager::Update()
     {
         if (currentScene != nullptr)
         {
-            delete currentScene;
-            currentScene = nullptr;
+            currentScene.reset();
         }
         currentName = nextName;
         currentScene = factory->Create(nextName);
@@ -118,21 +117,20 @@ void SceneManager::Release()
 {
     if (currentScene != nullptr)
     {
-        delete currentScene;
-        currentScene = nullptr;
+        currentScene.reset();
     }
     transition.reset();
-    delete factory;
+    factory.reset();
 }
 
 SceneBase* SceneManager::CurrentScene()
 {
-    return currentScene;
+    return currentScene.get();
 }
 
-void SceneManager::SetCurrentScene(SceneBase* scene)
+static void SceneManager::SetCurrentScene(std::unique_ptr<SceneBase> scene)
 {
-    currentScene = scene;
+    currentScene = std::move(scene);
 }
 
 void SceneManager::ChangeScene(const std::string& sceneName)

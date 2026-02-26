@@ -9,7 +9,6 @@ class CTutorial : public Object3D
 {
 public:
     CTutorial();
-
     // チュートリアルのステートを変更する
     // @param state 変更先のステート //
     void SetState(CTutorialState::State state);
@@ -24,9 +23,9 @@ public:
     void Lesson();
 
 private:
-    ~CTutorial();
+
     void Update() override;
 
     CTutorialState* m_pCurrentState;
-    std::unordered_map<CTutorialState::State, CTutorialState*> m_states;
+    std::unordered_map<CTutorialState::State, std::unique_ptr<CTutorialState>> m_states;
 };

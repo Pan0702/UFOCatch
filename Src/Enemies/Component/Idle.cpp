@@ -3,8 +3,8 @@
 #include "../Human/Human.h"
 #include "../System/EnemyManager.h"
 
-CIdle::CIdle(CEnemyBase* e,float endFrame)
-    :m_endFrame(endFrame)
+CIdle::CIdle(CEnemyBase* e, float endFrame)
+    : m_endFrame(endFrame)
 {
     m_pOwner = e;
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
@@ -31,7 +31,7 @@ void CIdle::Update()
     switch (m_idleState)
     {
     case ANIMATION:
-            IdleAnim();
+        IdleAnim();
         break;
     case STOP:
         IdleStop();
@@ -40,11 +40,8 @@ void CIdle::Update()
         assert("error:IdleState");
         break;
     }
-    CHuman* pHuman = ObjectManager::FindGameObject<CHuman>();
-    if (pHuman != m_pOwner)
-    {
-        m_pOwner->IsSuctionCheck();
-    }
+
+    m_pOwner->IsSuctionCheck();
 }
 
 void CIdle::IdleStop()

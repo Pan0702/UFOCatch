@@ -8,9 +8,9 @@ class CDisplayInfo : public Object3D
 {
 public:
     CDisplayInfo();
-
-private:
     ~CDisplayInfo();
+private:
+
     void Update() override;
     void Draw() override;
     void GiwakuDraw();

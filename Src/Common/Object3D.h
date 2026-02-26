@@ -102,7 +102,7 @@ public:
 
 	/// <summary>
 	/// ���Ƌ��̓����蔻�������
-	/// ���������ꍇ�́Apush�ɉ����Ԃ��ꏊ��Ԃ�
+	/// ���������ꍇ�́Apush�ɉ����Ԃ��ꏊ��Ԃ�
 	/// </summary>
 	/// <param name="target">����̋�</param>
 	/// <param name="withY">false�ɂ����Y�̍��W���𖳎�����</param>
@@ -125,7 +125,7 @@ public:
 	/// �A�j���[�^�[�̃A�h���X��Ԃ�
 	/// </summary>
 	/// <returns>�A�j���[�^�[�̃A�h���X</returns>
-	Animator* GetAnimator() { return m_pAnimator; }
+	Animator* GetAnimator() { return m_pAnimator.get(); }
 
 	/// <summary>
 	/// �R���W�������b�V����Ball����Ԃ�
@@ -135,7 +135,7 @@ public:
 
 protected:
 	CFbxMesh* m_pMesh;
-	Animator* m_pAnimator;
+	std::unique_ptr<Animator> m_pAnimator;
 	MeshCollider* m_pMeshCol;
 	Transform transform;
 };

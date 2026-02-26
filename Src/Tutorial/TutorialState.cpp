@@ -4,7 +4,7 @@
 #include "TutorialAnimal.h"
 #include "TutorialDisplayInfo.h"
 #include "TutorialHuman.h"
-#include "../System/GameInstance.h""
+#include "../System/GameInstance.h"
 #include "../Player/Player.h"
 #include "../Player/PlayerHP.h"
 #include "../System/Timer.h"

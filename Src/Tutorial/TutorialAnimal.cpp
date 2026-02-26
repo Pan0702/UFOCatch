@@ -1,6 +1,6 @@
 #include "TutorialAnimal.h"
 
-#include "../System/GameInstance.h""
+#include "../System/GameInstance.h"
 #include "../Player/Player.h"
 #include "../Utils/Animator.h"
 #include "../Enemies/System/EnemyManager.h"
@@ -14,7 +14,7 @@ CTutorialAnimal::CTutorialAnimal(const VECTOR3& pos)
     m_pMesh->Load("data/NewAnimal/Dog/Dog.mesh");
     m_pMesh->LoadAnimation(A_IDEL, "data/NewAnimal/Dog/Dog_Idle.anmx", false);
 
-    m_pAnimator = new Animator();
+    m_pAnimator = std::make_unique<Animator>();
     m_pAnimator->SetModel(m_pMesh);
     m_pAnimator->Play(A_IDEL);
 

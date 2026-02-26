@@ -14,7 +14,7 @@ CADebug::CADebug(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos)
 {
     m_pMesh = ObjectManager::FindGameObject<CEnemyManager>()->MeshList("Dog");
-    m_pAnimator = new Animator();
+    m_pAnimator = std::make_unique<Animator>();
     m_pAnimator->SetModel(m_pMesh);
     m_pAnimator->Play(A_WALK);
 
@@ -23,10 +23,10 @@ CADebug::CADebug(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     m_pGround = ObjectManager::FindGameObject<CGround>();
     
-    m_components[CBaseState::State::IDLE] = new CIdle(this,570.0f);
-    m_components[CBaseState::State::WALK] = new CWalk(this, 2.0f);
-    m_components[CBaseState::State::SUCTION] = new CSuction(this);
-    m_components[CBaseState::State::DESTROY] = new CDestroy(this,100,1);
+    m_components[CBaseState::State::IDLE] = std::make_unique<CIdle>(this,570.0f);
+    m_components[CBaseState::State::WALK] = std::make_unique<CWalk>(this, 2.0f);
+    m_components[CBaseState::State::SUCTION] = std::make_unique<CSuction>(this);
+    m_components[CBaseState::State::DESTROY] = std::make_unique<CDestroy>(this,100,1);
     m_pState->Enter(CBaseState::State::WALK);
     m_pBBox = CreateBBox();
 }
@@ -46,7 +46,7 @@ void CADebug::Update()
 
     // 削除フラグが立っている（CEnemyBase::Updateで処理がスキップされた）場合は、
     // これ以上の処理（衝突判定など）を行わない
-    if (m_pState != nullptr && m_pComponent == m_components[CBaseState::State::DESTROY])
+    if (m_pState != nullptr && m_pComponent == m_components[CBaseState::State::DESTROY].get())
     {
         return;
     }
@@ -61,7 +61,7 @@ void CADebug::Update()
 
 void CADebug::Draw()
 {
-    m_pMesh->Render(m_pAnimator, transform.matrix());
+    m_pMesh->Render(m_pAnimator.get(), transform.matrix());
 }
 
 VECTOR3 CADebug::SuctionSpeed() const
@@ -72,5 +72,5 @@ VECTOR3 CADebug::SuctionSpeed() const
 
 bool CADebug::ShouldApplyGravity() const
 {
-    return m_pComponent != m_components.at(CBaseState::State::SUCTION);
+    return m_pComponent != m_components.at(CBaseState::State::SUCTION).get();
 }

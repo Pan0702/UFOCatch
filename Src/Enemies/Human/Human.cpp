@@ -10,38 +10,39 @@
 #include "../Component/IdleHuman.h"
 #include "../Component/Walk.h"
 
-
 CHuman::CHuman(const VECTOR3& pos, const VECTOR2& areaSize)
     : m_AreaSize(areaSize)
 {
     transform.position = pos;
     m_pMesh = ObjectManager::FindGameObject<CEnemyManager>()->MeshList("Human");
-    m_pAnimator = new Animator();
+    m_pAnimator =  std::make_unique<Animator>();
     m_pAnimator->SetModel(m_pMesh);
     m_pAnimator->Play(A_IDEL);
     m_pAnimator->SetPlaySpeed(1.0f);
     angle = 0.0f;
 
-    m_components[CBaseState::State::IDLE] = new CIdleHuman(this);
-    m_components[CBaseState::State::WALK] = new CWalk(this,1.2f);
-    m_components[CBaseState::State::FIND_PLAYER] = new CFind(this);
-    m_pComponent = m_components[CBaseState::State::IDLE];
-    m_pState = new CBaseState(this);
-    m_pState->Enter(CBaseState::State::IDLE);
-    m_pState->SetNextState();
-    m_pFunShape = new CFunShape();
+    InitStates();
+
+    m_pFunShape = Instantiate<CFunShape>();
     m_pGround = ObjectManager::FindGameObject<CGround>();
     m_pBBox = CreateBBox();
+    m_pFunShape->SetParent(this);
+    m_isHuman = true;
+}
+
+void CHuman::InitStates()
+{
+    m_components[CBaseState::State::IDLE] = std::make_unique<CIdleHuman>(this);
+    m_components[CBaseState::State::WALK] = std::make_unique<CWalk>(this,1.2f);
+    m_components[CBaseState::State::FIND_PLAYER] = std::make_unique<CFind>(this);
+    m_pComponent = m_components[CBaseState::State::IDLE].get();
+    m_pState = std::make_unique<CBaseState>(this);
+    m_pState->Enter(CBaseState::State::IDLE);
+    m_pState->SetNextState();
 }
 
 CHuman::~CHuman()
 {
-    for (auto& state : m_components)
-    {
-        if (state.second == nullptr) continue;
-        SAFE_DELETE(state.second);
-        state.second = nullptr;
-    }
     m_components.clear();
 }
 void CHuman::Update()
@@ -49,7 +50,7 @@ void CHuman::Update()
     CEnemyBase::Update();
 
     // 削除フラグが立っている場合は、これ以上の処理を行わない
-    if (m_pState != nullptr && m_pComponent == m_components[CBaseState::State::DESTROY])
+    if (m_pState != nullptr && m_pComponent == m_components[CBaseState::State::DESTROY].get())
     {
         return;
     }
@@ -81,7 +82,7 @@ void CHuman::Update()
 
 void CHuman::Draw()
 {
-    m_pMesh->Render(m_pAnimator, transform.matrix());
+    m_pMesh->Render(m_pAnimator.get(), transform.matrix());
     //Debug関数
     //DrawDirectionLine();
     //FanShape();
@@ -89,8 +90,12 @@ void CHuman::Draw()
 
 void CHuman::AtkArea() const
 {
-    m_pFunShape->PosSet(transform.position, angle + transform.rotation.y );
+    if (m_pFunShape)
+    {
+        m_pFunShape->PosSet(transform.position, angle + transform.rotation.y);
+    }
 }
+
 
 //Humanの範囲をLineで可視化
 //範囲内なら水色、外なら緑になる

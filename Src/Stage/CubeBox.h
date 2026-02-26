@@ -8,7 +8,8 @@ public:
     // メッシュファイルのパスを指定してインスタンスを生成する
     // @param meshPath メッシュファイルのパス //
     CCubeBox(const char* meshPath);
-private:
     ~CCubeBox();
+private:
+
     void Draw() override;
 };

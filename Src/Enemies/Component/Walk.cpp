@@ -137,8 +137,7 @@ void CWalk::Update()
     {
         m_isFinish = true;
     }
-    CHuman* pHuman = ObjectManager::FindGameObject<CHuman>();
-    if (pHuman != m_pOwner)
+    if (m_pOwner->IsHuman())
     {
         m_pOwner->IsSuctionCheck();
     }

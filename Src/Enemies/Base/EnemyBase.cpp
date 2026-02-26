@@ -7,48 +7,42 @@
 CEnemyBase::CEnemyBase()
     : m_velocityY(0.0f)
 {
-    CEnemyManager* manager = ObjectManager::FindGameObject<CEnemyManager>();
-    if (manager)
+    m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
+    m_pEnemyManager = ObjectManager::FindGameObject<CEnemyManager>();
+    if (m_pEnemyManager)
     {
-        manager->RegisterEnemy(this);
+        m_pEnemyManager->RegisterEnemy(this);
     }
+
 }
 
 
-CBBox* CEnemyBase::CreateBBox()
+std::unique_ptr<CBBox> CEnemyBase::CreateBBox()
 {
     if (m_pBBox == nullptr && m_pMesh != nullptr)
     {
-        m_pBBox = new CBBox(m_pMesh->m_vMin, m_pMesh->m_vMax);
+        m_pBBox = std::make_unique<CBBox>(m_pMesh->m_vMin, m_pMesh->m_vMax);
     }
-    return m_pBBox;
+    return move(m_pBBox);
 }
+
 
 
 void CEnemyBase::ChangeState(CBaseState::State type)
 {
     // 同じ状態なら何もしない
-    if (m_pComponent == m_components[type]) return;
+    if (m_pComponent == m_components[type].get()) return;
 
     m_pState->Exit();
-    m_pComponent = m_components[type];
+    m_pComponent = m_components[type].get();
     m_pState->Enter(type);
 }
 
 CEnemyBase::~CEnemyBase()
 {
-    CEnemyManager* manager = ObjectManager::FindGameObject<CEnemyManager>();
-    if (manager)
+    if (m_pEnemyManager)
     {
-        manager->UnregisterEnemy(this);
-    }
-
-    SAFE_DELETE(m_pBBox);
-    SAFE_DELETE(m_pState);
-
-    for (auto& component : m_components)
-    {
-        SAFE_DELETE(component.second);
+        m_pEnemyManager->UnregisterEnemy(this);
     }
 
 }
@@ -160,8 +154,7 @@ bool CEnemyBase::GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const
 std::vector<CEnemyBase*> CEnemyBase::GetNearbyEnemies() const
 {
     // AnimalManagerを取得 //
-    CEnemyManager* manager = ObjectManager::FindGameObject<CEnemyManager>();
-    if (manager == nullptr)
+    if (m_pEnemyManager == nullptr)
     {
         return std::vector<CEnemyBase*>();
     }
@@ -174,7 +167,7 @@ std::vector<CEnemyBase*> CEnemyBase::GetNearbyEnemies() const
     }
 
     // マネージャーの四分木を使って、周辺のエネミーを効率的に取得 //
-    return manager->GetNearbyEnemies(const_cast<CEnemyBase*>(this), pos, size);
+    return m_pEnemyManager->GetNearbyEnemies(const_cast<CEnemyBase*>(this), pos, size);
 }
 
 void CEnemyBase::UpdateBBox() const
@@ -266,10 +259,9 @@ VECTOR3 CEnemyBase::CalcSlideMove(const VECTOR3& desiredMove) const
     // 四分木で近傍オブジェクトのみ取得
     VECTOR2 pos2d, size2d;
     std::vector<CStageObject*> stageObjects;
-    CEnemyManager* manager = ObjectManager::FindGameObject<CEnemyManager>();
-    if (manager && GetBounds2D(pos2d, size2d))
+    if (m_pEnemyManager && GetBounds2D(pos2d, size2d))
     {
-        stageObjects = manager->GetNearbyStageObjects(pos2d, size2d);
+        stageObjects = m_pEnemyManager->GetNearbyStageObjects(pos2d, size2d);
     }
 
     for (CStageObject* stage : stageObjects)
@@ -277,7 +269,7 @@ VECTOR3 CEnemyBase::CalcSlideMove(const VECTOR3& desiredMove) const
         if (stage == nullptr || stage->GetOBB() == nullptr) continue;
 
         VECTOR3 hitPos, hitNormal;
-        if (stage->HitOBB(m_pBBox, &hitPos, &hitNormal))
+        if (stage->HitOBB(m_pBBox.get(), &hitPos, &hitNormal))
         {
             // OBBCollisionDetection は法線を (0,1,0) 固定で返すため hitNormal は使用不可
             // ステージ中心 → 敵中心 の方向を壁法線の代わりに使う
@@ -325,13 +317,12 @@ void CEnemyBase::ResolveStageCollisions()
     if (m_pBBox == nullptr) return;
 
     // 四分木で近傍オブジェクトのみ取得
-    CEnemyManager* manager = ObjectManager::FindGameObject<CEnemyManager>();
-    if (manager == nullptr) return;
+    if (m_pEnemyManager == nullptr) return;
 
     VECTOR2 pos, size;
     if (!GetBounds2D(pos, size)) return;
 
-    std::vector<CStageObject*> stageObjects = manager->GetNearbyStageObjects(pos, size);
+    std::vector<CStageObject*> stageObjects = m_pEnemyManager->GetNearbyStageObjects(pos, size);
 
     for (CStageObject* stage : stageObjects)
     {
@@ -347,7 +338,7 @@ CComponentBase* CEnemyBase::GetComponent(CBaseState::State type) const
     {
         return nullptr;
     }
-    return itr->second;
+    return itr->second.get();
 }
 
 VECTOR3 CEnemyBase::SuctionSpeed() const
@@ -357,9 +348,8 @@ VECTOR3 CEnemyBase::SuctionSpeed() const
 
 void CEnemyBase::IsSuctionCheck() 
 {
-    const CPlayer* pl = ObjectManager::FindGameObject<CPlayer>();
-    if (pl == nullptr)return;
-    if (pl->GetIsSuckUp() && pl->IsInsideSuctionCircle(transform.position))
+    if (m_pPlayer == nullptr)return;
+    if (m_pPlayer->GetIsSuckUp() && m_pPlayer->IsInsideSuctionCircle(transform.position))
     {
         ChangeState(CBaseState::State::SUCTION);
     }

@@ -29,16 +29,13 @@ namespace
 
 CTutorialDisplayInfo::CTutorialDisplayInfo()
 {
-    m_pSprite = new CSprite();
-    m_pImage = new CSpriteImage("data/Tutorial/TutorialUI.png");
+    m_pImage = std::make_unique<CSpriteImage>("data/Tutorial/TutorialUI.png");
     m_nDisplayType = 0;
     m_questNum = 0;
 }
 
 CTutorialDisplayInfo::~CTutorialDisplayInfo()
 {
-    SAFE_DELETE(m_pSprite);
-    SAFE_DELETE(m_pImage);
 }
 
 void CTutorialDisplayInfo::Draw()
@@ -52,13 +49,14 @@ void CTutorialDisplayInfo::Draw()
 ////////////////////
 void CTutorialDisplayInfo::OperationDraw() const
 {
+    CSprite spr;
     switch (m_nDisplayType)
     {
     case Move:
-        m_pSprite->Draw(m_pImage, MOVE_UI_X, MOVE_UI_Y, MOVE_UI_SRC_X, MOVE_UI_SRC_Y, MOVE_UI_WIDTH, MOVE_UI_HEIGHT);
+        spr.Draw(m_pImage.get(), MOVE_UI_X, MOVE_UI_Y, MOVE_UI_SRC_X, MOVE_UI_SRC_Y, MOVE_UI_WIDTH, MOVE_UI_HEIGHT);
         break;
     case Suction:
-        m_pSprite->Draw(m_pImage, SUCTION_UI_X, SUCTION_UI_Y, SUCTION_UI_SRC_X, SUCTION_UI_SRC_Y, SUCTION_UI_WIDTH, SUCTION_UI_HEIGHT);
+        spr.Draw(m_pImage.get(), SUCTION_UI_X, SUCTION_UI_Y, SUCTION_UI_SRC_X, SUCTION_UI_SRC_Y, SUCTION_UI_WIDTH, SUCTION_UI_HEIGHT);
         break;
     default:
         break;
@@ -68,8 +66,9 @@ void CTutorialDisplayInfo::OperationDraw() const
 ////////////////////
 // 目標表示UIを描画する 
 ////////////////////
-void CTutorialDisplayInfo::TargetDraw()
+void CTutorialDisplayInfo::TargetDraw() const
 {
+    CSprite spr;
     int srcY = TARGET_UI_BASE_SRC_Y + TARGET_UI_QUEST_HEIGHT * m_questNum;
-    m_pSprite->Draw(m_pImage, TARGET_UI_X, TARGET_UI_Y, TARGET_UI_SRC_X, srcY, TARGET_UI_WIDTH, TARGET_UI_QUEST_HEIGHT);
+    spr.Draw(m_pImage.get(), TARGET_UI_X, TARGET_UI_Y, TARGET_UI_SRC_X, srcY, TARGET_UI_WIDTH, TARGET_UI_QUEST_HEIGHT);
 }

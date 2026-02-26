@@ -9,22 +9,22 @@
 CAShepherdDog::CAShepherdDog()
 {
     m_pMesh = ObjectManager::FindGameObject<CEnemyManager>()->MeshList("Dog");
-    m_pAnimator = new Animator();
+    m_pAnimator = std::make_unique<Animator>();
     m_pAnimator->SetModel(m_pMesh);
     m_pAnimator->Play(A_WALK);
-    m_pGround = ObjectManager::FindGameObject<CGround>(); 
+    m_pGround = ObjectManager::FindGameObject<CGround>();
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     //動くスピード2.0f
-    m_components[CBaseState::State::COLLECTING] = new CCollecting(this, 2.0f);
+    m_components[CBaseState::State::COLLECTING] = std::make_unique<CCollecting>(this, 2.0f);
     //動くスピード2.0f
-    m_components[CBaseState::State::DRIVING] = new CDriving(this, 2.0f);
-    m_components[CBaseState::State::RESCUE] = new CRescue(this);
-    m_components[CBaseState::State::IDLE] = new CIdle(this, 570.0f);
-    m_components[CBaseState::State::WALK] = new CWalk(this, 1.2f);
+    m_components[CBaseState::State::DRIVING] = std::make_unique<CDriving>(this, 2.0f);
+    m_components[CBaseState::State::RESCUE] = std::make_unique<CRescue>(this);
+    m_components[CBaseState::State::IDLE] = std::make_unique<CIdle>(this, 570.0f);
+    m_components[CBaseState::State::WALK] = std::make_unique<CWalk>(this, 1.2f);
     //スコアが２００、経験値が2.0f
-    m_components[CBaseState::State::DESTROY] = new CDestroyShepherdDog(this,200,2.0f);
-    m_pState = new CBaseState(this);
-    m_pComponent = m_components[CBaseState::State::IDLE];
+    m_components[CBaseState::State::DESTROY] = std::make_unique<CDestroyShepherdDog>(this, 200, 2.0f);
+    m_pState = std::make_unique<CBaseState>(this);
+    m_pComponent = m_components[CBaseState::State::IDLE].get();
     m_pState->Enter(CBaseState::State::IDLE);
     m_pBBox = CreateBBox();
 }
@@ -46,7 +46,7 @@ void CAShepherdDog::Update()
             }
         }
     }
-    
+
     if (!m_rescueQueue.empty())
     {
         ChangeState(CBaseState::State::RESCUE);
@@ -88,7 +88,7 @@ void CAShepherdDog::Update()
         }
     }
 
-    CEnemyBase::Update();  // Component実行
+    CEnemyBase::Update(); // Component実行
 }
 
 
@@ -135,7 +135,7 @@ void CAShepherdDog::PopRescueQueue()
 
 const std::vector<CSheep*>& CAShepherdDog::GetSheeps() const
 {
-    return m_sheeps; 
+    return m_sheeps;
 }
 
 const std::vector<CSheep*>& CAShepherdDog::GetRescueQueue() const

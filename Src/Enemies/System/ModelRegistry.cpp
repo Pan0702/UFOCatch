@@ -3,6 +3,8 @@
 #include <Windows.h>
 #include <tchar.h>
 
+#include "../../Framework/GameObject.h"
+
 CModelRegistry::CModelRegistry()
 {
     LoadDefaultModels();

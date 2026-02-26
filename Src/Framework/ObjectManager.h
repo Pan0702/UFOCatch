@@ -7,6 +7,7 @@
 /// <author>N.Hanai</author>
 
 #include <list>
+#include <memory>
 #include <string>
 class GameObject;
 
@@ -22,7 +23,7 @@ namespace ObjectManager {
 	/// この関数は、GameObjectのコンストラクタから呼ばれる
 	/// </summary>
 	/// <param name="obj"></param>
-	void Push(GameObject* obj);
+	void Push(std::unique_ptr<GameObject> obj);
 
 	/// <summary>
 	/// Objectを削除する
@@ -123,14 +124,14 @@ namespace ObjectManager {
 	/// </summary>
 	/// <param name="obj">プライオリティを設定するオブジェクト</param>
 	/// <param name="order">描画プライオリティ</param>
-	void SetDrawOrder(GameObject* _obj, int _order);
+	void SetDrawOrder(const GameObject* obj, int _order);
 
 	/// <summary>
 	/// Updateの優先順位を付ける
 	/// </summary>
 	/// <param name="_obj"></param>
 	/// <param name="_priority"></param>
-	void SetPriority(GameObject* _obj, int _priority);
+	void SetPriority(const GameObject* obj, int _priority);
 
 	/// <summary>
 	/// GameObjectを削除する
@@ -143,21 +144,21 @@ namespace ObjectManager {
 	/// </summary>
 	void DeleteAllGameObject();
 
-	void DontDestroy(GameObject* obj, bool dont = true);
+	void DontDestroy(const GameObject* obj, bool dont = true);
 
 	/// <summary>
 	/// Updateを実行するか設定する
 	/// </summary>
 	/// <param name="obj">GameObjectのインスタンス</param>
 	/// <param name="active">実行する場合はtrue</param>
-	void SetActive(GameObject* obj, bool active = true);
+	void SetActive(const GameObject* obj, bool active = true);
 
 	/// <summary>
 	/// Drawを実行するか設定する
 	/// </summary>
 	/// <param name="obj">GameObjectのインスタンス</param>
 	/// <param name="visible">Drawする場合はtrue</param>
-	void SetVisible(GameObject* obj, bool visible = true);
+	void SetVisible(const GameObject* obj, bool visible = true);
 
 	/// <summary>
 	/// 指定のオブジェクトが存在するかを調べる

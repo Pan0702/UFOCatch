@@ -10,11 +10,13 @@ public:
     // 指定位置にチュートリアル用動物を生成する
     // @param pos 生成位置 //
     CTutorialAnimal(const VECTOR3& pos);
+    ~CTutorialAnimal();
+    
     //　Scoreを足してオブジェクトをDestroy//
     void Destroy();
 
 private:
-    ~CTutorialAnimal();
+
 
     void Update() override;
 

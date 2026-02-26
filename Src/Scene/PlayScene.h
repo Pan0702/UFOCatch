@@ -14,6 +14,6 @@ public:
 private:
 	CXAudioSource* m_pBGM;
 	//4ぶんき計算Debug
-	//void QTreeDebug();
+	void QTreeDebug();
 	
 };

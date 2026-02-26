@@ -1,5 +1,6 @@
 #include "SelectionScene.h"
 #include "../Framework/AudioManager.h"
+#include "../Framework/GameObject.h"
 
 namespace
 {
@@ -94,7 +95,7 @@ void CSelectionScene::Update()
     PlayButton();
     LevelButton();
 
-    m_wipeAnim.Update(0.05f);
+    m_wipeAnim.Update(5.0f, SceneManager::DeltaTime());
 }
 void CSelectionScene::PlayButton()
 {

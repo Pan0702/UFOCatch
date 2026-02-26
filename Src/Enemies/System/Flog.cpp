@@ -52,7 +52,7 @@ void CFlog::Initialize()
         );
 
         // 羊を生成（ShepherdDog不要）
-        CSheep* sheep = new CSheep(iniPos);
+        CSheep* sheep = Instantiate<CSheep>(iniPos);
         m_allSheep.push_back(sheep);
     }
 }

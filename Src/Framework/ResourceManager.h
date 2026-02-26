@@ -5,5 +5,5 @@
 namespace ResourceManager {
 	void Init();
 	void Reset();
-	CFbxMesh* LoadFbx(std::string filename);
+	CFbxMesh* LoadFbx(const std::string& filename);
 };

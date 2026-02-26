@@ -37,16 +37,16 @@ public:
     void ResetCollisionStats() const;
 
     // 静的ツリーをシーン初期化後に1回構築する
-    void BuildStaticTree();
+    void BuildStaticTree() const;
 
     // 近くの静的ステージオブジェクトを取得（StaticQuadTreeIndexに委譲）
     std::vector<CStageObject*> GetNearbyStageObjects(
         const VECTOR2& pos, const VECTOR2& size) const;
 
     // 各クラスへの直接アクセス（必要に応じて）
-    CModelRegistry* GetModelRegistry() const { return m_pModelRegistry; }
-    CEnemyQuadTree* GetQuadTreeIndex() const { return m_pQuadTreeIndex; }
-    CStageQuadTree* GetStaticQuadTreeIndex() const { return m_pStaticQuadTreeIndex; }
+    CModelRegistry* GetModelRegistry() const { return m_pModelRegistry.get(); }
+    CEnemyQuadTree* GetQuadTreeIndex() const { return m_pQuadTreeIndex.get(); }
+    CStageQuadTree* GetStaticQuadTreeIndex() const { return m_pStaticQuadTreeIndex.get(); }
 
 public:
     CPlayer* m_pPlayer;
@@ -54,9 +54,9 @@ public:
 private:
     void Update() override;
 
-    CModelRegistry* m_pModelRegistry;
-    CEnemyQuadTree* m_pQuadTreeIndex;
-    CStageQuadTree* m_pStaticQuadTreeIndex;
+    std::unique_ptr<CModelRegistry> m_pModelRegistry;
+    std::unique_ptr<CEnemyQuadTree> m_pQuadTreeIndex;
+    std::unique_ptr<CStageQuadTree> m_pStaticQuadTreeIndex;
     std::vector<CEnemyBase*> m_enemies;
 
     // 互換性のため残す（未使用）

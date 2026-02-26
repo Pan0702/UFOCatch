@@ -13,14 +13,14 @@
 #include "../System/Timer.h"
 CNormalScene::CNormalScene()
 {
-    new CStageFactor();
+    Instantiate<CStageFactor>();
     ObjectManager::FindGameObject<CStageFactor>()->SpawnObjects(40, 40,90);
     Instantiate<CPlayerCamera>();
     SingleInstantiate<CEnemyManager>();
     ObjectManager::FindGameObject<CEnemyManager>()->BuildStaticTree();
-    new CTimer(70);
-    new CPlayer(45);             
-    new CAnimalFactor(30,30,1);
+    Instantiate<CTimer>(70);
+    Instantiate<CPlayer>(45);             
+    Instantiate<CAnimalFactor>(30,30,1);
      Instantiate<CFlog>();           
     Instantiate<CVisionSystem>();
     Instantiate<CDisplayInfo>();

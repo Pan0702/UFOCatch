@@ -7,8 +7,9 @@ class TitleScene : public SceneBase
 {
 public:
 	TitleScene();
-private:
 	~TitleScene();
+private:
+
 	void Update() override;
 	void Draw() override;
 	std::vector<std::string> m_text;

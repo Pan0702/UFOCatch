@@ -101,67 +101,69 @@ struct VECTOR4 : public XMFLOAT4
 struct VECTOR3 : public XMFLOAT3
 {
     // コンストラクタ
-    VECTOR3() = default;
-    VECTOR3(float x, float y, float z)
-    {
-       this->x = x; this->y = y; this->z = z;
-    }
-    VECTOR3(const XMVECTOR& other) :XMFLOAT3()
-    {
-       XMVECTOR temp = other;
-       XMStoreFloat3(this, temp);
-    }
+   VECTOR3() = default;
+   VECTOR3(float x, float y, float z)
+   {
+      this->x = x; this->y = y; this->z = z;
+   }
+   VECTOR3(const XMVECTOR& other) :XMFLOAT3()
+   {
+      XMVECTOR temp = other;
+      XMStoreFloat3(this, temp);
+   }
 
     // 演算子
-    inline bool operator == (const VECTOR3& r) const { return x == r.x && y == r.y && z == r.z; }
-    inline bool operator != (const VECTOR3& r) const { return x != r.x || y != r.y || z != r.z; }
-    inline VECTOR3 operator +(const VECTOR3& r) const { return VECTOR3(x + r.x, y + r.y, z + r.z); }
-    inline VECTOR3 operator -(const VECTOR3& r) const { return VECTOR3(x - r.x, y - r.y, z - r.z); }
-    inline VECTOR3 operator +=(const VECTOR3& r) {
-       x += r.x, y += r.y, z += r.z;
-       return *this;
-    }
-    inline VECTOR3 operator -=(const VECTOR3& r) {
-       x -= r.x, y -= r.y, z -= r.z;
-       return *this;
-    }
-    inline VECTOR3 operator *(const float& r) const { return VECTOR3(x * r, y * r, z * r); }
-    inline VECTOR3 operator /(const float& r) const { return VECTOR3(x / r, y / r, z / r); }
-    inline VECTOR3 operator *=(const float& r) {
-       x *= r, y *= r, z *= r;
-       return *this;
-    }
-    inline VECTOR3 operator /=(const float& r) {
-       x /= r, y /= r, z /= r;
-       return *this;
-    }
+   // 演算
+   inline bool operator == (const VECTOR3& r) const { return x == r.x && y == r.y && z == r.z; }
+   inline bool operator != (const VECTOR3& r) const { return x != r.x || y != r.y || z != r.z; }
+   inline VECTOR3 operator +(const VECTOR3& r) const { return VECTOR3(x + r.x, y + r.y, z + r.z); }
+   inline VECTOR3 operator -(const VECTOR3& r) const { return VECTOR3(x - r.x, y - r.y, z - r.z); }
+   inline VECTOR3 operator +=(const VECTOR3& r) {
+      x += r.x, y += r.y, z += r.z;
+      return *this;
+   }
+   inline VECTOR3 operator -=(const VECTOR3& r) {
+      x -= r.x, y -= r.y, z -= r.z;
+      return *this;
+   }
+   inline VECTOR3 operator *(const float& r) const { return VECTOR3(x * r, y * r, z * r); }
+   inline VECTOR3 operator /(const float& r) const { return VECTOR3(x / r, y / r, z / r); }
+   inline VECTOR3 operator *=(const float& r) {
+      x *= r, y *= r, z *= r;
+      return *this;
+   }
+   inline VECTOR3 operator /=(const float& r) {
+      x /= r, y /= r, z /= r;
+      return *this;
+   }
 
-    inline VECTOR3 operator + () const { return *this; }
-    inline VECTOR3 operator - () const { return VECTOR3(-x, -y, -z); }
+   inline VECTOR3 operator + () const { return *this; }
+   inline VECTOR3 operator - () const { return VECTOR3(-x, -y, -z); }
 
 
     // 代入
-    VECTOR3& operator=(const XMVECTOR& other)
-    {
-       XMVECTOR temp = other;
-       XMStoreFloat3(this, temp);
-       return *this;
-    }
-    VECTOR3& operator=(const VECTOR3& other)
-    {
-       this->x = other.x;
-       this->y = other.y;
-       this->z = other.z;
-       return *this;
-    }
 
-    // キャスト
-    operator XMVECTOR() const {
-       return XMLoadFloat3(this);
-    }
-    operator XMFLOAT3() const {
-       return XMFLOAT3(this->x, this->y, this->z);
-    }
+	VECTOR3& operator=(const XMVECTOR& other)
+	{
+		XMVECTOR temp = other;
+		XMStoreFloat3(this, temp);
+		return *this;
+	}
+	VECTOR3& operator=(const VECTOR3& other)
+	{
+		this->x = other.x;
+		this->y = other.y;
+		this->z = other.z;
+		return *this;
+	}
+
+	// キャスト
+	operator XMVECTOR() const {
+		return XMLoadFloat3(this);
+	}
+	operator XMFLOAT3() const {
+		return {this->x, this->y, this->z};
+	}
 
     float LengthSquare() const { return this->x * this->x + this->y * this->y + this->z * this->z; }
     float Length() const { return sqrtf(LengthSquare()); }

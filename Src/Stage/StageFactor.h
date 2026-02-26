@@ -1,7 +1,8 @@
 #pragma once
+#include "../Framework/GameObject.h"
 
 // ステージのオブジェクトを生成するファクトリークラス //
-class CStageFactor
+class CStageFactor : public GameObject
 {
 public:
     CStageFactor();

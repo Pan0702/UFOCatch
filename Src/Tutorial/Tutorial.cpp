@@ -2,7 +2,7 @@
 
 #include "TutorialAnimal.h"
 #include "TutorialHuman.h"
-#include "../System/GameInstance.h""
+#include "../System/GameInstance.h"
 #include "../Enemies/Human/Human.h"
 #include "../Enemies/System/EnemyManager.h"
 #include "../System/Timer.h"
@@ -17,25 +17,18 @@ namespace
 CTutorial::CTutorial()
 {
     // 各ステートを生成してマップに登録 //
-    m_states[CTutorialState::State::Move] = new CMoveState(this);
-    m_states[CTutorialState::State::Expands] = new CExpands(this);
-    m_states[CTutorialState::State::Discovery] = new CDiscoveryState(this);
-    m_states[CTutorialState::State::Suction] = new CSuctionState(this);
-    m_states[CTutorialState::State::Play] = new CPlayState(this);
-    m_pCurrentState = m_states[CTutorialState::State::Move];
+    m_states[CTutorialState::State::Move] = std::make_unique< CMoveState>(this);
+    m_states[CTutorialState::State::Expands] = std::make_unique< CExpands>(this);
+    m_states[CTutorialState::State::Discovery] = std::make_unique< CDiscoveryState>(this);
+    m_states[CTutorialState::State::Suction] = std::make_unique< CSuctionState>(this);
+    m_states[CTutorialState::State::Play] = std::make_unique< CPlayState>(this);
+    m_pCurrentState = m_states[CTutorialState::State::Move].get();
 
     // 最初のチュートリアル用動物を生成 //
     static constexpr float INITIAL_ANIMAL_Z = 5.0f;
-    new CTutorialAnimal(VECTOR3(0, 0, INITIAL_ANIMAL_Z));
+    Instantiate< CTutorialAnimal>(VECTOR3(0, 0, INITIAL_ANIMAL_Z));
 }
 
-CTutorial::~CTutorial()
-{
-    for (auto state : m_states)
-    {
-        SAFE_DELETE(state.second);
-    }
-}
 
 void CTutorial::Update()
 {
@@ -52,7 +45,7 @@ void CTutorial::Update()
 void CTutorial::SetState(CTutorialState::State state)
 {
     m_pCurrentState->Exit();
-    m_pCurrentState = m_states[state];
+    m_pCurrentState = m_states[state].get();
     m_pCurrentState->Enter();
 }
 

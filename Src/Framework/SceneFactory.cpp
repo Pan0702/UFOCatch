@@ -13,48 +13,48 @@
 #include "../Scene/OIScene.h"
 #include "../Scene/NormalScene.h"
 
-SceneBase* SceneFactory::CreateFirst()
+std::unique_ptr<SceneBase> SceneFactory::CreateFirst()
 {
 	SingleInstantiate<CGameInstance>();
-	return new TitleScene();
+	return std::make_unique<TitleScene>();
 	
 	return nullptr;
 }
 
-SceneBase* SceneFactory::Create(const std::string& name)
+std::unique_ptr<SceneBase> SceneFactory::Create(const std::string& name)
 {
 
 	if (name == "TitleScene") {
-		return new TitleScene();
+		return std::make_unique<TitleScene>();
 	}
 	if (name == "Easy") {
-		return new PlayScene();
+		return std::make_unique<PlayScene>();
 	}
 	if (name == "Normal") {
-		return new CNormalScene();
+		return std::make_unique<CNormalScene>();
 	}
 	if (name == "PlayScene") {
-		return new PlayScene();
+		return std::make_unique<PlayScene>();
 	}
 	if (name == "SelectScene")
 	{
-		return new CSelectionScene();
+		return std::make_unique<CSelectionScene>();
 	}
 	if (name == "ResultScene")
 	{
-		return new CResultScene();
+		return std::make_unique<CResultScene>();
 	}
 	if (name == "Tutorial")
 	{
-		return new CTutorialScene();
+		return std::make_unique<CTutorialScene>();	
 	}
 	if (name == "Debug")
 	{
-		return new CDebugScene();
+		return std::make_unique<CDebugScene>();
 	}
 	if (name == "OI")
 	{
-		return new OIScene();
+		return std::make_unique<OIScene>();
 	}
 	//
 	assert(false);

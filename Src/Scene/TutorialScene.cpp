@@ -1,12 +1,10 @@
 #include "TutorialScene.h"
-#include "../Enemies/System/EnemyManager.h"
 #include "../Player/PCamera.h"
 #include "../Player/Player.h"
 #include "../Enemies/AnimalDog/Dog.h"
 #include "../Stage/Ground.h"
 #include "../Stage/StageFactor.h"
 #include "../System/DisplayInfo.h"
-#include "../System/Timer.h"
 #include "../System/VisionSystem.h"
 #include "../Tutorial/Tutorial.h"
 #include "../Tutorial/TutorialDisplayInfo.h"
@@ -15,9 +13,9 @@
 CTutorialScene::CTutorialScene()
 {
     Instantiate<CStageFactor>();
-    new CGround("data/Ground/Prefabs/Objectes001.mesh", VECTOR3(1.0f, 1.0f, 1.0f));
+    Instantiate<CGround>("data/Ground/Prefabs/Objectes001.mesh", VECTOR3(1.0f, 1.0f, 1.0f));
     Instantiate<CPlayerCamera>();
-    new CPlayer(10);
+    Instantiate<CPlayer>(10);
     Instantiate<CVisionSystem>();
     Instantiate<CDisplayInfo>();
     Instantiate<CTutorial>();
@@ -25,13 +23,7 @@ CTutorialScene::CTutorialScene()
     Instantiate<CDisplayInfo>();
     AudioManager::Load(_T("Play"), _T("data/Sound/yukai.wav"));
     AudioManager::Play(_T("Play"), true);
-    ObjectManager::FindGameObject<CGameInstance>()->Init(1000);
+    CGameInstance::Get()->Init(1000);
 }
 
-CTutorialScene::~CTutorialScene()
-{
-}
-
-
-
-
+CTutorialScene::~CTutorialScene() = default;

@@ -6,7 +6,8 @@ class CTutorialScene : public SceneBase
 {
 public:
     CTutorialScene();
-private:
     ~CTutorialScene();
+private:
+
 
 };

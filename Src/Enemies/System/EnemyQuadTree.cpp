@@ -6,7 +6,7 @@ CEnemyQuadTree::CEnemyQuadTree()
     : m_pTree(nullptr), m_lastEnemyCount(0), m_frameCount(0)
 {
     // 4分木の初期化（レベル3、範囲-20〜20）
-    m_pTree = new CLiner4Tree<CEnemyBase>(3, VECTOR4(-20, -20, 20, 20));
+    m_pTree = new CLiner4Tree<CEnemyBase>(3, VECTOR4(-40, -40, 40, 40));
 
     // 統計情報の初期化
     m_processTimes.reserve(60);  // 60フレーム分の履歴

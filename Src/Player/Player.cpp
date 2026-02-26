@@ -23,11 +23,11 @@ CPlayer::CPlayer(float moveRange)
     constexpr float INITIAL_CONE_HEIGHT = 4.0f;
     constexpr float CONE_DEGREE = 4.0f;
 
-    m_pLevel = new CPlayerLevel(transform.position.y + INITIAL_CONE_HEIGHT, CONE_DEGREE);
+    m_pLevel = Instantiate<CPlayerLevel>(transform.position.y + INITIAL_CONE_HEIGHT, CONE_DEGREE);
 
-    new CPlayerHP(3);
-    new CConeDraw(transform.position.y);
-    new CCircleDraw();
+    Instantiate<CPlayerHP>(3);
+    Instantiate<CConeDraw>(transform.position.y);
+    Instantiate<CCircleDraw>();
 
     transform.scale = VECTOR3(0.5f, 0.5f, 0.5f);
     m_SuctionActive = false;

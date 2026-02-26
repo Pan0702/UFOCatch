@@ -1,14 +1,14 @@
 #include "OIScene.h"
-
+#include "../Framework/GameObject.h"
 OIScene::OIScene()
 {
-    m_pSpriteImage = new CSpriteImage("data/Select/OI.png");
+    m_pSpriteImage = std::make_unique<CSpriteImage>("data/Select/OI.png");
 }
 
 void OIScene::Draw()
 {
     CSprite spr;
-    spr.Draw(m_pSpriteImage,0,0,0,0,1366,768);
+    spr.Draw(m_pSpriteImage.get(),0,0,0,0,1366,768);
 }
 
 void OIScene::Update()

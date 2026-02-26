@@ -11,10 +11,6 @@ Object3D::Object3D()
 
 Object3D::~Object3D()
 {
-	if (m_pAnimator != nullptr) {
-		delete m_pAnimator;
-		m_pAnimator = nullptr;
-	}
 	// mesh と meshCol は各クラスで管理されるため削除しない
 }
 
@@ -34,7 +30,7 @@ void Object3D::Draw()
 		m_pMesh->Render(transform.matrix());
 	}
 	else {
-		m_pMesh->Render(m_pAnimator, transform.matrix());
+		m_pMesh->Render(m_pAnimator.get(), transform.matrix());
 	}
 
 }

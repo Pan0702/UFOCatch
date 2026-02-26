@@ -18,19 +18,22 @@ public:
 
     // 周辺のエネミーを取得
     std::vector<CEnemyBase*> GetNearbyEnemies() const;
-
-    CBBox* GetBBox() const { return m_pBBox; }
     void SetRotateY(float y)  { transform.rotation.y = y; }
-    const VECTOR2& GetAreaSize() const { return m_areaSize; }
+
     // ステージなどからの強制的な位置更新用
     void AddPosition(const VECTOR3& addPos) { transform.position += addPos; }
     
-    CComponentBase* GetComponent(CBaseState::State type) const;
     virtual VECTOR3 SuctionSpeed() const;
     void IsSuctionCheck();
     
     // 壁スライディング：desiredMoveから壁方向の成分を除いた移動ベクトルを返す
     VECTOR3 CalcSlideMove(const VECTOR3& desiredMove) const;
+    
+    const VECTOR2& GetAreaSize() const { return m_areaSize; }
+    CBBox* GetBBox() const { return m_pBBox.get(); }
+    CComponentBase* GetComponent(CBaseState::State type) const;
+    
+    bool IsHuman() const { return m_isHuman; }
 protected:
     // 物理演算
     void ApplyGravity();  // 重力を適用し、地面との衝突判定を行う
@@ -38,7 +41,7 @@ protected:
 
     // バウンディングボックス管理
     void UpdateBBox() const;  // バウンディングボックスのワールド行列を更新
-    CBBox* CreateBBox();  // メッシュからバウンディングボックスを生成
+    std::unique_ptr<CBBox> CreateBBox();  // メッシュからバウンディングボックスを生成
 
     // OBB衝突判定と押し戻し処理
     void ResolveOBBCollisions();  // 周辺エネミーとのOBB衝突を検出し、押し戻し処理を実行
@@ -47,11 +50,15 @@ protected:
     // ステージオブジェクトとの衝突判定と押し戻し処理
     void ResolveStageCollisions();  // ステージオブジェクトとのOBB衝突を検出し、押し戻し処理を実行//
 
-    std::unordered_map<CBaseState::State, CComponentBase*> m_components;
+    std::unordered_map<CBaseState::State, std::unique_ptr<CComponentBase>> m_components;
     CComponentBase* m_pComponent = nullptr;
-    CBaseState* m_pState = nullptr;
-    CBBox* m_pBBox = nullptr;
+    std::unique_ptr<CBaseState> m_pState = nullptr;
+    std::unique_ptr<CBBox> m_pBBox = nullptr;
     CGround* m_pGround = nullptr;
+    CPlayer* m_pPlayer = nullptr;
+    CEnemyManager* m_pEnemyManager = nullptr;
+    
     float m_velocityY;
     VECTOR2 m_areaSize;
+    bool m_isHuman = false;
 };

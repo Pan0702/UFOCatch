@@ -20,6 +20,10 @@ public:
     void AddDiscovery(int dis) { m_discovery += dis; }
     void AddCapture(int cap) { m_capture += cap; }
     void AddSaw(int saw) { m_saw += saw; }
+    
+    static CGameInstance* Get() {
+        return SingleInstantiate<CGameInstance>();
+    }
 
 private:
     int m_score;

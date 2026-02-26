@@ -29,18 +29,18 @@ public:
     }
 
     // 毎フレーム呼ぶ
-    void Update(float speed = 0.12f)
+    void Update(float speed = 0.12f, float deltaTime = 0.0f)
     {
         for (int i = 0; i < (int)m_clipT.size(); i++)
         {
             if (m_closing[i])
             {
-                m_clipT[i] -= speed;
+                m_clipT[i] -= speed * deltaTime;
                 if (m_clipT[i] < 0.0f) m_clipT[i] = 0.0f;
             }
             else
             {
-                m_clipT[i] += speed;
+                m_clipT[i] += speed * deltaTime;
                 if (m_clipT[i] > 1.0f) m_clipT[i] = 1.0f;
             }
         }

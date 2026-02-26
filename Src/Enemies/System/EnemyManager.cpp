@@ -14,28 +14,18 @@ namespace
 CEnemyManager::CEnemyManager()
     : m_pMesh(nullptr)
     , m_pMeshCol(nullptr)
-    , m_pModelRegistry(nullptr)
-    , m_pQuadTreeIndex(nullptr)
-    , m_pStaticQuadTreeIndex(nullptr)
+    , m_pModelRegistry(std::make_unique<CModelRegistry>())
+    , m_pQuadTreeIndex(std::make_unique<CEnemyQuadTree>())
+    , m_pStaticQuadTreeIndex(std::make_unique<CStageQuadTree>())
     , m_pPlayer(nullptr)
 {
     ObjectManager::DontDestroy(this);
     ObjectManager::SetVisible(this, false);
-
-    // 各クラスを初期化
-    m_pModelRegistry = new CModelRegistry();
-    m_pQuadTreeIndex = new CEnemyQuadTree();
-    m_pStaticQuadTreeIndex = new CStageQuadTree();
+    
 }
 
 CEnemyManager::~CEnemyManager()
 {
-    SAFE_DELETE(m_pModelRegistry);
-    m_pModelRegistry = nullptr;
-    SAFE_DELETE(m_pQuadTreeIndex);
-    m_pQuadTreeIndex = nullptr;
-    SAFE_DELETE(m_pStaticQuadTreeIndex);
-    m_pStaticQuadTreeIndex = nullptr;
 }
 
 void CEnemyManager::RegisterEnemy(CEnemyBase* enemy)
@@ -120,7 +110,7 @@ void CEnemyManager::ResetCollisionStats() const
     }
 }
 
-void CEnemyManager::BuildStaticTree()
+void CEnemyManager::BuildStaticTree() const
 {
     if (m_pStaticQuadTreeIndex)
     {

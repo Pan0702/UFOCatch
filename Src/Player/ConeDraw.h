@@ -30,7 +30,7 @@ private:
     void Draw()   override;
 
     CPlayer*      m_pPlayer;
-    CSpriteImage* m_pCircleImage;
+    std::unique_ptr<CSpriteImage> m_pCircleImage;
     CPlayerLevel* m_pLevel;
     
     float m_radius;

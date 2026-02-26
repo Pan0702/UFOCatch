@@ -25,7 +25,7 @@ private:
     ///範囲を描画
    // void DrawDirectionLine();
     void AtkArea() const;
-    void FanShape();
+    void InitStates();
     ///
 private:
     CFunShape* m_pFunShape;
