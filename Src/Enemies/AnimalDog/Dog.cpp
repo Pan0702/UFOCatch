@@ -54,15 +54,14 @@ CADog::~CADog()
 
 void CADog::Update()
 {
-    m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     if (m_pPlayer != nullptr)
     {
         m_isInConeArea = m_pPlayer->IsWithSuctionCone(transform.position);
     }
-    
+
     //地面との当たり判定と、ComponentのUpdateを呼び出してる
     CEnemyBase::Update();
-    
+
 }
 
 VECTOR3 CADog::SuctionSpeed() const

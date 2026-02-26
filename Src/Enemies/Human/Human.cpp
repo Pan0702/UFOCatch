@@ -1,5 +1,6 @@
 #include "Human.h"
 #include "FunShape.h"
+#include "../../Player/Player.h"
 #include "../../Player/PlayerHP.h"
 #include "../../System/VisionSystem.h"
 #include "../System/EnemyManager.h"
@@ -31,6 +32,9 @@ CHuman::CHuman(const VECTOR3& pos, const VECTOR2& areaSize)
     m_pFunShape = new CFunShape();
     m_pGround = ObjectManager::FindGameObject<CGround>();
     m_pBBox = CreateBBox();
+    m_pVisionSystem = ObjectManager::FindGameObject<CVisionSystem>();
+    m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
+    m_pPlayerHP = ObjectManager::FindGameObject<CPlayerHP>();
 }
 
 CHuman::~CHuman()
@@ -54,11 +58,8 @@ void CHuman::Update()
         return;
     }
 
-    m_pAnimator->Update();
-    CVisionSystem*vision = ObjectManager::FindGameObject<CVisionSystem>();
-    m_inSight = vision->SectorCircleCollision(ToVec2XZ(transform.position), transform.rotation.y)
-        && ObjectManager::FindGameObject<CPlayer>()->GetIsSuckUp();
-
+    m_inSight = m_pVisionSystem->SectorCircleCollision(ToVec2XZ(transform.position), transform.rotation.y)
+        && m_pPlayer->GetIsSuckUp();
 
     if (m_inSight)
     {
@@ -66,14 +67,9 @@ void CHuman::Update()
     }
     else
     {
-        ObjectManager::FindGameObject<CPlayerHP>()->ResetFlag();
+        m_pPlayerHP->ResetFlag();
     }
     AtkArea();
-    ResolveOBBCollisions();
-    UpdateBBox();
-
-    // ステージオブジェクトとの衝突判定と押し戻し（最後に実行）
-    ResolveStageCollisions();
 }
 
 

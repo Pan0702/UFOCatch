@@ -73,12 +73,11 @@ void CAnimalChicken::Cry() const
 
 void CAnimalChicken::Update()
 {
-    m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     if (m_pPlayer != nullptr)
     {
         m_isInConeArea = m_pPlayer->IsWithSuctionCone(transform.position);
     }
-    
+
     CEnemyBase::Update();
 }
 void CAnimalChicken::ChangeState(CBaseState::State type)
