@@ -1,0 +1,70 @@
+install for rider
+
+py -m pip install lizard
+py -m lizard .
+確認
+py -m pip show lizard
+
+py -m pip install jinja2
+
+
+＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
+
+
+
+How to use
+
+C+＋ファイルのみを分析
+py -m lizard *.cpp *.h
+
+複雑度の閾値を設定
+py -m lizard -C 10 
+
+ファイルのみを基本分析
+py -m lizard Src
+
+ファイルのみを詳細分析
+py -m lizard -v Src
+
+Srcフォルダ内のC++ファイルのみを指定
+py -m lizard Src/*.cpp Src/*.h -H -o complexity_report.html
+より詳細なオプション付き
+py -m lizard Src -v -C 10 -H -o complexity_report.html
+
+Src: Srcフォルダを対象に指定
+-v: 詳細情報を表示
+-C 10: 循環的複雑度が10を超える関数に警告
+-H: HTML形式で出力
+-o complexity_report.html: 出力ファイル名
+
+特定の複雑度以上のみ表示
+py -m lizard Src -C 5
+
+CSVで出力
+py -m lizard Src --csv
+
+警告のみ表示
+py -m lizard Src -w -C 8
+
+
+＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
+
+
+
+CCN
+循環的複雑度。
+if文、for文、switch-case文が増えると数値が上がります。
+0〜10は最良、11〜20はやや複雑、21〜40はテストしづらい、50以上は危険
+
+NLOC
+メソッドやファイルのコード行数（コメントを除く）
+
+token
+トークンとはコンパイラが字句解析／構文解析する際の最小単位（要素）であり、
+ここでは関数中のトークン数です
+
+PARAM
+メソッドのパラメータ数
+
+length	
+メソッドやファイルのコード行数（コメントを含む）
