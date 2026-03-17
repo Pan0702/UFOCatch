@@ -127,13 +127,13 @@ void MeshCollider::transformSkinVertices()
     if (animator == nullptr)  return;
     if (animator->PlayingID() == id)
     {
-        if (animator->CurrentFrame() <= static_cast<float>(frame + FrameLimit) && animator->CurrentFrame() >= frame - FrameLimit) 
+        if (animator->CurrentFrame() <= (static_cast<float>(frame) + FrameLimit) && animator->CurrentFrame() >= static_cast<int>(frame) - FrameLimit) 
             return;
     }
     id = animator->PlayingID();
     frame = static_cast<int>(animator->CurrentFrame());
 
-    for (int m = 0; m < mesh->m_dwMeshNum; m++)
+    for (int m = 0; m < static_cast<int>(mesh->m_dwMeshNum); m++)
     {
         // �{�[���s��ɂ�钸�_�̕ό`
         int i = 0;

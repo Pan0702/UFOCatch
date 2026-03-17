@@ -1,0 +1,630 @@
+#include "FbxParser.h"
+
+#include <cmath>
+#include <fstream>
+#include <stdexcept>
+#include <unordered_map>
+
+#include <windows.h>
+#include <zlib.h>
+
+#include "../../MyMath.h"
+
+namespace
+{
+    constexpr char kFbxMagic[] = "Kaydara FBX Binary  \x00\x1a\x00";
+    constexpr int kFbxMagicSize = 23;
+    constexpr uint64_t kVersionOffset = 23;
+    constexpr uint32_t kVersion64bit = 7500;
+}
+
+// ----------------------------------------------------------------
+//  FBX バイナリファイルを読み込む
+// ----------------------------------------------------------------
+bool FbxParser::Load(const std::string& path)
+{
+    std::ifstream file(path, std::ios::binary);
+    if (!file)
+    {
+        MessageBoxA(nullptr, ("FBX ファイルを開けません: " + path).c_str(),
+                    "FbxParser", MB_OK | MB_ICONERROR);
+        return false;
+    }
+
+    file.seekg(0, std::ios::end);
+    data_.resize(static_cast<size_t>(file.tellg()));
+    file.seekg(0);
+    file.read(reinterpret_cast<char*>(data_.data()),
+              static_cast<std::streamsize>(data_.size()));
+
+    if (data_.size() < 27 ||
+        memcmp(data_.data(), kFbxMagic, kFbxMagicSize) != 0)
+    {
+        MessageBoxA(nullptr, "FBX バイナリフォーマットではありません",
+                    "FbxParser", MB_OK | MB_ICONERROR);
+        return false;
+    }
+
+    version_ = Read<uint32_t>(kVersionOffset);
+    is64bit_ = (version_ >= kVersion64bit);
+
+    roots_ = ParseChildren(27, data_.size());
+    return true;
+}
+
+// ----------------------------------------------------------------
+//  読み込んだ FBX から頂点・インデックスデータを展開する
+//
+//  仕様:
+//    - Objects 直下の全 Geometry を結合して1つのメッシュとして出力する
+//    - 各 Geometry に対応する Model の ローカル Transform (T/R/S) を適用する
+//      （親 Model の Transform は適用しない）
+//    - 頂点の一意性は (pos_idx, uv_idx) の組み合わせで判定する（法線は含めない）
+//    - UV の V 軸反転は行わない（シェーダー側で処理する）
+// ----------------------------------------------------------------
+bool FbxParser::ExtractMesh(
+    std::vector<MeshVertex>& out_verts,
+    std::vector<uint32_t>& out_indices)
+{
+    Node* objects = FindNode(roots_, "Objects");
+    if (!objects)
+    {
+        MessageBoxA(nullptr, "FBX: Objects ノードが見つかりません",
+                    "FbxParser", MB_OK | MB_ICONERROR);
+        return false;
+    }
+
+    // --- Model ID → Node のマップを作成 ---
+    model_map_.clear();
+    for (auto& child : objects->children)
+    {
+        if (child.name == "Model")
+            model_map_[ReadNodeId(child.prop_start)] = &child;
+    }
+    
+    // --- Geometry ID セットを作成 ---
+    std::unordered_map<int64_t, Node*> geo_map;
+    for (auto& child : objects->children)
+    {
+        if (child.name == "Geometry")
+            geo_map[ReadNodeId(child.prop_start)] = &child;
+    }
+
+    // --- Connections から接続情報を収集 ---
+    //   geo_to_model      : Geometry ID → 直接の親 Model ID
+    //   model_parent_map_ : Model ID    → 親 Model ID（グローバル行列の再帰計算用）
+    std::unordered_map<int64_t, int64_t> geo_to_model;
+    model_parent_map_.clear();
+    Node* conn_node = FindNode(roots_, "Connections");
+    if (conn_node)
+    {
+        for (auto& c : conn_node->children)
+        {
+            if (c.name != "C") continue;
+            uint64_t off = c.prop_start;
+            // conn_type (S) をスキップ
+            if (off < data_.size() && data_[off] == 'S')
+            {
+                uint32_t l = Read<uint32_t>(off + 1);
+                off += 5 + l;
+            }
+            // タグを実際に読んでオフセットを正確に進める
+            uint8_t tag1 = data_[off];
+            int64_t id1  = ReadNodeId(off);
+            off += (tag1 == 'L') ? 9u : 5u;
+            int64_t id2  = ReadNodeId(off);
+
+            if (geo_map.count(id1))
+                geo_to_model[id1] = id2;
+            else if (model_map_.count(id1) && model_map_.count(id2))
+                model_parent_map_[id1] = id2;
+        }
+    }
+    // // --- デバッグ: model_map_ / model_parent_map_ の内容を確認 ---
+    // {
+    //     char buf[256];
+    //     sprintf_s(buf, "[FbxParser] model_map_ size=%zu  model_parent_map_ size=%zu\n",
+    //               model_map_.size(), model_parent_map_.size());
+    //     OutputDebugStringA(buf);
+    // }
+    //
+    // // --- デバッグ: geo_to_model の内容を確認 ---
+    // {
+    //     char buf[256];
+    //     sprintf_s(buf, "[FbxParser] geo_map size=%zu  geo_to_model size=%zu\n",
+    //               geo_map.size(), geo_to_model.size());
+    //     OutputDebugStringA(buf);
+    // }
+    // --- 全 Geometry を展開して結合 ---
+    out_verts.clear();
+    out_indices.clear();
+
+    if (geo_map.empty())
+    {
+        MessageBoxA(nullptr, "FBX: Geometry ノードが見つかりません",
+                    "FbxParser", MB_OK | MB_ICONERROR);
+        return false;
+    }
+
+    for (auto& child : objects->children)
+    {
+        if (child.name != "Geometry") continue;
+
+        int64_t geo_id = ReadNodeId(child.prop_start);
+        Node* model = nullptr;
+        auto it = geo_to_model.find(geo_id);
+        if (it != geo_to_model.end())
+        {
+            // // --- デバッグ: ID の照合を確認 ---
+            // char buf[256];
+            // sprintf_s(buf, "[FbxParser] geo_id=%lld  model_id_from_conn=%lld  in_model_map=%s\n",
+            //           geo_id, it->second,
+            //           model_map_.count(it->second) ? "YES" : "NO");
+            // OutputDebugStringA(buf);
+
+            
+            auto mit = model_map_.find(it->second);
+            if (mit != model_map_.end()) model = mit->second;
+        }
+
+        if (!ExtractGeometry(&child, model, out_verts, out_indices))
+            return false;
+    }
+
+    return true;
+}
+
+std::string FbxParser::GetTextureFileName() const
+{
+    // Objects 直下の最初の Texture ノードを探す
+    Node* objects = FindNode(const_cast<std::vector<Node>&>(roots_), "Objects");
+    if (!objects) return "";
+
+    Node* tex = FindNode(objects->children, "Texture");
+    if (!tex) return "";
+
+    // RelativeFilename を優先して使う
+    Node* rel = FindNode(tex->children, "RelativeFilename");
+    if (rel)
+    {
+        std::string s = ReadString(rel, ""); // ノード自身のプロパティを読む
+        // ノード自身のプロパティを読む//
+        uint64_t off = rel->prop_start;
+        if (data_[off] == 'S')
+        {
+            uint32_t len = Read<uint32_t>(off + 1);
+            s = std::string(reinterpret_cast<const char*>(data_.data() + off + 5), len);
+        }
+        if (!s.empty())
+        {
+            // 絶対パス（"X:\" や "/" 始まり）ならファイル名部分だけ返す
+            bool is_abs = (s.size() >= 2 && s[1] == ':') || (s[0] == '/' || s[0] == '\\');
+            if (is_abs)
+            {
+                size_t pos = s.find_last_of("/\\");
+                return (pos != std::string::npos) ? s.substr(pos + 1) : s;
+            }
+            return s;
+        }
+    }
+
+    // RelativeFilename がなければ FileName のファイル名部分だけ返す
+    Node* fn = FindNode(tex->children, "FileName");
+    if (fn)
+    {
+        uint64_t off = fn->prop_start;
+        if (data_[off] == 'S')
+        {
+            uint32_t len = Read<uint32_t>(off + 1);
+            std::string full(reinterpret_cast<const char*>(data_.data() + off + 5), len);
+            // パスの最後のファイル名だけ取り出す
+            size_t pos = full.find_last_of("/\\");
+            if (pos != std::string::npos) return full.substr(pos + 1);
+            return full;
+        }
+    }
+
+    return "";
+}
+
+
+// ----------------------------------------------------------------
+//  1つの Geometry ノードをローカル Transform を適用しながら展開する
+// ----------------------------------------------------------------
+bool FbxParser::ExtractGeometry(
+    Node* geometry,
+    Node* model,
+    std::vector<MeshVertex>& out_verts,
+    std::vector<uint32_t>& out_indices)
+{
+    std::vector<double> raw_pos = ReadDoubleArray(geometry, "Vertices");
+    std::vector<int32_t> poly_idx = ReadIntArray(geometry, "PolygonVertexIndex");
+    if (raw_pos.empty() || poly_idx.empty()) return true;
+
+    Node* le_normal = FindNode(geometry->children, "LayerElementNormal");
+    if (!le_normal)
+    {
+        MessageBoxA(nullptr, "FBX: LayerElementNormal が見つかりません",
+                    "FbxParser", MB_OK | MB_ICONERROR);
+        return false;
+    }
+    std::string norm_ref = ReadString(le_normal, "ReferenceInformationType");
+    std::vector<double> raw_norm = ReadDoubleArray(le_normal, "Normals");
+    std::vector<int32_t> norm_idx = {};
+    if (norm_ref == "IndexToDirect")
+        norm_idx = ReadIntArray(le_normal, "NormalsIndex");
+
+    Node* le_uv = FindNode(geometry->children, "LayerElementUV");
+    if (!le_uv)
+    {
+        MessageBoxA(nullptr, "FBX: LayerElementUV が見つかりません",
+                    "FbxParser", MB_OK | MB_ICONERROR);
+        return false;
+    }
+    std::string uv_ref = ReadString(le_uv, "ReferenceInformationType");
+    std::vector<double> raw_uv = ReadDoubleArray(le_uv, "UV");
+    std::vector<int32_t> uv_idx = {};
+    if (uv_ref == "IndexToDirect")
+        uv_idx = ReadIntArray(le_uv, "UVIndex");
+    
+    MATRIX4X4 mat = GetGlobalMatrix(model);
+
+    // --- デバッグ: 行列の移動成分を確認 ---
+    {
+        char buf[256];
+        sprintf_s(buf, "[FbxParser] GlobalMatrix T=(%.3f, %.3f, %.3f)\n",
+                  mat.m[3][0], mat.m[3][1], mat.m[3][2]);
+        OutputDebugStringA(buf);
+    }
+    
+    const uint32_t vertex_offset = static_cast<uint32_t>(out_verts.size());
+    uint32_t pv_counter = 0;
+    std::vector<std::pair<uint32_t, uint32_t>> face;
+
+    // ポリゴン頂点ごとに必ず新規頂点を生成し、インデックスを 0 から振り直す
+    auto emit_vertex = [&](uint32_t pos_idx, uint32_t pv_idx)
+    {
+        uint32_t n_idx = (norm_ref == "IndexToDirect")
+                             ? static_cast<uint32_t>(norm_idx[pv_idx])
+                             : pv_idx;
+        uint32_t u_idx = (uv_ref == "IndexToDirect")
+                             ? static_cast<uint32_t>(uv_idx[pv_idx])
+                             : pv_idx;
+
+        float px = static_cast<float>(raw_pos[pos_idx * 3 + 0]);
+        float py = static_cast<float>(raw_pos[pos_idx * 3 + 1]);
+        float pz = static_cast<float>(raw_pos[pos_idx * 3 + 2]);
+        float nx = static_cast<float>(raw_norm[n_idx * 3 + 0]);
+        float ny = static_cast<float>(raw_norm[n_idx * 3 + 1]);
+        float nz = static_cast<float>(raw_norm[n_idx * 3 + 2]);
+
+        MeshVertex v{};
+        // 位置にグローバル変換行列を適用する（行優先）
+        v.position[0] = (mat.m[0][0] * px + mat.m[1][0] * py + mat.m[2][0] * pz + mat.m[3][0]) / 100.0f;
+        v.position[1] = (mat.m[0][1] * px + mat.m[1][1] * py + mat.m[2][1] * pz + mat.m[3][1]) / 100.0f;
+        v.position[2] = (mat.m[0][2] * px + mat.m[1][2] * py + mat.m[2][2] * pz + mat.m[3][2]) / 100.0f;
+        // 法線に回転のみ適用して再正規化する
+        float wnx = mat.m[0][0] * nx + mat.m[1][0] * ny + mat.m[2][0] * nz;
+        float wny = mat.m[0][1] * nx + mat.m[1][1] * ny + mat.m[2][1] * nz;
+        float wnz = mat.m[0][2] * nx + mat.m[1][2] * ny + mat.m[2][2] * nz;
+        float len = std::sqrt(wnx * wnx + wny * wny + wnz * wnz);
+        if (len > 1e-6f)
+        {
+            wnx /= len;
+            wny /= len;
+            wnz /= len;
+        }
+        v.normal[0] = wnx;
+        v.normal[1] = wny;
+        v.normal[2] = wnz;
+        // UV はそのまま（V 軸反転はシェーダー側で行う）
+        v.uv[0] = static_cast<float>(raw_uv[u_idx * 2 + 0]);
+        v.uv[1] = 1.0f - static_cast<float>(raw_uv[u_idx * 2 + 1]);
+
+        uint32_t new_idx = static_cast<uint32_t>(out_verts.size() - vertex_offset);
+        out_verts.push_back(v);
+        out_indices.push_back(vertex_offset + new_idx);
+    };
+
+    for (int32_t raw : poly_idx)
+    {
+        bool is_end = (raw < 0);
+        uint32_t pos_idx = is_end ? static_cast<uint32_t>(~raw) : static_cast<uint32_t>(raw);
+        face.push_back({pos_idx, pv_counter++});
+
+        if (is_end)
+        {
+            for (size_t i = 1; i + 1 < face.size(); ++i)
+            {
+                emit_vertex(face[0].first, face[0].second);
+                emit_vertex(face[i].first, face[i].second);
+                emit_vertex(face[i + 1].first, face[i + 1].second);
+            }
+            face.clear();
+        }
+    }
+
+    return true;
+}
+
+// ----------------------------------------------------------------
+//  ノードの最初のプロパティ（ID）を int64_t で読む
+//  FBX 7400 以前は 'I'(int32)、7500 以降は 'L'(int64)
+// ----------------------------------------------------------------
+int64_t FbxParser::ReadNodeId(uint64_t offset) const
+{
+    uint8_t tc = data_[offset];
+    if (tc == 'L') return Read<int64_t>(offset + 1);
+    if (tc == 'I') return static_cast<int64_t>(Read<int32_t>(offset + 1));
+    return 0;
+}
+
+// ----------------------------------------------------------------
+//  Model ノードからグローバル変換行列を取得する
+//  Connections の親チェーンを再帰的に辿り、全祖先のローカル行列を結合する
+//  （FbxNode::EvaluateGlobalTransform() 相当）
+// ----------------------------------------------------------------
+MATRIX4X4 FbxParser::GetGlobalMatrix(Node* model) const
+{
+    const MATRIX4X4 identity(1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1);
+    if (!model) return identity;
+
+    int64_t model_id = ReadNodeId(model->prop_start);
+
+    auto parent_it = model_parent_map_.find(model_id);
+    if (parent_it != model_parent_map_.end())
+    {
+        auto node_it = model_map_.find(parent_it->second);
+        if (node_it != model_map_.end())
+        {
+            // 親のグローバル行列 × 自分のローカル行列
+            MATRIX4X4 parent_global = GetGlobalMatrix(node_it->second);
+            MATRIX4X4 local = GetLocalMatrix(model);
+            return parent_global * local;
+        }
+    }
+
+    // 親がいない（ルートノード）ならローカル行列がそのままグローバル行列
+    return GetLocalMatrix(model);
+}
+
+// ----------------------------------------------------------------
+//  Model ノードからローカル変換行列 (TRS) を取得する
+//  行優先 4x4, Euler 回転順序は FBX 標準の XYZ
+// ----------------------------------------------------------------
+MATRIX4X4 FbxParser::GetLocalMatrix(Node* model) const
+{
+    MATRIX4X4 m(1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1);
+    if (!model) return m;
+    Node* props70 = FindNode(model->children, "Properties70");
+    if (!props70) return m;
+
+    double tx = 0, ty = 0, tz = 0;
+    double rx = 0, ry = 0, rz = 0;
+    double sx = 1, sy = 1, sz = 1;
+
+    for (auto& p : props70->children)
+    {
+        if (p.name != "P") continue;
+        uint64_t off = p.prop_start;
+
+        // 1つ目: プロパティ名 (S)
+        if (data_[off] != 'S') continue;
+        uint32_t slen = Read<uint32_t>(off + 1);
+        std::string pname(reinterpret_cast<const char*>(data_.data() + off + 5), slen);
+        off += 5 + slen;
+
+        if (pname != "Lcl Translation" &&
+            pname != "Lcl Rotation" &&
+            pname != "Lcl Scaling")
+            continue;
+
+        // 2〜4つ目（型名, ラベル, フラグ）をスキップ
+        for (int i = 0; i < 3; ++i)
+        {
+            if (off >= data_.size()) break;
+            uint8_t tc = data_[off++];
+            if (tc == 'S')
+            {
+                uint32_t l = Read<uint32_t>(off);
+                off += 4 + l;
+            }
+            else if (tc == 'I') off += 4;
+            else if (tc == 'L') off += 8;
+            else if (tc == 'F') off += 4;
+            else if (tc == 'D') off += 8;
+        }
+
+        // 5〜7つ目: X, Y, Z 値
+        auto read_val = [&]() -> double
+        {
+            if (off >= data_.size()) return 0.0;
+            uint8_t tc = data_[off++];
+            if (tc == 'D')
+            {
+                double v = Read<double>(off);
+                off += 8;
+                return v;
+            }
+            if (tc == 'F')
+            {
+                float v = Read<float>(off);
+                off += 4;
+                return static_cast<double>(v);
+            }
+            return 0.0;
+        };
+        double vx = read_val(), vy = read_val(), vz = read_val();
+        if (pname == "Lcl Translation")
+        {
+            tx = vx;
+            ty = vy;
+            tz = vz;
+        }
+        else if (pname == "Lcl Rotation")
+        {
+            rx = vx * DegToRad;
+            ry = vy * DegToRad;
+            rz = vz * DegToRad;
+        }
+        else if (pname == "Lcl Scaling")
+        {
+            sx = vx;
+            sy = vy;
+            sz = vz;
+        }
+    }
+
+    // rx/ry/rz はすでに DegToRad 済みなのでそのまま渡す
+    double crx = cos(rx), srx = sin(rx);
+    double cry = cos(ry), sry = sin(ry);
+    double crz = cos(rz), srz = sin(rz);
+
+    // 行優先 TRS 行列（R = Rz * Ry * Rx）
+    m.m[0][0] = static_cast<float>(sx * (cry * crz));
+    m.m[0][1] = static_cast<float>(sx * (cry * srz));
+    m.m[0][2] = static_cast<float>(sx * (-sry));
+    m.m[0][3] = 0.0f;
+    m.m[1][0] = static_cast<float>(sy * (srx * sry * crz - crx * srz));
+    m.m[1][1] = static_cast<float>(sy * (srx * sry * srz + crx * crz));
+    m.m[1][2] = static_cast<float>(sy * (srx * cry));
+    m.m[1][3] = 0.0f;
+    m.m[2][0] = static_cast<float>(sz * (crx * sry * crz + srx * srz));
+    m.m[2][1] = static_cast<float>(sz * (crx * sry * srz - srx * crz));
+    m.m[2][2] = static_cast<float>(sz * (crx * cry));
+    m.m[2][3] = 0.0f;
+    m.m[3][0] = static_cast<float>(tx);
+    m.m[3][1] = static_cast<float>(ty);
+    m.m[3][2] = static_cast<float>(tz);
+    m.m[3][3] = 1.0f;
+    return m;
+}
+
+// ----------------------------------------------------------------
+//  ノードヘッダーを読み込む（32bit / 64bit オフセットに対応）
+// ----------------------------------------------------------------
+FbxParser::Node FbxParser::ReadNodeHeader(uint64_t offset, uint64_t& out_end) const
+{
+    Node n;
+    uint64_t num_props;
+    uint64_t prop_len;
+
+    if (is64bit_)
+    {
+        out_end = Read<uint64_t>(offset);
+        num_props = Read<uint64_t>(offset + 8);
+        prop_len = Read<uint64_t>(offset + 16);
+        uint8_t name_len = data_[offset + 24];
+        n.name.assign(reinterpret_cast<const char*>(data_.data() + offset + 25), name_len);
+        n.prop_start = offset + 25 + name_len;
+        n.prop_len = prop_len;
+        n.child_start = n.prop_start + prop_len;
+    }
+    else
+    {
+        out_end = Read<uint32_t>(offset);
+        num_props = Read<uint32_t>(offset + 4);
+        prop_len = Read<uint32_t>(offset + 8);
+        uint8_t name_len = data_[offset + 12];
+        n.name.assign(reinterpret_cast<const char*>(data_.data() + offset + 13), name_len);
+        n.prop_start = offset + 13 + name_len;
+        n.prop_len = prop_len;
+        n.child_start = n.prop_start + prop_len;
+    }
+    n.end = out_end;
+    (void)num_props;
+    return n;
+}
+
+// ----------------------------------------------------------------
+//  指定範囲の子ノードを再帰的に解析する
+// ----------------------------------------------------------------
+std::vector<FbxParser::Node> FbxParser::ParseChildren(uint64_t start, uint64_t end)
+{
+    std::vector<Node> nodes;
+    uint64_t offset = start;
+    size_t header_sz = is64bit_ ? 25 : 13;
+
+    while (offset + header_sz <= end)
+    {
+        uint64_t node_end = 0;
+        Node n = ReadNodeHeader(offset, node_end);
+        if (node_end == 0 && n.name.empty()) break;
+        n.children = ParseChildren(n.child_start, n.end);
+        nodes.push_back(std::move(n));
+        offset = node_end;
+    }
+    return nodes;
+}
+
+// ----------------------------------------------------------------
+//  ノードリストから指定名のノードを再帰的に検索する
+// ----------------------------------------------------------------
+FbxParser::Node* FbxParser::FindNode(std::vector<Node>& nodes, const std::string& name)
+{
+    for (auto& n : nodes)
+    {
+        if (n.name == name) return &n;
+        Node* r = FindNode(n.children, name);
+        if (r) return r;
+    }
+    return nullptr;
+}
+
+// ----------------------------------------------------------------
+//  型付き配列プロパティを読み込む（非圧縮 / zlib 圧縮の両方に対応）
+// ----------------------------------------------------------------
+template <typename T>
+std::vector<T> FbxParser::ReadTypedArray(uint64_t offset)
+{
+    uint32_t count = Read<uint32_t>(offset);
+    uint32_t encoding = Read<uint32_t>(offset + 4);
+    uint32_t comp_len = Read<uint32_t>(offset + 8);
+    const uint8_t* src = data_.data() + offset + 12;
+
+    std::vector<T> result(count);
+    if (encoding == 0)
+    {
+        memcpy(result.data(), src, sizeof(T) * count);
+    }
+    else if (encoding == 1)
+    {
+        uLongf dest_len = static_cast<uLongf>(sizeof(T) * count);
+        if (uncompress(
+            reinterpret_cast<Bytef*>(result.data()), &dest_len,
+            src, comp_len) != Z_OK)
+            throw std::runtime_error("zlib 解凍に失敗しました");
+    }
+    return result;
+}
+
+template std::vector<double> FbxParser::ReadTypedArray<double>(uint64_t);
+template std::vector<int32_t> FbxParser::ReadTypedArray<int32_t>(uint64_t);
+
+std::vector<double> FbxParser::ReadDoubleArray(Node* parent, const std::string& node_name)
+{
+    Node* n = FindNode(parent->children, node_name);
+    if (!n) return {};
+    uint64_t off = n->prop_start;
+    if (static_cast<char>(data_[off]) != 'd') return {};
+    return ReadTypedArray<double>(off + 1);
+}
+
+std::vector<int32_t> FbxParser::ReadIntArray(Node* parent, const std::string& node_name)
+{
+    Node* n = FindNode(parent->children, node_name);
+    if (!n) return {};
+    uint64_t off = n->prop_start;
+    if (static_cast<char>(data_[off]) != 'i') return {};
+    return ReadTypedArray<int32_t>(off + 1);
+}
+
+std::string FbxParser::ReadString(Node* parent, const std::string& node_name) const
+{
+    Node* n = FindNode(parent->children, node_name);
+    if (!n) return "";
+    uint64_t off = n->prop_start;
+    if (static_cast<char>(data_[off]) != 'S') return "";
+    uint32_t len = Read<uint32_t>(off + 1);
+    return std::string(reinterpret_cast<const char*>(data_.data() + off + 5), len);
+}
