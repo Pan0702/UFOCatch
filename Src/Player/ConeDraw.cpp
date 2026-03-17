@@ -1,4 +1,4 @@
-#include "ConeDraw.h"
+﻿#include "ConeDraw.h"
 #include "../Framework/ObjectManager.h"
 #include "../Core/Game/GameMain.h"
 #include "../Utils/Sprite3D.h"
@@ -49,7 +49,7 @@ void CConeDraw::Draw()
 }
 
 ////////////////////
-// 地面に吸い込み範囲の円を描画する //
+// 蝨ｰ髱｢縺ｫ蜷ｸ縺・ｾｼ縺ｿ遽・峇縺ｮ蜀・ｒ謠冗判縺吶ｋ //
 ////////////////////
 
 

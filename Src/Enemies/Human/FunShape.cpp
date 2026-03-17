@@ -1,4 +1,4 @@
-#include "FunShape.h"
+﻿#include "FunShape.h"
 
 CFunShape::CFunShape()
 {

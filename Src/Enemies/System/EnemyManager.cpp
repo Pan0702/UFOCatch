@@ -1,4 +1,4 @@
-#include "EnemyManager.h"
+﻿#include "EnemyManager.h"
 #include "../../Utils/BBox.h"
 #include "../AnimalDog/Dog.h"
 #include "../HUman/Human.h"
@@ -35,7 +35,7 @@ void CEnemyManager::RegisterEnemy(CEnemyBase* enemy)
 
 void CEnemyManager::UnregisterEnemy(CEnemyBase* enemy)
 {
-    // swap-and-pop で O(1) 削除
+    // swap-and-pop 縺ｧ O(1) 蜑企勁
     for (size_t i = 0; i < m_enemies.size(); ++i)
     {
         if (m_enemies[i] == enemy)
@@ -49,7 +49,7 @@ void CEnemyManager::UnregisterEnemy(CEnemyBase* enemy)
 
 void CEnemyManager::Update()
 {
-    // QuadTreeIndexを更新（管理リストを渡す）
+    // QuadTreeIndex繧呈峩譁ｰ・育ｮ｡逅・Μ繧ｹ繝医ｒ貂｡縺呻ｼ・
     if (m_pQuadTreeIndex)
     {
         m_pQuadTreeIndex->Update(m_enemies);

@@ -1,4 +1,4 @@
-#include "SceneBase.h"
+﻿#include "SceneBase.h"
 #include "objectManager.h"
 
 SceneBase::SceneBase()

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "ComponentBase.h"
 
 class CWalk : public CComponentBase
@@ -10,24 +10,24 @@ public:
 
 private:
     
-    /// 境界内に収まるランダムな回転量と移動距離を 生成する
-    /// ランダムに回転量（-180°～+180°）と移動距離  （1 .0～3.5）を生成し、 境界チェックに通るまで最大50回リトライする。
-    /// 有効な組み合わせが見つかった場合、m_turnAm  ountとm_moveAmountに設定される。
-    /// @return 有効な移動パラメータが見つかった場  合true、 最大試行回数を超えた場合false
+    /// 蠅・阜蜀・↓蜿弱∪繧九Λ繝ｳ繝繝縺ｪ蝗櫁ｻ｢驥上→遘ｻ蜍戊ｷ晞屬繧・逕滓・縺吶ｋ
+    /// 繝ｩ繝ｳ繝繝縺ｫ蝗櫁ｻ｢驥擾ｼ・180ﾂｰ・・180ﾂｰ・峨→遘ｻ蜍戊ｷ晞屬  ・・ .0・・.5・峨ｒ逕滓・縺励・蠅・阜繝√ぉ繝・け縺ｫ騾壹ｋ縺ｾ縺ｧ譛螟ｧ50蝗槭Μ繝医Λ繧､縺吶ｋ縲・
+    /// 譛牙柑縺ｪ邨・∩蜷医ｏ縺帙′隕九▽縺九▲縺溷ｴ蜷医［_turnAm  ount縺ｨm_moveAmount縺ｫ險ｭ螳壹＆繧後ｋ縲・
+    /// @return 譛牙柑縺ｪ遘ｻ蜍輔ヱ繝ｩ繝｡繝ｼ繧ｿ縺瑚ｦ九▽縺九▲縺溷ｴ  蜷・rue縲・譛螟ｧ隧ｦ陦悟屓謨ｰ繧定ｶ・∴縺溷ｴ蜷・alse
     bool CalcRandomMove();
     
     /*
-    ///  回転・移動後の位置が境界内に収まるかチェック
-    /// @param areaSize エリアのサイズ
-    /// @return 境界内ならtrue、境界外ならfalse
+    ///  蝗櫁ｻ｢繝ｻ遘ｻ蜍募ｾ後・菴咲ｽｮ縺悟｢・阜蜀・↓蜿弱∪繧九°繝√ぉ繝・け
+    /// @param areaSize 繧ｨ繝ｪ繧｢縺ｮ繧ｵ繧､繧ｺ
+    /// @return 蠅・阜蜀・↑繧液rue縲∝｢・阜螟悶↑繧映alse
     bool BoundaryCheck(const VECTOR2& areaSize) const;
     */
-    ///Walkのアニメーションを1.0fの速度で再生する
+    ///Walk縺ｮ繧｢繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ繧・.0f縺ｮ騾溷ｺｦ縺ｧ蜀咲函縺吶ｋ
     void PlayWalkAnimation();
     
-    /// 角度をradで-π～πの間に正規化する
-    /// @param angle 角度
-    /// @return -π～πの間に正規化した角度を返す
+    /// 隗貞ｺｦ繧池ad縺ｧ-ﾏ・槃縺ｮ髢薙↓豁｣隕丞喧縺吶ｋ
+    /// @param angle 隗貞ｺｦ
+    /// @return -ﾏ・槃縺ｮ髢薙↓豁｣隕丞喧縺励◆隗貞ｺｦ繧定ｿ斐☆
     static float ClampRotateY(float angle);
     
 
@@ -39,5 +39,5 @@ private:
     float m_targetRotation;
     float m_moveSpeed;
     bool m_rotation;
-    static constexpr float kTurnAngleDeg = 180.0f; // ランダム回転の範囲（度）。
+    static constexpr float kTurnAngleDeg = 180.0f; // 繝ｩ繝ｳ繝繝蝗櫁ｻ｢縺ｮ遽・峇・亥ｺｦ・峨・
 };

@@ -1,41 +1,41 @@
-#define NOMINMAX
+﻿#define NOMINMAX
 #include "StageObject.h"
 #include "../Enemies/Base/EnemyBase.h"
 #include "../Framework/ResourceManager.h"
 
 ////////////////////
-// コンストラクタ
-// @param meshPath メッシュファイルのパス
-// @param pos オブジェクトの位置
-// @param scale オブジェクトのサイズ
-// @param useOBB OBBを使用するか //
+// 繧ｳ繝ｳ繧ｹ繝医Λ繧ｯ繧ｿ
+// @param meshPath 繝｡繝・す繝･繝輔ぃ繧､繝ｫ縺ｮ繝代せ
+// @param pos 繧ｪ繝悶ず繧ｧ繧ｯ繝医・菴咲ｽｮ
+// @param scale 繧ｪ繝悶ず繧ｧ繧ｯ繝医・繧ｵ繧､繧ｺ
+// @param useOBB OBB繧剃ｽｿ逕ｨ縺吶ｋ縺・//
 ////////////////////
 CStageObject::CStageObject(const char* meshPath, const VECTOR3& pos, float scale, bool useOBB)
 {
     m_bUseOBB = useOBB;
     m_pOBB = nullptr;
 
-    // ResourceManagerからメッシュを取得（キャッシュされる）
+    // ResourceManager縺九ｉ繝｡繝・す繝･繧貞叙蠕暦ｼ医く繝｣繝・す繝･縺輔ｌ繧具ｼ・
     m_pMesh = ResourceManager::LoadFbx(meshPath);
 
-    // OBBの作成
+    // OBB縺ｮ菴懈・
     if (m_bUseOBB)
     {
-        // メッシュから直接バウンディングボックスを取得
+        // 繝｡繝・す繝･縺九ｉ逶ｴ謗･繝舌え繝ｳ繝・ぅ繝ｳ繧ｰ繝懊ャ繧ｯ繧ｹ繧貞叙蠕・
         VECTOR3 vMin = m_pMesh->m_vMin;
         VECTOR3 vMax = m_pMesh->m_vMax;
 
-        // OBBを作成
+        // OBB繧剃ｽ懈・
         m_pOBB = new CBBox(vMin, vMax);
     }
 
-    // 初期位置
+    // 蛻晄悄菴咲ｽｮ
     transform.position = pos;
     transform.scale = VECTOR3(1.0f, 1.0f, 1.0f) * scale;
 }
 
 //------------------------------------------------------------------------
-// デストラクタ
+// 繝・せ繝医Λ繧ｯ繧ｿ
 //------------------------------------------------------------------------
 CStageObject::~CStageObject()
 {
@@ -47,13 +47,13 @@ CStageObject::~CStageObject()
 }
 
 //------------------------------------------------------------------------
-// 更新処理
+// 譖ｴ譁ｰ蜃ｦ逅・
 //------------------------------------------------------------------------
 void CStageObject::Update()
 {
     Object3D::Update();
 
-    // OBBのワールド行列を更新
+    // OBB縺ｮ繝ｯ繝ｼ繝ｫ繝芽｡悟・繧呈峩譁ｰ
     if (m_pOBB)
     {
         m_pOBB->m_mWorld = transform.matrix();
@@ -61,14 +61,14 @@ void CStageObject::Update()
 }
 
 //------------------------------------------------------------------------
-// 描画処理
+// 謠冗判蜃ｦ逅・
 //------------------------------------------------------------------------
 void CStageObject::Draw()
 {
     Object3D::Draw();
 
 
-    // // デバッグ用: OBBを描画（必要に応じてコメントアウト）
+    // // 繝・ヰ繝・げ逕ｨ: OBB繧呈緒逕ｻ・亥ｿ・ｦ√↓蠢懊§縺ｦ繧ｳ繝｡繝ｳ繝医い繧ｦ繝茨ｼ・
     // if (m_pOBB)
     // {
     //     m_pOBB->Render();
@@ -111,11 +111,11 @@ bool CStageObject::GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const
 }
 
 ////////////////////
-// OBBとの衝突判定を行う
-// @param other 相手のOBB
-// @param vHit 衝突位置（Out）
-// @param vNormal 衝突法線（Out）※XZ平面のみ（Y成分は0）
-// @return 衝突していたらtrue //
+// OBB縺ｨ縺ｮ陦晉ｪ∝愛螳壹ｒ陦後≧
+// @param other 逶ｸ謇九・OBB
+// @param vHit 陦晉ｪ∽ｽ咲ｽｮ・・ut・・
+// @param vNormal 陦晉ｪ∵ｳ慕ｷ夲ｼ・ut・俄ｻXZ蟷ｳ髱｢縺ｮ縺ｿ・・謌仙・縺ｯ0・・
+// @return 陦晉ｪ√＠縺ｦ縺・◆繧液rue //
 ////////////////////
 bool CStageObject::HitOBB(CBBox* other, VECTOR3* vHit, VECTOR3* vNormal)
 {
@@ -127,14 +127,14 @@ bool CStageObject::HitOBB(CBBox* other, VECTOR3* vHit, VECTOR3* vNormal)
     VECTOR3 vHitTemp, vNormalTemp;
     bool bHit = m_pOBB->OBBCollisionDetection(other, &vHitTemp, &vNormalTemp);
 
-    // 結果を格納
+    // 邨先棡繧呈ｼ邏・
     if (bHit)
     {
         if (vHit) *vHit = vHitTemp;
 
         if (vNormal)
         {
-            // XZ平面のみで押し戻し（Y軸を含めると下にめり込む）
+            // XZ蟷ｳ髱｢縺ｮ縺ｿ縺ｧ謚ｼ縺玲綾縺暦ｼ・霆ｸ繧貞性繧√ｋ縺ｨ荳九↓繧√ｊ霎ｼ繧・・
             vNormalTemp.y = 0.0f;
             *vNormal = XMVector3Normalize(vNormalTemp);
         }
@@ -144,8 +144,8 @@ bool CStageObject::HitOBB(CBBox* other, VECTOR3* vHit, VECTOR3* vNormal)
 }
 
 ////////////////////
-// エネミーとの衝突を解消する
-// @param pEnemy 判定対象のエネミー //
+// 繧ｨ繝阪Α繝ｼ縺ｨ縺ｮ陦晉ｪ√ｒ隗｣豸医☆繧・
+// @param pEnemy 蛻､螳壼ｯｾ雎｡縺ｮ繧ｨ繝阪Α繝ｼ //
 ////////////////////
 void CStageObject::ResolveEnemyCollision(CEnemyBase* pEnemy)
 {
@@ -154,8 +154,8 @@ void CStageObject::ResolveEnemyCollision(CEnemyBase* pEnemy)
     VECTOR3 hitPos, hitNormal;
     if (HitOBB(pEnemy->GetBBox(), &hitPos, &hitNormal))
     {
-        // OBBCollisionDetection は法線を (0,1,0) 固定で返すため hitNormal は使用不可
-        // ステージ中心 → エネミー中心 の方向で押し戻す
+        // OBBCollisionDetection 縺ｯ豕慕ｷ壹ｒ (0,1,0) 蝗ｺ螳壹〒霑斐☆縺溘ａ hitNormal 縺ｯ菴ｿ逕ｨ荳榊庄
+        // 繧ｹ繝・・繧ｸ荳ｭ蠢・竊・繧ｨ繝阪Α繝ｼ荳ｭ蠢・縺ｮ譁ｹ蜷代〒謚ｼ縺玲綾縺・
         MATRIX4X4 stageCenterMat = XMMatrixTranslation(
             m_pOBB->m_fLengthX + m_pOBB->m_vMin.x,
             m_pOBB->m_fLengthY + m_pOBB->m_vMin.y,

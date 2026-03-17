@@ -113,6 +113,8 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>$(ProjectDir)Libs\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -605,6 +607,7 @@
     <ClInclude Include="Src\Utils\CsvReader.h" />
     <ClInclude Include="Src\Utils\Displace.h" />
     <ClInclude Include="Src\Utils\FbxMesh.h" />
+    <ClInclude Include="Src\Utils\JsonReader.h" />
     <ClInclude Include="Src\Utils\Lerp.h" />
     <ClInclude Include="Src\Utils\LerpValue.h" />
     <ClInclude Include="Src\Utils\MeshCollider.h" />
@@ -616,6 +619,7 @@
     <ClInclude Include="Src\Utils\ScreenTransition.h" />
     <ClInclude Include="Src\Utils\SphereCollider.h" />
     <ClInclude Include="Src\Utils\Sprite3D.h" />
+    <ClInclude Include="Src\Utils\WipeAnimator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libs\Imgui\imgui.cpp" />
@@ -3402,6 +3406,7 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Src\Utils\JsonReader.cpp" />
     <ClCompile Include="Src\Utils\MeshCollider.cpp">
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>

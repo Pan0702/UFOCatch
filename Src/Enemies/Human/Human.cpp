@@ -1,4 +1,4 @@
-#include "Human.h"
+﻿#include "Human.h"
 #include "FunShape.h"
 #include "../../Player/Player.h"
 #include "../../Player/PlayerHP.h"
@@ -49,7 +49,7 @@ void CHuman::Update()
 {
     CEnemyBase::Update();
 
-    // 削除フラグが立っている場合は、これ以上の処理を行わない
+    // 蜑企勁繝輔Λ繧ｰ縺檎ｫ九▲縺ｦ縺・ｋ蝣ｴ蜷医・縲√％繧御ｻ･荳翫・蜃ｦ逅・ｒ陦後ｏ縺ｪ縺・
     if (m_pState != nullptr && m_pComponent == m_components[CBaseState::State::DESTROY].get())
     {
         return;
@@ -73,7 +73,7 @@ void CHuman::Update()
     ResolveOBBCollisions();
     UpdateBBox();
 
-    // ステージオブジェクトとの衝突判定と押し戻し（最後に実行）
+    // 繧ｹ繝・・繧ｸ繧ｪ繝悶ず繧ｧ繧ｯ繝医→縺ｮ陦晉ｪ∝愛螳壹→謚ｼ縺玲綾縺暦ｼ域怙蠕後↓螳溯｡鯉ｼ・
     ResolveStageCollisions();
 }
 
@@ -83,7 +83,7 @@ void CHuman::Update()
 void CHuman::Draw()
 {
     m_pMesh->Render(m_pAnimator.get(), transform.matrix());
-    //Debug関数
+    //Debug髢｢謨ｰ
     //DrawDirectionLine();
     //FanShape();
 }
@@ -97,8 +97,8 @@ void CHuman::AtkArea() const
 }
 
 
-//Humanの範囲をLineで可視化
-//範囲内なら水色、外なら緑になる
+//Human縺ｮ遽・峇繧鱈ine縺ｧ蜿ｯ隕門喧
+//遽・峇蜀・↑繧画ｰｴ濶ｲ縲∝､悶↑繧臥ｷ代↓縺ｪ繧・
 //Debug
 // void CHuman::DrawDirectionLine()
 // {

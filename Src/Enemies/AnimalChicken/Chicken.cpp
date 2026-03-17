@@ -1,4 +1,4 @@
-#include "Chicken.h"
+﻿#include "Chicken.h"
 
 #include <iostream>
 
@@ -51,7 +51,7 @@ CAnimalChicken::~CAnimalChicken()
 void CAnimalChicken::Cry() const
 {
     m_pCry->Play();
-    // 距離が9以下のHumanをチキンの方に向かせる
+    // 霍晞屬縺・莉･荳九・Human繧偵メ繧ｭ繝ｳ縺ｮ譁ｹ縺ｫ蜷代°縺帙ｋ
     auto humans = ObjectManager::FindGameObjects<CHuman>();
     for (auto* human : humans)
     {

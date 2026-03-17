@@ -1,4 +1,4 @@
-#include "DisplayInfo.h"
+﻿#include "DisplayInfo.h"
 
 #include <algorithm>
 
@@ -13,11 +13,11 @@ CDisplayInfo::CDisplayInfo()
     m_expImage = new CSpriteImage("data/PlayUIParts.png");
     m_giwakuImage = new CSpriteImage("data/Circle.png");
     m_pLogo = new CSpriteImage("data/Logo.png");
-    // 経験値ゲージ初期化
+    // 邨碁ｨ灘､繧ｲ繝ｼ繧ｸ蛻晄悄蛹・
     m_prevProportion = 0;
     m_currentWidth = 0;
 
-    // 疑惑ゲージ初期化
+    // 逍第ヱ繧ｲ繝ｼ繧ｸ蛻晄悄蛹・
     m_prevGiwakuProportion = 0;
     m_currentAngle = 0;
     m_isCutInDraw = false;
@@ -36,19 +36,19 @@ CDisplayInfo::~CDisplayInfo()
 
 void CDisplayInfo::Update()
 {
-    // Lerp更新
+    // Lerp譖ｴ譁ｰ
     float nextWidth = m_xpWeightLerp.Update(SceneManager::DeltaTime());
 
-    // Lerp中、または値が更新された場合
+    // Lerp荳ｭ縲√∪縺溘・蛟､縺梧峩譁ｰ縺輔ｌ縺溷ｴ蜷・
     if (m_xpWeightLerp.IsAnimating() || nextWidth != m_currentWidth)
     {
         m_currentWidth = nextWidth;
 
-        // 満タンに達したかチェック（レベルアップ演出完了時）
+        // 貅繧ｿ繝ｳ縺ｫ驕斐＠縺溘°繝√ぉ繝・け・医Ξ繝吶Ν繧｢繝・・貍泌・螳御ｺ・凾・・
         if (m_currentWidth >= 1224.0f)
         {
             m_currentWidth -= 1224.0f;
-            m_prevProportion = 0; // 次のExpDrawで0から余剰分へのLerpを開始させる
+            m_prevProportion = 0; // 谺｡縺ｮExpDraw縺ｧ0縺九ｉ菴吝臆蛻・∈縺ｮLerp繧帝幕蟋九＆縺帙ｋ
             m_xpWeightLerp.ForceSetValue(m_currentWidth);
         }
     }
@@ -57,14 +57,14 @@ void CDisplayInfo::Update()
 void CDisplayInfo::Draw()
 {
     ExpDraw();
-    //BaseUIを描画
+    //BaseUI繧呈緒逕ｻ
     m_pSprite->Draw(m_playUIImage, 0, 0, 0, 0, 1366, 768);
     GiwakuDraw();
     TimeDraw();
     HPDraw();
     LvDraw();
 
-    // タイマーからカットイン情報を取得して描画
+    // 繧ｿ繧､繝槭・縺九ｉ繧ｫ繝・ヨ繧､繝ｳ諠・ｱ繧貞叙蠕励＠縺ｦ謠冗判
     CTimer* pTimer = ObjectManager::FindGameObject<CTimer>();
     if (pTimer && pTimer->IsCutInVisible())
     {
@@ -74,49 +74,49 @@ void CDisplayInfo::Draw()
 
 
 ////////////////////
-// 疑惑ゲージを描画する //
+// 逍第ヱ繧ｲ繝ｼ繧ｸ繧呈緒逕ｻ縺吶ｋ //
 ////////////////////
 void CDisplayInfo::GiwakuDraw()
 {
     CPlayerHP* pHp = ObjectManager::FindGameObject<CPlayerHP>();
-    //割合を計算
+    //蜑ｲ蜷医ｒ險育ｮ・
     float proportion = avoidZero(pHp->GetFindCount() / pHp->GetMaxFindCount());
-    //疑惑ゲージを描画
+    //逍第ヱ繧ｲ繝ｼ繧ｸ繧呈緒逕ｻ
     m_pSprite->DrawCircle(m_giwakuImage, 1122, 469, 0, 0, 230, 230, 0.0f, proportion * XM_2PI);
 
     if (pHp->GetFoundFlag())
     {
-        //疑惑から確信に変わったときの見た目を描画
+        //逍第ヱ縺九ｉ遒ｺ菫｡縺ｫ螟峨ｏ縺｣縺溘→縺阪・隕九◆逶ｮ繧呈緒逕ｻ
         m_pSprite->Draw(m_expImage, 1192, 588, 0, 0, 97, 73);
     }
 }
 
 ////////////////////
-// 経験値ゲージを描画する //
+// 邨碁ｨ灘､繧ｲ繝ｼ繧ｸ繧呈緒逕ｻ縺吶ｋ //
 ////////////////////
 void CDisplayInfo::ExpDraw()
 {
-    //LvBaseを描画
+    //LvBase繧呈緒逕ｻ
     m_pSprite->Draw(m_expImage, 144, 713, 0, 160, 1224, 55);
     CPlayerLevel* pl = ObjectManager::FindGameObject<CPlayerLevel>();
     if (!pl) return;
 
-    //割合を計算
+    //蜑ｲ蜷医ｒ險育ｮ・
     float proportion = avoidZero(pl->GetExp() / pl->GetAllExp());
 
     static constexpr float epsilon = 0.001f;
 
-    // Lerpが終わっていたら新しい目標を設定
+    // Lerp縺檎ｵゅｏ縺｣縺ｦ縺・◆繧画眠縺励＞逶ｮ讓吶ｒ險ｭ螳・
     if (!m_xpWeightLerp.IsAnimating())
     {
-        // レベルアップしたかどうか（割合が減少したか、または1.0を超えたか）
+        // 繝ｬ繝吶Ν繧｢繝・・縺励◆縺九←縺・°・亥牡蜷医′貂帛ｰ代＠縺溘°縲√∪縺溘・1.0繧定ｶ・∴縺溘°・・
         if (proportion < m_prevProportion - epsilon || proportion >= 1.0f)
         {
-            // 満タンまでLerpさせる
+            // 貅繧ｿ繝ｳ縺ｾ縺ｧLerp縺輔○繧・
             m_xpWeightLerp.Start(m_currentWidth, 1224.0f, 0.5f);
-            // m_prevProportionはUpdateのリセット処理で0になるのを待つ
+            // m_prevProportion縺ｯUpdate縺ｮ繝ｪ繧ｻ繝・ヨ蜃ｦ逅・〒0縺ｫ縺ｪ繧九・繧貞ｾ・▽
         }
-        // 通常の経験値増加
+        // 騾壼ｸｸ縺ｮ邨碁ｨ灘､蠅怜刈
         else if (fabs(proportion - m_prevProportion) > epsilon)
         {
             float targetWidth = 1224.0f * proportion;
@@ -125,12 +125,12 @@ void CDisplayInfo::ExpDraw()
         }
     }
 
-    //LvBarを描画
+    //LvBar繧呈緒逕ｻ
     m_pSprite->Draw(m_expImage, 144, 721, 0, 100, m_currentWidth, 47);
 }
 
 ////////////////////
-// タイマーを描画する //
+// 繧ｿ繧､繝槭・繧呈緒逕ｻ縺吶ｋ //
 ////////////////////
 void CDisplayInfo::TimeDraw()
 {
@@ -139,7 +139,7 @@ void CDisplayInfo::TimeDraw()
 
     int time = static_cast<int>(pTimer->GetTime());
 
-    // 桁数を計算
+    // 譯∵焚繧定ｨ育ｮ・
     int count = 0;
     int tmp = time;
     while (tmp > 0)
@@ -149,7 +149,7 @@ void CDisplayInfo::TimeDraw()
     }
     count = (std::max)(count, 2);
 
-    // 各桁を左から順に描画
+    // 蜷・｡√ｒ蟾ｦ縺九ｉ鬆・↓謠冗判
     for (int i = 0; i < count; i++)
     {
         int divisor = static_cast<int>(Pow(10, count - 1 - i));
@@ -173,7 +173,7 @@ void CDisplayInfo::LvDraw()
     CPlayerLevel* pl = ObjectManager::FindGameObject<CPlayerLevel>();
     int lv = pl->GetLv();
     
-    // 桁数を計算
+    // 譯∵焚繧定ｨ育ｮ・
     int count = 0;
     int tmp = lv;
     while (tmp > 0)

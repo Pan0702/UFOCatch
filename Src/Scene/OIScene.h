@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../Framework/SceneBase.h"
 #include "../Utils/Sprite3D.h"
 

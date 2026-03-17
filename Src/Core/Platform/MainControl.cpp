@@ -1,4 +1,4 @@
-#include "MainControl.h"
+﻿#include "MainControl.h"
 #include <assert.h>
 #include <string>
 #include "../Game/GameMain.h"

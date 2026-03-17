@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 #include "../Common/Object3D.h"
 #include "../Utils/LerpValue.h"
 
-// EXP・LV・吸い込みコーンのサイズを管理するクラス //
+// EXP繝ｻLV繝ｻ蜷ｸ縺・ｾｼ縺ｿ繧ｳ繝ｼ繝ｳ縺ｮ繧ｵ繧､繧ｺ繧堤ｮ｡逅・☆繧九け繝ｩ繧ｹ //
 class CPlayerLevel : public Object3D
 {
 public:

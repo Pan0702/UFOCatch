@@ -1,11 +1,11 @@
-#include "TitleScene.h"
+﻿#include "TitleScene.h"
 #include "../Core/Game/GameMain.h"
 #include "../Framework/AudioManager.h"
 #include "../Enemies/System/EnemyManager.h"
 
 TitleScene::TitleScene()
 {
-    // PlayScene用モデルを起動時に先読みしておく
+    // PlayScene逕ｨ繝｢繝・Ν繧定ｵｷ蜍墓凾縺ｫ蜈郁ｪｭ縺ｿ縺励※縺翫￥
     SingleInstantiate<CEnemyManager>();
 
     m_imageInfos.push_back(ImageInfo(
@@ -100,12 +100,12 @@ void TitleScene::Draw()
         20, 20, "TitleScene", 16, RGB(255, 0, 0));
     CSprite spr;
 
-    // 背景画像を描画//
+    // 閭梧勹逕ｻ蜒上ｒ謠冗判//
     const auto& bgInfo = m_imageInfos[2];
     spr.Draw(bgInfo.pImage, bgInfo.pos.x, bgInfo.pos.y,
              bgInfo.imageSize.x, bgInfo.imageSize.y, bgInfo.imageSize.z, bgInfo.imageSize.w);
 
-    //ボタンのワイプ描画//
+    //繝懊ち繝ｳ縺ｮ繝ｯ繧､繝玲緒逕ｻ//
     for (int i = 0; i < 2; i++)
     {
         const auto& info = m_imageInfos[i];

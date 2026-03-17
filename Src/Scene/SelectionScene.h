@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../Framework/SceneBase.h"
 #include "../Utils/WipeAnimator.h"
 
@@ -18,7 +18,7 @@ private:
     void LevelButton();
     void ButtonsDraw();
     void InitImage();
-    //Buttonに関する情報
+    //Button縺ｫ髢｢縺吶ｋ諠・ｱ
     struct ButtomInfo
     {
         CSpriteImage* image;

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "FunShape.h"
 #include "../../Common/Object3D.h"
@@ -22,7 +22,7 @@ public:
 private:
     void Update() override;
     void Draw() override;
-    ///範囲を描画
+    ///遽・峇繧呈緒逕ｻ
    // void DrawDirectionLine();
     void AtkArea() const;
     void InitStates();

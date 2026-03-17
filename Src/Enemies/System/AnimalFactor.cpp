@@ -1,12 +1,12 @@
-#include "AnimalFactor.h"
+﻿#include "AnimalFactor.h"
 
 #include "../AnimalChicken/Chicken.h"
 #include "../AnimalDog/Dog.h"
 #include "../Human/Human.h"
 
-///動物を生成
-/// @param sizeX 生成する動物のXの範囲 
-/// @param sizeZ 生成する動物のZの範囲 //
+///蜍慕黄繧堤函謌・
+/// @param sizeX 逕滓・縺吶ｋ蜍慕黄縺ｮX縺ｮ遽・峇 
+/// @param sizeZ 逕滓・縺吶ｋ蜍慕黄縺ｮZ縺ｮ遽・峇 //
 CAnimalFactor::CAnimalFactor(float sizeX, float sizeZ, int type)
 {
     float f1;

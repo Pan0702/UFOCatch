@@ -1,9 +1,9 @@
-#pragma once
+﻿#pragma once
 #include "../Common/Object3D.h"
 #include "../Utils/Sprite3D.h"
 #include "../Utils/LerpValue.h"
 
-// ゲーム中のUIを表示するクラス //
+// 繧ｲ繝ｼ繝荳ｭ縺ｮUI繧定｡ｨ遉ｺ縺吶ｋ繧ｯ繝ｩ繧ｹ //
 class CDisplayInfo : public Object3D
 {
 public:
@@ -26,12 +26,12 @@ private:
     CSpriteImage* m_giwakuImage;
     CSpriteImage* m_pLogo;
 
-    // 経験値ゲージ用
+    // 邨碁ｨ灘､繧ｲ繝ｼ繧ｸ逕ｨ
     LerpValue m_xpWeightLerp;
     float m_prevProportion;
     float m_currentWidth;
 
-    // 疑惑ゲージ用（円形）
+    // 逍第ヱ繧ｲ繝ｼ繧ｸ逕ｨ・亥・蠖｢・・
     LerpValue m_giwakuAngleLerp;
     float m_prevGiwakuProportion;
     float m_currentAngle;

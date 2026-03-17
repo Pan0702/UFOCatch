@@ -1,12 +1,12 @@
-#pragma once
+﻿#pragma once
 #include "../Common/Object3D.h"
 
-// プレイヤーのHP及び発見状態を管理するクラス //
+// 繝励Ξ繧､繝､繝ｼ縺ｮHP蜿翫・逋ｺ隕狗憾諷九ｒ邂｡逅・☆繧九け繝ｩ繧ｹ //
 class CPlayerHP : public Object3D
 {
 public:
-    // HPの初期値を指定してインスタンスを生成する
-    // @param hp 初期HP //
+    // HP縺ｮ蛻晄悄蛟､繧呈欠螳壹＠縺ｦ繧､繝ｳ繧ｹ繧ｿ繝ｳ繧ｹ繧堤函謌舌☆繧・
+    // @param hp 蛻晄悄HP //
     CPlayerHP(const int& hp);
     ~CPlayerHP();
     void SubHP();

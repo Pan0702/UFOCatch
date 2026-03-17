@@ -1,4 +1,4 @@
-#include "Find.h"
+﻿#include "Find.h"
 #include "../../Player/PlayerHP.h"
 #include "../Human/Human.h"
 CFind::CFind(CHuman* human)

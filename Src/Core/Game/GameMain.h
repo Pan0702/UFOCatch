@@ -1,13 +1,13 @@
-//=============================================================================
-//		�R�c�Q�[���v���O�����@�@�@�@�@                 ver 3.2        2023.1.31
+﻿//=============================================================================
+//		・ｽR・ｽc・ｽQ・ｽ[・ｽ・ｽ・ｽv・ｽ・ｽ・ｽO・ｽ・ｽ・ｽ・ｽ・ｽ@・ｽ@・ｽ@・ｽ@・ｽ@                 ver 3.2        2023.1.31
 //
-//		�Q�[���̃��C������
+//		・ｽQ・ｽ[・ｽ・ｽ・ｽﾌ・ｿｽ・ｽC・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ
 //																GameMain.h
 //=============================================================================
 
 #pragma once
 
-//�w�b�_�[�t�@�C���̃C���N���[�h
+//・ｽw・ｽb・ｽ_・ｽ[・ｽt・ｽ@・ｽC・ｽ・ｽ・ｽﾌイ・ｽ・ｽ・ｽN・ｽ・ｽ・ｽ[・ｽh
 #include <stdio.h>
 #include <windows.h>
 #include <vector>
@@ -34,29 +34,29 @@ class CShader;
 class CFbxMeshCtrl;
 
 // --------------------------------------------------------------------------------------------------
-//  �Q�[�����C���N���X
+//  ・ｽQ・ｽ[・ｽ・ｽ・ｽ・ｽ・ｽC・ｽ・ｽ・ｽN・ｽ・ｽ・ｽX
 // --------------------------------------------------------------------------------------------------
 class CGameMain
 {
 public:
-	// �����o�ϐ�
-	CMain*			m_pMain;		// ���C���N���X
-	CDirect3D*		m_pD3D;			//	Direct3D�I�u�W�F�N�g
-	CXAudio*		m_pXAudio;		//	XAudio�I�u�W�F�N�g
-	CDirectInput*	m_pDI;			//	DirectInputD�I�u�W�F�N�g
-	CFontTexture*	m_pFont;		//	�t�H���g�e�N�X�`���[
-	CShader*		m_pShader;		//	�V�F�[�_�[
-	CFbxMeshCtrl*	m_pFbxMeshCtrl;	// ���b�V���R���g���[���N���X    // -- 2021.2.4
+	// ・ｽ・ｽ・ｽ・ｽ・ｽo・ｽﾏ撰ｿｽ
+	CMain*			m_pMain;		// ・ｽ・ｽ・ｽC・ｽ・ｽ・ｽN・ｽ・ｽ・ｽX
+	CDirect3D*		m_pD3D;			//	Direct3D・ｽI・ｽu・ｽW・ｽF・ｽN・ｽg
+	CXAudio*		m_pXAudio;		//	XAudio・ｽI・ｽu・ｽW・ｽF・ｽN・ｽg
+	CDirectInput*	m_pDI;			//	DirectInputD・ｽI・ｽu・ｽW・ｽF・ｽN・ｽg
+	CFontTexture*	m_pFont;		//	・ｽt・ｽH・ｽ・ｽ・ｽg・ｽe・ｽN・ｽX・ｽ`・ｽ・ｽ・ｽ[
+	CShader*		m_pShader;		//	・ｽV・ｽF・ｽ[・ｽ_・ｽ[
+	CFbxMeshCtrl*	m_pFbxMeshCtrl;	// ・ｽ・ｽ・ｽb・ｽV・ｽ・ｽ・ｽR・ｽ・ｽ・ｽg・ｽ・ｽ・ｽ[・ｽ・ｽ・ｽN・ｽ・ｽ・ｽX    // -- 2021.2.4
 	
-	// �J�����E���C�g�E�r���[
-	VECTOR3         m_vEyePt;		//�J�����i���_�j�ʒu
-	VECTOR3         m_vLookatPt;	//�����ʒu
+	// ・ｽJ・ｽ・ｽ・ｽ・ｽ・ｽE・ｽ・ｽ・ｽC・ｽg・ｽE・ｽr・ｽ・ｽ・ｽ[
+	VECTOR3         m_vEyePt;		//・ｽJ・ｽ・ｽ・ｽ・ｽ・ｽi・ｽ・ｽ・ｽ_・ｽj・ｽﾊ置
+	VECTOR3         m_vLookatPt;	//・ｽ・ｽ・ｽ・ｽ・ｽﾊ置
 	MATRIX4X4       m_mView;
 	MATRIX4X4       m_mProj;
-	VECTOR3         m_vLightDir;	//�f�B���N�V���i�����C�g�̕���
-	VECTOR4         m_vLightIntensity;	//���C�g�̋��x(RGB) + Alpha
+	VECTOR3         m_vLightDir;	//・ｽf・ｽB・ｽ・ｽ・ｽN・ｽV・ｽ・ｽ・ｽi・ｽ・ｽ・ｽ・ｽ・ｽC・ｽg・ｽﾌ包ｿｽ・ｽ・ｽ
+	VECTOR4         m_vLightIntensity;	//・ｽ・ｽ・ｽC・ｽg・ｽﾌ具ｿｽ・ｽx(RGB) + Alpha
 public:
-	// ���\�b�h
+	// ・ｽ・ｽ・ｽ\・ｽb・ｽh
 	CGameMain(CMain* pMain);
 	~CGameMain();
 
@@ -70,7 +70,7 @@ public:
 
 	void SetWindowName(const char* name);
 
-	// ���C�g�̋��x��ݒ�/�擾
+	// ・ｽ・ｽ・ｽC・ｽg・ｽﾌ具ｿｽ・ｽx・ｽ・ｽﾝ抵ｿｽ/・ｽ謫ｾ
 	void    SetLightIntensity(float r, float g, float b, float a = 1.0f);
 	void    SetLightIntensity(VECTOR4 intensity);
 	VECTOR4 GetLightIntensity() const { return m_vLightIntensity; }

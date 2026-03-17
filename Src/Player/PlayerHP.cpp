@@ -1,11 +1,11 @@
-#include "PlayerHP.h"
+﻿#include "PlayerHP.h"
 #include "Player.h"
 #include "../System/GameInstance.h"
 #include "../Scene/PlayScene.h"
 
 ////////////////////
-// HPの初期値を指定してインスタンスを生成する
-// @param hp 初期HP //
+// HP縺ｮ蛻晄悄蛟､繧呈欠螳壹＠縺ｦ繧､繝ｳ繧ｹ繧ｿ繝ｳ繧ｹ繧堤函謌舌☆繧・
+// @param hp 蛻晄悄HP //
 ////////////////////
 CPlayerHP::CPlayerHP(const int& hp)
     : m_maxHp(hp)
@@ -22,7 +22,7 @@ CPlayerHP::~CPlayerHP()
 }
 
 ////////////////////
-// HPを減らす処理と目撃カウントを増やす //
+// HP繧呈ｸ帙ｉ縺吝・逅・→逶ｮ謦・き繧ｦ繝ｳ繝医ｒ蠅励ｄ縺・//
 ////////////////////
 void CPlayerHP::SubHP()
 {
@@ -39,27 +39,27 @@ void CPlayerHP::SubHP()
 void CPlayerHP::Update()
 {
     CGameInstance* pGI = ObjectManager::FindGameObject<CGameInstance>();
-    //疑惑でみつかったか
+    //逍第ヱ縺ｧ縺ｿ縺､縺九▲縺溘°
     if (m_seemToFind)
     {
         m_findCount += SceneManager::DeltaTime();
-        //一定時間しかいにいたので確信に変化
+        //荳螳壽凾髢薙＠縺九＞縺ｫ縺・◆縺ｮ縺ｧ遒ｺ菫｡縺ｫ螟牙喧
         if (m_findCount >= m_findMaxCount)
         {
             m_invincible = 0;
             m_found = true;
             m_seemToFind = false;
-            //いまのHPから１引く
+            //縺・∪縺ｮHP縺九ｉ・大ｼ輔￥
             m_currentHp--;
-            //見つかった回数を追加
+            //隕九▽縺九▲縺溷屓謨ｰ繧定ｿｽ蜉
             pGI->AddDiscovery(1);
         }
     }
-    //見つかったか
+    //隕九▽縺九▲縺溘°
     if (m_found)
     {
         m_invincible += SceneManager::DeltaTime();
-        //1.5s経過したら無敵時間を解除
+        //1.5s邨碁℃縺励◆繧臥┌謨ｵ譎る俣繧定ｧ｣髯､
         if (m_invincible >= 1.5f)
         {
             m_findCount = 0;
@@ -73,7 +73,7 @@ void CPlayerHP::Update()
             m_findCount -= SceneManager::DeltaTime();
         }
     }
-    //死亡したのでシーンを切り替え
+    //豁ｻ莠｡縺励◆縺ｮ縺ｧ繧ｷ繝ｼ繝ｳ繧貞・繧頑崛縺・
     if (m_currentHp <= 0)
     {
         SceneManager::ChangeSceneWithTransition("ResultScene");

@@ -1,4 +1,4 @@
-#include <algorithm>
+﻿#include <algorithm>
 #include <cassert>
 
 #include "sceneManager.h"
@@ -14,12 +14,12 @@ namespace
     std::unique_ptr<SceneBase> currentScene;
     std::unique_ptr<SceneFactory> factory;
 
-    // トランジション
+    // 繝医Λ繝ｳ繧ｸ繧ｷ繝ｧ繝ｳ
     std::unique_ptr<CScreenTransition> transition;
-    std::string pendingSceneName; // トランジション中の次のシーン名
-    bool waitingForFadeIn = false; // FadeIn待ち状態
+    std::string pendingSceneName; // 繝医Λ繝ｳ繧ｸ繧ｷ繝ｧ繝ｳ荳ｭ縺ｮ谺｡縺ｮ繧ｷ繝ｼ繝ｳ蜷・
+    bool waitingForFadeIn = false; // FadeIn蠕・■迥ｶ諷・
 
-    // DeltaTime用
+    // DeltaTime逕ｨ
     LARGE_INTEGER freq;
     LARGE_INTEGER current;
     float deltaTime;
@@ -40,7 +40,7 @@ namespace
         QueryPerformanceCounter(&current);
         float t = static_cast<float>(current.QuadPart - last.QuadPart) / freq.QuadPart;
         float t2 = t;
-        // deltaTimeは、平均フレームレートの2倍を超えないようにする
+        // deltaTime縺ｯ縲∝ｹｳ蝮・ヵ繝ｬ繝ｼ繝繝ｬ繝ｼ繝医・2蛟阪ｒ雜・∴縺ｪ縺・ｈ縺・↓縺吶ｋ
         if (recCount >= REC_SIZE)
         {
             float sum = 0;
@@ -72,7 +72,7 @@ void SceneManager::Update()
 {
     timeUpdate();
 
-    // トランジション更新
+    // 繝医Λ繝ｳ繧ｸ繧ｷ繝ｧ繝ｳ譖ｴ譁ｰ
     if (transition)
         transition->Update(deltaTime);
 
@@ -84,16 +84,16 @@ void SceneManager::Update()
         }
         currentName = nextName;
         currentScene = factory->Create(nextName);
-        // シーン生成はロード処理で時間がかかる場合がある。
-        // ロード時間を次フレームの deltaTime に含めないようタイムスタンプをリセットする。
+        // 繧ｷ繝ｼ繝ｳ逕滓・縺ｯ繝ｭ繝ｼ繝牙・逅・〒譎る俣縺後°縺九ｋ蝣ｴ蜷医′縺ゅｋ縲・
+        // 繝ｭ繝ｼ繝画凾髢薙ｒ谺｡繝輔Ξ繝ｼ繝縺ｮ deltaTime 縺ｫ蜷ｫ繧√↑縺・ｈ縺・ち繧､繝繧ｹ繧ｿ繝ｳ繝励ｒ繝ｪ繧ｻ繝・ヨ縺吶ｋ縲・
         QueryPerformanceCounter(&current);
     }
 
-    // シーン切り替え後にFadeIn開始
+    // 繧ｷ繝ｼ繝ｳ蛻・ｊ譖ｿ縺亥ｾ後↓FadeIn髢句ｧ・
     if (waitingForFadeIn && nextName == currentName)
     {
         waitingForFadeIn = false;
-        // シーンのロード（currentSceneの生成）が完了した直後にFadeInを開始する
+        // 繧ｷ繝ｼ繝ｳ縺ｮ繝ｭ繝ｼ繝会ｼ・urrentScene縺ｮ逕滓・・峨′螳御ｺ・＠縺溽峩蠕後↓FadeIn繧帝幕蟋九☆繧・
         transition->StartFadeIn();
     }
     if (currentScene != nullptr)
@@ -108,7 +108,7 @@ void SceneManager::Draw()
 
 void SceneManager::DrawTransition()
 {
-    // トランジションは最前面に描画（ObjectManager::Draw()より後に呼ぶこと）
+    // 繝医Λ繝ｳ繧ｸ繧ｷ繝ｧ繝ｳ縺ｯ譛蜑埼擇縺ｫ謠冗判・・bjectManager::Draw()繧医ｊ蠕後↓蜻ｼ縺ｶ縺薙→・・
     if (transition)
         transition->Draw();
 }
@@ -141,12 +141,12 @@ void SceneManager::ChangeScene(const std::string& sceneName)
 void SceneManager::ChangeSceneWithTransition(const std::string& sceneName)
 {
     if (transition->IsTransitioning())
-        return; // トランジション中は無視
+        return; // 繝医Λ繝ｳ繧ｸ繧ｷ繝ｧ繝ｳ荳ｭ縺ｯ辟｡隕・
 
     pendingSceneName = sceneName;
     transition->StartFadeOut([&]()
     {
-        // FadeOut完了時にシーン切り替え
+        // FadeOut螳御ｺ・凾縺ｫ繧ｷ繝ｼ繝ｳ蛻・ｊ譖ｿ縺・
         nextName = pendingSceneName;
         waitingForFadeIn = true;
     });

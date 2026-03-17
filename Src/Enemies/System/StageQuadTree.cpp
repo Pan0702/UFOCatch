@@ -1,11 +1,11 @@
-#include "StageQuadTree.h"
+﻿#include "StageQuadTree.h"
 #include "../../Stage/StageObject.h"
 #include <list>
 
 CStageQuadTree::CStageQuadTree()
     : m_pTree(nullptr)
 {
-    // NormalScene(±40)・PlayScene(±30)の両方をカバーする範囲
+    // NormalScene(ﾂｱ40)繝ｻPlayScene(ﾂｱ30)縺ｮ荳｡譁ｹ繧偵き繝舌・縺吶ｋ遽・峇
     m_pTree = new CLiner4Tree<CStageObject>(3, VECTOR4(-50, -50, 50, 50));
 }
 
@@ -37,6 +37,6 @@ std::vector<CStageObject*> CStageQuadTree::GetNearbyObjects(
 {
     if (m_pTree == nullptr) return {};
 
-    // nullptr渡しで自己除外なし（静的オブジェクトは自分自身を除く必要がない）
+    // nullptr貂｡縺励〒閾ｪ蟾ｱ髯､螟悶↑縺暦ｼ磯撕逧・が繝悶ず繧ｧ繧ｯ繝医・閾ｪ蛻・・霄ｫ繧帝勁縺丞ｿ・ｦ√′縺ｪ縺・ｼ・
     return m_pTree->GetObjects(nullptr, pos, size);
 }

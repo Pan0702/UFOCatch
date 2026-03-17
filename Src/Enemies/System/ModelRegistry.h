@@ -1,10 +1,10 @@
-#pragma once
+﻿#pragma once
 #include <string>
 #include <list>
 
 class CFbxMesh;
 
-// アニメーションタイプ
+// 繧｢繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ繧ｿ繧､繝・
 enum AnimationType
 {
     A_IDEL = 0,
@@ -13,17 +13,17 @@ enum AnimationType
     A_SEACH
 };
 
-// モデル登録・取得クラス
+// 繝｢繝・Ν逋ｻ骭ｲ繝ｻ蜿門ｾ励け繝ｩ繧ｹ
 class CModelRegistry
 {
 public:
     CModelRegistry();
     ~CModelRegistry();
 
-    // メッシュを名前で取得
+    // 繝｡繝・す繝･繧貞錐蜑阪〒蜿門ｾ・
     CFbxMesh* GetMesh(const std::string& name) const;
 
-    // メッシュを追加
+    // 繝｡繝・す繝･繧定ｿｽ蜉
     void Register(const std::string& name, CFbxMesh* mesh);
 
 private:
@@ -35,6 +35,6 @@ private:
 
     std::list<ModelEntry> m_models;
 
-    // デフォルトのメッシュをロード
+    // 繝・ヵ繧ｩ繝ｫ繝医・繝｡繝・す繝･繧偵Ο繝ｼ繝・
     void LoadDefaultModels();
 };

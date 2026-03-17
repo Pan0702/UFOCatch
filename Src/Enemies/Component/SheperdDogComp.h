@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "ComponentBase.h"
 #include "Destroy.h"
 #include "../AnimalDog/ShepherdDog.h"
@@ -40,13 +40,13 @@ public:
 private:
     enum Phase
     {
-        APPROACH_SHEEP, // フェーズ1: 羊に近づく
-        GUIDE_TO_CENTER // フェーズ2: 重心まで誘導
+        APPROACH_SHEEP, // 繝輔ぉ繝ｼ繧ｺ1: 鄒翫↓霑代▼縺・
+        GUIDE_TO_CENTER // 繝輔ぉ繝ｼ繧ｺ2: 驥榊ｿ・∪縺ｧ隱伜ｰ・
     };
 
     CAShepherdDog* m_pOwner;
-    CSheep* m_targetSheep = nullptr; // 救助対象の羊
-    VECTOR3 m_centroid = {0, 0, 0}; // 群れの重心
+    CSheep* m_targetSheep = nullptr; // 謨大勧蟇ｾ雎｡縺ｮ鄒・
+    VECTOR3 m_centroid = {0, 0, 0}; // 鄒､繧後・驥榊ｿ・
     Phase m_phase;
 };
 

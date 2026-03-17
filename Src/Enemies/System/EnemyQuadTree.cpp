@@ -1,15 +1,15 @@
-#include "EnemyQuadTree.h"
+﻿#include "EnemyQuadTree.h"
 #include "../Base/EnemyBase.h"
 #include "../../Common/Object3D.h"
 
 CEnemyQuadTree::CEnemyQuadTree()
     : m_pTree(nullptr), m_lastEnemyCount(0), m_frameCount(0)
 {
-    // 4分木の初期化（レベル3、範囲-20〜20）
+    // 4蛻・惠縺ｮ蛻晄悄蛹厄ｼ医Ξ繝吶Ν3縲∫ｯ・峇-20縲・0・・
     m_pTree = new CLiner4Tree<CEnemyBase>(3, VECTOR4(-40, -40, 40, 40));
 
-    // 統計情報の初期化
-    m_processTimes.reserve(60);  // 60フレーム分の履歴
+    // 邨ｱ險域ュ蝣ｱ縺ｮ蛻晄悄蛹・
+    m_processTimes.reserve(60);  // 60繝輔Ξ繝ｼ繝蛻・・螻･豁ｴ
 }
 
 CEnemyQuadTree::~CEnemyQuadTree()
@@ -45,13 +45,13 @@ std::vector<CEnemyBase*> CEnemyQuadTree::GetNearbyEnemies(
         return result;
     }
 
-    // 処理時間の計測開始
+    // 蜃ｦ逅・凾髢薙・險域ｸｬ髢句ｧ・
     auto startTime = std::chrono::high_resolution_clock::now();
 
-    // 四分木から周辺オブジェクトを取得
+    // 蝗帛・譛ｨ縺九ｉ蜻ｨ霎ｺ繧ｪ繝悶ず繧ｧ繧ｯ繝医ｒ蜿門ｾ・
     result = m_pTree->GetObjects(pObj, pos, size);
 
-    // 処理時間の計測終了
+    // 蜃ｦ逅・凾髢薙・險域ｸｬ邨ゆｺ・
     auto endTime = std::chrono::high_resolution_clock::now();
     float elapsedMs = std::chrono::duration<float, std::milli>(endTime - startTime).count();
 
@@ -62,14 +62,14 @@ std::vector<CEnemyBase*> CEnemyQuadTree::GetNearbyEnemies(
 
 void CEnemyQuadTree::CalcCollisionStats(float elapsedMs, const std::vector<CEnemyBase*>& enemies, int totalEnemyCount) const
 {
-    // 統計情報の更新
+    // 邨ｱ險域ュ蝣ｱ縺ｮ譖ｴ譁ｰ
     m_processTimes.push_back(elapsedMs);
-    if (m_processTimes.size() > 60)  // 60フレーム分のみ保持
+    if (m_processTimes.size() > 60)  // 60繝輔Ξ繝ｼ繝蛻・・縺ｿ菫晄戟
     {
         m_processTimes.erase(m_processTimes.begin());
     }
 
-    // 平均・最大処理時間の計算
+    // 蟷ｳ蝮・・譛螟ｧ蜃ｦ逅・凾髢薙・險育ｮ・
     float sum = 0.0f;
     m_stats.maxProcessTimeMs = 0.0f;
     for (float time : m_processTimes)
@@ -82,16 +82,16 @@ void CEnemyQuadTree::CalcCollisionStats(float elapsedMs, const std::vector<CEnem
     }
     m_stats.avgProcessTimeMs = m_processTimes.empty() ? 0.0f : sum / m_processTimes.size();
 
-    // 判定回数の統計
+    // 蛻､螳壼屓謨ｰ縺ｮ邨ｱ險・
     m_stats.totalChecks = static_cast<int>(enemies.size());
 
-    // 敵の総数（EnemyManagerの管理リストから取得済み）
+    // 謨ｵ縺ｮ邱乗焚・・nemyManager縺ｮ邂｡逅・Μ繧ｹ繝医°繧牙叙蠕玲ｸ医∩・・
     m_stats.enemyCount = totalEnemyCount;
 
-    // 総当たりの場合の判定回数（自分以外の全敵）
+    // 邱丞ｽ薙◆繧翫・蝣ｴ蜷医・蛻､螳壼屓謨ｰ・郁・蛻・ｻ･螟悶・蜈ｨ謨ｵ・・
     m_stats.potentialChecks = m_stats.enemyCount > 0 ? m_stats.enemyCount - 1 : 0;
 
-    // 削減率の計算
+    // 蜑頑ｸ帷紫縺ｮ險育ｮ・
     if (m_stats.potentialChecks > 0)
     {
         m_stats.reductionRate = 100.0f * (1.0f - static_cast<float>(m_stats.totalChecks) / static_cast<float>(m_stats.potentialChecks));

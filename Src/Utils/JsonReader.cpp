@@ -1,4 +1,4 @@
-#include "JsonReader.h"
+﻿#include "JsonReader.h"
 
 #include "../Common/Object3D.h"
 #include <fstream>
@@ -7,10 +7,10 @@
 
 //
 // using json = nlohmann::json;
-// // JSONファイルを読み込み、記録されたモデルをステージに復元する
+// // JSON繝輔ぃ繧､繝ｫ繧定ｪｭ縺ｿ霎ｼ縺ｿ縲∬ｨ倬鹸縺輔ｌ縺溘Δ繝・Ν繧偵せ繝・・繧ｸ縺ｫ蠕ｩ蜈・☆繧・
 // void JsonReader::ImportFromFile(const std::string& path)
 // {
-//     // ファイルを開く
+//     // 繝輔ぃ繧､繝ｫ繧帝幕縺・
 //     std::ifstream file(path);
 //     if (!file.is_open()) return;
 //
@@ -25,7 +25,7 @@
 //         std::string model_path = item["path"];
 //         
 //
-//         // JSON から Transform を復元
+//         // JSON 縺九ｉ Transform 繧貞ｾｩ蜈・
 //         Transform transform;
 //         transform.position = VECTOR3(
 //             item["transform"]["position"]["x"],

@@ -1,13 +1,13 @@
-//-----------------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------------
 //
-//  Direct3Dを利用するためのライブラリ                ver 3.5         2024.11.2
+//  Direct3D繧貞茜逕ｨ縺吶ｋ縺溘ａ縺ｮ繝ｩ繧､繝悶Λ繝ｪ                ver 3.5         2024.11.2
 // 
-//  ① Direct3Dの初期化    
-//  ② テクスチャサンプラーとブレンドステートの作成
-//  ③ イメージファイルを読み込んでテクスチャを作成する関数
-//  ④ コンパイル済みシェーダーの読み込みを行う関数
-//  ⑤ レンダリングターゲットの設定を行う関数
-//  ⑥ コンパイル済みシェーダーの読み込みを行う関数  x64対応
+//  竭 Direct3D縺ｮ蛻晄悄蛹・   
+//  竭｡ 繝・け繧ｹ繝√Ε繧ｵ繝ｳ繝励Λ繝ｼ縺ｨ繝悶Ξ繝ｳ繝峨せ繝・・繝医・菴懈・
+//  竭｢ 繧､繝｡繝ｼ繧ｸ繝輔ぃ繧､繝ｫ繧定ｪｭ縺ｿ霎ｼ繧薙〒繝・け繧ｹ繝√Ε繧剃ｽ懈・縺吶ｋ髢｢謨ｰ
+//  竭｣ 繧ｳ繝ｳ繝代う繝ｫ貂医∩繧ｷ繧ｧ繝ｼ繝繝ｼ縺ｮ隱ｭ縺ｿ霎ｼ縺ｿ繧定｡後≧髢｢謨ｰ
+//  竭､ 繝ｬ繝ｳ繝繝ｪ繝ｳ繧ｰ繧ｿ繝ｼ繧ｲ繝・ヨ縺ｮ險ｭ螳壹ｒ陦後≧髢｢謨ｰ
+//  竭･ 繧ｳ繝ｳ繝代う繝ｫ貂医∩繧ｷ繧ｧ繝ｼ繝繝ｼ縺ｮ隱ｭ縺ｿ霎ｼ縺ｿ繧定｡後≧髢｢謨ｰ  x64蟇ｾ蠢・
 //
 //                                               Direct3D.h
 //
@@ -15,7 +15,7 @@
 
 #pragma once
 
-// ヘッダーファイルのインクルード
+// 繝倥ャ繝繝ｼ繝輔ぃ繧､繝ｫ縺ｮ繧､繝ｳ繧ｯ繝ｫ繝ｼ繝・
 #include <stdio.h>
 #include <windows.h>
 #include <d3d11.h>
@@ -26,7 +26,7 @@
 #include "../Game/Macro.h"
 #include "../../Utils/MyMath.h"
 
-// 必要なライブラリファイルのロード
+// 蠢・ｦ√↑繝ｩ繧､繝悶Λ繝ｪ繝輔ぃ繧､繝ｫ縺ｮ繝ｭ繝ｼ繝・
 #pragma comment(lib,"winmm.lib")
 //#pragma comment(lib, "d2d1.lib")
 //#pragma comment(lib,"windowscodecs.lib")
@@ -34,66 +34,66 @@
 #pragma comment(lib,"d3dCompiler.lib")
 #pragma comment(lib,"dxgi.lib")                    // -- 2024.11.2
 
-// マクロ
+// 繝槭け繝ｭ
 #define ALIGN16 _declspec(align(16))
 
 
-// アンチエイリアス設定 ------------ // -- 2018.8.3 ---------------------------
-// アンチエイリアスを行わないとき
+// 繧｢繝ｳ繝√お繧､繝ｪ繧｢繧ｹ險ｭ螳・------------ // -- 2018.8.3 ---------------------------
+// 繧｢繝ｳ繝√お繧､繝ｪ繧｢繧ｹ繧定｡後ｏ縺ｪ縺・→縺・
 #define SAMPLE_COUNT    1
 #define SAMPLE_QUALITY  0
 
-// アンチエイリアスを行うとき
+// 繧｢繝ｳ繝√お繧､繝ｪ繧｢繧ｹ繧定｡後≧縺ｨ縺・
 //#define SAMPLE_COUNT    4
 //#define SAMPLE_QUALITY  0
 
 
-// Direct3Dクラス
+// Direct3D繧ｯ繝ｩ繧ｹ
 class CDirect3D
 {
 public:
-    // メンバ変数
+    // 繝｡繝ｳ繝仙､画焚
     HWND  m_hWnd;
     DWORD m_dwWindowWidth;
     DWORD m_dwWindowHeight;
 
-    // Dx11コアオブジェクト
+    // Dx11繧ｳ繧｢繧ｪ繝悶ず繧ｧ繧ｯ繝・
     ID3D11Device* m_pDevice;
     ID3D11DeviceContext* m_pDeviceContext;
     IDXGISwapChain* m_pSwapChain;
-    ID3D11RenderTargetView* m_pBackBuffer_TexRTV;   // バックバッファのRTV
-    ID3D11DepthStencilView* m_pBackBuffer_DSTexDSV; // デプスバッファのDSV
-    ID3D11Texture2D* m_pBackBuffer_DSTex;    // デプス用テクスチャリソース
+    ID3D11RenderTargetView* m_pBackBuffer_TexRTV;   // 繝舌ャ繧ｯ繝舌ャ繝輔ぃ縺ｮRTV
+    ID3D11DepthStencilView* m_pBackBuffer_DSTexDSV; // 繝・・繧ｹ繝舌ャ繝輔ぃ縺ｮDSV
+    ID3D11Texture2D* m_pBackBuffer_DSTex;    // 繝・・繧ｹ逕ｨ繝・け繧ｹ繝√Ε繝ｪ繧ｽ繝ｼ繧ｹ
     IDXGIAdapter* m_pAdapter;             // -- 2024.11.2
 
-    // ブレンドステート
-    ID3D11BlendState* m_pBlendStateNormal;  // 通常（不透明）
-    ID3D11BlendState* m_pBlendStateTrapen;  // 半透明ブレンド
-    ID3D11BlendState* m_pBlendStateAdd;     // 加算合成
+    // 繝悶Ξ繝ｳ繝峨せ繝・・繝・
+    ID3D11BlendState* m_pBlendStateNormal;  // 騾壼ｸｸ・井ｸ埼乗・・・
+    ID3D11BlendState* m_pBlendStateTrapen;  // 蜊企乗・繝悶Ξ繝ｳ繝・
+    ID3D11BlendState* m_pBlendStateAdd;     // 蜉邂怜粋謌・
 
-    // デプスステンシルステート
-    ID3D11DepthStencilState* m_pDepthStencilStateDefault;  // デフォルト（ZWrite有効）
-    ID3D11DepthStencilState* m_pDepthStencilStateNoWrite;  // ZWrite無効（透明描画用）
-    ID3D11DepthStencilState* m_pDepthStencilStateNoZTest;  // ZTest/ZWrite無効（常に描画）
+    // 繝・・繧ｹ繧ｹ繝・Φ繧ｷ繝ｫ繧ｹ繝・・繝・
+    ID3D11DepthStencilState* m_pDepthStencilStateDefault;  // 繝・ヵ繧ｩ繝ｫ繝茨ｼ・Write譛牙柑・・
+    ID3D11DepthStencilState* m_pDepthStencilStateNoWrite;  // ZWrite辟｡蜉ｹ・磯乗・謠冗判逕ｨ・・
+    ID3D11DepthStencilState* m_pDepthStencilStateNoZTest;  // ZTest/ZWrite辟｡蜉ｹ・亥ｸｸ縺ｫ謠冗判・・
 
-    // テクスチャのサンプラー
-    ID3D11SamplerState* m_pSampleLinear; // 線形補間
-    ID3D11SamplerState* m_pSampleBorder; // 境界色指定
+    // 繝・け繧ｹ繝√Ε縺ｮ繧ｵ繝ｳ繝励Λ繝ｼ
+    ID3D11SamplerState* m_pSampleLinear; // 邱壼ｽ｢陬憺俣
+    ID3D11SamplerState* m_pSampleBorder; // 蠅・阜濶ｲ謖・ｮ・
 
-    // WIC COM オブジェクト(CLSID_WICImagingFactory)
-    // 画像読み込み用
+    // WIC COM 繧ｪ繝悶ず繧ｧ繧ｯ繝・CLSID_WICImagingFactory)
+    // 逕ｻ蜒剰ｪｭ縺ｿ霎ｼ縺ｿ逕ｨ
     IWICImagingFactory* m_pFactory;    // -- 2018.12.26
 
-    // ラスタライザステート
-    ID3D11RasterizerState* m_pRStateR;   // 通常表示（裏面カリングあり）
-    ID3D11RasterizerState* m_pRStateRW;  // ワイヤーフレーム表示用
+    // 繝ｩ繧ｹ繧ｿ繝ｩ繧､繧ｶ繧ｹ繝・・繝・
+    ID3D11RasterizerState* m_pRStateR;   // 騾壼ｸｸ陦ｨ遉ｺ・郁｣城擇繧ｫ繝ｪ繝ｳ繧ｰ縺ゅｊ・・
+    ID3D11RasterizerState* m_pRStateRW;  // 繝ｯ繧､繝､繝ｼ繝輔Ξ繝ｼ繝陦ｨ遉ｺ逕ｨ
 
-    // レンダーターゲット管理
-    ID3D11RenderTargetView* m_pTarget_TexRTV;   // 現在のレンダーターゲットRTV
-    ID3D11DepthStencilView* m_pTarget_DSTexDSV; // 現在のデプスステンシルDSV
+    // 繝ｬ繝ｳ繝繝ｼ繧ｿ繝ｼ繧ｲ繝・ヨ邂｡逅・
+    ID3D11RenderTargetView* m_pTarget_TexRTV;   // 迴ｾ蝨ｨ縺ｮ繝ｬ繝ｳ繝繝ｼ繧ｿ繝ｼ繧ｲ繝・ヨRTV
+    ID3D11DepthStencilView* m_pTarget_DSTexDSV; // 迴ｾ蝨ｨ縺ｮ繝・・繧ｹ繧ｹ繝・Φ繧ｷ繝ｫDSV
 
     // ---------------------------------------------------------------
-    // メソッド
+    // 繝｡繧ｽ繝・ラ
     CDirect3D();
     ~CDirect3D();
     HRESULT InitD3D(HWND hWnd, DWORD width, DWORD height);
@@ -107,10 +107,10 @@ public:
     HRESULT CreateShaderResourceViewFromFile(const TCHAR* TName, ID3D11ShaderResourceView** ppTexture, DWORD& dwImageWidth, DWORD& dwImageHeight, UINT MipLevels = 1);
     HRESULT CreateShaderResourceViewFromFile(const TCHAR* TName, ID3D11ShaderResourceView** ppTexture, UINT MipLevels = 1);
 
-    // レンダーターゲット・深度バッファ制御
+    // 繝ｬ繝ｳ繝繝ｼ繧ｿ繝ｼ繧ｲ繝・ヨ繝ｻ豺ｱ蠎ｦ繝舌ャ繝輔ぃ蛻ｶ蠕｡
     void SetRenderTarget(ID3D11RenderTargetView* pTexRTV, ID3D11DepthStencilView* pDSTexDSV);
     void ClearRenderTarget(float ClearColor[]);
-    void SetZBuffer(bool bZBuf); // Zバッファの有効/無効切り替え
+    void SetZBuffer(bool bZBuf); // Z繝舌ャ繝輔ぃ縺ｮ譛牙柑/辟｡蜉ｹ蛻・ｊ譖ｿ縺・
 
     // --------------------------------------------------
     void DestroyD3D();

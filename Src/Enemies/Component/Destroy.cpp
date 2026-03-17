@@ -1,4 +1,4 @@
-#include "Destroy.h"
+﻿#include "Destroy.h"
 #include "../../System/GameInstance.h"
 CDestroy::CDestroy(CEnemyBase* e,int score,float exp)
     :m_score(score),m_exp(exp)

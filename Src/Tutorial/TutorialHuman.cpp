@@ -1,4 +1,4 @@
-#include "TutorialHuman.h"
+﻿#include "TutorialHuman.h"
 #include "../System/VisionSystem.h"
 #include "../Player/Player.h"
 #include "../Player/PlayerHP.h"
@@ -7,7 +7,7 @@
 
 namespace
 {
-    // 初期回転角度（度） //
+    // 蛻晄悄蝗櫁ｻ｢隗貞ｺｦ・亥ｺｦ・・//
     constexpr float INITIAL_ROTATION_DEG = 180.0f;
 }
 
@@ -35,18 +35,18 @@ void CTutorialHuman::Update()
     CPlayer* player = ObjectManager::FindGameObject<CPlayer>();
 
     vision->GetCircleInfo().SetCenter(player->GetPos());
-    // 扇形の視界内にプレイヤーがいて、かつ吸い込みボタンが押されているかチェック //
+    // 謇・ｽ｢縺ｮ隕也阜蜀・↓繝励Ξ繧､繝､繝ｼ縺後＞縺ｦ縲√°縺､蜷ｸ縺・ｾｼ縺ｿ繝懊ち繝ｳ縺梧款縺輔ｌ縺ｦ縺・ｋ縺九メ繧ｧ繝・け //
     m_inSight = vision->SectorCircleCollision(ToVec2XZ(transform.position), transform.rotation.y)
         && player->GetIsSuckUp();
 
     if (m_inSight)
     {
-        // 視界内で吸い込み中ならHPを減らす //
+        // 隕也阜蜀・〒蜷ｸ縺・ｾｼ縺ｿ荳ｭ縺ｪ繧羽P繧呈ｸ帙ｉ縺・//
         ObjectManager::FindGameObject<CPlayerHP>()->SubHP();
     }
     else
     {
-        // 視界外ならフラグをリセット //
+        // 隕也阜螟悶↑繧峨ヵ繝ｩ繧ｰ繧偵Μ繧ｻ繝・ヨ //
         ObjectManager::FindGameObject<CPlayerHP>()->ResetFlag();
     }
 }

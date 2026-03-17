@@ -1,4 +1,4 @@
-#include "StateBase.h"
+﻿#include "StateBase.h"
 #include "../../Utils/MyMath.h"
 #include "../Component/Suction.h"
 # define STR(var) #var
@@ -37,7 +37,7 @@ void CBaseState::Exit()
 
 CBaseState::State CBaseState::NextStatePop()
 {
-    // Suctionコンポーネントが完了している場合はDestroyに切り替える
+    // Suction繧ｳ繝ｳ繝昴・繝阪Φ繝医′螳御ｺ・＠縺ｦ縺・ｋ蝣ｴ蜷医・Destroy縺ｫ蛻・ｊ譖ｿ縺医ｋ
     CSuction* suctionComponent = dynamic_cast<CSuction*>(m_pEnemy->GetComponent(State::SUCTION));
     if (suctionComponent != nullptr && suctionComponent->IsFinishSuction())
     {

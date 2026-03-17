@@ -1,4 +1,4 @@
-#include "Dog.h"
+﻿#include "Dog.h"
 
 #include "../../Player/Player.h"
 #include "../../Stage/Ground.h"
@@ -31,9 +31,9 @@ CADog::CADog(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
 
 void CADog::InitStates()
 {
-    //アニメーションの最終フレーム : 570.0f //
+    //繧｢繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ縺ｮ譛邨ゅヵ繝ｬ繝ｼ繝 : 570.0f //
     m_components[CBaseState::State::IDLE] = std::make_unique<CIdle>(this, 570.0f);      
-    //移動スピード : 1.2f//
+    //遘ｻ蜍輔せ繝斐・繝・: 1.2f//
     m_components[CBaseState::State::WALK] = std::make_unique< CWalk>(this, 1.2f);
     m_components[CBaseState::State::SUCTION] = std::make_unique<CSuction>(this);
     //Score : 100 ,Exp : 1.0f //
@@ -55,7 +55,7 @@ void CADog::Update()
         m_isInConeArea = m_pPlayer->IsWithSuctionCone(transform.position);
     }
 
-    //地面との当たり判定と、ComponentのUpdateを呼び出してる
+    //蝨ｰ髱｢縺ｨ縺ｮ蠖薙◆繧雁愛螳壹→縲，omponent縺ｮUpdate繧貞他縺ｳ蜃ｺ縺励※繧・
     CEnemyBase::Update();
 
 }

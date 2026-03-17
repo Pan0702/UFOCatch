@@ -1,18 +1,18 @@
-#include "Flog.h"
+﻿#include "Flog.h"
 
 void CFlog::RemoveFromArray(const CSheep* sheep)
 {
-    // Swap and Pop方式で高速削除
+    // Swap and Pop譁ｹ蠑上〒鬮倬溷炎髯､
     for (size_t i = 0; i < m_allSheep.size(); ++i)
     {
         if (m_allSheep[i] == sheep)
         {
-            // 最後の要素と入れ替え
+            // 譛蠕後・隕∫ｴ縺ｨ蜈･繧梧崛縺・
             m_allSheep[i] = m_allSheep.back();
-            // 最後を削除
+            // 譛蠕後ｒ蜑企勁
             m_allSheep.pop_back();
 
-            // メモリ解放
+            // 繝｡繝｢繝ｪ隗｣謾ｾ
             SAFE_DELETE(sheep);
             break;
         }
@@ -29,21 +29,21 @@ CFlog::~CFlog() = default;
 
 void CFlog::Initialize()
 {
-    // パラメータ
-    constexpr int SHEEP_COUNT = 10; // 羊の総数
+    // 繝代Λ繝｡繝ｼ繧ｿ
+    constexpr int SHEEP_COUNT = 10; // 鄒翫・邱乗焚
 
-    VECTOR3 spawnCenter(0, 0, 0); // 生成位置の中心
+    VECTOR3 spawnCenter(0, 0, 0); // 逕滓・菴咲ｽｮ縺ｮ荳ｭ蠢・
 
-    // 群れの中心点と半径を設定
+    // 鄒､繧後・荳ｭ蠢・せ縺ｨ蜊雁ｾ・ｒ險ｭ螳・
     m_flockCenter = VECTOR3(0, 0, 0);
     m_flockRadius = 4.0f;
 
-    // 羊を生成
+    // 鄒翫ｒ逕滓・
     for (int i = 0; i < SHEEP_COUNT; ++i)
     {
-        // ランダムな初期位置
+        // 繝ｩ繝ｳ繝繝縺ｪ蛻晄悄菴咲ｽｮ
         float angle = Randomf(0.0f, XM_2PI);
-        const float spawnRadius = m_flockRadius; // 生成範囲の半径
+        const float spawnRadius = m_flockRadius; // 逕滓・遽・峇縺ｮ蜊雁ｾ・
         float radius = Randomf(0.0f, spawnRadius);
         VECTOR3 iniPos = spawnCenter + VECTOR3(
             cosf(angle) * radius,
@@ -51,7 +51,7 @@ void CFlog::Initialize()
             sinf(angle) * radius
         );
 
-        // 羊を生成（ShepherdDog不要）
+        // 鄒翫ｒ逕滓・・・hepherdDog荳崎ｦ・ｼ・
         CSheep* sheep = Instantiate<CSheep>(iniPos);
         m_allSheep.push_back(sheep);
     }
@@ -80,6 +80,6 @@ FlogInfo CFlog::CalcFlogInfo(const std::vector<CSheep*>& manySheep) const
             info.furthestSheep = sheep;
         }
     }
-    // maxDistanceは二乗値のまま返す（比較側でPow2()を使う）
+    // maxDistance縺ｯ莠御ｹ怜､縺ｮ縺ｾ縺ｾ霑斐☆・域ｯ碑ｼ・・縺ｧPow2()繧剃ｽｿ縺・ｼ・
     return info;
 }

@@ -1,4 +1,4 @@
-#include "PlayerLevel.h"
+﻿#include "PlayerLevel.h"
 
 CPlayerLevel::CPlayerLevel(float initialConeTopPos, float coneDegree)
     : m_coneDegree(coneDegree)
@@ -17,7 +17,7 @@ void CPlayerLevel::Update()
 }
 
 ////////////////////
-// 一定数吸い込んだかチェック //
+// 荳螳壽焚蜷ｸ縺・ｾｼ繧薙□縺九メ繧ｧ繝・け //
 ////////////////////
 void CPlayerLevel::CheckLevel()
 {
@@ -32,7 +32,7 @@ void CPlayerLevel::CheckLevel()
 }
 
 ////////////////////
-// 吸い込みコーンの高さを増加させる //
+// 蜷ｸ縺・ｾｼ縺ｿ繧ｳ繝ｼ繝ｳ縺ｮ鬮倥＆繧貞｢怜刈縺輔○繧・//
 ////////////////////
 void CPlayerLevel::IncreaseSuctionConeHeight()
 {
@@ -44,7 +44,7 @@ void CPlayerLevel::IncreaseSuctionConeHeight()
 }
 
 ////////////////////
-// 高さと半径のLerp処理 //
+// 鬮倥＆縺ｨ蜊雁ｾ・・Lerp蜃ｦ逅・//
 ////////////////////
 void CPlayerLevel::UpdateHeightAndRadiusLerp()
 {

@@ -1,4 +1,4 @@
-#include "TutorialAnimal.h"
+﻿#include "TutorialAnimal.h"
 
 #include "../System/GameInstance.h"
 #include "../Player/Player.h"
@@ -27,14 +27,14 @@ CTutorialAnimal::CTutorialAnimal(const VECTOR3& pos)
 void CTutorialAnimal::Update()
 {
     CPlayer* pPl = ObjectManager::FindGameObject<CPlayer>();
-    // 吸い込む範囲内かつ吸い込むボタンを押していたら位置を足していく //
+    // 蜷ｸ縺・ｾｼ繧遽・峇蜀・°縺､蜷ｸ縺・ｾｼ繧繝懊ち繝ｳ繧呈款縺励※縺・◆繧我ｽ咲ｽｮ繧定ｶｳ縺励※縺・￥ //
     if (pPl->IsWithSuctionCone(transform.position) && pPl->GetIsSuckUp())
     {
-        // 吸い込み時の移動速度係数 //
+        // 蜷ｸ縺・ｾｼ縺ｿ譎ゅ・遘ｻ蜍暮溷ｺｦ菫よ焚 //
         constexpr int SUCTION_SPEED_FACTOR = 1;
 
         transform.position += pPl->CalcSuctionDisplacement(SUCTION_SPEED_FACTOR, transform.position);
-        m_velocityY = 0.0f;  // 吸い込み中は重力をリセット //
+        m_velocityY = 0.0f;  // 蜷ｸ縺・ｾｼ縺ｿ荳ｭ縺ｯ驥榊鴨繧偵Μ繧ｻ繝・ヨ //
     }
     else
     {
@@ -43,15 +43,15 @@ void CTutorialAnimal::Update()
 }
 
 ////////////////////
-// Scoreを足してオブジェクトをDestroy 
+// Score繧定ｶｳ縺励※繧ｪ繝悶ず繧ｧ繧ｯ繝医ｒDestroy 
 ////////////////////
 void CTutorialAnimal::Destroy()
 {
-    // 捕獲時に加算する経験値 //
+    // 謐慕佐譎ゅ↓蜉邂励☆繧狗ｵ碁ｨ灘､ //
     constexpr int CAPTURE_EXP = 1;
-    // 捕獲時に加算するスコア //
+    // 謐慕佐譎ゅ↓蜉邂励☆繧九せ繧ｳ繧｢ //
     constexpr int CAPTURE_SCORE = 100;
-    // 捕獲時に加算する捕獲数 //
+    // 謐慕佐譎ゅ↓蜉邂励☆繧区黒迯ｲ謨ｰ //
     constexpr int CAPTURE_COUNT = 1;
     ObjectManager::FindGameObject<CPlayerLevel>()->AddExp(CAPTURE_EXP);
     ObjectManager::FindGameObject<CGameInstance>()->AddScore(CAPTURE_SCORE);
@@ -62,7 +62,7 @@ void CTutorialAnimal::Destroy()
 CTutorialAnimal::~CTutorialAnimal() = default;
 
 ////////////////////
-// 重力を適用する 
+// 驥榊鴨繧帝←逕ｨ縺吶ｋ 
 ////////////////////
 void CTutorialAnimal::ApplyGravity()
 {

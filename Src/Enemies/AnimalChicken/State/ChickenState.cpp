@@ -1,4 +1,4 @@
-#include "ChickenState.h"
+﻿#include "ChickenState.h"
 
 #include "../../../System/GameInstance.h"
 #include "../Chicken.h"
@@ -172,7 +172,7 @@ void CChickenSuction::Enter(State type)
 {
    m_pOwner->GetAudio()->Play();
 
-   // 距離が5以下のHumanをチキンの方に向かせる
+   // 霍晞屬縺・莉･荳九・Human繧偵メ繧ｭ繝ｳ縺ｮ譁ｹ縺ｫ蜷代°縺帙ｋ
    VECTOR3 chickenPos = m_pOwner->GetTransform().position;
    auto humans = ObjectManager::FindGameObjects<CHuman>();
    for (auto* human : humans)

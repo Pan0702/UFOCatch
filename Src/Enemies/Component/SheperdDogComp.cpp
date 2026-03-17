@@ -1,5 +1,5 @@
-#include "SheperdDogComp.h"
-#include "../AnimalDog//ShepherdDog.h"  // パスは調整してください
+﻿#include "SheperdDogComp.h"
+#include "../AnimalDog//ShepherdDog.h"  // 繝代せ縺ｯ隱ｿ謨ｴ縺励※縺上□縺輔＞
 #include "../System/Flog.h"
 
 CCollecting::CCollecting(CAShepherdDog* dog, float speed)
@@ -12,23 +12,23 @@ void CCollecting::Enter()
 {
     m_isFinish = false;
 
-    // 群れ情報を取得
+    // 鄒､繧梧ュ蝣ｱ繧貞叙蠕・
     FlogInfo info = ObjectManager::FindGameObject<CFlog>()->CalcFlogInfo(m_pOwner->GetSheeps());
 
-    // はぐれ羊がいない場合は終了
+    // 縺ｯ縺舌ｌ鄒翫′縺・↑縺・ｴ蜷医・邨ゆｺ・
     if (info.furthestSheep == nullptr)
     {
         m_isFinish = true;
         return;
     }
 
-    // はぐれ羊の位置
+    // 縺ｯ縺舌ｌ鄒翫・菴咲ｽｮ
     const VECTOR3 sheepPos = info.furthestSheep->GetTransform().position;
-    // はぐれ羊から重心への方向
+    // 縺ｯ縺舌ｌ鄒翫°繧蛾㍾蠢・∈縺ｮ譁ｹ蜷・
     VECTOR3 toCentroid = info.centroid - sheepPos;
     toCentroid.y = 0;
 
-    // ゼロベクトル対策
+    // 繧ｼ繝ｭ繝吶け繝医Ν蟇ｾ遲・
     if (toCentroid.LengthSquare() < 0.0001f)
     {
         m_isFinish = true;
@@ -36,21 +36,21 @@ void CCollecting::Enter()
     }
 
     normalize(toCentroid);
-    // 羊の背後に立つ距離（ストロンボム: 5m）
+    // 鄒翫・閭悟ｾ後↓遶九▽霍晞屬・医せ繝医Ο繝ｳ繝懊Β: 5m・・
     constexpr float behindDistance = 5.0f;
-    // 背後に回り込む位置を計算
+    // 閭悟ｾ後↓蝗槭ｊ霎ｼ繧菴咲ｽｮ繧定ｨ育ｮ・
     m_targetPos = sheepPos - toCentroid * behindDistance;
 }
 
 void CCollecting::Update()
 {
-    // 目標位置へ移動
+    // 逶ｮ讓吩ｽ咲ｽｮ縺ｸ遘ｻ蜍・
     const VECTOR3 currentPos = m_pOwner->GetTransform().position;
     VECTOR3 direction = m_targetPos - currentPos;
     direction.y = 0;
     const float distanceSq = direction.LengthSquare();
     constexpr float arrivalThresholdSq = 0.25f;
-    // 目標に到達したら終了
+    // 逶ｮ讓吶↓蛻ｰ驕斐＠縺溘ｉ邨ゆｺ・
     if (distanceSq < arrivalThresholdSq)
     {
         m_isFinish = true;
@@ -59,7 +59,7 @@ void CCollecting::Update()
 
     normalize(direction);
 
-    // 移動方向に回転
+    // 遘ｻ蜍墓婿蜷代↓蝗櫁ｻ｢
     float targetAngle = atan2f(direction.x, direction.z);
     m_pOwner->SetRotateY(targetAngle);
 
@@ -76,7 +76,7 @@ void CDriving::Enter()
 {
     m_isFinish = false;
 
-    // デバッグ：羊の数を確認
+    // 繝・ヰ繝・げ・夂ｾ翫・謨ｰ繧堤｢ｺ隱・
     size_t sheepCount = m_pOwner->GetSheeps().size();
 
     FlogInfo info = ObjectManager::FindGameObject<CFlog>()->CalcFlogInfo(m_pOwner->GetSheeps());
@@ -86,36 +86,36 @@ void CDriving::Enter()
     VECTOR3 ufoPos = player->GetTransform().position;
     VECTOR3 centroid = info.centroid;
 
-    // UFOから群れへの方向（逃げる方向）
+    // UFO縺九ｉ鄒､繧後∈縺ｮ譁ｹ蜷托ｼ磯・￡繧区婿蜷托ｼ・
     VECTOR3 escapeDir = centroid - ufoPos;
     escapeDir.y = 0;
 
-    // ゼロベクトル対策：UFOと群れが同じ位置ならデフォルト方向
+    // 繧ｼ繝ｭ繝吶け繝医Ν蟇ｾ遲厄ｼ啅FO縺ｨ鄒､繧後′蜷後§菴咲ｽｮ縺ｪ繧峨ョ繝輔か繝ｫ繝域婿蜷・
     float lengthSq = escapeDir.LengthSquare();
     if (lengthSq < 0.0001f)
     {
-        escapeDir = VECTOR3(0, 0, 1);  // デフォルト：Z+方向
+        escapeDir = VECTOR3(0, 0, 1);  // 繝・ヵ繧ｩ繝ｫ繝茨ｼ啝+譁ｹ蜷・
     }
     else
     {
-        escapeDir = escapeDir / sqrtf(lengthSq);  // 正規化
+        escapeDir = escapeDir / sqrtf(lengthSq);  // 豁｣隕丞喧
     }
 
-    // 群れの後ろ（UFOから見て群れの向こう側）に立つ
+    // 鄒､繧後・蠕後ｍ・・FO縺九ｉ隕九※鄒､繧後・蜷代％縺・・・峨↓遶九▽
     float pushDistance = 5.0f;
     m_targetPos = centroid + escapeDir * pushDistance;
 }
 
 void CDriving::Update()
 {
-    // 目標位置へ移動
+    // 逶ｮ讓吩ｽ咲ｽｮ縺ｸ遘ｻ蜍・
     const VECTOR3 currentPos = m_pOwner->GetTransform().position;
     VECTOR3 direction = m_targetPos - currentPos;
     direction.y = 0;
     const float distanceSq = direction.LengthSquare();
 
     constexpr float arrivalThresholdSq = 0.25f;
-    // 目標に到達したら終了
+    // 逶ｮ讓吶↓蛻ｰ驕斐＠縺溘ｉ邨ゆｺ・
     if (distanceSq < arrivalThresholdSq)
     {
         m_isFinish = true;
@@ -124,7 +124,7 @@ void CDriving::Update()
 
     normalize(direction);
 
-    // 移動方向に回転
+    // 遘ｻ蜍墓婿蜷代↓蝗櫁ｻ｢
     float targetAngle = atan2f(direction.x, direction.z);
     m_pOwner->SetRotateY(targetAngle);
 
@@ -143,7 +143,7 @@ void CRescue::Enter()
     m_pOwner->GetAnimator()->MergePlay(AnimationType::A_RUN);
     m_pOwner->GetAnimator()->SetPlaySpeed(1.5f);
 
-    // 救助キューから対象を取得
+    // 謨大勧繧ｭ繝･繝ｼ縺九ｉ蟇ｾ雎｡繧貞叙蠕・
     if (m_pOwner->GetRescueQueue().empty())
     {
         m_isFinish = true;
@@ -152,11 +152,11 @@ void CRescue::Enter()
 
     m_targetSheep = m_pOwner->GetRescueQueue().front();
 
-    // 群れの重心を計算
+    // 鄒､繧後・驥榊ｿ・ｒ險育ｮ・
     FlogInfo info = ObjectManager::FindGameObject<CFlog>()->CalcFlogInfo(m_pOwner->GetSheeps());
     m_centroid = info.centroid;
 
-    // フェーズ1: 羊に近づくところから開始
+    // 繝輔ぉ繝ｼ繧ｺ1: 鄒翫↓霑代▼縺上→縺薙ｍ縺九ｉ髢句ｧ・
     m_phase = Phase::APPROACH_SHEEP;
 }
 
@@ -176,21 +176,21 @@ void CRescue::Update()
     {
     case Phase::APPROACH_SHEEP:
         {
-            // 羊への方向
+            // 鄒翫∈縺ｮ譁ｹ蜷・
             const VECTOR3 toSheep = sheepPos - myPos;
             const float distance = toSheep.LengthSquare();
-            constexpr float m_arrivalDistance = 1.0f; // 重心到達判定距離
+            constexpr float m_arrivalDistance = 1.0f; // 驥榊ｿ・芦驕泌愛螳夊ｷ晞屬
 
-            // 羊の近くに到達したらフェーズ2へ
+            // 鄒翫・霑代￥縺ｫ蛻ｰ驕斐＠縺溘ｉ繝輔ぉ繝ｼ繧ｺ2縺ｸ
             if (distance < Pow2(m_arrivalDistance))
             {
                 m_phase = Phase::GUIDE_TO_CENTER;
                 break;
             }
 
-            // 羊に近づく
+            // 鄒翫↓霑代▼縺・
             normalize(toSheep);
-            // 移動方向に回転
+            // 遘ｻ蜍墓婿蜷代↓蝗櫁ｻ｢
             float targetAngle = atan2f(toSheep.x, toSheep.z);
             m_pOwner->SetRotateY(targetAngle);
             m_pOwner->AddPosition(toSheep * m_moveSpeed * SceneManager::DeltaTime());
@@ -199,30 +199,30 @@ void CRescue::Update()
 
     case Phase::GUIDE_TO_CENTER:
         {
-            // 羊から重心への方向
+            // 鄒翫°繧蛾㍾蠢・∈縺ｮ譁ｹ蜷・
             VECTOR3 toCentroid = m_centroid - sheepPos;
             toCentroid.y = 0;
             const float distance = toCentroid.LengthSquare();
 
-            // 重心に到達したら完了
-            constexpr float m_approachDistance = 2.0f; // 羊に近づく距離`
+            // 驥榊ｿ・↓蛻ｰ驕斐＠縺溘ｉ螳御ｺ・
+            constexpr float m_approachDistance = 2.0f; // 鄒翫↓霑代▼縺剰ｷ晞屬`
             if (distance < Pow2(m_approachDistance))
             {
-                m_pOwner->PopRescueQueue(); // キューから削除
+                m_pOwner->PopRescueQueue(); // 繧ｭ繝･繝ｼ縺九ｉ蜑企勁
                 m_isFinish = true;
                 break;
             }
 
-            // 羊の背後から重心方向へプレッシャーをかける位置
+            // 鄒翫・閭悟ｾ後°繧蛾㍾蠢・婿蜷代∈繝励Ξ繝・す繝｣繝ｼ繧偵°縺代ｋ菴咲ｽｮ
             normalize(toCentroid);
-            static constexpr float m_behindDistance = 2.0f; // 羊の背後に立つ距離
+            static constexpr float m_behindDistance = 2.0f; // 鄒翫・閭悟ｾ後↓遶九▽霍晞屬
             const VECTOR3 behindPos = sheepPos - toCentroid * m_behindDistance;
 
-            // その位置へ移動
+            // 縺昴・菴咲ｽｮ縺ｸ遘ｻ蜍・
             VECTOR3 toBehind = behindPos - myPos;
             toBehind.y = 0;
             normalize(toBehind);
-            // 移動方向に回転
+            // 遘ｻ蜍墓婿蜷代↓蝗櫁ｻ｢
             float targetAngle = atan2f(toBehind.x, toBehind.z);
             m_pOwner->SetRotateY(targetAngle);
             m_pOwner->AddPosition(toBehind * m_moveSpeed * SceneManager::DeltaTime());
@@ -240,7 +240,7 @@ CDestroyShepherdDog::CDestroyShepherdDog(CAShepherdDog* dog, int score, float ex
 
 void CDestroyShepherdDog::Enter()
 {
-    // 担当羊をPANIC化
+    // 諡・ｽ鍋ｾ翫ｒPANIC蛹・
     for (auto sheep : m_pDog->GetSheeps())
     {
         if (sheep != nullptr)
@@ -249,6 +249,6 @@ void CDestroyShepherdDog::Enter()
         }
     }
 
-    // 元のDestroy処理
+    // 蜈・・Destroy蜃ｦ逅・
     CDestroy::Enter();
 }

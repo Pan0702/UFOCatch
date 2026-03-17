@@ -1,4 +1,4 @@
-#include "Sheep.h"
+﻿#include "Sheep.h"
 
 #include "../Component/Destroy.h"
 #include "../Component/Idle.h"
@@ -21,15 +21,15 @@ CSheep::CSheep(const VECTOR3& iniPos)
 }
 void CSheep::InitStates()
 {
-    //アニメーションの最終フレーム : 120.0f //
+    //繧｢繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ縺ｮ譛邨ゅヵ繝ｬ繝ｼ繝 : 120.0f //
     m_components[CBaseState::State::IDLE] = std::make_unique< CIdle>(this, 120.0f);
-    //移動スピード : 1.2f//
+    //遘ｻ蜍輔せ繝斐・繝・: 1.2f//
     m_components[CBaseState::State::WALK] = std::make_unique< CWalk>(this, 1.3f);
     m_components[CBaseState::State::SUCTION] = std::make_unique< CSuction>(this);
     //Score : 100 ,Exp : 1.0f //
     m_components[CBaseState::State::DESTROY] = std::make_unique<CDestroy>(this, 80, 0.8f);
 
-    // 最初はIDLE状態から開始
+    // 譛蛻昴・IDLE迥ｶ諷九°繧蛾幕蟋・
     m_pComponent = m_components[CBaseState::State::IDLE].get();
     m_pState = std::make_unique<CBaseState>(this);
     m_pState->Enter(CBaseState::State::IDLE);

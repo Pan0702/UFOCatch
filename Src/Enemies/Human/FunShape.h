@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../../Common/Object3D.h"
 
 class CFunShape : public Object3D

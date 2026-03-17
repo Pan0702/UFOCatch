@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../Framework/AudioManager.h"
 #include "../Framework/GameObject.h"
 #include "../Utils/FbxMesh.h"
@@ -12,7 +12,7 @@ public:
 	VECTOR3 scale;
 	Transform() {
 		position = VECTOR3(0, 0, 0);
-		rotation = VECTOR3(0, 0, 0);   // ���W�A���p
+		rotation = VECTOR3(0, 0, 0);   // ・ｽ・ｽ・ｽW・ｽA・ｽ・ｽ・ｽp
 		scale = VECTOR3(1, 1, 1);
 	}
 	const MATRIX4X4 matrix() const {
@@ -64,71 +64,71 @@ public:
 	virtual SphereCollider Collider();
 
 	/// <summary>
-	/// ���ƃ��b�V���̓����蔻�������
-	/// ���������ꍇ�ɂ̂݁Apush�ɉ����Ԃ��ꏊ��Ԃ�
+	/// ・ｽ・ｽ・ｽﾆ・ｿｽ・ｽb・ｽV・ｽ・ｽ・ｽﾌ難ｿｽ・ｽ・ｽ・ｽ阡ｻ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ
+	/// ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ鼾・ｿｽﾉのみ、push・ｽﾉ会ｿｽ・ｽ・ｽ・ｽﾔゑｿｽ・ｽ齒奇ｿｽ・ｽﾔゑｿｽ
 	/// </summary>
-	/// <param name="sphere">����</param>
-	/// <param name="push">�����Ԃ����W���i�[����ꏊ</param>
-	/// <returns>���������ꍇ��true</returns>
+	/// <param name="sphere">・ｽ・ｽ・ｽ・ｽ</param>
+	/// <param name="push">・ｽ・ｽ・ｽ・ｽ・ｽﾔゑｿｽ・ｽ・ｽ・ｽW・ｽ・ｽ・ｽi・ｽ[・ｽ・ｽ・ｽ・ｽ齒・/param>
+	/// <returns>・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ鼾・ｿｽ・ｽtrue</returns>
 	virtual bool HitSphereToMeshPush(const SphereCollider& sphere, VECTOR3* push = nullptr);
 
 	/// <summary>
-	/// ���ƃ��b�V���̓����蔻�������
-	/// ���������ꍇ�́A�Փˏ���Ԃ�
+	/// ・ｽ・ｽ・ｽﾆ・ｿｽ・ｽb・ｽV・ｽ・ｽ・ｽﾌ難ｿｽ・ｽ・ｽ・ｽ阡ｻ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ
+	/// ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ鼾・ｿｽﾍ、・ｽﾕ突擾ｿｽ・ｽ・ｽﾔゑｿｽ
 	/// </summary>
-	/// <param name="sphere">����</param>
-	/// <param name="collOut">�Փˏ����i�[����ꏊ</param>
-	/// <returns>���������ꍇ��true</returns>
+	/// <param name="sphere">・ｽ・ｽ・ｽ・ｽ</param>
+	/// <param name="collOut">・ｽﾕ突擾ｿｽ・ｽ・ｽ・ｽi・ｽ[・ｽ・ｽ・ｽ・ｽ齒・/param>
+	/// <returns>・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ鼾・ｿｽ・ｽtrue</returns>
 	virtual bool HitSphereToMesh(const SphereCollider& sphere, MeshCollider::CollInfo* collOut = nullptr);
 
 	/// <summary>
-	/// �����ƃ��b�V���̓����蔻�������
-	/// ���������ꍇ�́A�Փˏ���Ԃ�
+	/// ・ｽ・ｽ・ｽ・ｽ・ｽﾆ・ｿｽ・ｽb・ｽV・ｽ・ｽ・ｽﾌ難ｿｽ・ｽ・ｽ・ｽ阡ｻ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ
+	/// ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ鼾・ｿｽﾍ、・ｽﾕ突擾ｿｽ・ｽ・ｽﾔゑｿｽ
 	/// </summary>
-	/// <param name="from">�����̎n�_</param>
-	/// <param name="to">�����̏I�_</param>
-	/// <param name="collOut">�Փˏ����i�[����ꏊ</param>
-	/// <returns>���������ꍇ��true</returns>
+	/// <param name="from">・ｽ・ｽ・ｽ・ｽ・ｽﾌ始・ｽ_</param>
+	/// <param name="to">・ｽ・ｽ・ｽ・ｽ・ｽﾌ終・ｽ_</param>
+	/// <param name="collOut">・ｽﾕ突擾ｿｽ・ｽ・ｽ・ｽi・ｽ[・ｽ・ｽ・ｽ・ｽ齒・/param>
+	/// <returns>・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ鼾・ｿｽ・ｽtrue</returns>
 	virtual bool HitLineToMesh(const VECTOR3& from, const VECTOR3& to, MeshCollider::CollInfo* collOut = nullptr);
 
 	/// <summary>
-	/// ���Ƌ��̓����蔻�������
-	/// �����̋��́ACollider()�Ŏ擾����
+	/// ・ｽ・ｽ・ｽﾆ具ｿｽ・ｽﾌ難ｿｽ・ｽ・ｽ・ｽ阡ｻ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ
+	/// ・ｽ・ｽ・ｽ・ｽ・ｽﾌ具ｿｽ・ｽﾍ、Collider()・ｽﾅ取得・ｽ・ｽ・ｽ・ｽ
 	/// </summary>
-	/// <param name="target">����̋�</param>
-	/// <param name="withY">false�ɂ����Y�̍��W���𖳎�����</param>
-	/// <returns>�d�Ȃ��</returns>
+	/// <param name="target">・ｽ・ｽ・ｽ・ｽﾌ具ｿｽ</param>
+	/// <param name="withY">false・ｽﾉゑｿｽ・ｽ・ｽ・ｽY・ｽﾌ搾ｿｽ・ｽW・ｽ・ｽ・ｽｳ趣ｿｽ・ｽ・ｽ・ｽ・ｽ</param>
+	/// <returns>・ｽd・ｽﾈゑｿｽ・ｽ</returns>
 	virtual float HitSphereToSphere(const SphereCollider& target, bool withY=true);
 
 	/// <summary>
-	/// ���Ƌ��̓����蔻�������
-	/// ���������ꍇ�́Apush�ɉ����Ԃ��ꏊ��Ԃ�
+	/// ・ｽ・ｽ・ｽﾆ具ｿｽ・ｽﾌ難ｿｽ・ｽ・ｽ・ｽ阡ｻ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ
+	/// ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ鼾・ｿｽﾌ、push・ｽﾉ会ｿｽ・ｽ・ｽ・ｽﾔゑｿｽ・ｽ齒奇ｿｽ・ｽﾔゑｿｽ
 	/// </summary>
-	/// <param name="target">����̋�</param>
-	/// <param name="withY">false�ɂ����Y�̍��W���𖳎�����</param>
-	/// <returns>���������ꍇ��true</returns>
+	/// <param name="target">・ｽ・ｽ・ｽ・ｽﾌ具ｿｽ</param>
+	/// <param name="withY">false・ｽﾉゑｿｽ・ｽ・ｽ・ｽY・ｽﾌ搾ｿｽ・ｽW・ｽ・ｽ・ｽｳ趣ｿｽ・ｽ・ｽ・ｽ・ｽ</param>
+	/// <returns>・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ鼾・ｿｽ・ｽtrue</returns>
 	virtual bool HitSphereToSpherePush(const SphereCollider& target, bool withY=true, VECTOR3* push = nullptr);
 
 	/// <summary>
-	/// ���b�V���̃A�h���X��Ԃ�
+	/// ・ｽ・ｽ・ｽb・ｽV・ｽ・ｽ・ｽﾌア・ｽh・ｽ・ｽ・ｽX・ｽ・ｽﾔゑｿｽ
 	/// </summary>
-	/// <returns>���b�V���̃A�h���X</returns>
+	/// <returns>・ｽ・ｽ・ｽb・ｽV・ｽ・ｽ・ｽﾌア・ｽh・ｽ・ｽ・ｽX</returns>
 	CFbxMesh* GetMesh() { return m_pMesh; }
 
 	/// <summary>
-	/// �R���W�������b�V���̃A�h���X��Ԃ�
+	/// ・ｽR・ｽ・ｽ・ｽW・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽb・ｽV・ｽ・ｽ・ｽﾌア・ｽh・ｽ・ｽ・ｽX・ｽ・ｽﾔゑｿｽ
 	/// </summary>
-	/// <returns>�R���W�������b�V���̃A�h���X</returns>
+	/// <returns>・ｽR・ｽ・ｽ・ｽW・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽb・ｽV・ｽ・ｽ・ｽﾌア・ｽh・ｽ・ｽ・ｽX</returns>
 	MeshCollider* MeshCol() { return m_pMeshCol; }
 
 	/// <summary>
-	/// �A�j���[�^�[�̃A�h���X��Ԃ�
+	/// ・ｽA・ｽj・ｽ・ｽ・ｽ[・ｽ^・ｽ[・ｽﾌア・ｽh・ｽ・ｽ・ｽX・ｽ・ｽﾔゑｿｽ
 	/// </summary>
-	/// <returns>�A�j���[�^�[�̃A�h���X</returns>
+	/// <returns>・ｽA・ｽj・ｽ・ｽ・ｽ[・ｽ^・ｽ[・ｽﾌア・ｽh・ｽ・ｽ・ｽX</returns>
 	Animator* GetAnimator() { return m_pAnimator.get(); }
 
 	/// <summary>
-	/// �R���W�������b�V����Ball����Ԃ�
+	/// ・ｽR・ｽ・ｽ・ｽW・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽb・ｽV・ｽ・ｽ・ｽ・ｽBall・ｽ・ｽ・ｽ・ｽﾔゑｿｽ
 	/// </summary>
 	/// <returns>SphereCollider</returns>
 	SphereCollider  GetSphereCollider();

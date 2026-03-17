@@ -1,4 +1,4 @@
-#include "ModelRegistry.h"
+﻿#include "ModelRegistry.h"
 #include "../../Utils/FbxMesh.h"
 #include <Windows.h>
 #include <tchar.h>
@@ -81,7 +81,7 @@ CFbxMesh* CModelRegistry::GetMesh(const std::string& name) const
     }
 
     MessageBox(nullptr, _T("CModelRegistry::GetMesh()"),
-               _T("エラー: 指定のモデル名が見つかりません"), MB_OK);
+               _T("繧ｨ繝ｩ繝ｼ: 謖・ｮ壹・繝｢繝・Ν蜷阪′隕九▽縺九ｊ縺ｾ縺帙ｓ"), MB_OK);
     return nullptr;
 }
 

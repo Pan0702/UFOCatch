@@ -1,13 +1,13 @@
-//=============================================================================
-//		�R�c�Q�[���v���O����			               ver 3.2        2023.1.31
+﻿//=============================================================================
+//		・ｽR・ｽc・ｽQ・ｽ[・ｽ・ｽ・ｽv・ｽ・ｽ・ｽO・ｽ・ｽ・ｽ・ｽ			               ver 3.2        2023.1.31
 //
-//		�E�B���h�E�Y�̎又��
+//		・ｽE・ｽB・ｽ・ｽ・ｽh・ｽE・ｽY・ｽﾌ主処・ｽ・ｽ
 //																Main.h
 //=============================================================================
 
 #pragma once
 
-//�w�b�_�[�t�@�C���̃C���N���[�h
+//・ｽw・ｽb・ｽ_・ｽ[・ｽt・ｽ@・ｽC・ｽ・ｽ・ｽﾌイ・ｽ・ｽ・ｽN・ｽ・ｽ・ｽ[・ｽh
 #include <atomic>
 #include <stdio.h>
 #include <thread>
@@ -15,8 +15,8 @@
 
 //#include "GameMain.h"
 
- // #define WINDOW_WIDTH   1920 //横幅
- // #define WINDOW_HEIGHT  1080 //高さ
+ // #define WINDOW_WIDTH   1920 //讓ｪ蟷・
+ // #define WINDOW_HEIGHT  1080 //鬮倥＆
 
 #define WINDOW_WIDTH   1366   
 #define WINDOW_HEIGHT  768    
@@ -26,20 +26,20 @@
 class CGameMain;
 
 //  ---------------------------------------------------------
-//  Windows���C���N���X
+//  Windows・ｽ・ｽ・ｽC・ｽ・ｽ・ｽN・ｽ・ｽ・ｽX
 //  ---------------------------------------------------------
 class CMain
 {
 public:
-	// �����o�ϐ�
-	CGameMain*	   m_pGMain;		  // �Q�[�����C���N���X
+	// ・ｽ・ｽ・ｽ・ｽ・ｽo・ｽﾏ撰ｿｽ
+	CGameMain*	   m_pGMain;		  // ・ｽQ・ｽ[・ｽ・ｽ・ｽ・ｽ・ｽC・ｽ・ｽ・ｽN・ｽ・ｽ・ｽX
 	HINSTANCE      m_hInstance;
 	HWND           m_hWnd;
-	bool           m_bLoopFlag;       // ���[�v�t���O�@true:���[�v�@false:���[�v�I��
-	double         m_MainLoopTime;    // ���[�v�X�s�[�h�@1/60Sec
+	bool           m_bLoopFlag;       // ・ｽ・ｽ・ｽ[・ｽv・ｽt・ｽ・ｽ・ｽO・ｽ@true:・ｽ・ｽ・ｽ[・ｽv・ｽ@false:・ｽ・ｽ・ｽ[・ｽv・ｽI・ｽ・ｽ
+	double         m_MainLoopTime;    // ・ｽ・ｽ・ｽ[・ｽv・ｽX・ｽs・ｽ[・ｽh・ｽ@1/60Sec
 
 public:
-	// ���\�b�h
+	// ・ｽ・ｽ・ｽ\・ｽb・ｽh
 	HRESULT InitWindow(HINSTANCE,INT,INT,INT,INT,LPCTSTR);
 	LRESULT MsgProc(HWND,UINT,WPARAM,LPARAM);
 	HRESULT Init();
@@ -52,15 +52,15 @@ public:
 	~CMain();
 
 private:
-	// 追加：ゲームループ用スレッド
+	// 霑ｽ蜉・壹ご繝ｼ繝繝ｫ繝ｼ繝礼畑繧ｹ繝ｬ繝・ラ
 	std::thread        m_GameThread;
 	std::atomic<bool>  m_RunGame{false};
 
-	void GameThreadFunc(); // スレッド本体
+	void GameThreadFunc(); // 繧ｹ繝ｬ繝・ラ譛ｬ菴・
 };
-// �֐��v���g�^�C�v�̐錾
+// ・ｽﾖ撰ｿｽ・ｽv・ｽ・ｽ・ｽg・ｽ^・ｽC・ｽv・ｽﾌ宣言
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-// imGUI2�̃v���g�^�C�v                                                       // -- 2020.8.7
+// imGUI2・ｽﾌプ・ｽ・ｽ・ｽg・ｽ^・ｽC・ｽv                                                       // -- 2020.8.7
 LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
 
