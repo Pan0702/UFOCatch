@@ -4,19 +4,19 @@
 
 UndoManager::UndoManager()
 {
-    data_ = ObjectManager::FindGameObject<StageData>();
+    m_pData = ObjectManager::FindGameObject<StageData>();
 }
 
 // 現在選択中のオブジェクトのTransformをUndoスタックに積む
 void UndoManager::Push()
 {
-    int index = data_->GetSelectIndex();
+    int index = m_pData->GetSelectIndex();
     UndoState state;
     state.index = index;
-    state.trans = *data_->GetSelectedTransform();;
-    undo_stack_.push(state);
+    state.trans = *m_pData->GetSelectedTransform();;
+    m_undoStack.push(state);
     // 新しい操作をしたら Redo 履歴は無効になるためクリア
-    redo_stack_ = std::stack<UndoState>();
+    m_redoStack = std::stack<UndoState>();
 }
 
 void UndoManager::Push(Transform* target)
@@ -26,67 +26,67 @@ void UndoManager::Push(Transform* target)
     state.index  = -2;         // StageData管理外のフラグ
     state.trans  = *target;
     state.target = target;
-    undo_stack_.push(state);
-    redo_stack_ = std::stack<UndoState>();
+    m_undoStack.push(state);
+    m_redoStack = std::stack<UndoState>();
 }
 
 // 現在選択中のオブジェクトのTransformをUndoスタックに積む
 void UndoManager::DeleteObjectPush()
 {
-    int index = data_->GetSelectIndex();
+    int index = m_pData->GetSelectIndex();
     UndoState state;
     state.index = -1;
-    state.trans = *data_->GetSelectedTransform();
-    state.model_name = data_->GetStageDataInfo()[index].model_name_;
-    undo_stack_.push(state);
+    state.trans = *m_pData->GetSelectedTransform();
+    state.modelName = m_pData->GetStageDataInfo()[index].modelName;
+    m_undoStack.push(state);
     // 新しい操作をしたら Redo 履歴は無効になるためクリア
-    redo_stack_ = std::stack<UndoState>();
+    m_redoStack = std::stack<UndoState>();
 }
 
 // 直前の操作を取り消し、現在状態をRedoスタックに退避する
 void UndoManager::Undo()
 {
-    if (undo_stack_.empty()) return;
-    UndoState prev_state = undo_stack_.top();
+    if (m_undoStack.empty()) return;
+    UndoState prev_state = m_undoStack.top();
     // Redo できるよう、Undoを適用する前に現在状態を Redo スタックへ退避
     UndoState state;
     if (prev_state.index >= 0)
     {
-        state.index = data_->GetSelectIndex();
-        state.trans = *data_->GetSelectedTransform();
-        state.model_name = "n";
-        redo_stack_.push(state);
+        state.index = m_pData->GetSelectIndex();
+        state.trans = *m_pData->GetSelectedTransform();
+        state.modelName = "n";
+        m_redoStack.push(state);
     }
 
 
     // Undo スタックの先頭を取り出して適用
-    undo_stack_.pop();
+    m_undoStack.pop();
 
     if (prev_state.index >= 0)
     {
-        data_->SetSelectedTransform(prev_state.index, prev_state.trans);
+        m_pData->SetSelectedTransform(prev_state.index, prev_state.trans);
     }
     else
     {
-        data_->AddModel(prev_state.trans, prev_state.model_name);
-        state.index = data_->GetSelectIndex();
-        state.model_name = "d";
-        redo_stack_.push(state);
+        m_pData->AddModel(prev_state.trans, prev_state.modelName);
+        state.index = m_pData->GetSelectIndex();
+        state.modelName = "d";
+        m_redoStack.push(state);
     }
 }
 
 // 取り消した操作をやり直す
 void UndoManager::Redo()
 {
-    if (redo_stack_.empty()) return;
-    UndoState state = redo_stack_.top();
-    if (state.model_name == "d")
+    if (m_redoStack.empty()) return;
+    UndoState state = m_redoStack.top();
+    if (state.modelName == "d")
     {
-        data_->DeleteModel(state.index);
+        m_pData->DeleteModel(state.index);
     }
     else
     {
-        data_->SetSelectedTransform(state.index, state.trans);
+        m_pData->SetSelectedTransform(state.index, state.trans);
     }
-    redo_stack_.pop();
+    m_redoStack.pop();
 }

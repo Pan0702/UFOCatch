@@ -1,14 +1,5 @@
 #include "GridDraw.h"
 
-namespace
-{
-    // 10マスごとにグリッド線を太く（不透明に）表示する
-    constexpr int   kMajorGridInterval = 10;
-
-    // 細いグリッド線のアルファ値（0〜1）
-    constexpr float kMinorLineAlpha    = 0.5f;
-}
-
 void GridDraw::Draw()
 {
     if (is_grid_draw_)
@@ -21,33 +12,34 @@ void GridDraw::Draw()
 void GridDraw::Grid()
 {
     CSprite spr;
-    constexpr float gridSize = 500.0f;
-
-    // Z 方向の線（X 軸に平行）
-    for (int i = -gridSize; i <= gridSize; i++)
+    constexpr float GIRD_SIZE = 500.0f;
+    constexpr float MINOR_LINE_ALPHA    = 0.5f;
+    constexpr int   MAJOR_GRID_INTERVAL = 10;    // Z 方向の線（X 軸に平行）
+    for (int i = -GIRD_SIZE; i <= GIRD_SIZE; i++)
     {
-        if (i % kMajorGridInterval == 0)
+        if (i % MAJOR_GRID_INTERVAL == 0)
         {
             // 主グリッド線（10マスごと）は不透明で描画
-            spr.DrawLine3D(VECTOR3(gridSize, 0, i), VECTOR3(-gridSize, 0, i), RGB(255, 255, 255));
+            spr.DrawLine3D(VECTOR3(GIRD_SIZE, 0, i), VECTOR3(-GIRD_SIZE, 0, i), RGB(255, 255, 255));
         }
         else
         {
             // 補助グリッド線は半透明で描画
-            spr.DrawLine3D(VECTOR3(gridSize, 0, i), VECTOR3(-gridSize, 0, i), RGB(255, 255, 255), kMinorLineAlpha);
+            spr.DrawLine3D(VECTOR3(GIRD_SIZE, 0, i), VECTOR3(-GIRD_SIZE, 0, i), RGB(255, 255, 255), MINOR_LINE_ALPHA);
         }
     }
 
     // X 方向の線（Z 軸に平行）
-    for (int i = -gridSize; i <= gridSize; i++)
+    for (int i = -GIRD_SIZE; i <= GIRD_SIZE; i++)
     {
-        if (i % kMajorGridInterval == 0)
+        if (i % MAJOR_GRID_INTERVAL == 0)
         {
-            spr.DrawLine3D(VECTOR3(i, 0, gridSize), VECTOR3(i, 0, -gridSize), RGB(255, 255, 255));
+            spr.DrawLine3D(VECTOR3(i, 0, GIRD_SIZE), VECTOR3(i, 0, -GIRD_SIZE), RGB(255, 255, 255));
         }
         else
         {
-            spr.DrawLine3D(VECTOR3(i, 0, gridSize), VECTOR3(i, 0, -gridSize), RGB(255, 255, 255), kMinorLineAlpha);
+            
+            spr.DrawLine3D(VECTOR3(i, 0, GIRD_SIZE), VECTOR3(i, 0, -GIRD_SIZE), RGB(255, 255, 255), MINOR_LINE_ALPHA);
         }
     }
 }

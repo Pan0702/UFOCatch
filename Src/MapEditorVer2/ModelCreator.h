@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 
-#include "../FbxMesh.h"
+#include "../Utils/FbxMesh.h"
 
 class ModelCreator
 {
@@ -11,7 +11,7 @@ private:
         std::string name;
         CFbxMesh* mesh;
     };
-    std::vector<ModelInfo> models_;
+    std::vector<ModelInfo> m_models;
 public:
     /// <summary>
     /// 指定パスのメッシュをロードし、ボタンリストとモデルストレージに登録する
@@ -23,7 +23,7 @@ public:
     /// FBX ファイルを .mesh に変換してからロードする。
     /// 出力先は FBX と同じフォルダ・同名の .mesh ファイル。
     /// </summary>
-    /// <param name="fbx_path">変換する FBX ファイルのパス</param>
-    void ConvertAndLoad(const std::string& fbx_path);
+    /// <param name="fbxPath">変換する FBX ファイルのパス</param>
+    void ConvertAndLoad(const std::string& fbxPath);
 
 };

@@ -9,12 +9,12 @@ private:
     {
         int         index      = -1;
         Transform   trans      = {};
-        std::string model_name = {};
+        std::string modelName = {};
         Transform*  target     = nullptr;
     };
-    std::stack<UndoState> undo_stack_;
-    std::stack<UndoState> redo_stack_;
-    StageData* data_;
+    std::stack<UndoState> m_undoStack;
+    std::stack<UndoState> m_redoStack;
+    StageData* m_pData;
 
 
 public:

@@ -9,11 +9,11 @@ class CFbxMesh;
 
 Button::Button()
 {
-    world_position_ = VECTOR3(0.0f, 0.0f, 0.0f);
+    m_worldPosition = VECTOR3(0.0f, 0.0f, 0.0f);
 
     // CModelStorage からメッシュを取得して1回だけ描画し SRV に焼き付ける
     CModelStorage* storage = ObjectManager::FindGameObject<CModelStorage>();
-    data_ = ObjectManager::FindGameObject<StageData>();
+    m_pData = ObjectManager::FindGameObject<StageData>();
     if (storage)
     {
         AddButton("Plane", storage->GetModel("Plane"));
@@ -21,8 +21,8 @@ Button::Button()
         AddButton("GoalLine", storage->GetModel("GoalLine"));
     }
 
-    model_creator_ = new ModelCreator();
-    grid_draw_ = new GridDraw();
+    m_pModelCreator = new ModelCreator();
+    m_pGridDraw = new GridDraw();
 }
 
 Button::~Button()
@@ -37,24 +37,24 @@ void Button::Update()
 }
 
 // 指定IDのボタンをリストに追加する。メッシュが渡された場合はプレビューテクスチャを生成する
-void Button::AddButton(const std::string& button_ID, CFbxMesh* mesh, const ImVec2& size)
+void Button::AddButton(const std::string& buttonId, CFbxMesh* pMesh, const ImVec2& size)
 {
-    ImageButtonData data(button_ID, size);
-    if (mesh)
+    ImageButtonData data(buttonId, size);
+    if (pMesh)
     {
-        ModelPreviewRT rt = CreateModelPreviewRT(mesh);
-        model_previews_.push_back(rt);
+        ModelPreviewRT rt = CreateModelPreviewRT(pMesh);
+        m_modelpreviews.push_back(rt);
         data.pTexture = rt.pSRV;
         data.isLoaded = (rt.pSRV != nullptr);
         data.isRenderTexture = true;
     }
-    image_buttons_.push_back(data);
+    m_imageButtons.push_back(data);
 }
 
 // isRenderTextureでないボタンのテクスチャをすべて解放してリストをクリアする
 void Button::ReleaseAllTextures()
 {
-    for (auto& button : image_buttons_)
+    for (auto& button : m_imageButtons)
     {
         if (button.pTexture && !button.isRenderTexture)
         {
@@ -62,7 +62,7 @@ void Button::ReleaseAllTextures()
             button.pTexture = nullptr;
         }
     }
-    image_buttons_.clear();
+    m_imageButtons.clear();
 }
 
 // メッシュをオフスクリーンに1回描画し、ImGuiボタン用のSRVを含むレンダーターゲットを返す
@@ -108,12 +108,12 @@ ModelPreviewRT Button::CreateModelPreviewRT(CFbxMesh* pMesh)
 
     // レンダリングターゲットの設定とクリア
     pD3D->SetRenderTarget(rt.pRTV, rt.pDSV);
-    constexpr float kClearR = 0.12f;
-    constexpr float kClearG = 0.12f;
-    constexpr float kClearB = 0.12f;
-    constexpr float kClearA = 1.0f;
+    constexpr float CLEAR_R= 0.12f;
+    constexpr float CLEAR_G = 0.12f;    
+    constexpr float CLEAR_B = 0.12f;
+    constexpr float CLEAR_A = 1.0f;
 
-    float clearColor[4] = {kClearR, kClearG, kClearB, kClearA};
+    float clearColor[4] = {CLEAR_R, CLEAR_G, CLEAR_B, CLEAR_A};
     pD3D->ClearRenderTarget(clearColor);
 
     // モデルの AABB からバウンディングスフィアを計算してカメラ距離を自動調整
@@ -126,31 +126,31 @@ ModelPreviewRT Button::CreateModelPreviewRT(CFbxMesh* pMesh)
         pMesh->m_vMax.y - pMesh->m_vMin.y,
         pMesh->m_vMax.z - pMesh->m_vMin.z, 0.0f);
     float radius = XMVectorGetX(XMVector3Length(extents)) * 0.5f;
-    constexpr float kPreviewCamMargin = 1.3f; // モデルが収まるようにする余白係数
-    constexpr float kPreviewFovDeg = 45.0f;
-    float distance = (radius / tanf(XMConvertToRadians(kPreviewFovDeg) * 0.5f)) * kPreviewCamMargin;
+    constexpr float PREVIEW_CAM_MARGIN = 1.3f; // モデルが収まるようにする余白係数
+    constexpr float PREVIEW_FOV_DEG = 45.0f;
+    float distance = (radius / tanf(XMConvertToRadians(PREVIEW_FOV_DEG) * 0.5f)) * PREVIEW_CAM_MARGIN;
 
-    constexpr float kPreviewCamDirX = 5.0f; // カメラ方向ベクトル（正規化前）
-    constexpr float kPreviewCamDirY = 5.0f;
-    constexpr float kPreviewCamDirZ = -8.0f;
-    XMVECTOR cam_dir = XMVector3Normalize(XMVectorSet(kPreviewCamDirX, kPreviewCamDirY, kPreviewCamDirZ, 0.0f));
+    constexpr float PREVIEW_CAM_DIR_X = 5.0f; // カメラ方向ベクトル（正規化前）
+    constexpr float PREVIEW_CAM_DIR_Y = 5.0f;
+    constexpr float PREVIEW_CAM_DIR_Z = -8.0f;
+    XMVECTOR cam_dir = XMVector3Normalize(XMVectorSet(PREVIEW_CAM_DIR_X, PREVIEW_CAM_DIR_Y, PREVIEW_CAM_DIR_Z, 0.0f));
     XMVECTOR eye = XMVectorAdd(center, XMVectorScale(cam_dir, distance));
 
     float near_clip = distance * 0.01f;
     float far_clip = distance * 10.0f;
 
     XMMATRIX mView = XMMatrixLookAtLH(eye, center, XMVectorSet(0, 1, 0, 0));
-    constexpr float kPreviewAspect = 1.0f; // 正方形テクスチャなのでアスペクト比1//
+    constexpr float PREVIEW_ASPECT = 1.0f; // 正方形テクスチャなのでアスペクト比1//
 
     XMMATRIX mProj = XMMatrixPerspectiveFovLH(
-        XMConvertToRadians(kPreviewFovDeg), kPreviewAspect, near_clip, far_clip);
+        XMConvertToRadians(PREVIEW_FOV_DEG), PREVIEW_ASPECT, near_clip, far_clip);
 
     XMFLOAT3 eye_f;
     XMStoreFloat3(&eye_f, eye);
-    const VECTOR3 light_eye = VECTOR3(eye_f.x, eye_f.y, eye_f.z);
+    const VECTOR3 vEye = VECTOR3(eye_f.x, eye_f.y, eye_f.z);
     // プレビュー用ライト方向と視点位置（ライト計算用）//
-    const VECTOR3 kPreviewLightDir = VECTOR3(0.5f, 1.0f, -1.0f);
-    pMesh->Render(XMMatrixIdentity(), mView, mProj, kPreviewLightDir, light_eye);
+    const VECTOR3 PEVIEW_LIGHT_DIR = VECTOR3(0.5f, 1.0f, -1.0f);
+    pMesh->Render(XMMatrixIdentity(), mView, mProj, PEVIEW_LIGHT_DIR, vEye);
 
     // 描画先とビューポートを元に戻す
     pD3D->SetRenderTarget(nullptr, nullptr);
@@ -162,11 +162,11 @@ ModelPreviewRT Button::CreateModelPreviewRT(CFbxMesh* pMesh)
 // 全モデルプレビューのD3Dリソースを解放してリストをクリアする
 void Button::ReleaseModelPreviews()
 {
-    for (auto& rt : model_previews_)
+    for (auto& rt : m_modelpreviews)
     {
         rt.Release();
     }
-    model_previews_.clear();
+    m_modelpreviews.clear();
 }
 
 
@@ -190,22 +190,22 @@ void Button::CreateImageButton(const ImageButtonData& buttonData)
 }
 
 // ボタンがクリックされたとき、対応モデルを原点にステージへ追加する
-void Button::HandleButtonClick(const std::string& buttonID)
+void Button::HandleButtonClick(const std::string& buttonId)
 {
     VECTOR3 init_pos = {0, 0, 0};
-    ObjectManager::FindGameObject<StageData>()->AddModel(init_pos, buttonID);
+    ObjectManager::FindGameObject<StageData>()->AddModel(init_pos, buttonId);
 }
 
 // エディタUIのImGuiウィンドウ（モデル追加・エクスポート・グリッド設定）を描画する
 void Button::DebugImGui()
 {
     // UI ウィンドウのレイアウト定数
-    constexpr float kEditorToolsWindowY = 10.0f;
+    constexpr float EDITOR_TOOL_WINDOW_Y = 10.0f;
     // 画面右端からの距離
-    constexpr float kEditorToolsOffsetFromRight = 320.0f; 
+    constexpr float EDITOR_TOOLS_OFFSERT_FROM_RIGHT = 320.0f; 
     // モデル追加・ボタン一覧ウィンドウ（画面右端に固定）
     ImGui::SetNextWindowPos(
-        ImVec2(ImGui::GetIO().DisplaySize.x - kEditorToolsOffsetFromRight, kEditorToolsWindowY),
+        ImVec2(ImGui::GetIO().DisplaySize.x - EDITOR_TOOLS_OFFSERT_FROM_RIGHT, EDITOR_TOOL_WINDOW_Y),
         ImGuiCond_FirstUseEver);
     ImGui::Begin("Editor Tools");
 
@@ -218,39 +218,39 @@ void Button::DebugImGui()
         if (!path.empty())
         {
             // 拡張子で .mesh / .fbx を振り分ける
-            size_t dot = path.find_last_of('.');
+            const size_t dot = path.find_last_of('.');
             std::string ext = (dot != std::string::npos) ? path.substr(dot) : "";
             for (auto& c : ext) c = static_cast<char>(tolower(c));
 
             if (ext == ".fbx")
-                model_creator_->ConvertAndLoad(path);
+                m_pModelCreator->ConvertAndLoad(path);
             else
-                model_creator_->CreateModel(path);
+                m_pModelCreator->CreateModel(path);
         }
     }
     ImGui::Separator();
     ImGui::BeginGroup();
     {
-        for (size_t i = 0; i < image_buttons_.size(); i++)
+        for (size_t i = 0; i < m_imageButtons.size(); i++)
         {
-            CreateImageButton(image_buttons_[i]);
+            CreateImageButton(m_imageButtons[i]);
             // 3列ごとに改行する
-            if ((i + 1) % 3 != 0 && i < image_buttons_.size() - 1) ImGui::SameLine();
+            if ((i + 1) % 3 != 0 && i < m_imageButtons.size() - 1) ImGui::SameLine();
         }
     }
     ImGui::EndGroup();
     ImGui::Separator();
     ImGui::End();
 
-    constexpr float kSettingWindowY = 300.0f;
+    constexpr float SETTING_WINDOW_Y = 300.0f;
     // 設定ウィンドウ（グリッド表示切替・エクスポート）
     ImGui::SetNextWindowPos(
-        ImVec2(ImGui::GetIO().DisplaySize.x - kEditorToolsOffsetFromRight, kSettingWindowY));
+        ImVec2(ImGui::GetIO().DisplaySize.x - EDITOR_TOOLS_OFFSERT_FROM_RIGHT, SETTING_WINDOW_Y));
     ImGui::Begin("Setting", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-    bool flag = grid_draw_->GetDrawFlag();
+    bool flag = m_pGridDraw->GetDrawFlag();
     if (ImGui::Checkbox("Grid", &flag))
     {
-        grid_draw_->SetDrawFlag(flag);
+        m_pGridDraw->SetDrawFlag(flag);
     }
     ImGui::Separator();
     if (ImGui::Button("Export"))
@@ -280,16 +280,16 @@ void Button::DrawHierarchy()
     ImGui::SetNextWindowSizeConstraints(ImVec2(120, 0), ImVec2(FLT_MAX, FLT_MAX));
     ImGui::Begin("Hierarchy", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
-    const std::vector<StageDataInfo>& stage_data = data_->GetStageDataInfo();
+    const std::vector<StageDataInfo>& stage_data = m_pData->GetStageDataInfo();
 
     std::unordered_map<std::string, int> nameCounts;
     for (int i = 0; i < stage_data.size(); i++)
     {
-        bool is_select = (select_id == i);
-        std::string name = stage_data[i].model_name_;
+        bool is_select = (m_pSelectId == i);
+        std::string name = stage_data[i].modelName;
 
         // すでに同じ名前が登録されているか確認
-        if (nameCounts.find(name) != nameCounts.end())
+        if (nameCounts.contains(name))
         {
             // 2回目以降の出現なので、カウントを増やして名前に反映
             nameCounts[name]++;
@@ -302,9 +302,9 @@ void Button::DrawHierarchy()
         }
         if (ImGui::Selectable(name.c_str(), is_select))
         {
-            data_->SetModel(i);
+            m_pData->SetModel(i);
             ObjectManager::FindGameObject<Controller>()->SetCatchFlag(true);
-            select_id = i;
+            m_pSelectId = i;
         }
     }
     ImGui::End();

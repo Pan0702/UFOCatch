@@ -2,21 +2,21 @@
 #include "Camera.h"
 #include "RandomPlacer.h"
 #include "UndoManager.h"
-#include "../Object3D.h"
+#include "../Common/Object3D.h"
 #include "TRSObject/TRS.h"
 
 class Controller : public Object3D
 {
 private:
-    Camera*                         camera_;
-    TRS*                            trs_;
-    CDirectInput*                   input_;
-    UndoManager*                    undo_manager_;
-    StageData*                      stage_data_;
-    RandomPlacer*                   random_placer_ = nullptr;
-    bool                            is_catch_ = false;
-    bool                            is_random_placer_ = false;
-    int                             copy_object_index_ = -1;
+    Camera*                         m_pCamera;
+    TRS*                            m_pTrs;
+    CDirectInput*                   m_pInput;
+    StageData*                      m_pStageData;
+    std::unique_ptr<UndoManager>    m_pUndoManager;
+    std::unique_ptr<RandomPlacer>   m_pRandomPlacer = nullptr;
+    bool                            m_isCatch = false;
+    bool                            m_isRandomPlacer = false;
+    int                             m_copyObjectIndex = -1;
 
 private:
     void Update() override;

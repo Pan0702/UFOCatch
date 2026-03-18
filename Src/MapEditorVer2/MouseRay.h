@@ -1,5 +1,5 @@
 #pragma once
-#include "../Object3D.h"
+#include "../Common/Object3D.h"
 
 /// <summary>
 /// ワールド空間上のレイ（半直線）

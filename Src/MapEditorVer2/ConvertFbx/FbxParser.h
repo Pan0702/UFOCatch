@@ -3,7 +3,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include "../../MyMath.h"
+#include "../../Utils/MyMath.h"
 
 // .mesh ファイルの頂点構造体（stride = 32 bytes）
 struct MeshVertex
@@ -21,20 +21,20 @@ private:
     struct Node
     {
         std::string name;
-        uint64_t    prop_start  = 0;
-        uint64_t    prop_len    = 0;
-        uint64_t    child_start = 0;
+        uint64_t    propStart  = 0;
+        uint64_t    propLen    = 0;
+        uint64_t    childStart = 0;
         uint64_t    end         = 0;
         std::vector<Node> children;
     };
 
-    std::vector<uint8_t> data_;
-    uint32_t             version_ = 0;
-    bool                 is64bit_ = false;
-    std::vector<Node>    roots_;
+    std::vector<uint8_t> m_data;
+    uint32_t             m_version = 0;
+    bool                 m_is64bit = false;
+    std::vector<Node>    m_roots;
     // Connections から構築するルックアップテーブル
-    std::unordered_map<int64_t, Node*>   model_map_;          // Model ID → Node*
-    std::unordered_map<int64_t, int64_t> model_parent_map_;   // Model ID → 親 Model ID
+    std::unordered_map<int64_t, Node*>   m_modelMap;          // Model ID → Node*
+    std::unordered_map<int64_t, int64_t> m_modelParentMap;   // Model ID → 親 Model ID
 
 public:
     /// <summary>
@@ -49,12 +49,12 @@ public:
     /// Objects 直下の全 Geometry を結合して1つのメッシュとして出力する。
     /// 各 Geometry に対応する Model のローカル Transform (T/R/S) を適用する。
     /// </summary>
-    /// <param name="out_verts">出力頂点配列</param>
-    /// <param name="out_indices">出力インデックス配列</param>
+    /// <param name="outVerts">出力頂点配列</param>
+    /// <param name="outIndices">出力インデックス配列</param>
     /// <returns>成功で true</returns>
     bool ExtractMesh(
-        std::vector<MeshVertex>& out_verts,
-        std::vector<uint32_t>&   out_indices);
+        std::vector<MeshVertex>& outVerts,
+        std::vector<uint32_t>&   outIndices);
     
     // FBX に埋め込まれたテクスチャのファイル名を取得する
     // RelativeFilename が空なら FileName のファイル名部分を返す
@@ -67,14 +67,14 @@ private:
     /// </summary>
     /// <param name="geometry">展開する Geometry ノード</param>
     /// <param name="model">対応する Model ノード（nullptr の場合は Transform なし）</param>
-    /// <param name="out_verts">追記先の頂点配列</param>
-    /// <param name="out_indices">追記先のインデックス配列</param>
+    /// <param name="outVerts">追記先の頂点配列</param>
+    /// <param name="outIndices">追記先のインデックス配列</param>
     /// <returns>成功で true。Vertices のない Geometry はスキップして true を返す</returns>
     bool ExtractGeometry(
         Node*                    geometry,
         Node*                    model,
-        std::vector<MeshVertex>& out_verts,
-        std::vector<uint32_t>&   out_indices);
+        std::vector<MeshVertex>& outVerts,
+        std::vector<uint32_t>&   outIndices);
 
     /// <summary>
     /// ノードの最初のプロパティ（ID）を int64_t で読む。
@@ -101,7 +101,7 @@ private:
     T Read(uint64_t offset) const
     {
         T v{};
-        memcpy(&v, data_.data() + offset, sizeof(T));
+        memcpy(&v, m_data.data() + offset, sizeof(T));
         return v;
     }
 
@@ -110,16 +110,16 @@ private:
     template<typename T>
     std::vector<T> ReadTypedArray(uint64_t offset);
 
-    Node              ReadNodeHeader(uint64_t offset, uint64_t& out_end) const;
+    Node              ReadNodeHeader(uint64_t offset, uint64_t& outEnd) const;
     std::vector<Node> ParseChildren(uint64_t start, uint64_t end);
     static Node*             FindNode(std::vector<Node>& nodes, const std::string& name);
 
     /// <summary>指定ノードの子から double 配列プロパティを読み込む</summary>
-    std::vector<double>  ReadDoubleArray(Node* parent, const std::string& node_name);
+    std::vector<double>  ReadDoubleArray(Node* parent, const std::string& nodeName);
 
     /// <summary>指定ノードの子から int32 配列プロパティを読み込む</summary>
-    std::vector<int32_t> ReadIntArray(Node* parent, const std::string& node_name);
+    std::vector<int32_t> ReadIntArray(Node* parent, const std::string& nodeName);
 
     /// <summary>指定ノードの子から文字列プロパティを読み込む</summary>
-    std::string          ReadString(Node* parent, const std::string& node_name) const;
+    std::string          ReadString(Node* parent, const std::string& nodeName) const;
 };

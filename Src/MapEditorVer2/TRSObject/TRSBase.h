@@ -1,5 +1,5 @@
 #pragma once
-#include "../../Object3D.h"
+#include "../../Common/Object3D.h"
 #include "../MouseRay.h"
 #include <d3d11.h>
 

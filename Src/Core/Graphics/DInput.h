@@ -193,6 +193,9 @@ public:
     bool GetMouse(void);
     bool CheckMouse(const int& nButton, const DWORD& nMode);
     DIMOUSESTATE GetMouseState(void);
+    float GetMouseWheel() const;
+    bool IsMouseMove() const;
+    bool IsMoveInput();
     POINT GetMousePos(); // 繝槭え繧ｹ縺ｮ迴ｾ蝨ｨ縺ｮ蠎ｧ讓吶ｒ蜿門ｾ・
     void ShowMouseCursor(bool bFlag);
     bool InitMouse(HWND);

@@ -6,12 +6,12 @@
 using json = nlohmann::json;
 
 // モデル名とTransformをJSONオブジェクトに変換して返す
-json ExportData::TransformToJson(const std::string& model_name, const Transform& transform)
+json ExportData::TransformToJson(const std::string& modelName, const Transform& transform)
 {
     json j;
-    const char* p = ObjectManager::FindGameObject<CModelStorage>()->GetModelPath(model_name);
+    const char* p = ObjectManager::FindGameObject<CModelStorage>()->GetModelPath(modelName);
     j["path"]       = p;
-    j["model_name"] = model_name;
+    j["model_name"] = modelName;
 
     // position / rotation / scale それぞれを x,y,z のオブジェクトとして格納
     j["transform"]["position"] = { {"x", transform.position.x}, {"y", transform.position.y}, {"z", transform.position.z} };
@@ -29,7 +29,7 @@ void ExportData::ExportAllModels(const std::string& file_name,
 
     for (const auto& item : model_list)
     {
-        root.push_back(TransformToJson(item.model_name_, item.transform_));
+        root.push_back(TransformToJson(item.modelName, item.transform));
     }
     
     std::ofstream file(file_name);

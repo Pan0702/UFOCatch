@@ -4,7 +4,7 @@
 #include "GridDraw.h"
 #include "ModelCreator.h"
 #include "StageData.h"
-#include "../Object3D.h"
+#include "../Common/Object3D.h"
 
 static constexpr int PREVIEW_SIZE = 128;
 
@@ -44,13 +44,13 @@ class Button : public Object3D
 {
 
 private:
-    VECTOR3 world_position_;
-    std::vector<ImageButtonData> image_buttons_;
-    std::vector<ModelPreviewRT>  model_previews_;
-    ModelCreator* model_creator_;
-    GridDraw* grid_draw_;
-    StageData* data_;
-    int select_id;
+    VECTOR3 m_worldPosition;
+    std::vector<ImageButtonData> m_imageButtons;
+    std::vector<ModelPreviewRT>  m_modelpreviews;
+    ModelCreator* m_pModelCreator;
+    GridDraw* m_pGridDraw;
+    StageData* m_pData;
+    int m_pSelectId;
     
 
 public:
@@ -59,25 +59,22 @@ public:
     void Update() override;
 
     /// <summary>指定IDのボタンをリストに追加する。メッシュが渡された場合はプレビューテクスチャを生成する</summary>
-    /// <param name="button_ID">ボタンの識別ID（モデル名）</param>
-    /// <param name="mesh">プレビュー用メッシュ（省略可）</param>
+    /// <param name="buttonId">ボタンの識別ID（モデル名）</param>
+    /// <param name="pMesh">プレビュー用メッシュ（省略可）</param>
     /// <param name="size">ボタンサイズ（デフォルト64x64）</param>
-    void AddButton(const std::string& button_ID, CFbxMesh* mesh = nullptr,const ImVec2& size = ImVec2(64, 64));
+    void AddButton(const std::string& buttonId, CFbxMesh* pMesh = nullptr,const ImVec2& size = ImVec2(64, 64));
 
 private:
-    /// <summary>初期ボタン群を生成する（未使用）</summary>
-    void InitializeButtons();
-
     /// <summary>isRenderTextureでないボタンのテクスチャをすべて解放してリストをクリアする</summary>
     void ReleaseAllTextures();
 
     /// <summary>ImageButtonDataの内容に応じてImGuiのボタンを1つ描画する</summary>
     /// <param name="buttonData">描画するボタンのデータ</param>
-    void CreateImageButton(const ImageButtonData& buttonData);
+    static void CreateImageButton(const ImageButtonData& buttonData);
 
     /// <summary>ボタンがクリックされたとき、対応モデルをステージに追加する</summary>
-    /// <param name="buttonID">クリックされたボタンのID</param>
-    static void HandleButtonClick(const std::string& buttonID);
+    /// <param name="buttonId">クリックされたボタンのID</param>
+    static void HandleButtonClick(const std::string& buttonId);
 
     /// <summary>エディタUIのImGuiウィンドウ（モデル追加・エクスポート・グリッド設定）を描画する</summary>
     void DebugImGui();

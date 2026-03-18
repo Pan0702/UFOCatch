@@ -1,26 +1,26 @@
 #pragma once
 #include "MouseRay.h"
-#include "../ModelStorage.h"
-#include "../Object3D.h"
+#include "../Framework/ResourceManager.h"
+#include "../Common/Object3D.h"
 
 struct StageDataInfo
 {
-    Transform transform_;
-    std::string model_name_;
+    Transform transform;
+    std::string modelName;
     StageDataInfo()
     {
-        transform_.position = VECTOR3(0, 0, 0);
-        model_name_ = "";
+        transform.position = VECTOR3(0, 0, 0);
+        modelName = "";
     }
     StageDataInfo(const std::string& model_name,const VECTOR3& pos)
     {
-        model_name_ = std::move(model_name);
-        transform_.position = pos;
+        modelName = model_name;
+        transform.position = pos;
     }
     StageDataInfo(const std::string& model_name,const Transform& t)
     {
-        model_name_ = std::move(model_name);
-        transform_ = t;
+        modelName = std::move(model_name);
+        transform = t;
     }
 };
 
@@ -28,9 +28,9 @@ class StageData : public Object3D
 {
 private:
 
-    std::vector<StageDataInfo> stage_data_;
-    CModelStorage* model_storage_;
-    int selected_model_ = -1;
+    std::vector<StageDataInfo> m_stageData;
+    * model_storage_;
+    int m_selectedModel = -1;
 private:
     void Draw () override;
 public:
@@ -39,15 +39,15 @@ public:
 
     /// <summary>指定座標とモデル名でオブジェクトをステージに追加する</summary>
     /// <param name="pos">配置するワールド座標</param>
-    /// <param name="model_name">使用するモデルの名前</param>
-    void AddModel(const VECTOR3& pos, const std::string& model_name);
+    /// <param name="modelName">使用するモデルの名前</param>
+    void AddModel(const VECTOR3& pos, const std::string& modelName);
     
-    void AddModel(const Transform& t ,const std::string&model_name);
+    void AddModel(const Transform& t ,const std::string&modelName);
     
     /// <summary>Transform  全体を指定してオブジェクト をステージに追加する（インポート用）</summary>               
-    /// <param name="model_name">使用する モデルの名前</param>        
+    /// <param name="modelName">使用する モデルの名前</param>        
     /// <param name="transform">配置するTransform（位置・回転・スケール）</param>  
-    void AddModelWithTransform(const std::string& model_name, const Transform& transform);
+    void AddModelWithTransform(const std::string& modelName, const Transform& transform);
 
     /// <summary>ステージデータをJSONファイルにエクスポートする</summary>
     /// <param name="filename">出力ファイル名（拡張子なし）</param>

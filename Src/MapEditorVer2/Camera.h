@@ -1,5 +1,5 @@
 #pragma once
-#include "../Object3D.h"
+#include "../Common/Object3D.h"
 class Camera : public Object3D
 {
 public:

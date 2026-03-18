@@ -19,17 +19,17 @@ namespace
 
 Controller::Controller()
 {
-    camera_ = ObjectManager::FindGameObject<Camera>();
-    trs_ = ObjectManager::FindGameObject<TRS>();
-    stage_data_ = ObjectManager::FindGameObject<StageData>();
-    input_ = GameDevice()->m_pDI;
-    undo_manager_ = new UndoManager();
-    random_placer_ = new RandomPlacer();//std::make_unique<RandomPlacer>();
+    m_pCamera = ObjectManager::FindGameObject<Camera>();
+    m_pTrs = ObjectManager::FindGameObject<TRS>();
+    m_pStageData = ObjectManager::FindGameObject<StageData>();
+    m_pInput = GameDevice()->m_pDI;
+    m_pUndoManager = std::make_unique<UndoManager>();
+    m_pRandomPlacer = std::make_unique<RandomPlacer>();
 }
 
 void Controller::SetCatchFlag(bool f)
 {
-    is_catch_ = f;
+    m_isCatch = f;
 }
 
 
@@ -40,13 +40,13 @@ void Controller::Update()
     if (!io.WantCaptureMouse)
     {
         // 右クリック中はカメラ操作を優先し、TRS 操作は無効
-        if (input_->CheckMouse(KD_DAT, DIM_RBUTTON))
+        if (m_pInput->CheckMouse(KD_DAT, DIM_RBUTTON))
         {
             CameraControl();
         }
         else
         {
-            if (is_catch_)
+            if (m_isCatch)
             {
                 // オブジェクト選択中のみキーによるモード切替を受け付ける
                 TRSControl();
@@ -54,55 +54,55 @@ void Controller::Update()
             else
             {
                 // 未選択時はギズモを非表示にする
-                trs_->SetState(TRS::State::kNone);
+                m_pTrs->SetState(TRS::State::kNone);
             }
         }
 
-        if (input_->GetMouseWheel() != 0)
+        if (m_pInput->GetMouseWheel() != 0)
         {
             Camera::Zoom();
         }
 
         // クリックした瞬間
-        if (input_->CheckMouse(KD_TRG, DIM_LBUTTON))
+        if (m_pInput->CheckMouse(KD_TRG, DIM_LBUTTON))
         {
             HandleLeftClick();
         }
 
         // 左クリック離し時にドラッグを解除
-        if (is_catch_ && input_->CheckMouse(KD_UTRG, DIM_LBUTTON))
+        if (m_isCatch && m_pInput->CheckMouse(KD_UTRG, DIM_LBUTTON))
         {
-            trs_->SetDraggingAxis(Axis::None);
+            m_pTrs->SetDraggingAxis(Axis::None);
         }
     }
 
     if (!io.WantCaptureKeyboard)
     {
-        if (input_->CheckKey(KD_TRG, DIK_F))
+        if (m_pInput->CheckKey(KD_TRG, DIK_F))
         {
             Camera::Focus();
         }
 
-        if (is_catch_)
+        if (m_isCatch)
         {
             // BackSpace / Delete でオブジェクト削除
-            bool is_delete = input_->CheckKey(KD_TRG, DIK_BACK) || input_->CheckKey(KD_TRG, DIK_DELETE);
+            bool is_delete = m_pInput->CheckKey(KD_TRG, DIK_BACK) || m_pInput->CheckKey(KD_TRG, DIK_DELETE);
             if (is_delete)
             {
-                trs_->SetState(TRS::State::kNone);
-                undo_manager_->DeleteObjectPush();
-                stage_data_->DeleteModel();
-                is_catch_ = false;
+                m_pTrs->SetState(TRS::State::kNone);
+                m_pUndoManager->DeleteObjectPush();
+                m_pStageData->DeleteModel();
+                m_isCatch = false;
             }
         }
 
-        if (input_->CheckKey(KD_TRG, DIK_C) && input_->CheckKey(KD_DAT, DIK_LCONTROL))
+        if (m_pInput->CheckKey(KD_TRG, DIK_C) && m_pInput->CheckKey(KD_DAT, DIK_LCONTROL))
         {
-            copy_object_index_ = stage_data_->GetSelectIndex();
+            m_copyObjectIndex = m_pStageData->GetSelectIndex();
         }
-        if (input_->CheckKey(KD_TRG, DIK_V) && input_->CheckKey(KD_DAT, DIK_LCONTROL))
+        if (m_pInput->CheckKey(KD_TRG, DIK_V) && m_pInput->CheckKey(KD_DAT, DIK_LCONTROL))
         {
-            stage_data_->CopyModel(copy_object_index_);
+            m_pStageData->CopyModel(m_copyObjectIndex);
         }
 
         HandleUndoRedo();
@@ -116,85 +116,85 @@ void Controller::HandleLeftClick()
     const Ray ray = MouseRay::Create();
 
     // ギズモへのクリックを優先判定。当たった場合はオブジェクト選択判定を行わない
-    const Axis a = trs_->RayHitTest(ray);
+    const Axis a = m_pTrs->RayHitTest(ray);
     if (a != Axis::None)
     {
-        if (is_random_placer_)
+        if (m_isRandomPlacer)
         {
-            undo_manager_->Push(random_placer_->GetTransform());
+            m_pUndoManager->Push(m_pRandomPlacer->GetTransform());
         }else
         {
             // ドラッグ開始前に現状態を保存
-            undo_manager_->Push();  
+            m_pUndoManager->Push();  
         }
   
-        trs_->SetDraggingAxis(a);
+        m_pTrs->SetDraggingAxis(a);
         return;
     }
 
     // ギズモに当たらなかった場合はステージオブジェクトの選択判定
     MeshCollider::CollInfo hit;
-    const int index = stage_data_->RayHitTest(ray, &hit);
+    const int index = m_pStageData->RayHitTest(ray, &hit);
     if (index >= 0)
     {
-        is_catch_ = true;
-        stage_data_->SetModel(index);
+        m_isCatch = true;
+        m_pStageData->SetModel(index);
     }
     else
     {
-        is_catch_ = false;
+        m_isCatch = false;
     }
 }
 
 // Ctrl+Z/Ctrl+YでUndo/Redoを実行する
 void Controller::HandleUndoRedo() const
 {
-    if (input_->CheckKey(KD_DAT, DIK_LCONTROL))
+    if (m_pInput->CheckKey(KD_DAT, DIK_LCONTROL))
     {
-        if (input_->CheckKey(KD_TRG, DIK_Z)) undo_manager_->Undo();
-        if (input_->CheckKey(KD_TRG, DIK_Y)) undo_manager_->Redo();
+        if (m_pInput->CheckKey(KD_TRG, DIK_Z)) m_pUndoManager->Undo();
+        if (m_pInput->CheckKey(KD_TRG, DIK_Y)) m_pUndoManager->Redo();
     }
 }
 
 void Controller::Random()
 {
-    if (random_placer_ == nullptr) return;  
-    if (is_random_placer_)
+    if (m_pRandomPlacer == nullptr) return;  
+    if (m_isRandomPlacer)
     {
-        random_placer_->SetDrawFlag(true);
-        trs_->SetOverrideTarget(random_placer_->GetTransform());
-        trs_->SetState(TRS::State::kTranslation);
-        is_catch_ = true;  // ギズモ表示ON
+        m_pRandomPlacer->SetDrawFlag(true);
+        m_pTrs->SetOverrideTarget(m_pRandomPlacer->GetTransform());
+        m_pTrs->SetState(TRS::State::kTranslation);
+        m_isCatch = true;  // ギズモ表示ON
     }else
     {
-        random_placer_->SetDrawFlag(false);
-        trs_->SetOverrideTarget(nullptr);
-        trs_->SetState(TRS::State::kNone);
-        is_catch_ = false;
+        m_pRandomPlacer->SetDrawFlag(false);
+        m_pTrs->SetOverrideTarget(nullptr);
+        m_pTrs->SetState(TRS::State::kNone);
+        m_isCatch = false;
     }
 }
 
 // W/E/R/Qキーでアクティブなギズモモードを切り替える
 void Controller::TRSControl() const
 {
-    if (input_->CheckKey(KD_TRG, DIK_W))
+    if (m_pInput->CheckKey(KD_TRG, DIK_W))
     {
-        trs_->SetState(TRS::State::kTranslation);
+        m_pTrs->SetState(TRS::State::kTranslation);
     }
 
-    if (input_->CheckKey(KD_TRG, DIK_E))
+    if (m_pInput->CheckKey(KD_TRG, DIK_E))
     {
-        trs_->SetState(TRS::State::kRotation);
+        m_pTrs->SetState(TRS::State::kRotation);
     }
 
-    if (input_->CheckKey(KD_TRG, DIK_R))
+    if (m_pInput->CheckKey(KD_TRG, DIK_R))
     {
-        trs_->SetState(TRS::State::kScaling);
+        m_pTrs->SetState(TRS::State::kScaling);
     }
 
-    if (input_->CheckKey(KD_TRG, DIK_Q))
+    if (m_pInput->CheckKey(KD_TRG, DIK_Q))
     {
-        trs_->SetState(TRS::State::kNone);
+        m_pTrs->SetState(TRS::State::kNone);
     }
 }
 
@@ -202,12 +202,12 @@ void Controller::TRSControl() const
 void Controller::CameraControl() const
 {
     //回転
-    if (input_->IsMouseMove())
+    if (m_pInput->IsMouseMove())
     {
         Camera::Rotate();
     }
     //移動
-    if (input_->IsMoveInput())
+    if (m_pInput->IsMoveInput())
     {
         Camera::Move();
     }
@@ -216,19 +216,19 @@ void Controller::CameraControl() const
 void Controller::Draw()
 {
     ImGui::Begin("Setting");
-    if (ImGui::Checkbox("Random Placer", &is_random_placer_))
+    if (ImGui::Checkbox("Random Placer", &m_isRandomPlacer))
     {
         Random();
     }
 
     ImGui::End();
-    if (is_random_placer_)
+    if (m_isRandomPlacer)
     {
-        random_placer_->Draw(); 
+        m_pRandomPlacer->Draw(); 
     }
-    Transform* t = stage_data_ ? stage_data_->GetSelectedTransform() : nullptr;
+    Transform* t = m_pStageData ? m_pStageData->GetSelectedTransform() : nullptr;
     if (not t) return;
-    if (not is_catch_)return;
+    if (not m_isCatch)return;
     ImGui::SetNextWindowPos(ImVec2(kTransformWindowX, kTransformWindowY), ImGuiCond_Once);
     ImGui::SetNextWindowSize(ImVec2(kTransformWindowW, kTransformWindowH), ImGuiCond_Once);
     ImGui::Begin("Transform");
@@ -241,7 +241,7 @@ void Controller::Draw()
     }
     if (ImGui::IsItemActivated())
     {
-        undo_manager_->Push();
+        m_pUndoManager->Push();
     }
     ImGui::Separator();
     VECTOR3& tmp_r = t->rotation;
@@ -252,7 +252,7 @@ void Controller::Draw()
     }
     if (ImGui::IsItemActivated())
     {
-        undo_manager_->Push();
+        m_pUndoManager->Push();
     }
     ImGui::Separator();
     ImGui::Text("Scale:    %.2f, %.2f, %.2f", t->scale.x,
@@ -262,7 +262,7 @@ void Controller::Draw()
     }
     if (ImGui::IsItemActivated())
     {
-        undo_manager_->Push();
+        m_pUndoManager->Push();
     }
     ImGui::Separator();
     ImGui::End();

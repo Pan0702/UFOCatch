@@ -16,10 +16,10 @@ public:
     bool Export(const std::string& name, const Transform& t);
 
     /// <summary>モデル名とTransformをJSONオブジェクトに変換して返す</summary>
-    /// <param name="model_name">モデルの名前</param>
+    /// <param name="modelName">モデルの名前</param>
     /// <param name="transform">変換するTransform</param>
     /// <returns>変換後のJSONオブジェクト</returns>
-    static nlohmann::json TransformToJson(const std::string& model_name, const Transform& transform);
+    static nlohmann::json TransformToJson(const std::string& modelName, const Transform& transform);
 
     /// <summary>ステージ上の全オブジェクトをJSON配列にシリアライズしてファイルに書き出す</summary>
     /// <param name="file_name">出力ファイル名（拡張子なし）</param>

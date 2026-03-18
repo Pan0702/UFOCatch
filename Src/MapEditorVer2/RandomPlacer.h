@@ -1,6 +1,6 @@
 #pragma once
 #include "UndoManager.h"
-#include "../Object3D.h"
+#include "../Common/Object3D.h"
 #include "TRSObject/TRS.h"
 
 class RandomPlacer : public Object3D

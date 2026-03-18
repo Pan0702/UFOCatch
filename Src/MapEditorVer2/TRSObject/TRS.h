@@ -2,7 +2,7 @@
 #include "Rotation.h"
 #include "Scaling.h"
 #include "Translation.h"
-#include "../../Object3D.h"
+#include "../../Common/Object3D.h"
 
 
 class StageData;

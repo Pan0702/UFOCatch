@@ -9,10 +9,10 @@
 
 EditorScene2::EditorScene2()
 {
-    new Camera();
-    new StageData();
-    new Button();
-    new TRS();
-    new Controller();
-    new BackGraund();
+    Instantiate<Camera>();
+    Instantiate<StageData>();
+    Instantiate<Button>();
+    Instantiate<TRS>();
+    Instantiate<Controller>();
+    Instantiate<BackGraund>();
 }

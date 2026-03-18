@@ -9,6 +9,5 @@ public:
     /// 譛ｪ繝ｭ繝ｼ繝峨・繝｢繝・Ν縺ｯ閾ｪ蜍慕噪縺ｫ繝ｭ繝ｼ繝峨＠縺ｦ繝懊ち繝ｳ縺ｫ繧りｿｽ蜉縺吶ｋ縲・
     /// </summary>
     /// <param name="path">繧､繝ｳ繝昴・繝医☆繧徽SON繝輔ぃ繧､繝ｫ縺ｮ繝代せ</param>
-    static void ImportFromFile(const std::string& path);
-    
+    static void ImportModelData(const std::string& path);
 };
