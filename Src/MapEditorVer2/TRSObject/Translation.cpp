@@ -1,4 +1,4 @@
-#include "Translation.h"
+﻿#include "Translation.h"
 
 
 CTranslation::CTranslation()
@@ -7,19 +7,20 @@ CTranslation::CTranslation()
     transform.scale = VECTOR3(5,5,5);
     SetDrawOrder(10);
 }
-// X/Y/Z軸の移動ギズモメッシュとコライダーを初期化する
+// X/Y/Z霆ｸ縺ｮ遘ｻ蜍輔ぐ繧ｺ繝｢繝｡繝・す繝･縺ｨ繧ｳ繝ｩ繧､繝繝ｼ繧貞・譛溷喧縺吶ｋ
 void CTranslation::InitMeshes()
 {
     auto InitMesh = [](Info& info, const char* path)
     {
-        info.mesh_ = std::make_unique<CFbxMesh>();
-        info.mesh_->Load(path);
-        info.coll_ = std::make_unique<MeshCollider>();
-        info.coll_->MakeFromMesh(info.mesh_.get());
+        info.mesh = std::make_unique<CFbxMesh>();
+        info.mesh->Load(path);
+        info.coll = std::make_unique<MeshCollider>();
+        info.coll->MakeFromMesh(info.mesh.get());
     };
-    InitMesh(x_info_,"data/Editor/Translate/X.mesh");
-    InitMesh(y_info_,"data/Editor/Translate/Y.mesh");
-    InitMesh(z_info_,"data/Editor/Translate/Z.mesh");
+    InitMesh(xInfo,"data/Editor/Translate/X.mesh");
+    InitMesh(yInfo,"data/Editor/Translate/Y.mesh");
+    InitMesh(zInfo,"data/Editor/Translate/Z.mesh");
 }
+
 
 

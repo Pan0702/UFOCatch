@@ -15,3 +15,4 @@ void CDestroy::Enter()
     m_pOwner->DestroyMe();
 }
 
+

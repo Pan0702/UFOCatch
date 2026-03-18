@@ -28,3 +28,4 @@ private:
 
 	WipeAnimator m_wipeAnim{ 2 };
 };
+

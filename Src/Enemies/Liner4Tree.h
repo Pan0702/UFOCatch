@@ -185,3 +185,4 @@ private:
     int m_maxLevel;
     VECTOR4 m_area;
 };
+

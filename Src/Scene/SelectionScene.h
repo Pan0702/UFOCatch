@@ -34,3 +34,4 @@ private:
     int m_play = 0;
     WipeAnimator m_wipeAnim{ 3 };
 };
+

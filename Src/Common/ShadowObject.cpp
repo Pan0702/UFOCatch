@@ -70,3 +70,4 @@ void CShadowObject::Draw()
         CIRCLE_ALPHA
     );
 }
+

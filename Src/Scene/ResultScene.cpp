@@ -93,3 +93,4 @@ void CResultScene::DrawResultNum(int result,int srcY)
         m_pSprite->Draw(m_pRankImage.get(),1000 + i * 73,srcY, 68 * num,540,68,103);  // 謨ｰ蟄礼判蜒上ｒ讓ｪ縺ｫ荳ｦ縺ｹ縺ｦ謠冗判 //
     }
 }
+

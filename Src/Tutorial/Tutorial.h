@@ -29,3 +29,4 @@ private:
     CTutorialState* m_pCurrentState;
     std::unordered_map<CTutorialState::State, std::unique_ptr<CTutorialState>> m_states;
 };
+

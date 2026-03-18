@@ -84,3 +84,4 @@ void CPlayerHP::ResetFlag()
 {
     m_seemToFind = false;
 }
+

@@ -86,3 +86,4 @@ public:
     // @param radius 險ｭ螳壹☆繧句濠蠕・//
     void SetCircleRadius(const float& radius) { m_circleInfo.SetRadius(radius); }
 };
+

@@ -198,3 +198,4 @@ void CDisplayInfo::CutIn(int num)
 {
     m_pSprite->Draw(m_pLogo, 400, 185, 0, 141 * num, 605, 141);
 }
+

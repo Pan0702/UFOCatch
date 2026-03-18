@@ -83,3 +83,4 @@ FlogInfo CFlog::CalcFlogInfo(const std::vector<CSheep*>& manySheep) const
     // maxDistance縺ｯ莠御ｹ怜､縺ｮ縺ｾ縺ｾ霑斐☆・域ｯ碑ｼ・・縺ｧPow2()繧剃ｽｿ縺・ｼ・
     return info;
 }
+

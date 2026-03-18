@@ -15,3 +15,4 @@ public:
 private:
     CHuman* m_pOwner;
 };
+

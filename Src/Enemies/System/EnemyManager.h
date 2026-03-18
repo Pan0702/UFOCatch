@@ -63,3 +63,4 @@ private:
     CFbxMesh* m_pMesh;
     class CMeshCollider* m_pMeshCol;
 };
+

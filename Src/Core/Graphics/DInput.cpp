@@ -424,6 +424,25 @@ DIMOUSESTATE CDirectInput::GetMouseState( void )
     return  m_dims;
 }
 
+float CDirectInput::GetMouseWheel() const
+{
+   return static_cast<float>(m_dims.lZ);
+}
+
+bool CDirectInput::IsMouseMove() const
+{
+   return (m_dims.lX != 0 || m_dims.lY != 0);
+}
+
+bool CDirectInput::IsMoveInput()
+{
+   if (CheckKey(KD_DAT, DIK_W)) return true;
+   if (CheckKey(KD_DAT, DIK_A)) return true;
+   if (CheckKey(KD_DAT, DIK_S)) return true;
+   if (CheckKey(KD_DAT, DIK_D)) return true;
+   return false;
+}
+
 //-----------------------------------------------------------------------------
 // ・ｽ}・ｽE・ｽX・ｽ・ｽ・ｽW・ｽｾゑｿｽ(mouse)
 //

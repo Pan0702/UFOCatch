@@ -109,3 +109,4 @@ bool CAnimalChicken::ShouldApplyGravity() const
 {
     return m_pComponent != m_components.at(CBaseState::State::SUCTION).get();
 }
+

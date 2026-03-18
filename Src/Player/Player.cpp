@@ -205,3 +205,4 @@ void CPlayer::Draw()
         Object3D::Draw();
     }
 }
+

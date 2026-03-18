@@ -1,4 +1,4 @@
-#include "FbxParser.h"
+﻿#include "FbxParser.h"
 
 #include <cmath>
 #include <fstream>
@@ -8,119 +8,114 @@
 #include <windows.h>
 #include <zlib.h>
 
-#include "../../MyMath.h"
+#include "../../Utils/MyMath.h"
 
-namespace
-{
-    constexpr char kFbxMagic[] = "Kaydara FBX Binary  \x00\x1a\x00";
-    constexpr int kFbxMagicSize = 23;
-    constexpr uint64_t kVersionOffset = 23;
-    constexpr uint32_t kVersion64bit = 7500;
-}
 
 // ----------------------------------------------------------------
-//  FBX バイナリファイルを読み込む
+//  FBX 繝舌う繝翫Μ繝輔ぃ繧､繝ｫ繧定ｪｭ縺ｿ霎ｼ繧
 // ----------------------------------------------------------------
 bool FbxParser::Load(const std::string& path)
 {
     std::ifstream file(path, std::ios::binary);
     if (!file)
     {
-        MessageBoxA(nullptr, ("FBX ファイルを開けません: " + path).c_str(),
+        MessageBoxA(nullptr, ("FBX 繝輔ぃ繧､繝ｫ繧帝幕縺代∪縺帙ｓ: " + path).c_str(),
                     "FbxParser", MB_OK | MB_ICONERROR);
         return false;
     }
 
     file.seekg(0, std::ios::end);
-    data_.resize(static_cast<size_t>(file.tellg()));
+    m_data.resize(static_cast<size_t>(file.tellg()));
     file.seekg(0);
-    file.read(reinterpret_cast<char*>(data_.data()),
-              static_cast<std::streamsize>(data_.size()));
+    file.read(reinterpret_cast<char*>(m_data.data()),
+              static_cast<std::streamsize>(m_data.size()));
 
-    if (data_.size() < 27 ||
-        memcmp(data_.data(), kFbxMagic, kFbxMagicSize) != 0)
+    constexpr char kFbxMagic[] = "Kaydara FBX Binary  \x00\x1a\x00";
+    constexpr int kFbxMagicSize = 23;
+    if (m_data.size() < 27 ||
+        memcmp(m_data.data(), kFbxMagic, kFbxMagicSize) != 0)
     {
-        MessageBoxA(nullptr, "FBX バイナリフォーマットではありません",
+        MessageBoxA(nullptr, "FBX 繝舌う繝翫Μ繝輔か繝ｼ繝槭ャ繝医〒縺ｯ縺ゅｊ縺ｾ縺帙ｓ",
                     "FbxParser", MB_OK | MB_ICONERROR);
         return false;
     }
 
-    version_ = Read<uint32_t>(kVersionOffset);
-    is64bit_ = (version_ >= kVersion64bit);
+    constexpr uint64_t kVersionOffset = 23;
+    m_version = Read<uint32_t>(kVersionOffset);
+    constexpr uint32_t kVersion64bit = 7500;
+    m_is64bit = (m_version >= kVersion64bit);
 
-    roots_ = ParseChildren(27, data_.size());
+    m_roots = ParseChildren(27, m_data.size());
     return true;
 }
 
 // ----------------------------------------------------------------
-//  読み込んだ FBX から頂点・インデックスデータを展開する
+//  隱ｭ縺ｿ霎ｼ繧薙□ FBX 縺九ｉ鬆らせ繝ｻ繧､繝ｳ繝・ャ繧ｯ繧ｹ繝・・繧ｿ繧貞ｱ暮幕縺吶ｋ
 //
-//  仕様:
-//    - Objects 直下の全 Geometry を結合して1つのメッシュとして出力する
-//    - 各 Geometry に対応する Model の ローカル Transform (T/R/S) を適用する
-//      （親 Model の Transform は適用しない）
-//    - 頂点の一意性は (pos_idx, uv_idx) の組み合わせで判定する（法線は含めない）
-//    - UV の V 軸反転は行わない（シェーダー側で処理する）
+//  莉墓ｧ・
+//    - Objects 逶ｴ荳九・蜈ｨ Geometry 繧堤ｵ仙粋縺励※1縺､縺ｮ繝｡繝・す繝･縺ｨ縺励※蜃ｺ蜉帙☆繧・
+//    - 蜷・Geometry 縺ｫ蟇ｾ蠢懊☆繧・Model 縺ｮ 繝ｭ繝ｼ繧ｫ繝ｫ Transform (T/R/S) 繧帝←逕ｨ縺吶ｋ
+//      ・郁ｦｪ Model 縺ｮ Transform 縺ｯ驕ｩ逕ｨ縺励↑縺・ｼ・
+//    - 鬆らせ縺ｮ荳諢乗ｧ縺ｯ (pos_idx, uv_idx) 縺ｮ邨・∩蜷医ｏ縺帙〒蛻､螳壹☆繧具ｼ域ｳ慕ｷ壹・蜷ｫ繧√↑縺・ｼ・
+//    - UV 縺ｮ V 霆ｸ蜿崎ｻ｢縺ｯ陦後ｏ縺ｪ縺・ｼ医す繧ｧ繝ｼ繝繝ｼ蛛ｴ縺ｧ蜃ｦ逅・☆繧具ｼ・
 // ----------------------------------------------------------------
-bool FbxParser::ExtractMesh(
-    std::vector<MeshVertex>& out_verts,
-    std::vector<uint32_t>& out_indices)
+bool FbxParser::ExtractMesh(std::vector<MeshVertex>& outVerts,std::vector<uint32_t>& outIndices)
 {
-    Node* objects = FindNode(roots_, "Objects");
+    Node* objects = FindNode(m_roots, "Objects");
     if (!objects)
     {
-        MessageBoxA(nullptr, "FBX: Objects ノードが見つかりません",
+        MessageBoxA(nullptr, "FBX: Objects 繝弱・繝峨′隕九▽縺九ｊ縺ｾ縺帙ｓ",
                     "FbxParser", MB_OK | MB_ICONERROR);
         return false;
     }
 
-    // --- Model ID → Node のマップを作成 ---
-    model_map_.clear();
+    // --- Model ID 竊・Node 縺ｮ繝槭ャ繝励ｒ菴懈・ ---
+    m_modelMap.clear();
     for (auto& child : objects->children)
     {
         if (child.name == "Model")
-            model_map_[ReadNodeId(child.prop_start)] = &child;
+            m_modelMap[ReadNodeId(child.propStart)] = &child;
     }
-    
-    // --- Geometry ID セットを作成 ---
+
+    // --- Geometry ID 繧ｻ繝・ヨ繧剃ｽ懈・ ---
     std::unordered_map<int64_t, Node*> geo_map;
     for (auto& child : objects->children)
     {
         if (child.name == "Geometry")
-            geo_map[ReadNodeId(child.prop_start)] = &child;
+            geo_map[ReadNodeId(child.propStart)] = &child;
     }
 
-    // --- Connections から接続情報を収集 ---
-    //   geo_to_model      : Geometry ID → 直接の親 Model ID
-    //   model_parent_map_ : Model ID    → 親 Model ID（グローバル行列の再帰計算用）
+    // --- Connections 縺九ｉ謗･邯壽ュ蝣ｱ繧貞庶髮・---
+    //   geo_to_model      : Geometry ID 竊・逶ｴ謗･縺ｮ隕ｪ Model ID
+    //   model_parent_map_ : Model ID    竊・隕ｪ Model ID・医げ繝ｭ繝ｼ繝舌Ν陦悟・縺ｮ蜀榊ｸｰ險育ｮ礼畑・・
     std::unordered_map<int64_t, int64_t> geo_to_model;
-    model_parent_map_.clear();
-    Node* conn_node = FindNode(roots_, "Connections");
+    m_modelParentMap.clear();
+    const Node* conn_node = FindNode(m_roots, "Connections");
     if (conn_node)
     {
         for (auto& c : conn_node->children)
         {
             if (c.name != "C") continue;
-            uint64_t off = c.prop_start;
-            // conn_type (S) をスキップ
-            if (off < data_.size() && data_[off] == 'S')
+            uint64_t off = c.propStart;
+            // conn_type (S) 繧偵せ繧ｭ繝・・
+            if (off < m_data.size() && m_data[off] == 'S')
             {
                 uint32_t l = Read<uint32_t>(off + 1);
                 off += 5 + l;
             }
-            // タグを実際に読んでオフセットを正確に進める
-            uint8_t tag1 = data_[off];
-            int64_t id1  = ReadNodeId(off);
+            // 繧ｿ繧ｰ繧貞ｮ滄圀縺ｫ隱ｭ繧薙〒繧ｪ繝輔そ繝・ヨ繧呈ｭ｣遒ｺ縺ｫ騾ｲ繧√ｋ
+            const uint8_t tag1 = m_data[off];
+            const int64_t id1 = ReadNodeId(off);
             off += (tag1 == 'L') ? 9u : 5u;
-            int64_t id2  = ReadNodeId(off);
+            const int64_t id2 = ReadNodeId(off);
 
             if (geo_map.count(id1))
                 geo_to_model[id1] = id2;
-            else if (model_map_.count(id1) && model_map_.count(id2))
-                model_parent_map_[id1] = id2;
+            else if (m_modelMap.contains(id1) && m_modelMap.contains(id2))
+                m_modelParentMap[id1] = id2;
         }
     }
-    // // --- デバッグ: model_map_ / model_parent_map_ の内容を確認 ---
+    // // --- 繝・ヰ繝・げ: model_map_ / model_parent_map_ 縺ｮ蜀・ｮｹ繧堤｢ｺ隱・---
     // {
     //     char buf[256];
     //     sprintf_s(buf, "[FbxParser] model_map_ size=%zu  model_parent_map_ size=%zu\n",
@@ -128,20 +123,20 @@ bool FbxParser::ExtractMesh(
     //     OutputDebugStringA(buf);
     // }
     //
-    // // --- デバッグ: geo_to_model の内容を確認 ---
+    // // --- 繝・ヰ繝・げ: geo_to_model 縺ｮ蜀・ｮｹ繧堤｢ｺ隱・---
     // {
     //     char buf[256];
     //     sprintf_s(buf, "[FbxParser] geo_map size=%zu  geo_to_model size=%zu\n",
     //               geo_map.size(), geo_to_model.size());
     //     OutputDebugStringA(buf);
     // }
-    // --- 全 Geometry を展開して結合 ---
-    out_verts.clear();
-    out_indices.clear();
+    // --- 蜈ｨ Geometry 繧貞ｱ暮幕縺励※邨仙粋 ---
+    outVerts.clear();
+    outIndices.clear();
 
     if (geo_map.empty())
     {
-        MessageBoxA(nullptr, "FBX: Geometry ノードが見つかりません",
+        MessageBoxA(nullptr, "FBX: Geometry 繝弱・繝峨′隕九▽縺九ｊ縺ｾ縺帙ｓ",
                     "FbxParser", MB_OK | MB_ICONERROR);
         return false;
     }
@@ -150,24 +145,24 @@ bool FbxParser::ExtractMesh(
     {
         if (child.name != "Geometry") continue;
 
-        int64_t geo_id = ReadNodeId(child.prop_start);
+        const int64_t geo_id = ReadNodeId(child.propStart);
         Node* model = nullptr;
-        auto it = geo_to_model.find(geo_id);
+        const auto it = geo_to_model.find(geo_id);
         if (it != geo_to_model.end())
         {
-            // // --- デバッグ: ID の照合を確認 ---
+            // // --- 繝・ヰ繝・げ: ID 縺ｮ辣ｧ蜷医ｒ遒ｺ隱・---
             // char buf[256];
             // sprintf_s(buf, "[FbxParser] geo_id=%lld  model_id_from_conn=%lld  in_model_map=%s\n",
             //           geo_id, it->second,
             //           model_map_.count(it->second) ? "YES" : "NO");
             // OutputDebugStringA(buf);
 
-            
-            auto mit = model_map_.find(it->second);
-            if (mit != model_map_.end()) model = mit->second;
+
+            const auto mit = m_modelMap.find(it->second);
+            if (mit != m_modelMap.end()) model = mit->second;
         }
 
-        if (!ExtractGeometry(&child, model, out_verts, out_indices))
+        if (!ExtractGeometry(&child, model, outVerts, outIndices))
             return false;
     }
 
@@ -176,29 +171,29 @@ bool FbxParser::ExtractMesh(
 
 std::string FbxParser::GetTextureFileName() const
 {
-    // Objects 直下の最初の Texture ノードを探す
-    Node* objects = FindNode(const_cast<std::vector<Node>&>(roots_), "Objects");
+    // Objects 逶ｴ荳九・譛蛻昴・ Texture 繝弱・繝峨ｒ謗｢縺・
+     Node* objects = FindNode(const_cast<std::vector<Node>&>(m_roots), "Objects");
     if (!objects) return "";
 
     Node* tex = FindNode(objects->children, "Texture");
     if (!tex) return "";
 
-    // RelativeFilename を優先して使う
+    // RelativeFilename 繧貞━蜈医＠縺ｦ菴ｿ縺・
     Node* rel = FindNode(tex->children, "RelativeFilename");
     if (rel)
     {
-        std::string s = ReadString(rel, ""); // ノード自身のプロパティを読む
-        // ノード自身のプロパティを読む//
-        uint64_t off = rel->prop_start;
-        if (data_[off] == 'S')
+        std::string s = ReadString(rel, ""); // 繝弱・繝芽・霄ｫ縺ｮ繝励Ο繝代ユ繧｣繧定ｪｭ繧
+        // 繝弱・繝芽・霄ｫ縺ｮ繝励Ο繝代ユ繧｣繧定ｪｭ繧//
+        const uint64_t off = rel->propStart;
+        if (m_data[off] == 'S')
         {
-            uint32_t len = Read<uint32_t>(off + 1);
-            s = std::string(reinterpret_cast<const char*>(data_.data() + off + 5), len);
+            const uint32_t len = Read<uint32_t>(off + 1);
+            s = std::string(reinterpret_cast<const char*>(m_data.data() + off + 5), len);
         }
         if (!s.empty())
         {
-            // 絶対パス（"X:\" や "/" 始まり）ならファイル名部分だけ返す
-            bool is_abs = (s.size() >= 2 && s[1] == ':') || (s[0] == '/' || s[0] == '\\');
+            // 邨ｶ蟇ｾ繝代せ・・X:\" 繧・"/" 蟋九∪繧奇ｼ峨↑繧峨ヵ繧｡繧､繝ｫ蜷埼Κ蛻・□縺題ｿ斐☆
+            const bool is_abs = (s.size() >= 2 && s[1] == ':') || (s[0] == '/' || s[0] == '\\');
             if (is_abs)
             {
                 size_t pos = s.find_last_of("/\\");
@@ -208,17 +203,17 @@ std::string FbxParser::GetTextureFileName() const
         }
     }
 
-    // RelativeFilename がなければ FileName のファイル名部分だけ返す
-    Node* fn = FindNode(tex->children, "FileName");
+    // RelativeFilename 縺後↑縺代ｌ縺ｰ FileName 縺ｮ繝輔ぃ繧､繝ｫ蜷埼Κ蛻・□縺題ｿ斐☆
+    const Node* fn = FindNode(tex->children, "FileName");
     if (fn)
     {
-        uint64_t off = fn->prop_start;
-        if (data_[off] == 'S')
+        uint64_t off = fn->propStart;
+        if (m_data[off] == 'S')
         {
-            uint32_t len = Read<uint32_t>(off + 1);
-            std::string full(reinterpret_cast<const char*>(data_.data() + off + 5), len);
-            // パスの最後のファイル名だけ取り出す
-            size_t pos = full.find_last_of("/\\");
+            const uint32_t len = Read<uint32_t>(off + 1);
+            const std::string full(reinterpret_cast<const char*>(m_data.data() + off + 5), len);
+            // 繝代せ縺ｮ譛蠕後・繝輔ぃ繧､繝ｫ蜷阪□縺大叙繧雁・縺・
+            const size_t pos = full.find_last_of("/\\");
             if (pos != std::string::npos) return full.substr(pos + 1);
             return full;
         }
@@ -229,27 +224,27 @@ std::string FbxParser::GetTextureFileName() const
 
 
 // ----------------------------------------------------------------
-//  1つの Geometry ノードをローカル Transform を適用しながら展開する
+//  1縺､縺ｮ Geometry 繝弱・繝峨ｒ繝ｭ繝ｼ繧ｫ繝ｫ Transform 繧帝←逕ｨ縺励↑縺後ｉ螻暮幕縺吶ｋ
 // ----------------------------------------------------------------
 bool FbxParser::ExtractGeometry(
     Node* geometry,
     Node* model,
-    std::vector<MeshVertex>& out_verts,
-    std::vector<uint32_t>& out_indices)
+    std::vector<MeshVertex>& outVerts,
+    std::vector<uint32_t>& outIndices)
 {
-    std::vector<double> raw_pos = ReadDoubleArray(geometry, "Vertices");
-    std::vector<int32_t> poly_idx = ReadIntArray(geometry, "PolygonVertexIndex");
+    const std::vector<double> raw_pos = ReadDoubleArray(geometry, "Vertices");
+    const std::vector<int32_t> poly_idx = ReadIntArray(geometry, "PolygonVertexIndex");
     if (raw_pos.empty() || poly_idx.empty()) return true;
 
     Node* le_normal = FindNode(geometry->children, "LayerElementNormal");
     if (!le_normal)
     {
-        MessageBoxA(nullptr, "FBX: LayerElementNormal が見つかりません",
+        MessageBoxA(nullptr, "FBX: LayerElementNormal 縺瑚ｦ九▽縺九ｊ縺ｾ縺帙ｓ",
                     "FbxParser", MB_OK | MB_ICONERROR);
         return false;
     }
-    std::string norm_ref = ReadString(le_normal, "ReferenceInformationType");
-    std::vector<double> raw_norm = ReadDoubleArray(le_normal, "Normals");
+    const std::string norm_ref = ReadString(le_normal, "ReferenceInformationType");
+    const std::vector<double> raw_norm = ReadDoubleArray(le_normal, "Normals");
     std::vector<int32_t> norm_idx = {};
     if (norm_ref == "IndexToDirect")
         norm_idx = ReadIntArray(le_normal, "NormalsIndex");
@@ -257,57 +252,57 @@ bool FbxParser::ExtractGeometry(
     Node* le_uv = FindNode(geometry->children, "LayerElementUV");
     if (!le_uv)
     {
-        MessageBoxA(nullptr, "FBX: LayerElementUV が見つかりません",
+        MessageBoxA(nullptr, "FBX: LayerElementUV 縺瑚ｦ九▽縺九ｊ縺ｾ縺帙ｓ",
                     "FbxParser", MB_OK | MB_ICONERROR);
         return false;
     }
-    std::string uv_ref = ReadString(le_uv, "ReferenceInformationType");
-    std::vector<double> raw_uv = ReadDoubleArray(le_uv, "UV");
+    const std::string uv_ref = ReadString(le_uv, "ReferenceInformationType");
+    const std::vector<double> raw_uv = ReadDoubleArray(le_uv, "UV");
     std::vector<int32_t> uv_idx = {};
     if (uv_ref == "IndexToDirect")
         uv_idx = ReadIntArray(le_uv, "UVIndex");
-    
+
     MATRIX4X4 mat = GetGlobalMatrix(model);
 
-    // --- デバッグ: 行列の移動成分を確認 ---
+    // --- 繝・ヰ繝・げ: 陦悟・縺ｮ遘ｻ蜍墓・蛻・ｒ遒ｺ隱・---
     {
         char buf[256];
         sprintf_s(buf, "[FbxParser] GlobalMatrix T=(%.3f, %.3f, %.3f)\n",
                   mat.m[3][0], mat.m[3][1], mat.m[3][2]);
         OutputDebugStringA(buf);
     }
-    
-    const uint32_t vertex_offset = static_cast<uint32_t>(out_verts.size());
+
+    const uint32_t vertex_offset = static_cast<uint32_t>(outVerts.size());
     uint32_t pv_counter = 0;
     std::vector<std::pair<uint32_t, uint32_t>> face;
 
-    // ポリゴン頂点ごとに必ず新規頂点を生成し、インデックスを 0 から振り直す
+    // 繝昴Μ繧ｴ繝ｳ鬆らせ縺斐→縺ｫ蠢・★譁ｰ隕城らせ繧堤函謌舌＠縲√う繝ｳ繝・ャ繧ｯ繧ｹ繧・0 縺九ｉ謖ｯ繧顔峩縺・
     auto emit_vertex = [&](uint32_t pos_idx, uint32_t pv_idx)
     {
-        uint32_t n_idx = (norm_ref == "IndexToDirect")
+        const uint32_t n_idx = (norm_ref == "IndexToDirect")
                              ? static_cast<uint32_t>(norm_idx[pv_idx])
                              : pv_idx;
-        uint32_t u_idx = (uv_ref == "IndexToDirect")
+        const uint32_t u_idx = (uv_ref == "IndexToDirect")
                              ? static_cast<uint32_t>(uv_idx[pv_idx])
                              : pv_idx;
 
-        float px = static_cast<float>(raw_pos[pos_idx * 3 + 0]);
-        float py = static_cast<float>(raw_pos[pos_idx * 3 + 1]);
-        float pz = static_cast<float>(raw_pos[pos_idx * 3 + 2]);
-        float nx = static_cast<float>(raw_norm[n_idx * 3 + 0]);
-        float ny = static_cast<float>(raw_norm[n_idx * 3 + 1]);
-        float nz = static_cast<float>(raw_norm[n_idx * 3 + 2]);
+        const float px = static_cast<float>(raw_pos[pos_idx * 3 + 0]);
+        const float py = static_cast<float>(raw_pos[pos_idx * 3 + 1]);
+        const float pz = static_cast<float>(raw_pos[pos_idx * 3 + 2]);
+        const float nx = static_cast<float>(raw_norm[n_idx * 3 + 0]);
+        const float ny = static_cast<float>(raw_norm[n_idx * 3 + 1]);
+        const float nz = static_cast<float>(raw_norm[n_idx * 3 + 2]);
 
         MeshVertex v{};
-        // 位置にグローバル変換行列を適用する（行優先）
+        // 菴咲ｽｮ縺ｫ繧ｰ繝ｭ繝ｼ繝舌Ν螟画鋤陦悟・繧帝←逕ｨ縺吶ｋ・郁｡悟━蜈茨ｼ・
         v.position[0] = (mat.m[0][0] * px + mat.m[1][0] * py + mat.m[2][0] * pz + mat.m[3][0]) / 100.0f;
         v.position[1] = (mat.m[0][1] * px + mat.m[1][1] * py + mat.m[2][1] * pz + mat.m[3][1]) / 100.0f;
         v.position[2] = (mat.m[0][2] * px + mat.m[1][2] * py + mat.m[2][2] * pz + mat.m[3][2]) / 100.0f;
-        // 法線に回転のみ適用して再正規化する
+        // 豕慕ｷ壹↓蝗櫁ｻ｢縺ｮ縺ｿ驕ｩ逕ｨ縺励※蜀肴ｭ｣隕丞喧縺吶ｋ
         float wnx = mat.m[0][0] * nx + mat.m[1][0] * ny + mat.m[2][0] * nz;
         float wny = mat.m[0][1] * nx + mat.m[1][1] * ny + mat.m[2][1] * nz;
         float wnz = mat.m[0][2] * nx + mat.m[1][2] * ny + mat.m[2][2] * nz;
-        float len = std::sqrt(wnx * wnx + wny * wny + wnz * wnz);
+        const float len = std::sqrt(wnx * wnx + wny * wny + wnz * wnz);
         if (len > 1e-6f)
         {
             wnx /= len;
@@ -317,19 +312,19 @@ bool FbxParser::ExtractGeometry(
         v.normal[0] = wnx;
         v.normal[1] = wny;
         v.normal[2] = wnz;
-        // UV はそのまま（V 軸反転はシェーダー側で行う）
+        // UV 縺ｯ縺昴・縺ｾ縺ｾ・・ 霆ｸ蜿崎ｻ｢縺ｯ繧ｷ繧ｧ繝ｼ繝繝ｼ蛛ｴ縺ｧ陦後≧・・
         v.uv[0] = static_cast<float>(raw_uv[u_idx * 2 + 0]);
         v.uv[1] = 1.0f - static_cast<float>(raw_uv[u_idx * 2 + 1]);
 
-        uint32_t new_idx = static_cast<uint32_t>(out_verts.size() - vertex_offset);
-        out_verts.push_back(v);
-        out_indices.push_back(vertex_offset + new_idx);
+        const uint32_t new_idx = static_cast<uint32_t>(outVerts.size() - vertex_offset);
+        outVerts.push_back(v);
+        outIndices.push_back(vertex_offset + new_idx);
     };
 
     for (int32_t raw : poly_idx)
     {
-        bool is_end = (raw < 0);
-        uint32_t pos_idx = is_end ? static_cast<uint32_t>(~raw) : static_cast<uint32_t>(raw);
+        const bool is_end = (raw < 0);
+        const uint32_t pos_idx = is_end ? static_cast<uint32_t>(~raw) : static_cast<uint32_t>(raw);
         face.push_back({pos_idx, pv_counter++});
 
         if (is_end)
@@ -348,55 +343,55 @@ bool FbxParser::ExtractGeometry(
 }
 
 // ----------------------------------------------------------------
-//  ノードの最初のプロパティ（ID）を int64_t で読む
-//  FBX 7400 以前は 'I'(int32)、7500 以降は 'L'(int64)
+//  繝弱・繝峨・譛蛻昴・繝励Ο繝代ユ繧｣・・D・峨ｒ int64_t 縺ｧ隱ｭ繧
+//  FBX 7400 莉･蜑阪・ 'I'(int32)縲・500 莉･髯阪・ 'L'(int64)
 // ----------------------------------------------------------------
-int64_t FbxParser::ReadNodeId(uint64_t offset) const
+int64_t FbxParser::ReadNodeId(const uint64_t offset) const
 {
-    uint8_t tc = data_[offset];
+    const uint8_t tc = m_data[offset];
     if (tc == 'L') return Read<int64_t>(offset + 1);
-    if (tc == 'I') return static_cast<int64_t>(Read<int32_t>(offset + 1));
+    if (tc == 'I') return Read<int32_t>(offset + 1);
     return 0;
 }
 
 // ----------------------------------------------------------------
-//  Model ノードからグローバル変換行列を取得する
-//  Connections の親チェーンを再帰的に辿り、全祖先のローカル行列を結合する
-//  （FbxNode::EvaluateGlobalTransform() 相当）
+//  Model 繝弱・繝峨°繧峨げ繝ｭ繝ｼ繝舌Ν螟画鋤陦悟・繧貞叙蠕励☆繧・
+//  Connections 縺ｮ隕ｪ繝√ぉ繝ｼ繝ｳ繧貞・蟶ｰ逧・↓霎ｿ繧翫∝・逾門・縺ｮ繝ｭ繝ｼ繧ｫ繝ｫ陦悟・繧堤ｵ仙粋縺吶ｋ
+//  ・・bxNode::EvaluateGlobalTransform() 逶ｸ蠖難ｼ・
 // ----------------------------------------------------------------
 MATRIX4X4 FbxParser::GetGlobalMatrix(Node* model) const
 {
-    const MATRIX4X4 identity(1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1);
+    const MATRIX4X4 identity(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
     if (!model) return identity;
 
-    int64_t model_id = ReadNodeId(model->prop_start);
+    int64_t modelId = ReadNodeId(model->propStart);
 
-    auto parent_it = model_parent_map_.find(model_id);
-    if (parent_it != model_parent_map_.end())
+    auto parentIt = m_modelParentMap.find(modelId);
+    if (parentIt != m_modelParentMap.end())
     {
-        auto node_it = model_map_.find(parent_it->second);
-        if (node_it != model_map_.end())
+        auto nodeIt = m_modelMap.find(parentIt->second);
+        if (nodeIt != m_modelMap.end())
         {
-            // 親のグローバル行列 × 自分のローカル行列
-            MATRIX4X4 parent_global = GetGlobalMatrix(node_it->second);
-            MATRIX4X4 local = GetLocalMatrix(model);
-            return parent_global * local;
+            // 隕ｪ縺ｮ繧ｰ繝ｭ繝ｼ繝舌Ν陦悟・ ﾃ・閾ｪ蛻・・繝ｭ繝ｼ繧ｫ繝ｫ陦悟・
+            const MATRIX4X4 parentGlobal = GetGlobalMatrix(nodeIt->second);
+            const MATRIX4X4 local = GetLocalMatrix(model);
+            return parentGlobal * local;
         }
     }
 
-    // 親がいない（ルートノード）ならローカル行列がそのままグローバル行列
+    // 隕ｪ縺後＞縺ｪ縺・ｼ医Ν繝ｼ繝医ヮ繝ｼ繝会ｼ峨↑繧峨Ο繝ｼ繧ｫ繝ｫ陦悟・縺後◎縺ｮ縺ｾ縺ｾ繧ｰ繝ｭ繝ｼ繝舌Ν陦悟・
     return GetLocalMatrix(model);
 }
 
 // ----------------------------------------------------------------
-//  Model ノードからローカル変換行列 (TRS) を取得する
-//  行優先 4x4, Euler 回転順序は FBX 標準の XYZ
+//  Model 繝弱・繝峨°繧峨Ο繝ｼ繧ｫ繝ｫ螟画鋤陦悟・ (TRS) 繧貞叙蠕励☆繧・
+//  陦悟━蜈・4x4, Euler 蝗櫁ｻ｢鬆・ｺ上・ FBX 讓呎ｺ悶・ XYZ
 // ----------------------------------------------------------------
 MATRIX4X4 FbxParser::GetLocalMatrix(Node* model) const
 {
-    MATRIX4X4 m(1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1);
+    MATRIX4X4 m(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
     if (!model) return m;
-    Node* props70 = FindNode(model->children, "Properties70");
+    const Node* props70 = FindNode(model->children, "Properties70");
     if (!props70) return m;
 
     double tx = 0, ty = 0, tz = 0;
@@ -406,12 +401,12 @@ MATRIX4X4 FbxParser::GetLocalMatrix(Node* model) const
     for (auto& p : props70->children)
     {
         if (p.name != "P") continue;
-        uint64_t off = p.prop_start;
+        uint64_t off = p.propStart;
 
-        // 1つ目: プロパティ名 (S)
-        if (data_[off] != 'S') continue;
-        uint32_t slen = Read<uint32_t>(off + 1);
-        std::string pname(reinterpret_cast<const char*>(data_.data() + off + 5), slen);
+        // 1縺､逶ｮ: 繝励Ο繝代ユ繧｣蜷・(S)
+        if (m_data[off] != 'S') continue;
+        const uint32_t slen = Read<uint32_t>(off + 1);
+        const std::string pname(reinterpret_cast<const char*>(m_data.data() + off + 5), slen);
         off += 5 + slen;
 
         if (pname != "Lcl Translation" &&
@@ -419,11 +414,11 @@ MATRIX4X4 FbxParser::GetLocalMatrix(Node* model) const
             pname != "Lcl Scaling")
             continue;
 
-        // 2〜4つ目（型名, ラベル, フラグ）をスキップ
+        // 2縲・縺､逶ｮ・亥梛蜷・ 繝ｩ繝吶Ν, 繝輔Λ繧ｰ・峨ｒ繧ｹ繧ｭ繝・・
         for (int i = 0; i < 3; ++i)
         {
-            if (off >= data_.size()) break;
-            uint8_t tc = data_[off++];
+            if (off >= m_data.size()) break;
+            const uint8_t tc = m_data[off++];
             if (tc == 'S')
             {
                 uint32_t l = Read<uint32_t>(off);
@@ -435,11 +430,11 @@ MATRIX4X4 FbxParser::GetLocalMatrix(Node* model) const
             else if (tc == 'D') off += 8;
         }
 
-        // 5〜7つ目: X, Y, Z 値
+        // 5縲・縺､逶ｮ: X, Y, Z 蛟､
         auto read_val = [&]() -> double
         {
-            if (off >= data_.size()) return 0.0;
-            uint8_t tc = data_[off++];
+            if (off >= m_data.size()) return 0.0;
+            const uint8_t tc = m_data[off++];
             if (tc == 'D')
             {
                 double v = Read<double>(off);
@@ -475,12 +470,12 @@ MATRIX4X4 FbxParser::GetLocalMatrix(Node* model) const
         }
     }
 
-    // rx/ry/rz はすでに DegToRad 済みなのでそのまま渡す
-    double crx = cos(rx), srx = sin(rx);
-    double cry = cos(ry), sry = sin(ry);
-    double crz = cos(rz), srz = sin(rz);
+    // rx/ry/rz 縺ｯ縺吶〒縺ｫ DegToRad 貂医∩縺ｪ縺ｮ縺ｧ縺昴・縺ｾ縺ｾ貂｡縺・
+    const double crx = cos(rx), srx = sin(rx);
+    const double cry = cos(ry), sry = sin(ry);
+    const double crz = cos(rz), srz = sin(rz);
 
-    // 行優先 TRS 行列（R = Rz * Ry * Rx）
+    // 陦悟━蜈・TRS 陦悟・・・ = Rz * Ry * Rx・・
     m.m[0][0] = static_cast<float>(sx * (cry * crz));
     m.m[0][1] = static_cast<float>(sx * (cry * srz));
     m.m[0][2] = static_cast<float>(sx * (-sry));
@@ -501,56 +496,56 @@ MATRIX4X4 FbxParser::GetLocalMatrix(Node* model) const
 }
 
 // ----------------------------------------------------------------
-//  ノードヘッダーを読み込む（32bit / 64bit オフセットに対応）
+//  繝弱・繝峨・繝・ム繝ｼ繧定ｪｭ縺ｿ霎ｼ繧・・2bit / 64bit 繧ｪ繝輔そ繝・ヨ縺ｫ蟇ｾ蠢懶ｼ・
 // ----------------------------------------------------------------
-FbxParser::Node FbxParser::ReadNodeHeader(uint64_t offset, uint64_t& out_end) const
+FbxParser::Node FbxParser::ReadNodeHeader(uint64_t offset, uint64_t& outEnd) const
 {
     Node n;
-    uint64_t num_props;
-    uint64_t prop_len;
+    uint64_t numProps;
+    uint64_t propLen;
 
-    if (is64bit_)
+    if (m_is64bit)
     {
-        out_end = Read<uint64_t>(offset);
-        num_props = Read<uint64_t>(offset + 8);
-        prop_len = Read<uint64_t>(offset + 16);
-        uint8_t name_len = data_[offset + 24];
-        n.name.assign(reinterpret_cast<const char*>(data_.data() + offset + 25), name_len);
-        n.prop_start = offset + 25 + name_len;
-        n.prop_len = prop_len;
-        n.child_start = n.prop_start + prop_len;
+        outEnd = Read<uint64_t>(offset);
+        numProps = Read<uint64_t>(offset + 8);
+        propLen = Read<uint64_t>(offset + 16);
+        const uint8_t nameLen = m_data[offset + 24];
+        n.name.assign(reinterpret_cast<const char*>(m_data.data() + offset + 25), nameLen);
+        n.propStart = offset + 25 + nameLen;
+        n.propLen = propLen;
+        n.childStart = n.propStart + propLen;
     }
     else
     {
-        out_end = Read<uint32_t>(offset);
-        num_props = Read<uint32_t>(offset + 4);
-        prop_len = Read<uint32_t>(offset + 8);
-        uint8_t name_len = data_[offset + 12];
-        n.name.assign(reinterpret_cast<const char*>(data_.data() + offset + 13), name_len);
-        n.prop_start = offset + 13 + name_len;
-        n.prop_len = prop_len;
-        n.child_start = n.prop_start + prop_len;
+        outEnd = Read<uint32_t>(offset);
+        numProps = Read<uint32_t>(offset + 4);
+        propLen = Read<uint32_t>(offset + 8);
+        const uint8_t name_len = m_data[offset + 12];
+        n.name.assign(reinterpret_cast<const char*>(m_data.data() + offset + 13), name_len);
+        n.propStart = offset + 13 + name_len;
+        n.propLen = propLen;
+        n.childStart = n.propStart + propLen;
     }
-    n.end = out_end;
-    (void)num_props;
+    n.end = outEnd;
+    (void)numProps;
     return n;
 }
 
 // ----------------------------------------------------------------
-//  指定範囲の子ノードを再帰的に解析する
+//  謖・ｮ夂ｯ・峇縺ｮ蟄舌ヮ繝ｼ繝峨ｒ蜀榊ｸｰ逧・↓隗｣譫舌☆繧・
 // ----------------------------------------------------------------
 std::vector<FbxParser::Node> FbxParser::ParseChildren(uint64_t start, uint64_t end)
 {
     std::vector<Node> nodes;
     uint64_t offset = start;
-    size_t header_sz = is64bit_ ? 25 : 13;
+    const size_t header_sz = m_is64bit ? 25 : 13;
 
     while (offset + header_sz <= end)
     {
         uint64_t node_end = 0;
         Node n = ReadNodeHeader(offset, node_end);
         if (node_end == 0 && n.name.empty()) break;
-        n.children = ParseChildren(n.child_start, n.end);
+        n.children = ParseChildren(n.childStart, n.end);
         nodes.push_back(std::move(n));
         offset = node_end;
     }
@@ -558,7 +553,7 @@ std::vector<FbxParser::Node> FbxParser::ParseChildren(uint64_t start, uint64_t e
 }
 
 // ----------------------------------------------------------------
-//  ノードリストから指定名のノードを再帰的に検索する
+//  繝弱・繝峨Μ繧ｹ繝医°繧画欠螳壼錐縺ｮ繝弱・繝峨ｒ蜀榊ｸｰ逧・↓讀懃ｴ｢縺吶ｋ
 // ----------------------------------------------------------------
 FbxParser::Node* FbxParser::FindNode(std::vector<Node>& nodes, const std::string& name)
 {
@@ -572,15 +567,15 @@ FbxParser::Node* FbxParser::FindNode(std::vector<Node>& nodes, const std::string
 }
 
 // ----------------------------------------------------------------
-//  型付き配列プロパティを読み込む（非圧縮 / zlib 圧縮の両方に対応）
+//  蝙倶ｻ倥″驟榊・繝励Ο繝代ユ繧｣繧定ｪｭ縺ｿ霎ｼ繧・磯撼蝨ｧ邵ｮ / zlib 蝨ｧ邵ｮ縺ｮ荳｡譁ｹ縺ｫ蟇ｾ蠢懶ｼ・
 // ----------------------------------------------------------------
 template <typename T>
 std::vector<T> FbxParser::ReadTypedArray(uint64_t offset)
 {
-    uint32_t count = Read<uint32_t>(offset);
-    uint32_t encoding = Read<uint32_t>(offset + 4);
+    const uint32_t count = Read<uint32_t>(offset);
+    const uint32_t encoding = Read<uint32_t>(offset + 4);
     uint32_t comp_len = Read<uint32_t>(offset + 8);
-    const uint8_t* src = data_.data() + offset + 12;
+    const uint8_t* src = m_data.data() + offset + 12;
 
     std::vector<T> result(count);
     if (encoding == 0)
@@ -593,7 +588,7 @@ std::vector<T> FbxParser::ReadTypedArray(uint64_t offset)
         if (uncompress(
             reinterpret_cast<Bytef*>(result.data()), &dest_len,
             src, comp_len) != Z_OK)
-            throw std::runtime_error("zlib 解凍に失敗しました");
+            throw std::runtime_error("zlib 隗｣蜃阪↓螟ｱ謨励＠縺ｾ縺励◆");
     }
     return result;
 }
@@ -601,30 +596,31 @@ std::vector<T> FbxParser::ReadTypedArray(uint64_t offset)
 template std::vector<double> FbxParser::ReadTypedArray<double>(uint64_t);
 template std::vector<int32_t> FbxParser::ReadTypedArray<int32_t>(uint64_t);
 
-std::vector<double> FbxParser::ReadDoubleArray(Node* parent, const std::string& node_name)
+std::vector<double> FbxParser::ReadDoubleArray(Node* parent, const std::string& nodeName)
 {
-    Node* n = FindNode(parent->children, node_name);
+    const Node* n = FindNode(parent->children, nodeName);
     if (!n) return {};
-    uint64_t off = n->prop_start;
-    if (static_cast<char>(data_[off]) != 'd') return {};
+    const uint64_t off = n->propStart;
+    if (static_cast<char>(m_data[off]) != 'd') return {};
     return ReadTypedArray<double>(off + 1);
 }
 
-std::vector<int32_t> FbxParser::ReadIntArray(Node* parent, const std::string& node_name)
+std::vector<int32_t> FbxParser::ReadIntArray(Node* parent, const std::string& nodeName)
 {
-    Node* n = FindNode(parent->children, node_name);
+    const Node* n = FindNode(parent->children, nodeName);
     if (!n) return {};
-    uint64_t off = n->prop_start;
-    if (static_cast<char>(data_[off]) != 'i') return {};
+    const uint64_t off = n->propStart;
+    if (static_cast<char>(m_data[off]) != 'i') return {};
     return ReadTypedArray<int32_t>(off + 1);
 }
 
-std::string FbxParser::ReadString(Node* parent, const std::string& node_name) const
+std::string FbxParser::ReadString(Node* parent, const std::string& nodeName) const
 {
-    Node* n = FindNode(parent->children, node_name);
+    const Node* n = FindNode(parent->children, nodeName);
     if (!n) return "";
-    uint64_t off = n->prop_start;
-    if (static_cast<char>(data_[off]) != 'S') return "";
-    uint32_t len = Read<uint32_t>(off + 1);
-    return std::string(reinterpret_cast<const char*>(data_.data() + off + 5), len);
+    const uint64_t off = n->propStart;
+    if (static_cast<char>(m_data[off]) != 'S') return "";
+    const uint32_t len = Read<uint32_t>(off + 1);
+    return std::string(reinterpret_cast<const char*>(m_data.data() + off + 5), len);
 }
+

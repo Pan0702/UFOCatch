@@ -79,3 +79,4 @@ void AudioStorage::InitMusic()
     AudioManager::Load("Decide", _T("data/Sound/decide.wav"));
     AudioManager::Load("Select", _T("data/Sound/select_002.wav"));
 }
+

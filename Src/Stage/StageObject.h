@@ -51,3 +51,4 @@ protected:
     CBBox* m_pOBB;      // OBB陦晉ｪ∝愛螳・
     bool   m_bUseOBB;   // OBB繧剃ｽｿ逕ｨ縺吶ｋ縺・
 };
+

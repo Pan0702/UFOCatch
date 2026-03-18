@@ -72,3 +72,4 @@ void CTutorialDisplayInfo::TargetDraw() const
     int srcY = TARGET_UI_BASE_SRC_Y + TARGET_UI_QUEST_HEIGHT * m_questNum;
     spr.Draw(m_pImage.get(), TARGET_UI_X, TARGET_UI_Y, TARGET_UI_SRC_X, srcY, TARGET_UI_WIDTH, TARGET_UI_QUEST_HEIGHT);
 }
+

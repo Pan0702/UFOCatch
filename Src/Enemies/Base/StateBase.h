@@ -54,3 +54,4 @@ private:
     static constexpr int NEXT_STATE_MAX_SIZE = 3;
     std::queue<CBaseState::State> actionQueue;
 };
+

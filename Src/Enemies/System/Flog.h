@@ -34,3 +34,4 @@ private:
     VECTOR3 m_flockCenter;
     float m_flockRadius;
 };
+

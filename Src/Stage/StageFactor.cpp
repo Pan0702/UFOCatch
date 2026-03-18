@@ -21,3 +21,4 @@ void CStageFactor::SpawnObjects(float sizeX,float sizeZ,int num)
         Instantiate< CStageObject>("data/Ground/Prefabs/Tree1a.mesh",VECTOR3(randomX,0.0f,randomZ),2);
     }
 }
+

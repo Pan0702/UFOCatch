@@ -35,3 +35,4 @@ private:
     const VECTOR2 m_areaSize;
 
 };
+

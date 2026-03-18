@@ -44,3 +44,4 @@ CAnimalFactor::~CAnimalFactor() = default;
 void CAnimalFactor::Normal(float sizeX, float sizeZ)
 {
 }
+

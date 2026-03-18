@@ -29,3 +29,4 @@ private:
     std::unique_ptr<CSpriteImage> m_pRankImage;
     CGameInstance* m_pGI;
 };
+

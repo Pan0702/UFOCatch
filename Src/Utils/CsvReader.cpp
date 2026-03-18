@@ -100,3 +100,4 @@ float CsvReader::GetFloat(unsigned int line, unsigned int column)
 	std::string str = GetString(line, column);
 	return std::stof(str);
 }
+

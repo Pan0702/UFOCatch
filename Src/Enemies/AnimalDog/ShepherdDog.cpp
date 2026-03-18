@@ -147,3 +147,4 @@ void CAShepherdDog::AddSheep(CSheep* sheep)
 {
     m_sheeps.push_back(sheep);
 }
+

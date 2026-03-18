@@ -92,3 +92,4 @@ void CModelRegistry::Register(const std::string& name, CFbxMesh* mesh)
     entry.mesh = mesh;
     m_models.push_back(entry);
 }
+

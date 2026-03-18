@@ -41,3 +41,4 @@ private:
     bool m_rotation;
     static constexpr float kTurnAngleDeg = 180.0f; // 繝ｩ繝ｳ繝繝蝗櫁ｻ｢縺ｮ遽・峇・亥ｺｦ・峨・
 };
+

@@ -1,4 +1,4 @@
-#include "RandomPlacer.h"
+﻿#include "RandomPlacer.h"
 #include "../ModelStorage.h"
 
 RandomPlacer::RandomPlacer()
@@ -53,7 +53,7 @@ void RandomPlacer::Update()
     ImGui::DragFloat3("Scale", &transform.scale.x, 0.1);
     ImGui::DragInt("Rotation", &count_, 1);
 
-    ImGui::Checkbox("高さを固定にする", &changed);
+    ImGui::Checkbox("鬮倥＆繧貞崋螳壹↓縺吶ｋ", &changed);
     ImGui::SameLine();
     ImGui::InputFloat("", &height_);
     model_names_ = CModelStorage::GetInstance()->GetModelNames();
@@ -87,7 +87,7 @@ void RandomPlacer::SpawnObject(int model, bool flag)
     VECTOR3 mesh_min = mesh ? mesh->m_vMin : VECTOR3(0, 0, 0);
     VECTOR3 mesh_max = mesh ? mesh->m_vMax : VECTOR3(0, 0, 0);
 
-    // このSpawnセッションで配置済みのAABBリスト
+    // 縺薙・Spawn繧ｻ繝・す繝ｧ繝ｳ縺ｧ驟咲ｽｮ貂医∩縺ｮAABB繝ｪ繧ｹ繝・
     struct Aabb { VECTOR3 min, max; };
     std::vector<Aabb> placed;
 
@@ -130,3 +130,4 @@ void RandomPlacer::SpawnObject(int model, bool flag)
         }
     }
 }
+

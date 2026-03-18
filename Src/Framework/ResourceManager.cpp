@@ -1,31 +1,56 @@
 ﻿#include "ResourceManager.h"
 #include <unordered_map>
 #include <fstream>
+#include "../Utils/MeshCollider.h"
+#include "GameObject.h"
 
 namespace {
-    std::unordered_map<std::string, std::unique_ptr<CFbxMesh>> fbxFiles;
+    std::vector<ModelInfo> modelInfos;
 };
 
 void ResourceManager::Init()
 {
-    fbxFiles.clear();
 }
 
 void ResourceManager::Reset()
 {
-    for (auto& f : fbxFiles) {
-        f.second.reset();
-    }
-    fbxFiles.clear();
+    
+    modelInfos.clear();
 }
 
-CFbxMesh* ResourceManager::LoadFbx(const std::string& filename)
+void ResourceManager::LoadFbx(const char* name, const char* path)
 {
-    if (fbxFiles.find(filename) == fbxFiles.end()) {
-        auto mesh = std::make_unique<CFbxMesh>();
-        assert(mesh);
-        mesh->Load(filename.c_str());
-        fbxFiles[filename] = std::move(mesh);
+    
+    ModelInfo m(name, path);
+    m.mesh = std::make_unique<CFbxMesh>();
+    m.coll = std::make_unique<MeshCollider>();
+    m.mesh->Load(path);
+    m.coll->MakeFromMesh(m.mesh.get());
+    for (auto& f : modelInfos)
+    {
+        if (f.name == name)return;
     }
-    return fbxFiles[filename].get();
+    modelInfos.push_back(m);
+    
 }
+
+CFbxMesh* ResourceManager::GetMesh(const char* name)
+{
+    for (auto& m : modelInfos)
+    {
+        if (m.name == name) return m.mesh.get();
+    }
+    return nullptr;
+}
+
+MeshCollider* ResourceManager::GetColl(const char* name)
+{
+    for (auto& m : modelInfos)
+    {
+        if (m.name == name) return m.coll.get();
+    }
+    return nullptr;
+}
+
+
+

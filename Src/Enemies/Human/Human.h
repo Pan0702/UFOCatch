@@ -34,3 +34,4 @@ private:
     float angle;
     bool m_inSight;
 };
+

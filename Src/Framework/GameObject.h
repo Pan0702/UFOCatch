@@ -168,3 +168,4 @@ C* SingleInstantiate()
     }
     return obj;
 }
+

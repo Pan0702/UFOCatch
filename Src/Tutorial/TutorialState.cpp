@@ -161,3 +161,4 @@ void CPlayState::Update()
 {
     RemoveCaughtAnimals();
 }
+

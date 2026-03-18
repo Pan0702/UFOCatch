@@ -27,3 +27,4 @@ float MainControl::RefreshTimer()
 {
     return refreshTimer;
 }
+

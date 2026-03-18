@@ -60,3 +60,4 @@ std::unique_ptr<SceneBase> SceneFactory::Create(const std::string& name)
 	assert(false);
 	return nullptr;
 }
+

@@ -13,3 +13,4 @@ private:
 
    // bool Init(const char* filePath);
 };
+

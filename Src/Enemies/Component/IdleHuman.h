@@ -35,3 +35,4 @@ private:
     // CIdleHuman蟆ら畑縺ｮ繧ｪ繝ｼ繝翫・・・Human蝙具ｼ・//
     CHuman* m_pOwner;
 };
+

@@ -12,3 +12,4 @@ public:
 private:
     bool m_isFinishSuction;
 };
+

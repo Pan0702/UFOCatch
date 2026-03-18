@@ -32,3 +32,4 @@ private:
     int m_discovery;
     int m_capture;
 };
+

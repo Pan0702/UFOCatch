@@ -69,3 +69,4 @@ public:
     CChickenDestroy(CAnimalChicken* chicken);
     void Enter(State type) override;
 };
+

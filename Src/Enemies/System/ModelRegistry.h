@@ -38,3 +38,4 @@ private:
     // 繝・ヵ繧ｩ繝ｫ繝医・繝｡繝・す繝･繧偵Ο繝ｼ繝・
     void LoadDefaultModels();
 };
+

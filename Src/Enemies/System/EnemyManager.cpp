@@ -127,3 +127,4 @@ std::vector<CStageObject*> CEnemyManager::GetNearbyStageObjects(
     }
     return {};
 }
+

@@ -108,3 +108,4 @@ void CEnemyQuadTree::ResetCollisionStats() const
     m_processTimes.clear();
     m_frameCount = 0;
 }
+

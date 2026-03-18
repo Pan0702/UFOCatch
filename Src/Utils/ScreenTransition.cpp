@@ -105,3 +105,4 @@ void CScreenTransition::Draw()
         spr.Draw(m_pImage.get(), x, 0, 0, 0, static_cast<int>(width), static_cast<int>(imageHeight));
     }
 }
+

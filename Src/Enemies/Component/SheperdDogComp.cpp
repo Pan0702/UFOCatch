@@ -252,3 +252,4 @@ void CDestroyShepherdDog::Enter()
     // 蜈・・Destroy蜃ｦ逅・
     CDestroy::Enter();
 }
+

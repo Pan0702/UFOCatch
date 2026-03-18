@@ -59,3 +59,4 @@ public:
 private:
     CAShepherdDog* m_pDog;
 };
+

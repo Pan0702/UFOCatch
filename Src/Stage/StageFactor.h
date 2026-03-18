@@ -8,3 +8,4 @@ public:
     CStageFactor();
     static void SpawnObjects(float sizeX, float sizeZ, int num);;
 };
+

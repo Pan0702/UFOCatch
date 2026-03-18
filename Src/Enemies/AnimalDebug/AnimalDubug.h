@@ -30,3 +30,4 @@ private:
     CPlayer* m_pPlayer;
 
 };
+

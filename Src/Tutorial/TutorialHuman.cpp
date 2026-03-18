@@ -50,3 +50,4 @@ void CTutorialHuman::Update()
         ObjectManager::FindGameObject<CPlayerHP>()->ResetFlag();
     }
 }
+

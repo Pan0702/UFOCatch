@@ -12,3 +12,4 @@ protected:
     int m_score;
     float m_exp;
 };
+

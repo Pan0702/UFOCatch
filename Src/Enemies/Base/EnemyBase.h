@@ -62,3 +62,4 @@ protected:
     VECTOR2 m_areaSize;
     bool m_isHuman = false;
 };
+

@@ -1,5 +1,5 @@
-#pragma once
-#include "../Object3D.h"
+﻿#pragma once
+#include "../Common/Object3D.h"
 
 class GridDraw : public Object3D
 {
@@ -9,11 +9,12 @@ private:
 private:
     void Draw() override;
 
-    /// <summary>XZ平面にグリッド線を描画する。10マスごとに線を太く表示する</summary>
+    /// <summary>XZ蟷ｳ髱｢縺ｫ繧ｰ繝ｪ繝・ラ邱壹ｒ謠冗判縺吶ｋ縲・0繝槭せ縺斐→縺ｫ邱壹ｒ螟ｪ縺剰｡ｨ遉ｺ縺吶ｋ</summary>
     static void Grid();
 
 public:
-    /// <summary>グリッド描画フラグの現在値を返す</summary>
+    /// <summary>繧ｰ繝ｪ繝・ラ謠冗判繝輔Λ繧ｰ縺ｮ迴ｾ蝨ｨ蛟､繧定ｿ斐☆</summary>
     bool GetDrawFlag() const { return is_grid_draw_; }
     void SetDrawFlag(bool flag) { is_grid_draw_ = flag; }
 };
+

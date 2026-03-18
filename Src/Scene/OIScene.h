@@ -13,3 +13,4 @@ private:
     void Update() override;
     std::unique_ptr<CSpriteImage> m_pSpriteImage;
 };
+

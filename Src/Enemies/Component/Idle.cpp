@@ -70,3 +70,4 @@ bool CIdle::AnimationFinish() const
     }
     return false;
 }
+

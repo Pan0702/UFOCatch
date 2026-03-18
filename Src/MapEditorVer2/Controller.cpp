@@ -1,4 +1,4 @@
-#include "Controller.h"
+﻿#include "Controller.h"
 
 #include "MouseRay.h"
 #include "UndoManager.h"
@@ -7,29 +7,29 @@
 
 namespace
 {
-    // Transform ウィンドウの初期位置とサイズ
+    // Transform 繧ｦ繧｣繝ｳ繝峨え縺ｮ蛻晄悄菴咲ｽｮ縺ｨ繧ｵ繧､繧ｺ
     constexpr float kTransformWindowX    = 10.0f;
     constexpr float kTransformWindowY    = 10.0f;
     constexpr float kTransformWindowW    = 300.0f;
     constexpr float kTransformWindowH    = 160.0f;
 
-    // DragFloat3 の1フレームあたりの変化量
+    // DragFloat3 縺ｮ1繝輔Ξ繝ｼ繝縺ゅ◆繧翫・螟牙喧驥・
     constexpr float kDragSpeed = 0.1f;
 }
 
 Controller::Controller()
 {
-    camera_ = ObjectManager::FindGameObject<Camera>();
-    trs_ = ObjectManager::FindGameObject<TRS>();
-    stage_data_ = ObjectManager::FindGameObject<StageData>();
-    input_ = GameDevice()->m_pDI;
-    undo_manager_ = new UndoManager();
-    random_placer_ = new RandomPlacer();//std::make_unique<RandomPlacer>();
+    m_pCamera = ObjectManager::FindGameObject<Camera>();
+    m_pTrs = ObjectManager::FindGameObject<TRS>();
+    m_pStageData = ObjectManager::FindGameObject<StageData>();
+    m_pInput = GameDevice()->m_pDI;
+    m_pUndoManager = std::make_unique<UndoManager>();
+    m_pRandomPlacer = std::make_unique<RandomPlacer>();
 }
 
 void Controller::SetCatchFlag(bool f)
 {
-    is_catch_ = f;
+    m_isCatch = f;
 }
 
 
@@ -39,70 +39,70 @@ void Controller::Update()
 
     if (!io.WantCaptureMouse)
     {
-        // 右クリック中はカメラ操作を優先し、TRS 操作は無効
-        if (input_->CheckMouse(KD_DAT, DIM_RBUTTON))
+        // 蜿ｳ繧ｯ繝ｪ繝・け荳ｭ縺ｯ繧ｫ繝｡繝ｩ謫堺ｽ懊ｒ蜆ｪ蜈医＠縲ゝRS 謫堺ｽ懊・辟｡蜉ｹ
+        if (m_pInput->CheckMouse(KD_DAT, DIM_RBUTTON))
         {
             CameraControl();
         }
         else
         {
-            if (is_catch_)
+            if (m_isCatch)
             {
-                // オブジェクト選択中のみキーによるモード切替を受け付ける
+                // 繧ｪ繝悶ず繧ｧ繧ｯ繝磯∈謚樔ｸｭ縺ｮ縺ｿ繧ｭ繝ｼ縺ｫ繧医ｋ繝｢繝ｼ繝牙・譖ｿ繧貞女縺台ｻ倥￠繧・
                 TRSControl();
             }
             else
             {
-                // 未選択時はギズモを非表示にする
-                trs_->SetState(TRS::State::kNone);
+                // 譛ｪ驕ｸ謚樊凾縺ｯ繧ｮ繧ｺ繝｢繧帝撼陦ｨ遉ｺ縺ｫ縺吶ｋ
+                m_pTrs->SetState(TRS::State::kNone);
             }
         }
 
-        if (input_->GetMouseWheel() != 0)
+        if (m_pInput->GetMouseWheel() != 0)
         {
             Camera::Zoom();
         }
 
-        // クリックした瞬間
-        if (input_->CheckMouse(KD_TRG, DIM_LBUTTON))
+        // 繧ｯ繝ｪ繝・け縺励◆迸ｬ髢・
+        if (m_pInput->CheckMouse(KD_TRG, DIM_LBUTTON))
         {
             HandleLeftClick();
         }
 
-        // 左クリック離し時にドラッグを解除
-        if (is_catch_ && input_->CheckMouse(KD_UTRG, DIM_LBUTTON))
+        // 蟾ｦ繧ｯ繝ｪ繝・け髮｢縺玲凾縺ｫ繝峨Λ繝・げ繧定ｧ｣髯､
+        if (m_isCatch && m_pInput->CheckMouse(KD_UTRG, DIM_LBUTTON))
         {
-            trs_->SetDraggingAxis(Axis::None);
+            m_pTrs->SetDraggingAxis(Axis::None);
         }
     }
 
     if (!io.WantCaptureKeyboard)
     {
-        if (input_->CheckKey(KD_TRG, DIK_F))
+        if (m_pInput->CheckKey(KD_TRG, DIK_F))
         {
             Camera::Focus();
         }
 
-        if (is_catch_)
+        if (m_isCatch)
         {
-            // BackSpace / Delete でオブジェクト削除
-            bool is_delete = input_->CheckKey(KD_TRG, DIK_BACK) || input_->CheckKey(KD_TRG, DIK_DELETE);
+            // BackSpace / Delete 縺ｧ繧ｪ繝悶ず繧ｧ繧ｯ繝亥炎髯､
+            bool is_delete = m_pInput->CheckKey(KD_TRG, DIK_BACK) || m_pInput->CheckKey(KD_TRG, DIK_DELETE);
             if (is_delete)
             {
-                trs_->SetState(TRS::State::kNone);
-                undo_manager_->DeleteObjectPush();
-                stage_data_->DeleteModel();
-                is_catch_ = false;
+                m_pTrs->SetState(TRS::State::kNone);
+                m_pUndoManager->DeleteObjectPush();
+                m_pStageData->DeleteModel();
+                m_isCatch = false;
             }
         }
 
-        if (input_->CheckKey(KD_TRG, DIK_C) && input_->CheckKey(KD_DAT, DIK_LCONTROL))
+        if (m_pInput->CheckKey(KD_TRG, DIK_C) && m_pInput->CheckKey(KD_DAT, DIK_LCONTROL))
         {
-            copy_object_index_ = stage_data_->GetSelectIndex();
+            m_copyObjectIndex = m_pStageData->GetSelectIndex();
         }
-        if (input_->CheckKey(KD_TRG, DIK_V) && input_->CheckKey(KD_DAT, DIK_LCONTROL))
+        if (m_pInput->CheckKey(KD_TRG, DIK_V) && m_pInput->CheckKey(KD_DAT, DIK_LCONTROL))
         {
-            stage_data_->CopyModel(copy_object_index_);
+            m_pStageData->CopyModel(m_copyObjectIndex);
         }
 
         HandleUndoRedo();
@@ -110,104 +110,104 @@ void Controller::Update()
 
 }
 
-// 左クリック時にTRSギズモまたはステージオブジェクトへのレイ判定を行う
+// 蟾ｦ繧ｯ繝ｪ繝・け譎ゅ↓TRS繧ｮ繧ｺ繝｢縺ｾ縺溘・繧ｹ繝・・繧ｸ繧ｪ繝悶ず繧ｧ繧ｯ繝医∈縺ｮ繝ｬ繧､蛻､螳壹ｒ陦後≧
 void Controller::HandleLeftClick()
 {
     const Ray ray = MouseRay::Create();
 
-    // ギズモへのクリックを優先判定。当たった場合はオブジェクト選択判定を行わない
-    const Axis a = trs_->RayHitTest(ray);
+    // 繧ｮ繧ｺ繝｢縺ｸ縺ｮ繧ｯ繝ｪ繝・け繧貞━蜈亥愛螳壹ょｽ薙◆縺｣縺溷ｴ蜷医・繧ｪ繝悶ず繧ｧ繧ｯ繝磯∈謚槫愛螳壹ｒ陦後ｏ縺ｪ縺・
+    const Axis a = m_pTrs->RayHitTest(ray);
     if (a != Axis::None)
     {
-        if (is_random_placer_)
+        if (m_isRandomPlacer)
         {
-            undo_manager_->Push(random_placer_->GetTransform());
+            m_pUndoManager->Push(m_pRandomPlacer->GetTransform());
         }else
         {
-            // ドラッグ開始前に現状態を保存
-            undo_manager_->Push();  
+            // 繝峨Λ繝・げ髢句ｧ句燕縺ｫ迴ｾ迥ｶ諷九ｒ菫晏ｭ・
+            m_pUndoManager->Push();  
         }
   
-        trs_->SetDraggingAxis(a);
+        m_pTrs->SetDraggingAxis(a);
         return;
     }
 
-    // ギズモに当たらなかった場合はステージオブジェクトの選択判定
+    // 繧ｮ繧ｺ繝｢縺ｫ蠖薙◆繧峨↑縺九▲縺溷ｴ蜷医・繧ｹ繝・・繧ｸ繧ｪ繝悶ず繧ｧ繧ｯ繝医・驕ｸ謚槫愛螳・
     MeshCollider::CollInfo hit;
-    const int index = stage_data_->RayHitTest(ray, &hit);
+    const int index = m_pStageData->RayHitTest(ray, &hit);
     if (index >= 0)
     {
-        is_catch_ = true;
-        stage_data_->SetModel(index);
+        m_isCatch = true;
+        m_pStageData->SetModel(index);
     }
     else
     {
-        is_catch_ = false;
+        m_isCatch = false;
     }
 }
 
-// Ctrl+Z/Ctrl+YでUndo/Redoを実行する
+// Ctrl+Z/Ctrl+Y縺ｧUndo/Redo繧貞ｮ溯｡後☆繧・
 void Controller::HandleUndoRedo() const
 {
-    if (input_->CheckKey(KD_DAT, DIK_LCONTROL))
+    if (m_pInput->CheckKey(KD_DAT, DIK_LCONTROL))
     {
-        if (input_->CheckKey(KD_TRG, DIK_Z)) undo_manager_->Undo();
-        if (input_->CheckKey(KD_TRG, DIK_Y)) undo_manager_->Redo();
+        if (m_pInput->CheckKey(KD_TRG, DIK_Z)) m_pUndoManager->Undo();
+        if (m_pInput->CheckKey(KD_TRG, DIK_Y)) m_pUndoManager->Redo();
     }
 }
 
 void Controller::Random()
 {
-    if (random_placer_ == nullptr) return;  
-    if (is_random_placer_)
+    if (m_pRandomPlacer == nullptr) return;  
+    if (m_isRandomPlacer)
     {
-        random_placer_->SetDrawFlag(true);
-        trs_->SetOverrideTarget(random_placer_->GetTransform());
-        trs_->SetState(TRS::State::kTranslation);
-        is_catch_ = true;  // ギズモ表示ON
+        m_pRandomPlacer->SetDrawFlag(true);
+        m_pTrs->SetOverrideTarget(m_pRandomPlacer->GetTransform());
+        m_pTrs->SetState(TRS::State::kTranslation);
+        m_isCatch = true;  // 繧ｮ繧ｺ繝｢陦ｨ遉ｺON
     }else
     {
-        random_placer_->SetDrawFlag(false);
-        trs_->SetOverrideTarget(nullptr);
-        trs_->SetState(TRS::State::kNone);
-        is_catch_ = false;
+        m_pRandomPlacer->SetDrawFlag(false);
+        m_pTrs->SetOverrideTarget(nullptr);
+        m_pTrs->SetState(TRS::State::kNone);
+        m_isCatch = false;
     }
 }
 
-// W/E/R/Qキーでアクティブなギズモモードを切り替える
+// W/E/R/Q繧ｭ繝ｼ縺ｧ繧｢繧ｯ繝・ぅ繝悶↑繧ｮ繧ｺ繝｢繝｢繝ｼ繝峨ｒ蛻・ｊ譖ｿ縺医ｋ
 void Controller::TRSControl() const
 {
-    if (input_->CheckKey(KD_TRG, DIK_W))
+    if (m_pInput->CheckKey(KD_TRG, DIK_W))
     {
-        trs_->SetState(TRS::State::kTranslation);
+        m_pTrs->SetState(TRS::State::kTranslation);
     }
 
-    if (input_->CheckKey(KD_TRG, DIK_E))
+    if (m_pInput->CheckKey(KD_TRG, DIK_E))
     {
-        trs_->SetState(TRS::State::kRotation);
+        m_pTrs->SetState(TRS::State::kRotation);
     }
 
-    if (input_->CheckKey(KD_TRG, DIK_R))
+    if (m_pInput->CheckKey(KD_TRG, DIK_R))
     {
-        trs_->SetState(TRS::State::kScaling);
+        m_pTrs->SetState(TRS::State::kScaling);
     }
 
-    if (input_->CheckKey(KD_TRG, DIK_Q))
+    if (m_pInput->CheckKey(KD_TRG, DIK_Q))
     {
-        trs_->SetState(TRS::State::kNone);
+        m_pTrs->SetState(TRS::State::kNone);
     }
 }
 
-// 右クリック中のマウス移動・キー入力でカメラを操作する
+// 蜿ｳ繧ｯ繝ｪ繝・け荳ｭ縺ｮ繝槭え繧ｹ遘ｻ蜍輔・繧ｭ繝ｼ蜈･蜉帙〒繧ｫ繝｡繝ｩ繧呈桃菴懊☆繧・
 void Controller::CameraControl() const
 {
-    //回転
-    if (input_->IsMouseMove())
+    //蝗櫁ｻ｢
+    if (m_pInput->IsMouseMove())
     {
         Camera::Rotate();
     }
-    //移動
-    if (input_->IsMoveInput())
+    //遘ｻ蜍・
+    if (m_pInput->IsMoveInput())
     {
         Camera::Move();
     }
@@ -216,19 +216,19 @@ void Controller::CameraControl() const
 void Controller::Draw()
 {
     ImGui::Begin("Setting");
-    if (ImGui::Checkbox("Random Placer", &is_random_placer_))
+    if (ImGui::Checkbox("Random Placer", &m_isRandomPlacer))
     {
         Random();
     }
 
     ImGui::End();
-    if (is_random_placer_)
+    if (m_isRandomPlacer)
     {
-        random_placer_->Draw(); 
+        m_pRandomPlacer->Draw(); 
     }
-    Transform* t = stage_data_ ? stage_data_->GetSelectedTransform() : nullptr;
+    Transform* t = m_pStageData ? m_pStageData->GetSelectedTransform() : nullptr;
     if (not t) return;
-    if (not is_catch_)return;
+    if (not m_isCatch)return;
     ImGui::SetNextWindowPos(ImVec2(kTransformWindowX, kTransformWindowY), ImGuiCond_Once);
     ImGui::SetNextWindowSize(ImVec2(kTransformWindowW, kTransformWindowH), ImGuiCond_Once);
     ImGui::Begin("Transform");
@@ -241,7 +241,7 @@ void Controller::Draw()
     }
     if (ImGui::IsItemActivated())
     {
-        undo_manager_->Push();
+        m_pUndoManager->Push();
     }
     ImGui::Separator();
     VECTOR3& tmp_r = t->rotation;
@@ -252,7 +252,7 @@ void Controller::Draw()
     }
     if (ImGui::IsItemActivated())
     {
-        undo_manager_->Push();
+        m_pUndoManager->Push();
     }
     ImGui::Separator();
     ImGui::Text("Scale:    %.2f, %.2f, %.2f", t->scale.x,
@@ -262,9 +262,10 @@ void Controller::Draw()
     }
     if (ImGui::IsItemActivated())
     {
-        undo_manager_->Push();
+        m_pUndoManager->Push();
     }
     ImGui::Separator();
     ImGui::End();
 
 }
+

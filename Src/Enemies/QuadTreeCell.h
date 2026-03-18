@@ -20,3 +20,4 @@ public:
 private:
     std::vector<T*> m_objects;
 };
+

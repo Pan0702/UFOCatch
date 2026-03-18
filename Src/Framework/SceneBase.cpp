@@ -9,3 +9,4 @@ SceneBase::~SceneBase()
 {
 	ObjectManager::ChangeScene();
 }
+

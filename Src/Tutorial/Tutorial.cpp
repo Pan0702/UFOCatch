@@ -99,3 +99,4 @@ void CTutorial::Lesson()
         new CTutorialAnimal(VECTOR3(randomX, 0, randomZ));
     }
 }
+

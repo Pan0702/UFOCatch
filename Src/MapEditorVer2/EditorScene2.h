@@ -1,5 +1,5 @@
-#pragma once
-#include "../SceneBase.h"
+﻿#pragma once
+#include "../Framework/SceneBase.h"
 
 class EditorScene2 : public SceneBase
 {
@@ -8,3 +8,4 @@ public:
     ~EditorScene2() = default;
     
 };
+

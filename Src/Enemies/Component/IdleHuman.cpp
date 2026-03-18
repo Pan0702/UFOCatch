@@ -212,3 +212,4 @@ bool CIdleHuman::AnimationFinish() const
     }
     return false;
 }
+

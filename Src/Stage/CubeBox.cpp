@@ -18,3 +18,4 @@ void CCubeBox::Draw()
 {
     Object3D::Draw();
 }
+

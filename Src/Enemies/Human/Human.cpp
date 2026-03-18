@@ -131,3 +131,4 @@ void CHuman::AtkArea() const
 //         spr.DrawLine3D(startPos, endPos, RGB(255, 0, 0));
 //     }
 // }
+

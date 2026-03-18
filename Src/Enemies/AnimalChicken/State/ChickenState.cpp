@@ -224,3 +224,4 @@ void CChickenDestroy::Enter(State type)
     ObjectManager::FindGameObject<CPlayerLevel>()->AddExp(1.5f);
     m_pOwner->DestroyMe();
 }
+

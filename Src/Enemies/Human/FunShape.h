@@ -8,3 +8,4 @@ public:
     ~CFunShape();
     void PosSet(const VECTOR3& pos, const float angle);
 };
+

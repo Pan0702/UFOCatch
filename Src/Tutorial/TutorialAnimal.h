@@ -26,3 +26,4 @@ private:
     float m_velocityY = 0.0f;      // Y霆ｸ譁ｹ蜷代・騾溷ｺｦ //
     CGround* m_pGround = nullptr;  // 蝨ｰ髱｢繧ｪ繝悶ず繧ｧ繧ｯ繝医∈縺ｮ繝昴う繝ｳ繧ｿ //
 };
+

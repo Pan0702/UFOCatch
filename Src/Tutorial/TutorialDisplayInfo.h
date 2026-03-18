@@ -36,3 +36,4 @@ private:
     int m_questNum;           // 迴ｾ蝨ｨ縺ｮ繧ｯ繧ｨ繧ｹ繝育分蜿ｷ //
     std::unique_ptr<CSpriteImage> m_pImage;   // UI逕ｻ蜒・//
 };
+

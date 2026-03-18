@@ -167,3 +167,4 @@ void SceneManager::Exit()
 {
     PostQuitMessage(0);
 }
+

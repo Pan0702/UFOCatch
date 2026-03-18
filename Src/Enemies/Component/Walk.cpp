@@ -147,3 +147,4 @@ float CWalk::ClampRotateY(float angle)
 {
     return std::remainder(angle, XM_2PI);
 }
+

@@ -1,67 +1,67 @@
-#include "MeshWriter.h"
+﻿#include "MeshWriter.h"
 
 #include <fstream>
 
 #include <windows.h>
 
-// 頂点・インデックスデータを .mesh フォーマットでファイルに書き出す
-// フォーマットは FbxMesh.cpp の Load 関数から逆算
+// 鬆らせ繝ｻ繧､繝ｳ繝・ャ繧ｯ繧ｹ繝・・繧ｿ繧・.mesh 繝輔か繝ｼ繝槭ャ繝医〒繝輔ぃ繧､繝ｫ縺ｫ譖ｸ縺榊・縺・
+// 繝輔か繝ｼ繝槭ャ繝医・ FbxMesh.cpp 縺ｮ Load 髢｢謨ｰ縺九ｉ騾・ｮ・
 bool MeshWriter::Write(
     const std::string&             path,
-    const std::string&             texture_name,
+    const std::string&             textureName,
     const std::vector<MeshVertex>& verts,
     const std::vector<uint32_t>&   indices)
 {
     std::ofstream file(path, std::ios::binary);
     if (!file)
     {
-        MessageBoxA(nullptr, (".mesh ファイルを書き込めません: " + path).c_str(), "MeshWriter", MB_OK | MB_ICONERROR);
+        MessageBoxA(nullptr, (".mesh 繝輔ぃ繧､繝ｫ繧呈嶌縺崎ｾｼ繧√∪縺帙ｓ: " + path).c_str(), "MeshWriter", MB_OK | MB_ICONERROR);
         return false;
     }
 
     // ---- Magic "MESH2010" (WCHAR[8] = 16 bytes) ----
-    // Head[6] = '1' → static mesh として認識される
-    WCHAR magic[] = L"MESH2010";  // 9要素（ヌル終端含む）だが書き込みは8文字分のみ
+    // Head[6] = '1' 竊・static mesh 縺ｨ縺励※隱崎ｭ倥＆繧後ｋ
+    WCHAR magic[] = L"MESH2010";  // 9隕∫ｴ・医レ繝ｫ邨らｫｯ蜷ｫ繧・峨□縺梧嶌縺崎ｾｼ縺ｿ縺ｯ8譁・ｭ怜・縺ｮ縺ｿ
     file.write(reinterpret_cast<const char*>(magic), 8 * sizeof(WCHAR));
 
-    // ---- テクスチャ数 ----
-    int tex_count = 1;
-    file.write(reinterpret_cast<const char*>(&tex_count), sizeof(int));
+    // ---- 繝・け繧ｹ繝√Ε謨ｰ ----
+    const int texCount = 1;
+    file.write(reinterpret_cast<const char*>(&texCount), sizeof(int));
 
-    // ---- テクスチャ名 (WCHAR[128] = 256 bytes, null 埋め) ----
-    WCHAR tex_buf[128] = {};
-    size_t copy_len = (std::min)(texture_name.size(), static_cast<size_t>(127));
-    for (size_t i = 0; i < copy_len; ++i)
-        tex_buf[i] = static_cast<WCHAR>(static_cast<unsigned char>(texture_name[i]));
-    file.write(reinterpret_cast<const char*>(tex_buf), 128 * sizeof(WCHAR));
+    // ---- 繝・け繧ｹ繝√Ε蜷・(WCHAR[128] = 256 bytes, null 蝓九ａ) ----
+    WCHAR texBuf[128] = {};
+    const size_t copyLen = (std::min)(textureName.size(), static_cast<size_t>(127));
+    for (size_t i = 0; i < copyLen; ++i)
+        texBuf[i] = static_cast<WCHAR>(static_cast<unsigned char>(textureName[i]));
+    file.write(reinterpret_cast<const char*>(texBuf), 128 * sizeof(WCHAR));
 
-    // ---- メッシュ数 ----
-    int mesh_count = 1;
-    file.write(reinterpret_cast<const char*>(&mesh_count), sizeof(int));
+    // ---- 繝｡繝・す繝･謨ｰ ----
+    const int meshCount = 1;
+    file.write(reinterpret_cast<const char*>(&meshCount), sizeof(int));
 
-    // ---- メッシュ名 (WCHAR[128] = 256 bytes, null 埋め) ----
-    WCHAR mesh_name[128] = {};
-    file.write(reinterpret_cast<const char*>(mesh_name), 128 * sizeof(WCHAR));
+    // ---- 繝｡繝・す繝･蜷・(WCHAR[128] = 256 bytes, null 蝓九ａ) ----
+    WCHAR meshName[128] = {};
+    file.write(reinterpret_cast<const char*>(meshName), 128 * sizeof(WCHAR));
 
-    // ---- 頂点数 ----
-    int vertex_count = static_cast<int>(verts.size());
-    file.write(reinterpret_cast<const char*>(&vertex_count), sizeof(int));
+    // ---- 鬆らせ謨ｰ ----
+    const int vertexCount = static_cast<int>(verts.size());
+    file.write(reinterpret_cast<const char*>(&vertexCount), sizeof(int));
 
-    // ---- 頂点データ (StaticVertex と同レイアウト: position + normal + uv = 32 bytes) ----
+    // ---- 鬆らせ繝・・繧ｿ (StaticVertex 縺ｨ蜷後Ξ繧､繧｢繧ｦ繝・ position + normal + uv = 32 bytes) ----
     file.write(reinterpret_cast<const char*>(verts.data()), sizeof(MeshVertex) * verts.size());
 
-    // ---- インデックス数 ----
-    int index_count = static_cast<int>(indices.size());
-    file.write(reinterpret_cast<const char*>(&index_count), sizeof(int));
+    // ---- 繧､繝ｳ繝・ャ繧ｯ繧ｹ謨ｰ ----
+    const int indexCount = static_cast<int>(indices.size());
+    file.write(reinterpret_cast<const char*>(&indexCount), sizeof(int));
 
-    // ---- インデックス配列 (DWORD = 4 bytes each) ----
+    // ---- 繧､繝ｳ繝・ャ繧ｯ繧ｹ驟榊・ (DWORD = 4 bytes each) ----
     file.write(reinterpret_cast<const char*>(indices.data()), sizeof(DWORD) * indices.size());
 
-    // ---- このメッシュのテクスチャ数 + テクスチャ番号インデックス ----
-    int tex_num_for_mesh = 1;
-    int tex_index        = 0;
-    file.write(reinterpret_cast<const char*>(&tex_num_for_mesh), sizeof(int));
-    file.write(reinterpret_cast<const char*>(&tex_index),        sizeof(int));
+    // ---- 縺薙・繝｡繝・す繝･縺ｮ繝・け繧ｹ繝√Ε謨ｰ + 繝・け繧ｹ繝√Ε逡ｪ蜿ｷ繧､繝ｳ繝・ャ繧ｯ繧ｹ ----
+    const int texNumforMesh = 1;
+    const int texIndex        = 0;
+    file.write(reinterpret_cast<const char*>(&texNumforMesh), sizeof(int));
+    file.write(reinterpret_cast<const char*>(&texIndex),        sizeof(int));
 
     return true;
 }

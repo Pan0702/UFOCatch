@@ -41,3 +41,4 @@ private:
     bool m_isCutInVisible;
     float m_cutInTimer;
 };
+

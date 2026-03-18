@@ -24,3 +24,4 @@ private:
     bool m_isHuman = false;
     const float m_endFrame;
 };
+

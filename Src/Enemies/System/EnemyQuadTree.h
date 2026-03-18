@@ -51,3 +51,4 @@ private:
     mutable std::vector<float> m_processTimes;
     mutable int m_frameCount;
 };
+

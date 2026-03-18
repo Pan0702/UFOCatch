@@ -1,7 +1,7 @@
-#pragma once
+﻿#pragma once
 #include <vector>
 
-#include "../FbxMesh.h"
+#include "../Utils/FbxMesh.h"
 
 class ModelCreator
 {
@@ -11,19 +11,20 @@ private:
         std::string name;
         CFbxMesh* mesh;
     };
-    std::vector<ModelInfo> models_;
+    std::vector<ModelInfo> m_models;
 public:
     /// <summary>
-    /// 指定パスのメッシュをロードし、ボタンリストとモデルストレージに登録する
+    /// 謖・ｮ壹ヱ繧ｹ縺ｮ繝｡繝・す繝･繧偵Ο繝ｼ繝峨＠縲√・繧ｿ繝ｳ繝ｪ繧ｹ繝医→繝｢繝・Ν繧ｹ繝医Ξ繝ｼ繧ｸ縺ｫ逋ｻ骭ｲ縺吶ｋ
     /// </summary>
-    /// <param name="path">ロードするメッシュファイルのパス</param>
+    /// <param name="path">繝ｭ繝ｼ繝峨☆繧九Γ繝・す繝･繝輔ぃ繧､繝ｫ縺ｮ繝代せ</param>
     void CreateModel(const std::string& path);
 
     /// <summary>
-    /// FBX ファイルを .mesh に変換してからロードする。
-    /// 出力先は FBX と同じフォルダ・同名の .mesh ファイル。
+    /// FBX 繝輔ぃ繧､繝ｫ繧・.mesh 縺ｫ螟画鋤縺励※縺九ｉ繝ｭ繝ｼ繝峨☆繧九・
+    /// 蜃ｺ蜉帛・縺ｯ FBX 縺ｨ蜷後§繝輔か繝ｫ繝繝ｻ蜷悟錐縺ｮ .mesh 繝輔ぃ繧､繝ｫ縲・
     /// </summary>
-    /// <param name="fbx_path">変換する FBX ファイルのパス</param>
-    void ConvertAndLoad(const std::string& fbx_path);
+    /// <param name="fbxPath">螟画鋤縺吶ｋ FBX 繝輔ぃ繧､繝ｫ縺ｮ繝代せ</param>
+    void ConvertAndLoad(const std::string& fbxPath);
 
 };
+

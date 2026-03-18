@@ -27,3 +27,4 @@ void CGameInstance::Init(int max)
 
 
 
+

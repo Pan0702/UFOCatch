@@ -47,3 +47,4 @@ private:
     element* freelist_;
 
 };
+

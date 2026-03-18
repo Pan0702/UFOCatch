@@ -88,3 +88,4 @@ void CBaseState::SetNextState()
         }
     }
 }
+

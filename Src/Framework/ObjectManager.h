@@ -168,3 +168,4 @@ namespace ObjectManager {
 	/// <returns>存在すれtrue</returns>
 	bool IsExist(GameObject* obj);
 };
+

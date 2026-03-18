@@ -29,3 +29,4 @@ private:
     float m_findCount;
     float m_findMaxCount;
 };
+

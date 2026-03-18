@@ -16,7 +16,7 @@ CStageObject::CStageObject(const char* meshPath, const VECTOR3& pos, float scale
     m_pOBB = nullptr;
 
     // ResourceManager縺九ｉ繝｡繝・す繝･繧貞叙蠕暦ｼ医く繝｣繝・す繝･縺輔ｌ繧具ｼ・
-    m_pMesh = ResourceManager::LoadFbx(meshPath);
+    m_pMesh = ResourceManager::LoadFbx(meshPath, TODO);
 
     // OBB縺ｮ菴懈・
     if (m_bUseOBB)
@@ -184,3 +184,4 @@ void CStageObject::ResolveEnemyCollision(CEnemyBase* pEnemy)
         }
     }
 }
+

@@ -1,4 +1,4 @@
-#include "Import.h"
+﻿#include "Import.h"
 
 #include <fstream>
 #include <nlohmann/json.hpp>
@@ -9,10 +9,10 @@
 
 using json = nlohmann::json;
 
-// JSONファイルを読み込み、記録されたモデルをステージに復元する
+// JSON繝輔ぃ繧､繝ｫ繧定ｪｭ縺ｿ霎ｼ縺ｿ縲∬ｨ倬鹸縺輔ｌ縺溘Δ繝・Ν繧偵せ繝・・繧ｸ縺ｫ蠕ｩ蜈・☆繧・
 void Import::ImportFromFile(const std::string& path)
 {
-    // ファイルを開く
+    // 繝輔ぃ繧､繝ｫ繧帝幕縺・
     std::ifstream file(path);
     if (!file.is_open()) return;
 
@@ -30,7 +30,7 @@ void Import::ImportFromFile(const std::string& path)
         std::string model_name = item["model_name"];
         std::string model_path = item["path"];
 
-        // モデルがストレージに未登録なら読み込んでボタンにも追加する
+        // 繝｢繝・Ν縺後せ繝医Ξ繝ｼ繧ｸ縺ｫ譛ｪ逋ｻ骭ｲ縺ｪ繧芽ｪｭ縺ｿ霎ｼ繧薙〒繝懊ち繝ｳ縺ｫ繧りｿｽ蜉縺吶ｋ
         if (storage->GetModel(model_name) == nullptr)
         {
             storage->AddModel(model_name.c_str(), model_path.c_str());
@@ -40,7 +40,7 @@ void Import::ImportFromFile(const std::string& path)
             }
         }
 
-        // JSON から Transform を復元
+        // JSON 縺九ｉ Transform 繧貞ｾｩ蜈・
         Transform transform;
         transform.position = VECTOR3(
             item["transform"]["position"]["x"],

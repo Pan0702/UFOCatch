@@ -157,3 +157,4 @@ bool Animator::HasAnimation(int id) const
 		return false;
 	return base->m_Animation[id].used;
 }
+

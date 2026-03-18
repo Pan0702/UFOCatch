@@ -10,3 +10,4 @@ public:
 private:
     static void Normal(float sizeX, float sizeZ);
 };
+

@@ -112,3 +112,4 @@ void TitleScene::Draw()
         m_wipeAnim.Draw(spr, i, info.pImage, info.pos.x, info.pos.y, info.imageSize.z, info.imageSize.w);
     }
 }
+
