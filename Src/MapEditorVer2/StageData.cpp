@@ -4,7 +4,7 @@
 
 namespace
 {
-    // 繝ｬ繧､蛻､螳壹↓菴ｿ逕ｨ縺吶ｋ繝ｬ繧､縺ｮ髟ｷ縺・
+    // レイ判定に使用するレイの長さ
     constexpr float kRayLength = 1000.0f;
 }
 StageData::StageData()
@@ -12,7 +12,7 @@ StageData::StageData()
 }
 
 
-// 謖・ｮ壼ｺｧ讓吶→繝｢繝・Ν蜷阪〒繧ｪ繝悶ず繧ｧ繧ｯ繝医ｒ繧ｹ繝・・繧ｸ縺ｫ霑ｽ蜉縺吶ｋ
+// 指定座標とモデル名でオブジェクトをステージに追加する
 void StageData::AddModel(const VECTOR3& pos, const std::string& modelName)
 {
     StageDataInfo info(modelName, pos);
@@ -20,7 +20,7 @@ void StageData::AddModel(const VECTOR3& pos, const std::string& modelName)
     m_selectedModel = static_cast<int>(m_stageData.size()) - 1;
 }
 
-// 謖・ｮ啜transform縺ｨ繝｢繝・Ν蜷阪〒繧ｪ繝悶ず繧ｧ繧ｯ繝医ｒ繧ｹ繝・・繧ｸ縺ｫ霑ｽ蜉縺吶ｋ
+// 指定transformとモデル名でオブジェクトをステージに追加する
 void StageData::AddModel(const Transform& t, const std::string& modelName)
 {
     StageDataInfo info(modelName, t);
@@ -28,7 +28,7 @@ void StageData::AddModel(const Transform& t, const std::string& modelName)
     m_selectedModel = static_cast<int>(m_stageData.size()) - 1;
 }
 
-// Transform蜈ｨ菴薙ｒ謖・ｮ壹＠縺ｦ繧ｪ繝悶ず繧ｧ繧ｯ繝医ｒ繧ｹ繝・・繧ｸ縺ｫ霑ｽ蜉縺吶ｋ・医う繝ｳ繝昴・繝育畑・・
+// Transform全体を指定してオブジェクトをステージに追加する（インポート用）
 void StageData::AddModelWithTransform(const std::string& modelName, const Transform& transform)
 {
     StageDataInfo info;
@@ -37,21 +37,21 @@ void StageData::AddModelWithTransform(const std::string& modelName, const Transf
     m_stageData.push_back(info);
 }
 
-// 繧ｹ繝・・繧ｸ繝・・繧ｿ繧谷SON繝輔ぃ繧､繝ｫ縺ｫ繧ｨ繧ｯ繧ｹ繝昴・繝医☆繧・
+// ステージデータをJSONファイルにエクスポートする
 void StageData::Export(const std::string& filename) const
 {
     ObjectManager::FindGameObject<ExportData>()->ExportAllModels(filename, m_stageData);
 }
 
 
-// 繝ｬ繧､縺ｨ繧ｹ繝・・繧ｸ荳翫・蜈ｨ繧ｪ繝悶ず繧ｧ繧ｯ繝医・繧ｳ繝ｩ繧､繝繝ｼ繧貞愛螳壹＠縲∵怙霑第磁縺ｮ繧､繝ｳ繝・ャ繧ｯ繧ｹ繧定ｿ斐☆
+// レイとステージ上の全オブジェクトのコライダーを判定し、最接近のインデックスを返す
 int StageData::RayHitTest(const Ray& ray,MeshCollider::CollInfo* collOut) const
 {
     VECTOR3 to = ray.origin + ray.direction * kRayLength;
     int hit_index = -1;
     float nearest = FLT_MAX;
 
-    // 蜈ｨ繧ｪ繝悶ず繧ｧ繧ｯ繝医ｒ襍ｰ譟ｻ縺励※蠖薙◆繧雁愛螳壹ｒ陦後＞縲∵怙繧ゅΞ繧､蟋狗せ縺ｫ霑代＞繧ゅ・繧帝∈縺ｶ
+    // 全オブジェクトを走査して当たり判定を行い、最もレイ始点に近いものを選ぶ
     for (int i = 0; i < m_stageData.size(); i++)
     {
         MeshCollider* coll =ResourceManager::GetColl(m_stageData[i].modelName.c_str());
@@ -73,7 +73,7 @@ int StageData::RayHitTest(const Ray& ray,MeshCollider::CollInfo* collOut) const
     return hit_index;
 }
 
-// 迴ｾ蝨ｨ驕ｸ謚樔ｸｭ縺ｮ繧ｪ繝悶ず繧ｧ繧ｯ繝医ｒ繧ｹ繝・・繧ｸ縺九ｉ蜑企勁縺吶ｋ
+// 現在選択中のオブジェクトをステージから削除する
 void StageData::DeleteModel()
 {
     if (m_stageData.empty())return;
@@ -99,7 +99,7 @@ void StageData::Draw()
 
 
 
-// 驕ｸ謚樔ｸｭ縺ｮ繧ｪ繝悶ず繧ｧ繧ｯ繝医う繝ｳ繝・ャ繧ｯ繧ｹ繧定ｨｭ螳壹☆繧・
+// 選択中のオブジェクトインデックスを設定する
 void StageData::SetModel(int index)
 {
     if (index < 0 || index >= m_stageData.size()) return;
@@ -117,7 +117,7 @@ void StageData::CopyModel(int index)
     m_selectedModel = static_cast<int>(m_stageData.size()) - 1;
 }
 
-// 迴ｾ蝨ｨ驕ｸ謚樔ｸｭ縺ｮ繧ｪ繝悶ず繧ｧ繧ｯ繝医う繝ｳ繝・ャ繧ｯ繧ｹ繧定ｿ斐☆
+// 現在選択中のオブジェクトインデックスを返す
 int StageData::GetSelectIndex() const
 {
     return m_selectedModel;
@@ -128,16 +128,17 @@ const std::vector<StageDataInfo>& StageData::GetStageDataInfo() const
     return m_stageData;
 }
 
-// 迴ｾ蝨ｨ驕ｸ謚樔ｸｭ縺ｮ繧ｪ繝悶ず繧ｧ繧ｯ繝医・Transform繝昴う繝ｳ繧ｿ繧定ｿ斐☆縲よ悴驕ｸ謚樊凾縺ｯnullptr
+// 現在選択中のオブジェクトのTransformポインタを返す。未選択時はnullptr
 Transform* StageData::GetSelectedTransform()
 {
     if (m_selectedModel < 0 || m_selectedModel >= m_stageData.size()) return nullptr;
     return &m_stageData[m_selectedModel].transform;
 }
 
-// 謖・ｮ壹う繝ｳ繝・ャ繧ｯ繧ｹ縺ｮ繧ｪ繝悶ず繧ｧ繧ｯ繝医・Transform繧剃ｸ頑嶌縺阪☆繧具ｼ・ndo/Redo逕ｨ・・
+// 指定インデックスのオブジェクトのTransformを上書きする（Undo/Redo用）
 void StageData::SetSelectedTransform(int index, const Transform& transform)
 {
     m_stageData[index].transform = transform;
 }
+
 

@@ -25,26 +25,26 @@ private:
     float m_translateAccum = 0.0f;
     float m_rotateAccum = 0.0f;
 private:
-    /// <summary>ImGui縺ｧ遘ｻ蜍輔せ繝翫ャ繝鈴㍼繧帝∈謚槭☆繧九Λ繧ｸ繧ｪ繝懊ち繝ｳ繧呈緒逕ｻ縺吶ｋ</summary>
+    /// <summary>ImGuiで移動スナップ量を選択するラジオボタンを描画する</summary>
     void RadioTranslate();
 
-    /// <summary>ImGui縺ｧTRS繝｢繝ｼ繝牙・譖ｿ縺ｨ蜷・ｨｭ螳啅I繧偵∪縺ｨ繧√※謠冗判縺吶ｋ</summary>
+    /// <summary>ImGuiでTRSモード切替と各設定UIをまとめて描画する</summary>
     void DrawImGui();
 
-    /// <summary>ImGui縺ｧ蝗櫁ｻ｢繧ｹ繝翫ャ繝鈴㍼繧帝∈謚槭☆繧九Λ繧ｸ繧ｪ繝懊ち繝ｳ繧呈緒逕ｻ縺吶ｋ</summary>
+    /// <summary>ImGuiで回転スナップ量を選択するラジオボタンを描画する</summary>
     void RadioRotate();
 
-    /// <summary>ImGui縺ｧ繧ｹ繧ｱ繝ｼ繝ｫ繧ｹ繝斐・繝峨ｒ驕ｸ謚槭☆繧九Λ繧ｸ繧ｪ繝懊ち繝ｳ繧呈緒逕ｻ縺吶ｋ</summary>
+    /// <summary>ImGuiでスケールスピードを選択するラジオボタンを描画する</summary>
     void RadioScale();
 
-    /// <summary>遘ｻ蜍暮㍼繧偵せ繝翫ャ繝怜腰菴阪↓荳ｸ繧√※compo縺ｫ邏ｯ遨榊刈邂励☆繧・/summary>
-    /// <param name="compo">譖ｴ譁ｰ蟇ｾ雎｡縺ｮ蠎ｧ讓呎・蛻・ｼ亥盾辣ｧ・・/param>
-    /// <param name="delta">莉翫ヵ繝ｬ繝ｼ繝縺ｮ遘ｻ蜍暮㍼</param>
+    /// <summary>移動量をスナップ単位に丸めてcompoに累積加算する</summary>
+    /// <param name="compo">更新対象の座標成分（参照）</param>
+    /// <param name="delta">今フレームの移動量</param>
     void SnapTranslation(float& compo, float delta);
 
-    /// <summary>蝗櫁ｻ｢驥上ｒ繧ｹ繝翫ャ繝怜腰菴阪↓荳ｸ繧√※compo縺ｫ邏ｯ遨榊刈邂励☆繧・/summary>
-    /// <param name="compo">譖ｴ譁ｰ蟇ｾ雎｡縺ｮ蝗櫁ｻ｢謌仙・・亥盾辣ｧ・・/param>
-    /// <param name="delta">莉翫ヵ繝ｬ繝ｼ繝縺ｮ蝗櫁ｻ｢驥・/param>
+    /// <summary>回転量をスナップ単位に丸めてcompoに累積加算する</summary>
+    /// <param name="compo">更新対象の回転成分（参照）</param>
+    /// <param name="delta">今フレームの回転量</param>
     void SnapRotation(float& compo, float delta);
     
     Transform* GetTarget() const;
@@ -52,29 +52,29 @@ private:
 public:
     TRS();
 
-    /// <summary>TRS縺ｮ謫堺ｽ懊Δ繝ｼ繝峨ｒ險ｭ螳壹☆繧具ｼ・tate蛻玲嫌繧貞盾辣ｧ・・/summary>
-    /// <param name="state">險ｭ螳壹☆繧鬼tate蛟､</param>
+    /// <summary>TRSの操作モードを設定する（State列挙を参照）</summary>
+    /// <param name="state">設定するState値</param>
     void SetState(int state) { m_state = state; }
 
     void Draw() override;
     void Update() override;
 
-    /// <summary>迴ｾ蝨ｨ縺ｮ繝｢繝ｼ繝峨↓蠢懊§縺溘ぐ繧ｺ繝｢縺ｨ繝ｬ繧､縺ｮ蠖薙◆繧雁愛螳壹ｒ陦後＞縲∝ｽ薙◆縺｣縺溯ｻｸ繧定ｿ斐☆</summary>
-    /// <param name="ray">蛻､螳壹↓菴ｿ逕ｨ縺吶ｋ繝ｬ繧､</param>
-    /// <returns>蠖薙◆縺｣縺溯ｻｸ・・/Y/Z・峨∝ｽ薙◆繧峨↑縺代ｌ縺ｰNone</returns>
+    /// <summary>現在のモードに応じたギズモとレイの当たり判定を行い、当たった軸を返す</summary>
+    /// <param name="ray">判定に使用するレイ</param>
+    /// <returns>当たった軸（X/Y/Z）、当たらなければNone</returns>
     Axis RayHitTest(const Ray& ray) const;
 
-    /// <summary>繝峨Λ繝・げ荳ｭ縺ｮ霆ｸ縺ｫ豐ｿ縺｣縺ｦ驕ｸ謚槭が繝悶ず繧ｧ繧ｯ繝医・Transform繧呈峩譁ｰ縺吶ｋ</summary>
+    /// <summary>ドラッグ中の軸に沿って選択オブジェクトのTransformを更新する</summary>
     void SetTransform();
 
-    /// <summary>繝槭え繧ｹ遘ｻ蜍暮㍼繧呈欠螳夊ｻｸ縺ｮ繧ｹ繧ｯ繝ｪ繝ｼ繝ｳ謚募ｽｱ繝吶け繝医Ν縺ｫ蟆・ｽｱ縺励√Ρ繝ｼ繝ｫ繝臥ｩｺ髢薙・螟牙喧驥上ｒ霑斐☆</summary>
-    /// <param name="axis">謫堺ｽ懆ｻｸ</param>
-    /// <param name="objPos">蟇ｾ雎｡繧ｪ繝悶ず繧ｧ繧ｯ繝医・繝ｯ繝ｼ繝ｫ繝牙ｺｧ讓・/param>
-    /// <returns>霆ｸ譁ｹ蜷代・螟牙喧驥・/returns>
+    /// <summary>マウス移動量を指定軸のスクリーン投影ベクトルに射影し、ワールド空間の変化量を返す</summary>
+    /// <param name="axis">操作軸</param>
+    /// <param name="objPos">対象オブジェクトのワールド座標</param>
+    /// <returns>軸方向の変化量</returns>
     static float AddTransform(Axis axis, const VECTOR3& objPos);
 
-    /// <summary>繝峨Λ繝・げ荳ｭ縺ｮ霆ｸ繧定ｨｭ螳壹☆繧九・one繧呈欠螳壹☆繧九→繝峨Λ繝・げ繧定ｧ｣髯､縺吶ｋ</summary>
-    /// <param name="axis">險ｭ螳壹☆繧玖ｻｸ</param>
+    /// <summary>ドラッグ中の軸を設定する。Noneを指定するとドラッグを解除する</summary>
+    /// <param name="axis">設定する軸</param>
     void SetDraggingAxis(Axis axis) { m_draggingAxis = axis; }
 
     void SetOverrideTarget(Transform* t);
@@ -87,4 +87,3 @@ public:
         kScaling
     };
 };
-

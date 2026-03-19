@@ -8,28 +8,28 @@ void GridDraw::Draw()
     }
 }
 
-// XZ蟷ｳ髱｢縺ｫ繧ｰ繝ｪ繝・ラ邱壹ｒ謠冗判縺吶ｋ縲・0繝槭せ縺斐→縺ｫ邱壹ｒ螟ｪ縺剰｡ｨ遉ｺ縺吶ｋ
+// XZ平面にグリッド線を描画する。10マスごとに線を太く表示する
 void GridDraw::Grid()
 {
     CSprite spr;
     constexpr float GIRD_SIZE = 500.0f;
     constexpr float MINOR_LINE_ALPHA    = 0.5f;
-    constexpr int   MAJOR_GRID_INTERVAL = 10;    // Z 譁ｹ蜷代・邱夲ｼ・ 霆ｸ縺ｫ蟷ｳ陦鯉ｼ・
+    constexpr int   MAJOR_GRID_INTERVAL = 10;    // Z 方向の線： X 軸に平行
     for (int i = -GIRD_SIZE; i <= GIRD_SIZE; i++)
     {
         if (i % MAJOR_GRID_INTERVAL == 0)
         {
-            // 荳ｻ繧ｰ繝ｪ繝・ラ邱夲ｼ・0繝槭せ縺斐→・峨・荳埼乗・縺ｧ謠冗判
+            // 主グリッド線：10マスごと）は不透明で描画
             spr.DrawLine3D(VECTOR3(GIRD_SIZE, 0, i), VECTOR3(-GIRD_SIZE, 0, i), RGB(255, 255, 255));
         }
         else
         {
-            // 陬懷勧繧ｰ繝ｪ繝・ラ邱壹・蜊企乗・縺ｧ謠冗判
+            // 補助グリッド線は半透明で描画
             spr.DrawLine3D(VECTOR3(GIRD_SIZE, 0, i), VECTOR3(-GIRD_SIZE, 0, i), RGB(255, 255, 255), MINOR_LINE_ALPHA);
         }
     }
 
-    // X 譁ｹ蜷代・邱夲ｼ・ 霆ｸ縺ｫ蟷ｳ陦鯉ｼ・
+    // X 方向の線： Z 軸に平行
     for (int i = -GIRD_SIZE; i <= GIRD_SIZE; i++)
     {
         if (i % MAJOR_GRID_INTERVAL == 0)
@@ -43,4 +43,3 @@ void GridDraw::Grid()
         }
     }
 }
-

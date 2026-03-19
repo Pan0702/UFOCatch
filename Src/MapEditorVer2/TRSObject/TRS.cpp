@@ -3,7 +3,7 @@
 
 namespace
 {
-    // 繧ｹ繧ｯ繝ｪ繝ｼ繝ｳ荳翫・霆ｸ繝吶け繝医Ν縺後⊇縺ｼ繧ｼ繝ｭ縺ｮ縺ｨ縺埼勁邂励ｒ髦ｲ縺舌＠縺阪＞蛟､
+    // スクリーン上の軸ベクトルがほぼゼロのとき除算をふせぐしきい値
     constexpr float kAxisScreenLenEpsilon = 0.000001f;
 }
 
@@ -15,7 +15,7 @@ TRS::TRS()
     m_pStageData = ObjectManager::FindGameObject<StageData>();
 }
 
-// 迴ｾ蝨ｨ縺ｮ繝｢繝ｼ繝峨↓蠢懊§縺溘ぐ繧ｺ繝｢縺ｨ繝ｬ繧､縺ｮ蠖薙◆繧雁愛螳壹ｒ陦後＞縲∝ｽ薙◆縺｣縺溯ｻｸ繧定ｿ斐☆
+// 現在のモードに応じたギズモとレイの当たり判定を行い、当たった軸を返す
 Axis TRS::RayHitTest(const Ray& ray) const
 {
     switch (m_state)
@@ -34,7 +34,7 @@ void TRS::Update()
     Transform* t = GetTarget();
     if (t == nullptr) return;
     
-    // 繧ｫ繝｡繝ｩ霍晞屬縺ｫ蠢懊§縺ｦ繧ｹ繧ｱ繝ｼ繝ｫ繧定ｪｿ謨ｴ縺励∝ｸｸ縺ｫ蜷後§隕九°縺代し繧､繧ｺ繧堤ｶｭ謖√☆繧・
+    // カメラ距離に応じてスケールを調整し、常に同じ見かけサイズを維持する
     const VECTOR3 cam_pos = GameDevice()->m_vEyePt;
     
     if (m_pTranslation_)
@@ -55,7 +55,7 @@ void TRS::Update()
     }
 }
 
-// 繝峨Λ繝・げ荳ｭ縺ｮ霆ｸ縺ｫ豐ｿ縺｣縺ｦ驕ｸ謚槭が繝悶ず繧ｧ繧ｯ繝医・Transform繧呈峩譁ｰ縺吶ｋ
+// ドラッグ中の軸に沿って選択オブジェクトのTransformを更新する
 void TRS::SetTransform()
 {
     if (m_draggingAxis == Axis::None) return;
@@ -65,7 +65,7 @@ void TRS::SetTransform()
 
     float delta = AddTransform(m_draggingAxis, t->position);
 
-    // 繝峨Λ繝・げ霆ｸ縺ｫ蟇ｾ蠢懊☆繧・VECTOR3 縺ｮ謌仙・・・/y/z・峨ｒ蜿ら・縺ｧ霑斐☆繝ｩ繝繝
+    // ドラッグ軸に対応する VECTOR3 の成分（x/y/z）を参照で返すラムダ
     auto getComponent = [&](VECTOR3& vec) -> float&
     {
         if (m_draggingAxis == Axis::X) return vec.x;
@@ -77,25 +77,25 @@ void TRS::SetTransform()
     switch (m_state)
     {
     case kTranslation:
-        // 繧ｹ繝翫ャ繝怜腰菴阪↓荳ｸ繧√※遘ｻ蜍・
+        // スナップ単位に丸めて移動
         SnapTranslation(getComponent(t->position), delta);
         break;
     case kRotation:
-        // 繧ｹ繝翫ャ繝怜腰菴阪↓荳ｸ繧√※蝗櫁ｻ｢
+        // スナップ単位に丸めて回転
         SnapRotation(getComponent(t->rotation) , delta );
         break;
     case kScaling:
-        // 繧ｹ繧ｱ繝ｼ繝ｫ縺ｯ繧ｹ繝翫ャ繝励↑縺励〒逶ｴ謗･蜉邂・
+        // スケールはスナップなしで直接加算
         getComponent(t->scale) += delta * m_scaleSpeed;
         break;
     default: break;
     }
 }
 
-// 遘ｻ蜍暮㍼繧偵せ繝翫ャ繝怜腰菴阪↓荳ｸ繧√※compo縺ｫ邏ｯ遨榊刈邂励☆繧・
+// 移動量をスナップ単位に丸めてcompoに累積加算する
 void TRS::SnapTranslation(float& compo, float delta)
 {
-    // 繝輔Ξ繝ｼ繝縺斐→縺ｮ delta 繧堤ｴｯ遨阪＠縲√せ繝翫ャ繝怜ｹ・step 繧定ｶ・∴繧九◆縺ｳ縺ｫ step 蜊倅ｽ阪〒遒ｺ螳・
+    // フレームごとの delta を累積し、スナップ幅 step を超えるたびに step 単位で確定
     m_translateAccum += delta;
     float step = m_translateSpeed;
     if (step > 0.0f)
@@ -113,10 +113,10 @@ void TRS::SnapTranslation(float& compo, float delta)
     }
 }
 
-// 蝗櫁ｻ｢驥上ｒ繧ｹ繝翫ャ繝怜腰菴阪↓荳ｸ繧√※compo縺ｫ邏ｯ遨榊刈邂励☆繧・
+// 回転量をスナップ単位に丸めてcompoに累積加算する
 void TRS::SnapRotation(float& compo, float delta)
 {
-    // 繝輔Ξ繝ｼ繝縺斐→縺ｮ delta 繧堤ｴｯ遨阪＠縲√せ繝翫ャ繝怜ｹ・step 繧定ｶ・∴繧九◆縺ｳ縺ｫ step 蜊倅ｽ阪〒遒ｺ螳・
+    // フレームごとの delta を累積し、スナップ幅 step を超えるたびに step 単位で確定
     m_rotateAccum += delta;
     float step = m_rotateSpeed;
     if (step > 0.0f)
@@ -141,14 +141,14 @@ Transform* TRS::GetTarget() const
     return m_pStageData->GetSelectedTransform();
 }
 
-// 繝槭え繧ｹ遘ｻ蜍暮㍼繧呈欠螳夊ｻｸ縺ｮ繧ｹ繧ｯ繝ｪ繝ｼ繝ｳ謚募ｽｱ繝吶け繝医Ν縺ｫ蟆・ｽｱ縺励√Ρ繝ｼ繝ｫ繝臥ｩｺ髢薙・螟牙喧驥上ｒ霑斐☆
+// マウス移動量を指定軸のスクリーン投影ベクトルに射影し、ワールド空間の変化量を返す
 float TRS::AddTransform(Axis axis, const VECTOR3& objPos)
 {
     auto device = GameDevice();
     DIMOUSESTATE mouse = device->m_pDI->GetMouseState();
     if (mouse.lX == 0 && mouse.lY == 0) return 0.0f;
 
-    // 霆ｸ縺ｮ譁ｹ蜷代・繧ｯ繝医Ν
+    // 軸の方向ベクトル
     VECTOR3 axisDir = {};
     if (axis == Axis::X) axisDir = VECTOR3(1, 0, 0);
     if (axis == Axis::Y) axisDir = VECTOR3(0, 1, 0);
@@ -158,7 +158,7 @@ float TRS::AddTransform(Axis axis, const VECTOR3& objPos)
     float screenH = static_cast<float>(device->m_pD3D->m_dwWindowHeight);
     MATRIX4X4 viewProj = device->m_mView * device->m_mProj;
 
-    // 繝ｯ繝ｼ繝ｫ繝牙ｺｧ讓・竊・繧ｹ繧ｯ繝ｪ繝ｼ繝ｳ蠎ｧ讓吶↓謚募ｽｱ
+    // ワールド座標 → スクリーン座標に投影
     auto projectToScreen = [&](const VECTOR3& pos) -> VECTOR2
     {
         VECTOR4 p = VECTOR4(pos.x, pos.y, pos.z, 1.0f);
@@ -173,17 +173,17 @@ float TRS::AddTransform(Axis axis, const VECTOR3& objPos)
         };
     };
 
-    // 繧ｪ繝悶ず繧ｧ繧ｯ繝井ｽ咲ｽｮ縺ｨ霆ｸ譁ｹ蜷・蜊倅ｽ榊・繧偵せ繧ｯ繝ｪ繝ｼ繝ｳ縺ｫ謚募ｽｱ
+    // オブジェクト位置と軸方向 単位分をスクリーンに投影
     VECTOR2 p1 = projectToScreen(objPos);
     VECTOR2 p2 = projectToScreen(objPos + axisDir);
 
-    // 繧ｹ繧ｯ繝ｪ繝ｼ繝ｳ遨ｺ髢薙〒縺ｮ霆ｸ繝吶け繝医Ν
+    // スクリーン空間での軸ベクトル
     float sx = p2.x - p1.x;
     float sy = p2.y - p1.y;
     float lenSq = sx * sx + sy * sy;
     if (lenSq < kAxisScreenLenEpsilon) return 0.0f;
 
-    // 繝槭え繧ｹ遘ｻ蜍輔ｒ繧ｹ繧ｯ繝ｪ繝ｼ繝ｳ霆ｸ譁ｹ蜷代↓蟆・ｽｱ (projected/len) / len = dot / lenSq
+    // マウス移動をスクリーン軸方向に射影 (projected/len) / len = dot / lenSq
     float dot = static_cast<float>(mouse.lX) * sx + static_cast<float>(mouse.lY) * sy;
     return dot / lenSq;
 }
@@ -212,7 +212,7 @@ void TRS::Draw()
 }
 
 
-// ImGui縺ｧTRS繝｢繝ｼ繝牙・譖ｿ縺ｨ蜷・ｨｭ螳啅I繧偵∪縺ｨ繧√※謠冗判縺吶ｋ
+// ImGuiでTRSモード切替と各設定UIをまとめて描画する
 void TRS::DrawImGui()
 {
     ImGui::SetNextWindowPos(ImVec2(350, 10), ImGuiCond_Once);
@@ -249,7 +249,7 @@ void TRS::DrawImGui()
 }
 
 
-// ImGui縺ｧ遘ｻ蜍輔せ繝翫ャ繝鈴㍼繧帝∈謚槭☆繧九Λ繧ｸ繧ｪ繝懊ち繝ｳ繧呈緒逕ｻ縺吶ｋ
+// ImGuiで移動スナップ量を選択するラジオボタンを描画する
 void TRS::RadioTranslate()
 {
     ImGui::Text("Translation");
@@ -279,7 +279,7 @@ void TRS::RadioTranslate()
     }
 }
 
-// ImGui縺ｧ蝗櫁ｻ｢繧ｹ繝翫ャ繝鈴㍼繧帝∈謚槭☆繧九Λ繧ｸ繧ｪ繝懊ち繝ｳ繧呈緒逕ｻ縺吶ｋ
+// ImGuiで回転スナップ量を選択するラジオボタンを描画する
 void TRS::RadioRotate()
 {
     ImGui::Text("Rotation");
@@ -313,7 +313,7 @@ void TRS::RadioRotate()
     }
 }
 
-// ImGui縺ｧ繧ｹ繧ｱ繝ｼ繝ｫ繧ｹ繝斐・繝峨ｒ驕ｸ謚槭☆繧九Λ繧ｸ繧ｪ繝懊ち繝ｳ繧呈緒逕ｻ縺吶ｋ
+// ImGuiでスケールスピードを選択するラジオボタンを描画する
 void TRS::RadioScale()
 {
     ImGui::Text("Scaling");
@@ -338,4 +338,3 @@ void TRS::RadioScale()
         m_scaleSpeed = 0.1f;
     }
 }
-

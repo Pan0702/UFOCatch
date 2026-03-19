@@ -7,7 +7,7 @@
 #include "ConvertFbx/FbxParser.h"
 #include "ConvertFbx/MeshWriter.h"
 
-// 謖・ｮ壹ヱ繧ｹ縺ｮ繝｡繝・す繝･繧偵Ο繝ｼ繝峨＠縲√・繧ｿ繝ｳ繝ｪ繧ｹ繝医→繝｢繝・Ν繧ｹ繝医Ξ繝ｼ繧ｸ縺ｫ逋ｻ骭ｲ縺吶ｋ
+// 指定パスのメッシュをロードし、ボタンリストとモデルストレージに登録する
 void ModelCreator::CreateModel(const std::string& path)
 {
 
@@ -44,10 +44,10 @@ void ModelCreator::CreateModel(const std::string& path)
     }
 }
 
-// FBX 繧・.mesh 縺ｫ螟画鋤縺励※縺九ｉ繝ｭ繝ｼ繝峨☆繧・
+// FBX を .mesh に変換してからロードする
 void ModelCreator::ConvertAndLoad(const std::string& fbxPath)
 {
-    // FBX 繧定ｧ｣譫舌＠縺ｦ鬆らせ繝ｻ繧､繝ｳ繝・ャ繧ｯ繧ｹ繧貞叙蠕・
+    // FBX を解析して頂点・インデックスを取得
     FbxParser parser;
     if (!parser.Load(fbxPath)) return;
 
@@ -55,7 +55,7 @@ void ModelCreator::ConvertAndLoad(const std::string& fbxPath)
     std::vector<uint32_t>   indices;
     if (!parser.ExtractMesh(verts, indices)) return;
 
-    // FBX 縺ｨ蜷後§繝輔か繝ｫ繝繝ｻ蜷悟錐縺ｧ .mesh 縺ｨ縺励※菫晏ｭ・
+    // FBX と同じフォルダ・同名で .mesh として保存
     std::string meshPath = fbxPath;
     size_t lastDot = meshPath.find_last_of('.');
     if (lastDot != std::string::npos) {
@@ -69,8 +69,8 @@ void ModelCreator::ConvertAndLoad(const std::string& fbxPath)
         MessageBox(0, _T("No Texture"), nullptr, MB_OK);
         return;
     }
-    // FbxMesh::Load 縺ｯ "mesh縺ｮ繝・ぅ繝ｬ繧ｯ繝医Μ + 繝・け繧ｹ繝√Ε蜷・ 縺ｧ繝輔Ν繝代せ繧堤ｵ・∩遶九※繧九◆繧√・
-    // 繝輔ぃ繧､繝ｫ蜷阪・縺ｿ繧剃ｿ晏ｭ倥☆繧具ｼ育ｵｶ蟇ｾ繝代せ繧・嶌蟇ｾ繝代せ縺ｮ菴呵ｨ医↑諠・ｱ繧帝勁蜴ｻ・・
+    // FbxMesh::Load は "meshのディレクトリ + テクスチャ名" でフルパスを組み立てるため、
+    // ファイル名のみを保存する（絶対パスや相対パスの余計な情報を除去）
     {
         size_t pos = texName.find_last_of("/\\");
         if (pos != std::string::npos)
@@ -79,7 +79,7 @@ void ModelCreator::ConvertAndLoad(const std::string& fbxPath)
     MeshWriter writer;
     if (!writer.Write(meshPath, texName, verts, indices)) return;
 
-    // 螟画鋤縺励◆ .mesh 繧帝壼ｸｸ繝ｭ繝ｼ繝・
+    // 変換した .mesh を通常ロード
     CreateModel(meshPath);
 }
 

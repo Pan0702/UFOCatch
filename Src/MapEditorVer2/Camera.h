@@ -7,15 +7,15 @@ public:
     ~Camera();
     void Update() override;
 
-    /// <summary>驕ｸ謚槭が繝悶ず繧ｧ繧ｯ繝医↓繧ｫ繝｡繝ｩ繧偵ヵ繧ｩ繝ｼ繧ｫ繧ｹ縺吶ｋ</summary>
+    /// <summary>選択オブジェクトにカメラをフォーカスする</summary>
     static void Focus();
 
-    /// <summary>WASD繧ｭ繝ｼ縺ｧ繧ｫ繝｡繝ｩ繧貞燕蠕悟ｷｦ蜿ｳ縺ｫ蟷ｳ陦檎ｧｻ蜍輔☆繧・/summary>
+    /// <summary>WASDキーでカメラを前後左右に平行移動する</summary>
     static void Move();
 
-    /// <summary>繝槭え繧ｹ遘ｻ蜍暮㍼縺ｫ蠢懊§縺ｦ繧ｫ繝｡繝ｩ縺ｮ豕ｨ隕也せ繧貞屓霆｢縺吶ｋ</summary>
+    /// <summary>マウス移動量に応じてカメラの注視点を回転する</summary>
     static void Rotate();
 
-    /// <summary>繝槭え繧ｹ繝帙う繝ｼ繝ｫ縺ｧ繧ｫ繝｡繝ｩ繧貞燕蠕梧婿蜷代↓繧ｺ繝ｼ繝縺吶ｋ</summary>
+    /// <summary>マウスホイールでカメラを前後方向にズームする</summary>
     static void Zoom();
 };

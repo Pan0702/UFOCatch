@@ -12,14 +12,14 @@
 
 
 // ----------------------------------------------------------------
-//  FBX 繝舌う繝翫Μ繝輔ぃ繧､繝ｫ繧定ｪｭ縺ｿ霎ｼ繧
+//  FBX バイナリファイルを読み込む
 // ----------------------------------------------------------------
 bool FbxParser::Load(const std::string& path)
 {
     std::ifstream file(path, std::ios::binary);
     if (!file)
     {
-        MessageBoxA(nullptr, ("FBX 繝輔ぃ繧､繝ｫ繧帝幕縺代∪縺帙ｓ: " + path).c_str(),
+        MessageBoxA(nullptr, ("FBX ファイルを開けません: " + path).c_str(),
                     "FbxParser", MB_OK | MB_ICONERROR);
         return false;
     }
@@ -35,7 +35,7 @@ bool FbxParser::Load(const std::string& path)
     if (m_data.size() < 27 ||
         memcmp(m_data.data(), kFbxMagic, kFbxMagicSize) != 0)
     {
-        MessageBoxA(nullptr, "FBX 繝舌う繝翫Μ繝輔か繝ｼ繝槭ャ繝医〒縺ｯ縺ゅｊ縺ｾ縺帙ｓ",
+        MessageBoxA(nullptr, "FBX バイナリフォーマットではありません",
                     "FbxParser", MB_OK | MB_ICONERROR);
         return false;
     }
@@ -50,26 +50,26 @@ bool FbxParser::Load(const std::string& path)
 }
 
 // ----------------------------------------------------------------
-//  隱ｭ縺ｿ霎ｼ繧薙□ FBX 縺九ｉ鬆らせ繝ｻ繧､繝ｳ繝・ャ繧ｯ繧ｹ繝・・繧ｿ繧貞ｱ暮幕縺吶ｋ
+//  読み込んだ FBX から頂点・インデックスデータを展開する
 //
-//  莉墓ｧ・
-//    - Objects 逶ｴ荳九・蜈ｨ Geometry 繧堤ｵ仙粋縺励※1縺､縺ｮ繝｡繝・す繝･縺ｨ縺励※蜃ｺ蜉帙☆繧・
-//    - 蜷・Geometry 縺ｫ蟇ｾ蠢懊☆繧・Model 縺ｮ 繝ｭ繝ｼ繧ｫ繝ｫ Transform (T/R/S) 繧帝←逕ｨ縺吶ｋ
-//      ・郁ｦｪ Model 縺ｮ Transform 縺ｯ驕ｩ逕ｨ縺励↑縺・ｼ・
-//    - 鬆らせ縺ｮ荳諢乗ｧ縺ｯ (pos_idx, uv_idx) 縺ｮ邨・∩蜷医ｏ縺帙〒蛻､螳壹☆繧具ｼ域ｳ慕ｷ壹・蜷ｫ繧√↑縺・ｼ・
-//    - UV 縺ｮ V 霆ｸ蜿崎ｻ｢縺ｯ陦後ｏ縺ｪ縺・ｼ医す繧ｧ繝ｼ繝繝ｼ蛛ｴ縺ｧ蜃ｦ逅・☆繧具ｼ・
+//  仕様
+//    - Objects 直下の全 Geometry を結合して1つのメッシュとして出力する
+//    - 各 Geometry に対応する Model の ローカル Transform (T/R/S) を適用する
+//      （親 Model の Transform は適用しない）
+//    - 頂点の一意性は (pos_idx, uv_idx) の組み合わせで判定する（法線は含めない）
+//    - UV の V 軸反転は行わない（シェーダー側で処理する）
 // ----------------------------------------------------------------
 bool FbxParser::ExtractMesh(std::vector<MeshVertex>& outVerts,std::vector<uint32_t>& outIndices)
 {
     Node* objects = FindNode(m_roots, "Objects");
     if (!objects)
     {
-        MessageBoxA(nullptr, "FBX: Objects 繝弱・繝峨′隕九▽縺九ｊ縺ｾ縺帙ｓ",
+        MessageBoxA(nullptr, "FBX: Objects ノードが見つかりません",
                     "FbxParser", MB_OK | MB_ICONERROR);
         return false;
     }
 
-    // --- Model ID 竊・Node 縺ｮ繝槭ャ繝励ｒ菴懈・ ---
+    // --- Model ID → Node のマップを作成 ---
     m_modelMap.clear();
     for (auto& child : objects->children)
     {
@@ -77,7 +77,7 @@ bool FbxParser::ExtractMesh(std::vector<MeshVertex>& outVerts,std::vector<uint32
             m_modelMap[ReadNodeId(child.propStart)] = &child;
     }
 
-    // --- Geometry ID 繧ｻ繝・ヨ繧剃ｽ懈・ ---
+    // --- Geometry ID セットを作成 ---
     std::unordered_map<int64_t, Node*> geo_map;
     for (auto& child : objects->children)
     {
@@ -85,9 +85,9 @@ bool FbxParser::ExtractMesh(std::vector<MeshVertex>& outVerts,std::vector<uint32
             geo_map[ReadNodeId(child.propStart)] = &child;
     }
 
-    // --- Connections 縺九ｉ謗･邯壽ュ蝣ｱ繧貞庶髮・---
-    //   geo_to_model      : Geometry ID 竊・逶ｴ謗･縺ｮ隕ｪ Model ID
-    //   model_parent_map_ : Model ID    竊・隕ｪ Model ID・医げ繝ｭ繝ｼ繝舌Ν陦悟・縺ｮ蜀榊ｸｰ險育ｮ礼畑・・
+    // --- Connections から接続情報を収集 ---
+    //   geo_to_model      : Geometry ID → 直接の親 Model ID
+    //   model_parent_map_ : Model ID    → 親 Model ID（グローバル行列の再帰計算用）
     std::unordered_map<int64_t, int64_t> geo_to_model;
     m_modelParentMap.clear();
     const Node* conn_node = FindNode(m_roots, "Connections");
@@ -97,13 +97,13 @@ bool FbxParser::ExtractMesh(std::vector<MeshVertex>& outVerts,std::vector<uint32
         {
             if (c.name != "C") continue;
             uint64_t off = c.propStart;
-            // conn_type (S) 繧偵せ繧ｭ繝・・
+            // conn_type (S) をスキップ
             if (off < m_data.size() && m_data[off] == 'S')
             {
                 uint32_t l = Read<uint32_t>(off + 1);
                 off += 5 + l;
             }
-            // 繧ｿ繧ｰ繧貞ｮ滄圀縺ｫ隱ｭ繧薙〒繧ｪ繝輔そ繝・ヨ繧呈ｭ｣遒ｺ縺ｫ騾ｲ繧√ｋ
+            // タグを実際に読んでオフセットを正確に進める
             const uint8_t tag1 = m_data[off];
             const int64_t id1 = ReadNodeId(off);
             off += (tag1 == 'L') ? 9u : 5u;
@@ -115,7 +115,7 @@ bool FbxParser::ExtractMesh(std::vector<MeshVertex>& outVerts,std::vector<uint32
                 m_modelParentMap[id1] = id2;
         }
     }
-    // // --- 繝・ヰ繝・げ: model_map_ / model_parent_map_ 縺ｮ蜀・ｮｹ繧堤｢ｺ隱・---
+    // // --- デバッグ: model_map_ / model_parent_map_ の内容を確認 ---
     // {
     //     char buf[256];
     //     sprintf_s(buf, "[FbxParser] model_map_ size=%zu  model_parent_map_ size=%zu\n",
@@ -123,20 +123,20 @@ bool FbxParser::ExtractMesh(std::vector<MeshVertex>& outVerts,std::vector<uint32
     //     OutputDebugStringA(buf);
     // }
     //
-    // // --- 繝・ヰ繝・げ: geo_to_model 縺ｮ蜀・ｮｹ繧堤｢ｺ隱・---
+    // // --- デバッグ: geo_to_model の内容を確認 ---
     // {
     //     char buf[256];
     //     sprintf_s(buf, "[FbxParser] geo_map size=%zu  geo_to_model size=%zu\n",
     //               geo_map.size(), geo_to_model.size());
     //     OutputDebugStringA(buf);
     // }
-    // --- 蜈ｨ Geometry 繧貞ｱ暮幕縺励※邨仙粋 ---
+    // --- 全 Geometry を展開して結合 ---
     outVerts.clear();
     outIndices.clear();
 
     if (geo_map.empty())
     {
-        MessageBoxA(nullptr, "FBX: Geometry 繝弱・繝峨′隕九▽縺九ｊ縺ｾ縺帙ｓ",
+        MessageBoxA(nullptr, "FBX: Geometry ノードが見つかりません",
                     "FbxParser", MB_OK | MB_ICONERROR);
         return false;
     }
@@ -150,7 +150,7 @@ bool FbxParser::ExtractMesh(std::vector<MeshVertex>& outVerts,std::vector<uint32
         const auto it = geo_to_model.find(geo_id);
         if (it != geo_to_model.end())
         {
-            // // --- 繝・ヰ繝・げ: ID 縺ｮ辣ｧ蜷医ｒ遒ｺ隱・---
+            // // --- デバッグ: ID の照合を確認 ---
             // char buf[256];
             // sprintf_s(buf, "[FbxParser] geo_id=%lld  model_id_from_conn=%lld  in_model_map=%s\n",
             //           geo_id, it->second,
@@ -171,19 +171,19 @@ bool FbxParser::ExtractMesh(std::vector<MeshVertex>& outVerts,std::vector<uint32
 
 std::string FbxParser::GetTextureFileName() const
 {
-    // Objects 逶ｴ荳九・譛蛻昴・ Texture 繝弱・繝峨ｒ謗｢縺・
+    // Objects 直下の最初の Texture ノードを探す
      Node* objects = FindNode(const_cast<std::vector<Node>&>(m_roots), "Objects");
     if (!objects) return "";
 
     Node* tex = FindNode(objects->children, "Texture");
     if (!tex) return "";
 
-    // RelativeFilename 繧貞━蜈医＠縺ｦ菴ｿ縺・
+    // RelativeFilename を優先して使う
     Node* rel = FindNode(tex->children, "RelativeFilename");
     if (rel)
     {
-        std::string s = ReadString(rel, ""); // 繝弱・繝芽・霄ｫ縺ｮ繝励Ο繝代ユ繧｣繧定ｪｭ繧
-        // 繝弱・繝芽・霄ｫ縺ｮ繝励Ο繝代ユ繧｣繧定ｪｭ繧//
+        std::string s = ReadString(rel, ""); // ノード自身のプロパティを読む
+        // ノード自身のプロパティを読む//
         const uint64_t off = rel->propStart;
         if (m_data[off] == 'S')
         {
@@ -192,7 +192,7 @@ std::string FbxParser::GetTextureFileName() const
         }
         if (!s.empty())
         {
-            // 邨ｶ蟇ｾ繝代せ・・X:\" 繧・"/" 蟋九∪繧奇ｼ峨↑繧峨ヵ繧｡繧､繝ｫ蜷埼Κ蛻・□縺題ｿ斐☆
+            // 絶対パス（"X:\" や "/" 始まり）ならファイル名部分だけ返す
             const bool is_abs = (s.size() >= 2 && s[1] == ':') || (s[0] == '/' || s[0] == '\\');
             if (is_abs)
             {
@@ -203,7 +203,7 @@ std::string FbxParser::GetTextureFileName() const
         }
     }
 
-    // RelativeFilename 縺後↑縺代ｌ縺ｰ FileName 縺ｮ繝輔ぃ繧､繝ｫ蜷埼Κ蛻・□縺題ｿ斐☆
+    // RelativeFilename がなければ FileName のファイル名部分だけ返す
     const Node* fn = FindNode(tex->children, "FileName");
     if (fn)
     {
@@ -212,7 +212,7 @@ std::string FbxParser::GetTextureFileName() const
         {
             const uint32_t len = Read<uint32_t>(off + 1);
             const std::string full(reinterpret_cast<const char*>(m_data.data() + off + 5), len);
-            // 繝代せ縺ｮ譛蠕後・繝輔ぃ繧､繝ｫ蜷阪□縺大叙繧雁・縺・
+            // パスの最後のファイル名だけ切り出す
             const size_t pos = full.find_last_of("/\\");
             if (pos != std::string::npos) return full.substr(pos + 1);
             return full;
@@ -224,7 +224,7 @@ std::string FbxParser::GetTextureFileName() const
 
 
 // ----------------------------------------------------------------
-//  1縺､縺ｮ Geometry 繝弱・繝峨ｒ繝ｭ繝ｼ繧ｫ繝ｫ Transform 繧帝←逕ｨ縺励↑縺後ｉ螻暮幕縺吶ｋ
+//  1つの Geometry ノードをローカル Transform を適用しながら展開する
 // ----------------------------------------------------------------
 bool FbxParser::ExtractGeometry(
     Node* geometry,
@@ -239,7 +239,7 @@ bool FbxParser::ExtractGeometry(
     Node* le_normal = FindNode(geometry->children, "LayerElementNormal");
     if (!le_normal)
     {
-        MessageBoxA(nullptr, "FBX: LayerElementNormal 縺瑚ｦ九▽縺九ｊ縺ｾ縺帙ｓ",
+        MessageBoxA(nullptr, "FBX: LayerElementNormal が見つかりません",
                     "FbxParser", MB_OK | MB_ICONERROR);
         return false;
     }
@@ -252,7 +252,7 @@ bool FbxParser::ExtractGeometry(
     Node* le_uv = FindNode(geometry->children, "LayerElementUV");
     if (!le_uv)
     {
-        MessageBoxA(nullptr, "FBX: LayerElementUV 縺瑚ｦ九▽縺九ｊ縺ｾ縺帙ｓ",
+        MessageBoxA(nullptr, "FBX: LayerElementUV が見つかりません",
                     "FbxParser", MB_OK | MB_ICONERROR);
         return false;
     }
@@ -264,7 +264,7 @@ bool FbxParser::ExtractGeometry(
 
     MATRIX4X4 mat = GetGlobalMatrix(model);
 
-    // --- 繝・ヰ繝・げ: 陦悟・縺ｮ遘ｻ蜍墓・蛻・ｒ遒ｺ隱・---
+    // --- デバッグ: 行列の移動成分を確認 ---
     {
         char buf[256];
         sprintf_s(buf, "[FbxParser] GlobalMatrix T=(%.3f, %.3f, %.3f)\n",
@@ -276,7 +276,7 @@ bool FbxParser::ExtractGeometry(
     uint32_t pv_counter = 0;
     std::vector<std::pair<uint32_t, uint32_t>> face;
 
-    // 繝昴Μ繧ｴ繝ｳ鬆らせ縺斐→縺ｫ蠢・★譁ｰ隕城らせ繧堤函謌舌＠縲√う繝ｳ繝・ャ繧ｯ繧ｹ繧・0 縺九ｉ謖ｯ繧顔峩縺・
+    // ポリゴン頂点ごとに必ず新規頂点を生成し、インデックスを 0 から振り直す
     auto emit_vertex = [&](uint32_t pos_idx, uint32_t pv_idx)
     {
         const uint32_t n_idx = (norm_ref == "IndexToDirect")
@@ -294,11 +294,11 @@ bool FbxParser::ExtractGeometry(
         const float nz = static_cast<float>(raw_norm[n_idx * 3 + 2]);
 
         MeshVertex v{};
-        // 菴咲ｽｮ縺ｫ繧ｰ繝ｭ繝ｼ繝舌Ν螟画鋤陦悟・繧帝←逕ｨ縺吶ｋ・郁｡悟━蜈茨ｼ・
+        // 位置にグローバル変換行列を適用する（行優先）
         v.position[0] = (mat.m[0][0] * px + mat.m[1][0] * py + mat.m[2][0] * pz + mat.m[3][0]) / 100.0f;
         v.position[1] = (mat.m[0][1] * px + mat.m[1][1] * py + mat.m[2][1] * pz + mat.m[3][1]) / 100.0f;
         v.position[2] = (mat.m[0][2] * px + mat.m[1][2] * py + mat.m[2][2] * pz + mat.m[3][2]) / 100.0f;
-        // 豕慕ｷ壹↓蝗櫁ｻ｢縺ｮ縺ｿ驕ｩ逕ｨ縺励※蜀肴ｭ｣隕丞喧縺吶ｋ
+        // 法線に回転のみ適用して再正規化する
         float wnx = mat.m[0][0] * nx + mat.m[1][0] * ny + mat.m[2][0] * nz;
         float wny = mat.m[0][1] * nx + mat.m[1][1] * ny + mat.m[2][1] * nz;
         float wnz = mat.m[0][2] * nx + mat.m[1][2] * ny + mat.m[2][2] * nz;
@@ -312,7 +312,7 @@ bool FbxParser::ExtractGeometry(
         v.normal[0] = wnx;
         v.normal[1] = wny;
         v.normal[2] = wnz;
-        // UV 縺ｯ縺昴・縺ｾ縺ｾ・・ 霆ｸ蜿崎ｻ｢縺ｯ繧ｷ繧ｧ繝ｼ繝繝ｼ蛛ｴ縺ｧ陦後≧・・
+        // UV はそのまま（ V 軸反転はシェーダー側で行う）
         v.uv[0] = static_cast<float>(raw_uv[u_idx * 2 + 0]);
         v.uv[1] = 1.0f - static_cast<float>(raw_uv[u_idx * 2 + 1]);
 
@@ -343,8 +343,8 @@ bool FbxParser::ExtractGeometry(
 }
 
 // ----------------------------------------------------------------
-//  繝弱・繝峨・譛蛻昴・繝励Ο繝代ユ繧｣・・D・峨ｒ int64_t 縺ｧ隱ｭ繧
-//  FBX 7400 莉･蜑阪・ 'I'(int32)縲・500 莉･髯阪・ 'L'(int64)
+//  ノードの最初のプロパティ（ID）を int64_t で読む
+//  FBX 7400 以前は 'I'(int32)、7500 以降は 'L'(int64)
 // ----------------------------------------------------------------
 int64_t FbxParser::ReadNodeId(const uint64_t offset) const
 {
@@ -355,9 +355,9 @@ int64_t FbxParser::ReadNodeId(const uint64_t offset) const
 }
 
 // ----------------------------------------------------------------
-//  Model 繝弱・繝峨°繧峨げ繝ｭ繝ｼ繝舌Ν螟画鋤陦悟・繧貞叙蠕励☆繧・
-//  Connections 縺ｮ隕ｪ繝√ぉ繝ｼ繝ｳ繧貞・蟶ｰ逧・↓霎ｿ繧翫∝・逾門・縺ｮ繝ｭ繝ｼ繧ｫ繝ｫ陦悟・繧堤ｵ仙粋縺吶ｋ
-//  ・・bxNode::EvaluateGlobalTransform() 逶ｸ蠖難ｼ・
+//  Model ノードからグローバル変換行列を計算する
+//  Connections の親チェーンを再帰的に辿り、各祖先のローカル行列を結合する
+//  （FbxNode::EvaluateGlobalTransform() 相当）
 // ----------------------------------------------------------------
 MATRIX4X4 FbxParser::GetGlobalMatrix(Node* model) const
 {
@@ -372,20 +372,20 @@ MATRIX4X4 FbxParser::GetGlobalMatrix(Node* model) const
         auto nodeIt = m_modelMap.find(parentIt->second);
         if (nodeIt != m_modelMap.end())
         {
-            // 隕ｪ縺ｮ繧ｰ繝ｭ繝ｼ繝舌Ν陦悟・ ﾃ・閾ｪ蛻・・繝ｭ繝ｼ繧ｫ繝ｫ陦悟・
+            // 親のグローバル行列 × 自身のローカル行列
             const MATRIX4X4 parentGlobal = GetGlobalMatrix(nodeIt->second);
             const MATRIX4X4 local = GetLocalMatrix(model);
             return parentGlobal * local;
         }
     }
 
-    // 隕ｪ縺後＞縺ｪ縺・ｼ医Ν繝ｼ繝医ヮ繝ｼ繝会ｼ峨↑繧峨Ο繝ｼ繧ｫ繝ｫ陦悟・縺後◎縺ｮ縺ｾ縺ｾ繧ｰ繝ｭ繝ｼ繝舌Ν陦悟・
+    // 親がいない（ルートノード）ならローカル行列がそのままグローバル行列
     return GetLocalMatrix(model);
 }
 
 // ----------------------------------------------------------------
-//  Model 繝弱・繝峨°繧峨Ο繝ｼ繧ｫ繝ｫ螟画鋤陦悟・ (TRS) 繧貞叙蠕励☆繧・
-//  陦悟━蜈・4x4, Euler 蝗櫁ｻ｢鬆・ｺ上・ FBX 讓呎ｺ悶・ XYZ
+//  Model ノードからローカル変換行列 (TRS) を計算する
+//  行列要素 4x4, Euler 回転順序は FBX 標準の XYZ
 // ----------------------------------------------------------------
 MATRIX4X4 FbxParser::GetLocalMatrix(Node* model) const
 {
@@ -403,7 +403,7 @@ MATRIX4X4 FbxParser::GetLocalMatrix(Node* model) const
         if (p.name != "P") continue;
         uint64_t off = p.propStart;
 
-        // 1縺､逶ｮ: 繝励Ο繝代ユ繧｣蜷・(S)
+        // 1つ目: プロパティ名 (S)
         if (m_data[off] != 'S') continue;
         const uint32_t slen = Read<uint32_t>(off + 1);
         const std::string pname(reinterpret_cast<const char*>(m_data.data() + off + 5), slen);
@@ -414,7 +414,7 @@ MATRIX4X4 FbxParser::GetLocalMatrix(Node* model) const
             pname != "Lcl Scaling")
             continue;
 
-        // 2縲・縺､逶ｮ・亥梛蜷・ 繝ｩ繝吶Ν, 繝輔Λ繧ｰ・峨ｒ繧ｹ繧ｭ繝・・
+        // 2～4つ目（型名, ラベル, フラグ）をスキップ
         for (int i = 0; i < 3; ++i)
         {
             if (off >= m_data.size()) break;
@@ -430,7 +430,7 @@ MATRIX4X4 FbxParser::GetLocalMatrix(Node* model) const
             else if (tc == 'D') off += 8;
         }
 
-        // 5縲・縺､逶ｮ: X, Y, Z 蛟､
+        // 5～7つ目: X, Y, Z 値
         auto read_val = [&]() -> double
         {
             if (off >= m_data.size()) return 0.0;
@@ -470,12 +470,12 @@ MATRIX4X4 FbxParser::GetLocalMatrix(Node* model) const
         }
     }
 
-    // rx/ry/rz 縺ｯ縺吶〒縺ｫ DegToRad 貂医∩縺ｪ縺ｮ縺ｧ縺昴・縺ｾ縺ｾ貂｡縺・
+    // rx/ry/rz はすでに DegToRad 済みなのでそのまま渡す
     const double crx = cos(rx), srx = sin(rx);
     const double cry = cos(ry), sry = sin(ry);
     const double crz = cos(rz), srz = sin(rz);
 
-    // 陦悟━蜈・TRS 陦悟・・・ = Rz * Ry * Rx・・
+    // 行列（ TRS 行列。 M = Rz * Ry * Rx）
     m.m[0][0] = static_cast<float>(sx * (cry * crz));
     m.m[0][1] = static_cast<float>(sx * (cry * srz));
     m.m[0][2] = static_cast<float>(sx * (-sry));
@@ -496,7 +496,7 @@ MATRIX4X4 FbxParser::GetLocalMatrix(Node* model) const
 }
 
 // ----------------------------------------------------------------
-//  繝弱・繝峨・繝・ム繝ｼ繧定ｪｭ縺ｿ霎ｼ繧・・2bit / 64bit 繧ｪ繝輔そ繝・ヨ縺ｫ蟇ｾ蠢懶ｼ・
+//  ノードのヘッダーを読み込む（32bit / 64bit オフセットに対応）
 // ----------------------------------------------------------------
 FbxParser::Node FbxParser::ReadNodeHeader(uint64_t offset, uint64_t& outEnd) const
 {
@@ -532,7 +532,7 @@ FbxParser::Node FbxParser::ReadNodeHeader(uint64_t offset, uint64_t& outEnd) con
 }
 
 // ----------------------------------------------------------------
-//  謖・ｮ夂ｯ・峇縺ｮ蟄舌ヮ繝ｼ繝峨ｒ蜀榊ｸｰ逧・↓隗｣譫舌☆繧・
+//  指定範囲の子ノードを再帰的に解析する
 // ----------------------------------------------------------------
 std::vector<FbxParser::Node> FbxParser::ParseChildren(uint64_t start, uint64_t end)
 {
@@ -553,7 +553,7 @@ std::vector<FbxParser::Node> FbxParser::ParseChildren(uint64_t start, uint64_t e
 }
 
 // ----------------------------------------------------------------
-//  繝弱・繝峨Μ繧ｹ繝医°繧画欠螳壼錐縺ｮ繝弱・繝峨ｒ蜀榊ｸｰ逧・↓讀懃ｴ｢縺吶ｋ
+//  ノードリストから指定名のノードを再帰的に探索する
 // ----------------------------------------------------------------
 FbxParser::Node* FbxParser::FindNode(std::vector<Node>& nodes, const std::string& name)
 {
@@ -567,7 +567,7 @@ FbxParser::Node* FbxParser::FindNode(std::vector<Node>& nodes, const std::string
 }
 
 // ----------------------------------------------------------------
-//  蝙倶ｻ倥″驟榊・繝励Ο繝代ユ繧｣繧定ｪｭ縺ｿ霎ｼ繧・磯撼蝨ｧ邵ｮ / zlib 蝨ｧ邵ｮ縺ｮ荳｡譁ｹ縺ｫ蟇ｾ蠢懶ｼ・
+//  型付き配列プロパティを読み込む（非圧縮 / zlib 圧縮の両方に対応）
 // ----------------------------------------------------------------
 template <typename T>
 std::vector<T> FbxParser::ReadTypedArray(uint64_t offset)
@@ -588,7 +588,7 @@ std::vector<T> FbxParser::ReadTypedArray(uint64_t offset)
         if (uncompress(
             reinterpret_cast<Bytef*>(result.data()), &dest_len,
             src, comp_len) != Z_OK)
-            throw std::runtime_error("zlib 隗｣蜃阪↓螟ｱ謨励＠縺ｾ縺励◆");
+            throw std::runtime_error("zlib 解凍に失敗しました");
     }
     return result;
 }

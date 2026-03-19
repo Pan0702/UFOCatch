@@ -7,7 +7,7 @@ CTranslation::CTranslation()
     transform.scale = VECTOR3(5,5,5);
     SetDrawOrder(10);
 }
-// X/Y/Z霆ｸ縺ｮ遘ｻ蜍輔ぐ繧ｺ繝｢繝｡繝・す繝･縺ｨ繧ｳ繝ｩ繧､繝繝ｼ繧貞・譛溷喧縺吶ｋ
+// X/Y/Z軸の移動ギズモメッシュとコライダーを初期化する
 void CTranslation::InitMeshes()
 {
     auto InitMesh = [](Info& info, const char* path)

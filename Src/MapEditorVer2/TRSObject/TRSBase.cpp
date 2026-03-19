@@ -2,7 +2,7 @@
 
 namespace
 {
-    // 繧ｮ繧ｺ繝｢縺ｮ繧ｹ繧ｯ繝ｪ繝ｼ繝ｳ荳翫〒縺ｮ隕九°縺代し繧､繧ｺ繧呈ｱｺ繧√ｋ菫よ焚・郁ｷ晞屬1蜊倅ｽ阪≠縺溘ｊ縺ｮ繝ｯ繝ｼ繝ｫ繝峨せ繧ｱ繝ｼ繝ｫ・・
+    // ギズモのスクリーン上での見かけサイズを決める係数（距離1単位あたりのワールドスケール）
 
 }
 
@@ -26,17 +26,17 @@ TRSBase::~TRSBase()
     }
 }
 
-// X/Y/Z霆ｸ縺ｮ繧ｮ繧ｺ繝｢繝｡繝・す繝･繧偵☆縺ｹ縺ｦ謠冗判縺吶ｋ・域ｷｱ蠎ｦ繝・せ繝医ｒ辟｡蜉ｹ蛹悶＠縺ｦ蟶ｸ縺ｫ謇句燕縺ｫ陦ｨ遉ｺ・・
+// X/Y/Z軸のギズモメッシュをすべて描画する（深度テストを無効化して常に手前に表示）
 void TRSBase::Render()
 {
     auto* ctx = GameDevice()->m_pD3D->m_pDeviceContext;
 
-    // 迴ｾ蝨ｨ縺ｮ豺ｱ蠎ｦ繧ｹ繝・・繝医ｒ菫晏ｭ・
+    // 現在の深度ステートを保存
     ID3D11DepthStencilState* prev_state = nullptr;
     UINT prev_stencil_ref = 0;
     ctx->OMGetDepthStencilState(&prev_state, &prev_stencil_ref);
 
-    // 豺ｱ蠎ｦ繝・せ繝医ｒ辟｡蜉ｹ蛹悶＠縺ｦ繧ｮ繧ｺ繝｢繧貞ｿ・★謇句燕縺ｫ謠冗判
+    // 深度テストを無効化してギズモを必ず手前に描画
     ctx->OMSetDepthStencilState(m_pDepthOffState, 0);
 
     if (xInfo.mesh != nullptr)
@@ -52,18 +52,18 @@ void TRSBase::Render()
         yInfo.mesh->Render(transform.matrix());
     }
 
-    // 豺ｱ蠎ｦ繧ｹ繝・・繝医ｒ蜈・↓謌ｻ縺・
+    // 深度ステートを元に戻す
     ctx->OMSetDepthStencilState(prev_state, prev_stencil_ref);
     if (prev_state) prev_state->Release();
 }
 
-// 繧ｮ繧ｺ繝｢縺ｮ陦ｨ遉ｺ菴咲ｽｮ繧呈欠螳壼ｺｧ讓吶↓險ｭ螳壹☆繧・
+// ギズモの表示位置を指定座標に設定する
 void TRSBase::SetPosition(const VECTOR3& pos)
 {
     transform.position = pos;
 }
 
-// 繧ｫ繝｡繝ｩ霍晞屬縺ｫ豈比ｾ九＠縺ｦ繧ｮ繧ｺ繝｢縺ｮ繧ｹ繧ｱ繝ｼ繝ｫ繧呈峩譁ｰ縺励∝ｸｸ縺ｫ蜷後§隕九°縺代し繧､繧ｺ縺ｫ縺吶ｋ
+// カメラ距離に比例してギズモのスケールを更新し、常に同じ見かけサイズにする
 void TRSBase::UpdateScaleByCamera(const VECTOR3& camPos)
 {
     const VECTOR3 diff = camPos - transform.position;
@@ -73,7 +73,7 @@ void TRSBase::UpdateScaleByCamera(const VECTOR3& camPos)
     transform.scale = VECTOR3(s, s, s);
 }
 
-// 繝ｬ繧､縺ｨX/Y/Z繧ｮ繧ｺ繝｢縺ｮ繧ｳ繝ｩ繧､繝繝ｼ繧貞愛螳壹＠縲∝ｽ薙◆縺｣縺溯ｻｸ繧定ｿ斐☆
+// レイとX/Y/Zギズモのコライダーを判定し、当たった軸を返す
 Axis TRSBase::RayHitTest(const Ray& ray, float length)
 {
     const VECTOR3 to  = ray.origin + ray.direction * length;

@@ -8,7 +8,7 @@ CRotation::CRotation()
     transform.scale = VECTOR3{2.0f, 2.0f, 2.0f};
 }
 
-// X/Y/Z霆ｸ縺ｮ蝗櫁ｻ｢繧ｮ繧ｺ繝｢繝｡繝・す繝･縺ｨ繧ｳ繝ｩ繧､繝繝ｼ繧貞・譛溷喧縺吶ｋ
+// X/Y/Z軸の回転ギズモメッシュとコライダーを初期化する
 void CRotation::InitMeshes()
 {
     auto InitMesh = [](Info& info, const char* path)

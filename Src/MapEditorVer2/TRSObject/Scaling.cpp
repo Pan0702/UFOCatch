@@ -6,7 +6,7 @@ CScaling::CScaling()
     SetDrawOrder(10);
 }
 
-// X/Y/Z霆ｸ縺ｮ繧ｹ繧ｱ繝ｼ繝ｫ繧ｮ繧ｺ繝｢繝｡繝・す繝･縺ｨ繧ｳ繝ｩ繧､繝繝ｼ繧貞・譛溷喧縺吶ｋ
+// X/Y/Z軸のスケールギズモメッシュとコライダーを初期化する
 void CScaling::InitMeshes()
 {
     auto InitMesh = [](Info& info, const char* path)
@@ -25,5 +25,6 @@ void CScaling::InitMeshes()
 CScaling::~CScaling()
 {
 }
+
 
 

@@ -9,10 +9,10 @@ private:
     VECTOR3 point_max_ = {};
     VECTOR3 point_min_ = {};
 
-    // ImGui繝代Λ繝｡繝ｼ繧ｿ
+    // ImGuiパラメータ
     int count_ = 10;
     float height_ = 1.0f;
-    std::string model_name_; // 驟咲ｽｮ縺吶ｋ繝｢繝・Ν蜷・
+    std::string model_name_; // 配置するモデル名
     bool is_draw_ = false;
     std::vector<std::string> model_names_;
 

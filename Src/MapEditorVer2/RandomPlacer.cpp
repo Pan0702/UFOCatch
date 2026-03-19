@@ -51,7 +51,7 @@ void RandomPlacer::SpawnObject(int model, bool flag)
     VECTOR3 mesh_min = mesh->m_vMin;
     VECTOR3 mesh_max = mesh->m_vMax;
 
-    // 縺薙・Spawn繧ｻ繝・す繝ｧ繝ｳ縺ｧ驟咲ｽｮ貂医∩縺ｮAABB繝ｪ繧ｹ繝・
+    // このSpawnセッションで配置済みのAABBリスト
     
     std::vector<Aabb> placed;
 
@@ -106,7 +106,7 @@ void RandomPlacer::DrawImGui()
     ImGui::DragFloat3("Scale", &transform.scale.x, 0.1f);
     ImGui::DragInt("Rotation", &count_, 1);
 
-    ImGui::Checkbox("鬮倥＆繧貞崋螳壹↓縺吶ｋ", &changed);
+    ImGui::Checkbox("高さを固定にする", &changed);
     ImGui::SameLine();
     ImGui::InputFloat("", &height_);
     model_names_ = ResourceManager::GetModelNames();
@@ -129,4 +129,3 @@ void RandomPlacer::DrawImGui()
     }
     ImGui::End();
 }
-
