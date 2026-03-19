@@ -1,12 +1,12 @@
 ﻿#pragma once
 #include "../Common/Object3D.h"
 
-// 繝励Ξ繧､繝､繝ｼ縺ｮHP蜿翫・逋ｺ隕狗憾諷九ｒ邂｡逅・☆繧九け繝ｩ繧ｹ //
+// プレイヤーのHP及び発見状態を管理するクラス //
 class CPlayerHP : public Object3D
 {
 public:
-    // HP縺ｮ蛻晄悄蛟､繧呈欠螳壹＠縺ｦ繧､繝ｳ繧ｹ繧ｿ繝ｳ繧ｹ繧堤函謌舌☆繧・
-    // @param hp 蛻晄悄HP //
+    // HPの初期値を指定してインスタンスを生成する
+    // @param hp 初期HP //
     CPlayerHP(const int& hp);
     ~CPlayerHP();
     void SubHP();
@@ -19,8 +19,8 @@ public:
     float GetInvincible() const { return m_invincible; }
 
 private:
-    void Update() override;;
-    
+    void Update() override;
+
     int m_currentHp;
     int m_maxHp;
     bool m_found;
@@ -29,4 +29,3 @@ private:
     float m_findCount;
     float m_findMaxCount;
 };
-

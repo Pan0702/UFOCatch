@@ -7,7 +7,7 @@ namespace
     const VECTOR3 INIT_CAM_POS = VECTOR3(0, 8, -4);
     const VECTOR3 INIT_CAM_LOOK = VECTOR3(0, 1, -1.5);
     const VECTOR3 INIT_SUCTION_CAM_POS = VECTOR3(0, 4, -7);
-    constexpr float REFERENCE_HEIGHT = 5.0f; // 蝓ｺ貅夜ｫ倥＆
+    constexpr float REFERENCE_HEIGHT = 5.0f; // 基準高さ
     const VECTOR3 offsetPoint1 = VECTOR3(0, 17.1f, -10.3f);
     const VECTOR3 offsetPoint2 = VECTOR3(0, 2.3f, -10.3f);
 }
@@ -29,14 +29,14 @@ void CPlayerCamera::Update()
 {
    // DebugImGui();
     UpdateCameraBezier();
-    GameDevice()->m_vEyePt = m_camPos;  // 繧ｫ繝｡繝ｩ菴咲ｽｮ繧呈峩譁ｰ
+    GameDevice()->m_vEyePt = m_camPos;  // カメラ位置を更新
     GameDevice()->m_vLookatPt = m_camLook;
     GameDevice()->m_mView = XMMatrixLookAtLH(
         m_camPos, m_camLook, INIT_UP_DIR);
 }
 
 ////////////////////
-// 繝吶ず繧ｧ譖ｲ邱壹〒繧ｫ繝｡繝ｩ繧呈峩譁ｰ縺吶ｋ //
+// ベジェ曲線でカメラを更新する //
 ////////////////////
 void CPlayerCamera::UpdateCameraBezier()
 {
@@ -50,26 +50,26 @@ void CPlayerCamera::UpdateCameraBezier()
     }
     else
     {
-        // 繧｢繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ邨ゆｺ・凾縺ｫ繧ｪ繝輔そ繝・ヨ繧偵Μ繧ｻ繝・ヨ
+        // アニメーション終了時にオフセットをリセット
         m_playerOffset = VECTOR3(0, 0, 0);
     }
 }
 
 ////////////////////
-// 繧ｫ繝｡繝ｩ菴咲ｽｮ繧定ｨｭ螳壹☆繧・
-// @param pos 繝励Ξ繧､繝､繝ｼ縺ｮ菴咲ｽｮ
-// @param coneHeight 繧ｳ繝ｼ繝ｳ縺ｮ鬮倥＆ //
+// カメラ位置を設定する
+// @param pos プレイヤーの位置
+// @param coneHeight コーンの高さ //
 ////////////////////
 void CPlayerCamera::PosSet(const VECTOR3& pos, const float& coneHeight)
 {
-    // 繝吶ず繧ｨ繧｢繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ荳ｭ縺ｯ蟾ｮ蛻・〒霑ｽ蠕・
+    // ベジェアニメーション中は差分で追従
     if (m_camPosBezier.IsAnimating() || m_camLookBezier.IsAnimating())
     {
         m_playerOffset = pos - m_animStartPlayerPos;
         return;
     }
 
-    // 繧ｳ繝ｼ繝ｳ縺ｮ鬮倥＆縺ｫ蠢懊§縺ｦ繧ｫ繝｡繝ｩ霍晞屬繧偵せ繧ｱ繝ｼ繝ｪ繝ｳ繧ｰ//
+    // コーンの高さに応じてカメラ距離をスケーリング //
     float scale = coneHeight / REFERENCE_HEIGHT;
     VECTOR3 scaledCamOffset = INIT_CAM_POS * scale;
 
@@ -78,13 +78,13 @@ void CPlayerCamera::PosSet(const VECTOR3& pos, const float& coneHeight)
 }
 
 ////////////////////
-// 繧ｫ繝｡繝ｩ繧偵ぜ繝ｼ繝繧､繝ｳ縺輔○繧・
-// @param pos 繝励Ξ繧､繝､繝ｼ縺ｮ菴咲ｽｮ //
+// カメラをズームインさせる
+// @param pos プレイヤーの位置 //
 ////////////////////
 void CPlayerCamera::ZoomIn(const VECTOR3& pos)
 {
     if (state == zoomIn) return;
-    m_animStartPlayerPos = pos;  // 繧｢繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ髢句ｧ区凾縺ｮ繝励Ξ繧､繝､繝ｼ菴咲ｽｮ繧定ｨ倬鹸
+    m_animStartPlayerPos = pos;  // アニメーション開始時のプレイヤー位置を記録
     m_playerOffset = VECTOR3(0, 0, 0);
 
     VECTOR3 startPos = m_camPos;
@@ -93,11 +93,11 @@ void CPlayerCamera::ZoomIn(const VECTOR3& pos)
     VECTOR3 startLook = m_camLook;
     VECTOR3 targetLook = pos + VECTOR3(0, -(pos.y / 2), 0);
 
-    // // 繝・ヰ繝・げ逕ｨ縺ｫ菫晏ｭ・/
+    // // デバッグ用に保存 //
     // m_debugStartLook = startLook;
     // m_debugTargetLook = targetLook;
 
-    // 蛻ｶ蠕｡轤ｹ縺ｯ繝励Ξ繧､繝､繝ｼ菴咲ｽｮ繧貞渕貅悶↓繧ｪ繝輔そ繝・ヨ//
+    // 制御点はプレイヤー位置を基準にオフセット //
     VECTOR3 controlPoint1 = startLook  + offsetPoint1;
     VECTOR3 controlPoint2 = targetLook + offsetPoint2;
     
@@ -108,16 +108,16 @@ void CPlayerCamera::ZoomIn(const VECTOR3& pos)
 }
 
 ////////////////////
-// 繧ｫ繝｡繝ｩ繧偵ぜ繝ｼ繝繧｢繧ｦ繝医＆縺帙ｋ
-// @param pos 繝励Ξ繧､繝､繝ｼ縺ｮ菴咲ｽｮ //
+// カメラをズームアウトさせる
+// @param pos プレイヤーの位置 //
 ////////////////////
 void CPlayerCamera::ZoomOut(const VECTOR3& pos)
 {
     if (state == zoomOut) return;
-    m_animStartPlayerPos = pos;  // 繧｢繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ髢句ｧ区凾縺ｮ繝励Ξ繧､繝､繝ｼ菴咲ｽｮ繧定ｨ倬鹸
+    m_animStartPlayerPos = pos;  // アニメーション開始時のプレイヤー位置を記録
     m_playerOffset = VECTOR3(0, 0, 0);
 
-    // 繧ｫ繝｡繝ｩ繧ｪ繝輔そ繝・ヨ繧偵せ繧ｱ繝ｼ繝ｪ繝ｳ繧ｰ
+    // カメラオフセットをスケーリング
     float scale = pos.y / REFERENCE_HEIGHT;
     VECTOR3 scaledCamOffset = INIT_CAM_POS * scale;
 
@@ -127,7 +127,7 @@ void CPlayerCamera::ZoomOut(const VECTOR3& pos)
     VECTOR3 startLook = m_camLook;
     VECTOR3 targetLook = pos + INIT_CAM_LOOK;
 
-    // 蛻ｶ蠕｡轤ｹ縺ｯ繝励Ξ繧､繝､繝ｼ菴咲ｽｮ繧貞渕貅悶↓繧ｪ繝輔そ繝・ヨ//
+    // 制御点はプレイヤー位置を基準にオフセット //
     VECTOR3 controlPoint1 = pos + offsetPoint2 ;
     VECTOR3 controlPoint2 = pos + offsetPoint1;
 
@@ -138,12 +138,12 @@ void CPlayerCamera::ZoomOut(const VECTOR3& pos)
 
 #if 0
 
-// 蛻ｶ蠕｡轤ｹDebug逕ｨ //
+// 制御点Debug用 //
 void CPlayerCamera::DebugImGui()
 {
         ImGui::Begin("Camera Bezier Control");
 
-    // === ZoomIn 蛻ｶ蠕｡轤ｹ ===
+    // === ZoomIn 制御点 ===
     if (ImGui::CollapsingHeader("ZoomIn Control Points", ImGuiTreeNodeFlags_DefaultOpen))
     {
         ImGui::Text("Camera Position Control Points:");
@@ -156,7 +156,7 @@ void CPlayerCamera::DebugImGui()
         ImGui::SliderFloat3("Ctrl2 (Look)", &m_zoomInLookCtrl2.x, -20.0f, 20.0f);
     }
 
-    // === ZoomOut 蛻ｶ蠕｡轤ｹ ===
+    // === ZoomOut 制御点 ===
     if (ImGui::CollapsingHeader("ZoomOut Control Points"))
     {
         ImGui::Text("Camera Position Control Points:");
@@ -169,12 +169,12 @@ void CPlayerCamera::DebugImGui()
         ImGui::SliderFloat3("Ctrl2 (Look)##Out", &m_zoomOutLookCtrl2.x, -20.0f, 20.0f);
     }
 
-    // === 迴ｾ蝨ｨ縺ｮ繧ｫ繝｡繝ｩ諠・ｱ ===
+    // === 現在のカメラ情報 ===
     ImGui::Separator();
     ImGui::Text("Current Camera Pos: %.2f, %.2f, %.2f", m_camPos.x, m_camPos.y, m_camPos.z);
     ImGui::Text("Current Camera Look: %.2f, %.2f, %.2f", m_camLook.x, m_camLook.y, m_camLook.z);
 
-    // === 繝・ヰ繝・げ・壼ｧ狗せ繝ｻ邨らせ ===
+    // === デバッグ：開始点・終了点 ===
     ImGui::Separator();
     ImGui::Text("DEBUG - Look Animation:");
     ImGui::Text("  Start:  %.2f, %.2f, %.2f", m_debugStartLook.x, m_debugStartLook.y, m_debugStartLook.z);
@@ -191,4 +191,3 @@ void CPlayerCamera::DebugImGui()
     ImGui::End();
 }
 #endif
-

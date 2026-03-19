@@ -4,7 +4,7 @@
 
 namespace Platform
 {
-    // 繝輔ぃ繧､繝ｫ繧ｪ繝ｼ繝励Φ繝繧､繧｢繝ｭ繧ｰ繧定｡ｨ遉ｺ縺励・∈謚槭＆繧後◆繝輔ぃ繧､繝ｫ縺ｮ繝代せ繧旦TF-8縺ｧ霑斐☆
+    // ファイルオープンダイアログを表示し、選択されたファイルのパスをUTF-8で返す
     std::string OpenFileDialog(const wchar_t* filter)
     {
         std::string result;
@@ -64,7 +64,7 @@ namespace Platform
         return result;
     }
 
-    /// Windows縺ｮ繝輔ぃ繧､繝ｫ繧ｻ繝ｼ繝悶ム繧､繧｢繝ｭ繧ｰ繧定｡ｨ遉ｺ縺励・∈謚槭＆繧後◆繝輔ぃ繧､繝ｫ縺ｮ繝代せ繧定ｿ斐☆
+    // Windowsのファイルセーブダイアログを表示し、選択されたファイルのパスを返す
     std::string SaveFileDialog(const wchar_t* filter, const wchar_t* initial_dir)
     {
         std::string result;
@@ -88,7 +88,7 @@ namespace Platform
                 };
                 file_save->SetFileTypes(1, spec);
             }
-            //繝輔ぃ繧､繝ｫ蜷阪ｒjson縺ｧ菫晏ｭ倥☆繧・/
+            // ファイル名をjsonで保存する
             file_save->SetDefaultExtension(L"json");
 
             if (initial_dir)
@@ -134,4 +134,3 @@ namespace Platform
         return result;
     }
 }
-

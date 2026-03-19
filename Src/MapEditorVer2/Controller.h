@@ -22,16 +22,16 @@ private:
     void Update() override;
     void Draw() override;
 
-    /// <summary>W/E/R/Q繧ｭ繝ｼ縺ｧ繧｢繧ｯ繝・ぅ繝悶↑繧ｮ繧ｺ繝｢繝｢繝ｼ繝峨ｒ蛻・ｊ譖ｿ縺医ｋ</summary>
+    /// <summary>W/E/R/Qキーでアクティブなギズモモードを切り替える</summary>
     void TRSControl() const;
 
-    /// <summary>蜿ｳ繧ｯ繝ｪ繝・け荳ｭ縺ｮ繝槭え繧ｹ遘ｻ蜍輔・繧ｭ繝ｼ蜈･蜉帙〒繧ｫ繝｡繝ｩ繧呈桃菴懊☆繧・/summary>
+    /// <summary>右クリック中のマウス移動やキー入力でカメラを操作する</summary>
     void CameraControl() const;
 
-    /// <summary>蟾ｦ繧ｯ繝ｪ繝・け譎ゅ↓TRS繧ｮ繧ｺ繝｢縺ｾ縺溘・繧ｹ繝・・繧ｸ繧ｪ繝悶ず繧ｧ繧ｯ繝医∈縺ｮ繝ｬ繧､蛻､螳壹ｒ陦後≧</summary>
+    /// <summary>左クリック時にTRSギズモまたはステージオブジェクトへのレイ判定を行う</summary>
     void HandleLeftClick();
 
-    /// <summary>Ctrl+Z/Ctrl+Y縺ｧUndo/Redo繧貞ｮ溯｡後☆繧・/summary>
+    /// <summary>Ctrl+Z/Ctrl+YでUndo/Redoを実行する</summary>
     void HandleUndoRedo() const;
     void Random();
 

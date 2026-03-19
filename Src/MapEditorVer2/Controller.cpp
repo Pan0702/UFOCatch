@@ -7,13 +7,13 @@
 
 namespace
 {
-    // Transform 繧ｦ繧｣繝ｳ繝峨え縺ｮ蛻晄悄菴咲ｽｮ縺ｨ繧ｵ繧､繧ｺ
+    // Transform ウィンドウの初期位置とサイズ
     constexpr float kTransformWindowX    = 10.0f;
     constexpr float kTransformWindowY    = 10.0f;
     constexpr float kTransformWindowW    = 300.0f;
     constexpr float kTransformWindowH    = 160.0f;
 
-    // DragFloat3 縺ｮ1繝輔Ξ繝ｼ繝縺ゅ◆繧翫・螟牙喧驥・
+    // DragFloat3 の1フレームあたりの変化量
     constexpr float kDragSpeed = 0.1f;
 }
 
@@ -39,7 +39,7 @@ void Controller::Update()
 
     if (!io.WantCaptureMouse)
     {
-        // 蜿ｳ繧ｯ繝ｪ繝・け荳ｭ縺ｯ繧ｫ繝｡繝ｩ謫堺ｽ懊ｒ蜆ｪ蜈医＠縲ゝRS 謫堺ｽ懊・辟｡蜉ｹ
+        // 右クリック中はカメラ操作を優先し、TRS 操作は無効
         if (m_pInput->CheckMouse(KD_DAT, DIM_RBUTTON))
         {
             CameraControl();
@@ -48,12 +48,12 @@ void Controller::Update()
         {
             if (m_isCatch)
             {
-                // 繧ｪ繝悶ず繧ｧ繧ｯ繝磯∈謚樔ｸｭ縺ｮ縺ｿ繧ｭ繝ｼ縺ｫ繧医ｋ繝｢繝ｼ繝牙・譖ｿ繧貞女縺台ｻ倥￠繧・
+                // オブジェクト選択中のみキーによるモード切替を受け付ける
                 TRSControl();
             }
             else
             {
-                // 譛ｪ驕ｸ謚樊凾縺ｯ繧ｮ繧ｺ繝｢繧帝撼陦ｨ遉ｺ縺ｫ縺吶ｋ
+                // 未選択時はギズモを非表示にする
                 m_pTrs->SetState(TRS::State::kNone);
             }
         }
@@ -63,13 +63,13 @@ void Controller::Update()
             Camera::Zoom();
         }
 
-        // 繧ｯ繝ｪ繝・け縺励◆迸ｬ髢・
+        // BackSpace / Delete でオブジェクト削除
         if (m_pInput->CheckMouse(KD_TRG, DIM_LBUTTON))
         {
             HandleLeftClick();
         }
 
-        // 蟾ｦ繧ｯ繝ｪ繝・け髮｢縺玲凾縺ｫ繝峨Λ繝・げ繧定ｧ｣髯､
+        // 左クリック離し時にドラッグを解除
         if (m_isCatch && m_pInput->CheckMouse(KD_UTRG, DIM_LBUTTON))
         {
             m_pTrs->SetDraggingAxis(Axis::None);
@@ -85,7 +85,7 @@ void Controller::Update()
 
         if (m_isCatch)
         {
-            // BackSpace / Delete 縺ｧ繧ｪ繝悶ず繧ｧ繧ｯ繝亥炎髯､
+            // BackSpace / Delete でオブジェクト削除
             bool is_delete = m_pInput->CheckKey(KD_TRG, DIK_BACK) || m_pInput->CheckKey(KD_TRG, DIK_DELETE);
             if (is_delete)
             {
@@ -110,12 +110,12 @@ void Controller::Update()
 
 }
 
-// 蟾ｦ繧ｯ繝ｪ繝・け譎ゅ↓TRS繧ｮ繧ｺ繝｢縺ｾ縺溘・繧ｹ繝・・繧ｸ繧ｪ繝悶ず繧ｧ繧ｯ繝医∈縺ｮ繝ｬ繧､蛻､螳壹ｒ陦後≧
+// 左クリック時にTRSギズモまたはステージオブジェクトへのレイ判定を行う
 void Controller::HandleLeftClick()
 {
     const Ray ray = MouseRay::Create();
 
-    // 繧ｮ繧ｺ繝｢縺ｸ縺ｮ繧ｯ繝ｪ繝・け繧貞━蜈亥愛螳壹ょｽ薙◆縺｣縺溷ｴ蜷医・繧ｪ繝悶ず繧ｧ繧ｯ繝磯∈謚槫愛螳壹ｒ陦後ｏ縺ｪ縺・
+    // オブジェクト選択中のみTRSギズモへのレイ判定を行う
     const Axis a = m_pTrs->RayHitTest(ray);
     if (a != Axis::None)
     {
@@ -124,7 +124,7 @@ void Controller::HandleLeftClick()
             m_pUndoManager->Push(m_pRandomPlacer->GetTransform());
         }else
         {
-            // 繝峨Λ繝・げ髢句ｧ句燕縺ｫ迴ｾ迥ｶ諷九ｒ菫晏ｭ・
+            // ドラッグ開始前に現状を保存
             m_pUndoManager->Push();  
         }
   
@@ -132,7 +132,7 @@ void Controller::HandleLeftClick()
         return;
     }
 
-    // 繧ｮ繧ｺ繝｢縺ｫ蠖薙◆繧峨↑縺九▲縺溷ｴ蜷医・繧ｹ繝・・繧ｸ繧ｪ繝悶ず繧ｧ繧ｯ繝医・驕ｸ謚槫愛螳・
+    // ギズモに当たらなかった場合はステージオブジェクトの選択判定
     MeshCollider::CollInfo hit;
     const int index = m_pStageData->RayHitTest(ray, &hit);
     if (index >= 0)
@@ -146,7 +146,7 @@ void Controller::HandleLeftClick()
     }
 }
 
-// Ctrl+Z/Ctrl+Y縺ｧUndo/Redo繧貞ｮ溯｡後☆繧・
+// Ctrl+Z/Ctrl+YでUndo/Redoを実行する
 void Controller::HandleUndoRedo() const
 {
     if (m_pInput->CheckKey(KD_DAT, DIK_LCONTROL))
@@ -164,7 +164,7 @@ void Controller::Random()
         m_pRandomPlacer->SetDrawFlag(true);
         m_pTrs->SetOverrideTarget(m_pRandomPlacer->GetTransform());
         m_pTrs->SetState(TRS::State::kTranslation);
-        m_isCatch = true;  // 繧ｮ繧ｺ繝｢陦ｨ遉ｺON
+        m_isCatch = true; // ギズモ表示ON
     }else
     {
         m_pRandomPlacer->SetDrawFlag(false);
@@ -174,7 +174,7 @@ void Controller::Random()
     }
 }
 
-// W/E/R/Q繧ｭ繝ｼ縺ｧ繧｢繧ｯ繝・ぅ繝悶↑繧ｮ繧ｺ繝｢繝｢繝ｼ繝峨ｒ蛻・ｊ譖ｿ縺医ｋ
+// W/E/R/Qキーでアクティブなギズモモードを切り替える
 void Controller::TRSControl() const
 {
     if (m_pInput->CheckKey(KD_TRG, DIK_W))
@@ -198,15 +198,15 @@ void Controller::TRSControl() const
     }
 }
 
-// 蜿ｳ繧ｯ繝ｪ繝・け荳ｭ縺ｮ繝槭え繧ｹ遘ｻ蜍輔・繧ｭ繝ｼ蜈･蜉帙〒繧ｫ繝｡繝ｩ繧呈桃菴懊☆繧・
+// 右クリック中のマウス移動やキー入力でカメラを操作する
 void Controller::CameraControl() const
 {
-    //蝗櫁ｻ｢
+    //マウスによる回転
     if (m_pInput->IsMouseMove())
     {
         Camera::Rotate();
     }
-    //遘ｻ蜍・
+    //キーボードによる移動
     if (m_pInput->IsMoveInput())
     {
         Camera::Move();

@@ -9,9 +9,9 @@
 #include "../System/Timer.h"
 
 ////////////////////
-// 蜴溽せ縺九ｉ遘ｻ蜍輔〒縺阪ｋ霍晞屬
-// 萓九∴縺ｰ-20~20縺ｪ繧・0縺ｨ蜈･蜉・
-// @param moveRange 遘ｻ蜍募庄閭ｽ遽・峇 //
+// 原点から移動できる距離
+// 例えば-20~20なら20と入力
+// @param moveRange 移動可能範囲 //
 ////////////////////
 CPlayer::CPlayer(float moveRange)
     : m_moveRange(moveRange)
@@ -46,10 +46,10 @@ CPlayer::~CPlayer()
 
 void CPlayer::Update()
 {
-    // 繧ｫ繝｡繝ｩ菴咲ｽｮ繧呈峩譁ｰ//
+    // カメラ位置を更新 //
     UpdateCameraPos();
 
-    // 繧ｲ繝ｼ繝髢句ｧ句燕縺ｯ謫堺ｽ懊ｒ蜿励￠莉倥￠縺ｪ縺・
+    // ゲーム開始前は操作を受け付けない
     CTimer* pTimer = ObjectManager::FindGameObject<CTimer>();
     if (pTimer && !pTimer->IsGameStarted())
     {
@@ -61,7 +61,7 @@ void CPlayer::Update()
         HandleMovementInput();
     }
 
-    // 蜷ｸ縺・ｾｼ縺ｿ繧ｭ繝ｼ縺ｮ迥ｶ諷九ｒ蜿門ｾ・
+    // 吸引キーの状態を取得
     if (!ObjectManager::FindGameObject<CPlayerHP>()->GetFoundFlag())
     {
         m_SuctionActive = GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_J);
@@ -71,7 +71,7 @@ void CPlayer::Update()
         m_SuctionActive = false;
     }
 
-    // 蜷ｸ縺・ｾｼ縺ｿ迥ｶ諷九′螟牙喧縺励◆縺ｨ縺阪□縺鷹浹螢ｰ繧貞宛蠕｡
+    // 吸引状態が変化したときだけ音声を制御
     if (m_SuctionActive && !m_prevSuctionActive)
     {
         AudioManager::Play(_T("Suction"), false);
@@ -87,7 +87,7 @@ void CPlayer::Update()
     pVision->SetCircleCenter(transform.position);
     pVision->SetCircleRadius(m_pLevel->GetRadius());
 
-    //Debug逕ｨ
+    //Debug用
     if (GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_L))
     {
         transform.scale = VECTOR3(0.3f, 1.0f, 0.f);
@@ -99,7 +99,7 @@ void CPlayer::Update()
 }
 
 ////////////////////
-// 繝励Ξ繧､繝､繝ｼ縺ｮ遘ｻ蜍募・蜉帙ｒ蜃ｦ逅・☆繧・//
+// プレイヤーの移動入力を処理する //
 ////////////////////
 void CPlayer::HandleMovementInput()
 {
@@ -139,11 +139,11 @@ void CPlayer::UpdateCameraPos()
 
 
 ////////////////////
-// 蠑輔″蟇・○繧九◆繧√・遘ｻ蜍暮㍼繧定ｨ育ｮ励☆繧・
-// 鬮倥＆縺ｮ蟾ｮ縺悟､ｧ縺阪＞縺ｻ縺ｩ驕・￥縲∬ｿ代＞縺ｻ縺ｩ騾溘￥蜷ｸ縺・ｾｼ繧
-// @param moveTimeSecond  遘ｻ蜍輔↓縺九￠繧区凾髢・
-// @param animalPos  蜍慕黄縺ｮ菴咲ｽｮ
-// @return 1蝗槫ｽ薙◆繧翫・遘ｻ蜍暮㍼
+// 引き寄せるための移動量を計算する
+// 高さの差が大きいほど遠く、近いほど速く吸引する
+// @param moveTimeSecond  移動にかける時間
+// @param animalPos  動物の位置
+// @return 1回当たりの移動量
 ////////////////////
 
 VECTOR3 CPlayer::CalcSuctionDisplacement(float moveTimeSecond, const VECTOR3& animalPos) const
@@ -167,9 +167,9 @@ VECTOR3 CPlayer::CalcSuctionDisplacement(float moveTimeSecond, const VECTOR3& an
 }
 
 ////////////////////
-// 繧ｪ繝悶ず繧ｧ繧ｯ繝医′繧ｳ繝ｼ繝ｳ縺ｮ遽・峇蜀・↓縺・ｋ縺九メ繧ｧ繝・け縺吶ｋ
-// @param targetPos 蟇ｾ雎｡縺ｮ菴咲ｽｮ
-// @return 遽・峇蜀・↑繧液rue //
+// オブジェクトがコーンの範囲内にいるかチェックする
+// @param targetPos 対象の位置
+// @return 範囲内ならtrue //
 ////////////////////
 bool CPlayer::IsWithSuctionCone(const VECTOR3& targetPos) const
 {
@@ -205,4 +205,3 @@ void CPlayer::Draw()
         Object3D::Draw();
     }
 }
-

@@ -4,8 +4,8 @@
 #include "../Scene/PlayScene.h"
 
 ////////////////////
-// HP縺ｮ蛻晄悄蛟､繧呈欠螳壹＠縺ｦ繧､繝ｳ繧ｹ繧ｿ繝ｳ繧ｹ繧堤函謌舌☆繧・
-// @param hp 蛻晄悄HP //
+// HPの初期値を指定してインスタンスを生成する
+// @param hp 初期HP //
 ////////////////////
 CPlayerHP::CPlayerHP(const int& hp)
     : m_maxHp(hp)
@@ -22,7 +22,7 @@ CPlayerHP::~CPlayerHP()
 }
 
 ////////////////////
-// HP繧呈ｸ帙ｉ縺吝・逅・→逶ｮ謦・き繧ｦ繝ｳ繝医ｒ蠅励ｄ縺・//
+// HPを減らす処理と目撃カウントを増やす //
 ////////////////////
 void CPlayerHP::SubHP()
 {
@@ -39,27 +39,27 @@ void CPlayerHP::SubHP()
 void CPlayerHP::Update()
 {
     CGameInstance* pGI = ObjectManager::FindGameObject<CGameInstance>();
-    //逍第ヱ縺ｧ縺ｿ縺､縺九▲縺溘°
+    // 疑惑でみつかったか
     if (m_seemToFind)
     {
         m_findCount += SceneManager::DeltaTime();
-        //荳螳壽凾髢薙＠縺九＞縺ｫ縺・◆縺ｮ縺ｧ遒ｺ菫｡縺ｫ螟牙喧
+        // 一定時間視界にいたので確信に変化
         if (m_findCount >= m_findMaxCount)
         {
             m_invincible = 0;
             m_found = true;
             m_seemToFind = false;
-            //縺・∪縺ｮHP縺九ｉ・大ｼ輔￥
+            // いまのHPから1引く
             m_currentHp--;
-            //隕九▽縺九▲縺溷屓謨ｰ繧定ｿｽ蜉
+            // 見つかった回数を追加
             pGI->AddDiscovery(1);
         }
     }
-    //隕九▽縺九▲縺溘°
+    // 見つかったか（確信状態）
     if (m_found)
     {
         m_invincible += SceneManager::DeltaTime();
-        //1.5s邨碁℃縺励◆繧臥┌謨ｵ譎る俣繧定ｧ｣髯､
+        // 1.5s経過したら無敵時間を解除
         if (m_invincible >= 1.5f)
         {
             m_findCount = 0;
@@ -73,7 +73,7 @@ void CPlayerHP::Update()
             m_findCount -= SceneManager::DeltaTime();
         }
     }
-    //豁ｻ莠｡縺励◆縺ｮ縺ｧ繧ｷ繝ｼ繝ｳ繧貞・繧頑崛縺・
+    // 死亡したのでシーンを切り替える
     if (m_currentHp <= 0)
     {
         SceneManager::ChangeSceneWithTransition("ResultScene");
@@ -84,4 +84,3 @@ void CPlayerHP::ResetFlag()
 {
     m_seemToFind = false;
 }
-
