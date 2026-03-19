@@ -10,13 +10,13 @@
 // @param scale 繧ｪ繝悶ず繧ｧ繧ｯ繝医・繧ｵ繧､繧ｺ
 // @param useOBB OBB繧剃ｽｿ逕ｨ縺吶ｋ縺・//
 ////////////////////
-CStageObject::CStageObject(const char* meshPath, const VECTOR3& pos, float scale, bool useOBB)
+CStageObject::CStageObject(const char* name, const VECTOR3& pos, float scale, bool useOBB)
 {
     m_bUseOBB = useOBB;
     m_pOBB = nullptr;
 
     // ResourceManager縺九ｉ繝｡繝・す繝･繧貞叙蠕暦ｼ医く繝｣繝・す繝･縺輔ｌ繧具ｼ・
-    m_pMesh = ResourceManager::LoadFbx(meshPath, TODO);
+    m_pMesh = ResourceManager::GetModel(name);
 
     // OBB縺ｮ菴懈・
     if (m_bUseOBB)

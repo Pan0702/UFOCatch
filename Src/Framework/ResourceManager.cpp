@@ -34,13 +34,23 @@ void ResourceManager::LoadFbx(const char* name, const char* path)
     
 }
 
-CFbxMesh* ResourceManager::GetMesh(const char* name)
+CFbxMesh* ResourceManager::GetModel(const char* name)
 {
     for (auto& m : modelInfos)
     {
         if (m.name == name) return m.mesh.get();
     }
     return nullptr;
+}
+
+std::vector<std::string> ResourceManager::GetModelNames()
+{
+    std::vector<std::string> names;
+    for (auto& m : modelInfos)
+    {
+        names.push_back(m.name);
+    }
+    return names;
 }
 
 MeshCollider* ResourceManager::GetColl(const char* name)
@@ -52,5 +62,14 @@ MeshCollider* ResourceManager::GetColl(const char* name)
     return nullptr;
 }
 
+const char* ResourceManager::GetPath(const char* name)
+{
+    for (auto& m : modelInfos)
+    {
+        if (m.name == name) return m.path;
+    }
+    assert("ModelのPathが見つかりません");
+    return nullptr;
+}
 
 

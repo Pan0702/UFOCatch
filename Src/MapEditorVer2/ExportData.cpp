@@ -9,7 +9,7 @@ using json = nlohmann::json;
 json ExportData::TransformToJson(const std::string& modelName, const Transform& transform)
 {
     json j;
-    const char* p = ObjectManager::FindGameObject<CModelStorage>()->GetModelPath(modelName);
+    const char* p = ResourceManager::GetPath(modelName.c_str());
     j["path"]       = p;
     j["model_name"] = modelName;
 

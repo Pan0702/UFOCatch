@@ -12,11 +12,11 @@ public:
     /// <summary>
     /// 繧ｳ繝ｳ繧ｹ繝医Λ繧ｯ繧ｿ
     /// </summary>
-    /// <param name="meshPath">繝｡繝・す繝･繝輔ぃ繧､繝ｫ縺ｮ繝代せ</param>
+    /// <param name="name">繝｡繝・す繝･繝輔ぃ繧､繝ｫ縺ｮ繝代せ</param>
     /// <param name="pos">繧ｪ繝悶ず繧ｧ繧ｯ繝医・菴咲ｽｮ</param>
     /// <param name="scale">繧ｪ繝悶ず繧ｧ繧ｯ繝医・繧ｵ繧､繧ｺ</param>
     /// <param name="useOBB">OBB繧剃ｽｿ逕ｨ縺吶ｋ縺具ｼ医ョ繝輔か繝ｫ繝・ true・・/param>
-    CStageObject(const char* meshPath, const VECTOR3& pos = VECTOR3(0,0,0), float scale = 1.0f, bool useOBB = true);
+    CStageObject(const char* name, const VECTOR3& pos = VECTOR3(0,0,0), float scale = 1.0f, bool useOBB = true);
     virtual ~CStageObject();
 
     void Update() override;

@@ -29,7 +29,6 @@ class StageData : public Object3D
 private:
 
     std::vector<StageDataInfo> m_stageData;
-    * model_storage_;
     int m_selectedModel = -1;
 private:
     void Draw () override;
@@ -57,7 +56,7 @@ public:
     /// <param name="ray">蛻､螳壹↓菴ｿ逕ｨ縺吶ｋ繝ｬ繧､</param>
     /// <param name="collOut">陦晉ｪ∵ュ蝣ｱ縺ｮ蜃ｺ蜉帛・</param>
     /// <returns>蠖薙◆縺｣縺溘が繝悶ず繧ｧ繧ｯ繝医・繧､繝ｳ繝・ャ繧ｯ繧ｹ縲ょｽ薙◆繧峨↑縺代ｌ縺ｰ-1</returns>
-    int RayHitTest(const Ray& ray, MeshCollider::CollInfo* collOut);
+    int RayHitTest(const Ray& ray, MeshCollider::CollInfo* collOut) const;
 
     /// <summary>迴ｾ蝨ｨ驕ｸ謚樔ｸｭ縺ｮ繧ｪ繝悶ず繧ｧ繧ｯ繝医ｒ繧ｹ繝・・繧ｸ縺九ｉ蜑企勁縺吶ｋ</summary>
     void DeleteModel();
@@ -71,7 +70,7 @@ public:
 
     /// <summary>謖・ｮ壹う繝ｳ繝・ャ繧ｯ繧ｹ縺ｮ繧ｪ繝悶ず繧ｧ繧ｯ繝医・Transform繧剃ｸ頑嶌縺阪☆繧具ｼ・ndo/Redo逕ｨ・・/summary>
     /// <param name="index">蟇ｾ雎｡繧､繝ｳ繝・ャ繧ｯ繧ｹ</param>
-    /// <param name="transform">險ｭ螳壹☆繧亀ransform</param>
+    /// <param name="transform">險ｭ螳壹☆繧亀transform</param>
     void SetSelectedTransform(int index, const Transform& transform);
 
     /// <summary>驕ｸ謚樔ｸｭ縺ｮ繧ｪ繝悶ず繧ｧ繧ｯ繝医う繝ｳ繝・ャ繧ｯ繧ｹ繧定ｨｭ螳壹☆繧・/summary>

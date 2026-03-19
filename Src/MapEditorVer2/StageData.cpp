@@ -9,7 +9,6 @@ namespace
 }
 StageData::StageData()
 {
-    model_storage_ = ObjectManager::FindGameObject<CModelStorage>();
 }
 
 
@@ -18,15 +17,15 @@ void StageData::AddModel(const VECTOR3& pos, const std::string& modelName)
 {
     StageDataInfo info(modelName, pos);
     m_stageData.push_back(info);
-    m_selectedModel = m_stageData.size() - 1;
+    m_selectedModel = static_cast<int>(m_stageData.size()) - 1;
 }
 
-// 謖・ｮ啜ransform縺ｨ繝｢繝・Ν蜷阪〒繧ｪ繝悶ず繧ｧ繧ｯ繝医ｒ繧ｹ繝・・繧ｸ縺ｫ霑ｽ蜉縺吶ｋ
+// 謖・ｮ啜transform縺ｨ繝｢繝・Ν蜷阪〒繧ｪ繝悶ず繧ｧ繧ｯ繝医ｒ繧ｹ繝・・繧ｸ縺ｫ霑ｽ蜉縺吶ｋ
 void StageData::AddModel(const Transform& t, const std::string& modelName)
 {
     StageDataInfo info(modelName, t);
     m_stageData.push_back(info);
-    m_selectedModel = m_stageData.size() - 1;
+    m_selectedModel = static_cast<int>(m_stageData.size()) - 1;
 }
 
 // Transform蜈ｨ菴薙ｒ謖・ｮ壹＠縺ｦ繧ｪ繝悶ず繧ｧ繧ｯ繝医ｒ繧ｹ繝・・繧ｸ縺ｫ霑ｽ蜉縺吶ｋ・医う繝ｳ繝昴・繝育畑・・
@@ -46,7 +45,7 @@ void StageData::Export(const std::string& filename) const
 
 
 // 繝ｬ繧､縺ｨ繧ｹ繝・・繧ｸ荳翫・蜈ｨ繧ｪ繝悶ず繧ｧ繧ｯ繝医・繧ｳ繝ｩ繧､繝繝ｼ繧貞愛螳壹＠縲∵怙霑第磁縺ｮ繧､繝ｳ繝・ャ繧ｯ繧ｹ繧定ｿ斐☆
-int StageData::RayHitTest(const Ray& ray,MeshCollider::CollInfo* collOut)
+int StageData::RayHitTest(const Ray& ray,MeshCollider::CollInfo* collOut) const
 {
     VECTOR3 to = ray.origin + ray.direction * kRayLength;
     int hit_index = -1;
@@ -55,7 +54,7 @@ int StageData::RayHitTest(const Ray& ray,MeshCollider::CollInfo* collOut)
     // 蜈ｨ繧ｪ繝悶ず繧ｧ繧ｯ繝医ｒ襍ｰ譟ｻ縺励※蠖薙◆繧雁愛螳壹ｒ陦後＞縲∵怙繧ゅΞ繧､蟋狗せ縺ｫ霑代＞繧ゅ・繧帝∈縺ｶ
     for (int i = 0; i < m_stageData.size(); i++)
     {
-        MeshCollider* coll = model_storage_->GetCollider(m_stageData[i].modelName);
+        MeshCollider* coll =ResourceManager::GetColl(m_stageData[i].modelName.c_str());
         if (coll == nullptr) continue;
 
         MeshCollider::CollInfo info;
@@ -92,7 +91,7 @@ void StageData::DeleteModel(int index)
 void StageData::Draw()
 {
     for (auto& data : m_stageData) {
-        CFbxMesh* mesh = model_storage_->GetModel(data.modelName);
+        CFbxMesh* mesh = ResourceManager::GetModel(data.modelName.c_str());
         if (mesh == nullptr) continue;
         mesh->Render(data.transform.matrix());
     }
@@ -115,7 +114,7 @@ void StageData::CopyModel(int index)
     info.transform = m_stageData[index].transform;
     info.transform.position.z += 5;
     m_stageData.push_back(info);
-    m_selectedModel = m_stageData.size() - 1;
+    m_selectedModel = static_cast<int>(m_stageData.size()) - 1;
 }
 
 // 迴ｾ蝨ｨ驕ｸ謚樔ｸｭ縺ｮ繧ｪ繝悶ず繧ｧ繧ｯ繝医う繝ｳ繝・ャ繧ｯ繧ｹ繧定ｿ斐☆

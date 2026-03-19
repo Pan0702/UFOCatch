@@ -3,7 +3,6 @@
 #include "FileDialog.h"
 #include "Import.h"
 #include "StageData.h"
-#include "../ModelStorage.h"
 struct ImageButtonData;
 class CFbxMesh;
 
@@ -12,14 +11,12 @@ Button::Button()
     m_worldPosition = VECTOR3(0.0f, 0.0f, 0.0f);
 
     // CModelStorage 縺九ｉ繝｡繝・す繝･繧貞叙蠕励＠縺ｦ1蝗槭□縺第緒逕ｻ縺・SRV 縺ｫ辟ｼ縺堺ｻ倥￠繧・
-    CModelStorage* storage = ObjectManager::FindGameObject<CModelStorage>();
     m_pData = ObjectManager::FindGameObject<StageData>();
-    if (storage)
-    {
-        AddButton("Plane", storage->GetModel("Plane"));
-        AddButton("Curve", storage->GetModel("Curve"));
-        AddButton("GoalLine", storage->GetModel("GoalLine"));
-    }
+
+    AddButton("Plane", ResourceManager::GetModel("Plane"));
+    AddButton("Curve", ResourceManager::GetModel("Curve"));
+    AddButton("GoalLine", ResourceManager::GetModel("GoalLine"));
+
 
     m_pModelCreator = new ModelCreator();
     m_pGridDraw = new GridDraw();
@@ -108,8 +105,8 @@ ModelPreviewRT Button::CreateModelPreviewRT(CFbxMesh* pMesh)
 
     // 繝ｬ繝ｳ繝繝ｪ繝ｳ繧ｰ繧ｿ繝ｼ繧ｲ繝・ヨ縺ｮ險ｭ螳壹→繧ｯ繝ｪ繧｢
     pD3D->SetRenderTarget(rt.pRTV, rt.pDSV);
-    constexpr float CLEAR_R= 0.12f;
-    constexpr float CLEAR_G = 0.12f;    
+    constexpr float CLEAR_R = 0.12f;
+    constexpr float CLEAR_G = 0.12f;
     constexpr float CLEAR_B = 0.12f;
     constexpr float CLEAR_A = 1.0f;
 
@@ -202,7 +199,7 @@ void Button::DebugImGui()
     // UI 繧ｦ繧｣繝ｳ繝峨え縺ｮ繝ｬ繧､繧｢繧ｦ繝亥ｮ壽焚
     constexpr float EDITOR_TOOL_WINDOW_Y = 10.0f;
     // 逕ｻ髱｢蜿ｳ遶ｯ縺九ｉ縺ｮ霍晞屬
-    constexpr float EDITOR_TOOLS_OFFSERT_FROM_RIGHT = 320.0f; 
+    constexpr float EDITOR_TOOLS_OFFSERT_FROM_RIGHT = 320.0f;
     // 繝｢繝・Ν霑ｽ蜉繝ｻ繝懊ち繝ｳ荳隕ｧ繧ｦ繧｣繝ｳ繝峨え・育判髱｢蜿ｳ遶ｯ縺ｫ蝗ｺ螳夲ｼ・
     ImGui::SetNextWindowPos(
         ImVec2(ImGui::GetIO().DisplaySize.x - EDITOR_TOOLS_OFFSERT_FROM_RIGHT, EDITOR_TOOL_WINDOW_Y),
@@ -255,7 +252,7 @@ void Button::DebugImGui()
     ImGui::Separator();
     if (ImGui::Button("Export"))
     {
-            std::string path = Platform::SaveFileDialog(L"*.json", L"data");
+        std::string path = Platform::SaveFileDialog(L"*.json", L"data");
         if (!path.empty())
         {
             ObjectManager::FindGameObject<StageData>()->Export(path);
@@ -309,4 +306,3 @@ void Button::DrawHierarchy()
     }
     ImGui::End();
 }
-

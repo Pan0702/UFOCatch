@@ -3,6 +3,8 @@
 
 class BackGraund : public Object3D
 {
+ private:
+ CFbxMesh* mesh;
 public:
  BackGraund();
 };

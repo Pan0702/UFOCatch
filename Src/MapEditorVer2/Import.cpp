@@ -5,7 +5,6 @@
 
 #include "StageData.h"
 #include "Buttom.h"
-#include "../ModelStorage.h"
 
 using json = nlohmann::json;
 
@@ -20,23 +19,22 @@ void Import::ImportFromFile(const std::string& path)
     file >> root;
 
     auto* stage_data = ObjectManager::FindGameObject<StageData>();
-    auto* storage    = ObjectManager::FindGameObject<CModelStorage>();
     auto* button     = ObjectManager::FindGameObject<Button>();
 
-    if (!stage_data || !storage) return;
+    if (!stage_data ) return;
 
     for (const auto& item : root)
     {
-        std::string model_name = item["model_name"];
-        std::string model_path = item["path"];
+        std::string modelName = item["model_name"];
+        std::string modelPath = item["path"];
 
         // 繝｢繝・Ν縺後せ繝医Ξ繝ｼ繧ｸ縺ｫ譛ｪ逋ｻ骭ｲ縺ｪ繧芽ｪｭ縺ｿ霎ｼ繧薙〒繝懊ち繝ｳ縺ｫ繧りｿｽ蜉縺吶ｋ
-        if (storage->GetModel(model_name) == nullptr)
+        if (ResourceManager::GetModel(modelName.c_str()) == nullptr)
         {
-            storage->AddModel(model_name.c_str(), model_path.c_str());
+            ResourceManager::LoadFbx(modelName.c_str(), modelPath.c_str());
             if (button)
             {
-                button->AddButton(model_name, storage->GetModel(model_name));
+                button->AddButton(modelName, ResourceManager::GetModel(modelName.c_str()));
             }
         }
 
@@ -55,6 +53,6 @@ void Import::ImportFromFile(const std::string& path)
             item["transform"]["scale"]["y"],
             item["transform"]["scale"]["z"]);
 
-        stage_data->AddModelWithTransform(model_name, transform);
+        stage_data->AddModelWithTransform(modelName, transform);
     }
 }

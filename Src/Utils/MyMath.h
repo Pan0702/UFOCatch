@@ -167,6 +167,7 @@ struct VECTOR3 : public XMFLOAT3
 
     float LengthSquare() const { return this->x * this->x + this->y * this->y + this->z * this->z; }
     float Length() const { return sqrtf(LengthSquare()); }
+   VECTOR3 Abs() const { return VECTOR3(std::fabs(this->x), std::fabs(this->y), std::fabs(this->z)); }
 };
 
 //

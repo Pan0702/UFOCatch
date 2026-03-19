@@ -3,7 +3,6 @@
 #include <vector>
 
 #include "Buttom.h"
-#include "../ModelStorage.h"
 #include "../Framework/ObjectManager.h"
 #include "ConvertFbx/FbxParser.h"
 #include "ConvertFbx/MeshWriter.h"
@@ -41,7 +40,7 @@ void ModelCreator::CreateModel(const std::string& path)
     {
         m_models.push_back(info);
         ObjectManager::FindGameObject<Button>()->AddButton(name, info.mesh);
-        ObjectManager::FindGameObject<CModelStorage>()->AddModel(name.c_str(), path.c_str());
+        ResourceManager::LoadFbx(name.c_str(), path.c_str());
     }
 }
 

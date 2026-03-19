@@ -75,7 +75,7 @@ public:
 
     /// <summary>繝峨Λ繝・げ荳ｭ縺ｮ霆ｸ繧定ｨｭ螳壹☆繧九・one繧呈欠螳壹☆繧九→繝峨Λ繝・げ繧定ｧ｣髯､縺吶ｋ</summary>
     /// <param name="axis">險ｭ螳壹☆繧玖ｻｸ</param>
-    void SetDraggingAxis(Axis axis) { dragging_axis_ = axis; }
+    void SetDraggingAxis(Axis axis) { m_draggingAxis = axis; }
 
     void SetOverrideTarget(Transform* t);
     

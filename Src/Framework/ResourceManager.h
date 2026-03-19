@@ -1,9 +1,7 @@
 ﻿#pragma once
 #include <string>
-#include <string_view>
 #include "../Utils/FbxMesh.h"
-
-class MeshCollider;
+#include "../Utils/MeshCollider.h"
 
 namespace ResourceManager
 {
@@ -11,17 +9,20 @@ namespace ResourceManager
     void Reset();
     CFbxMesh* LoadFbx(const std::string& filename);
     void LoadFbx(const char* name, const char* path);
-    void LoadFbx( const char* name);
-    CFbxMesh* GetMesh(const char* name);
+    void LoadFbx(const char* name);
+    CFbxMesh* GetModel(const char* name);
+    std::vector<std::string> GetModelNames();
     MeshCollider* GetColl(const char* name);
+    const char* GetPath(const char* name);
+    
 }
 
 struct ModelInfo
 {
     const char* name;
     const char* path;
-    std::unique_ptr<CFbxMesh> mesh;
-    std::unique_ptr<MeshCollider> coll;
+    std::shared_ptr<CFbxMesh> mesh;
+    std::shared_ptr<MeshCollider> coll;
 
     ModelInfo(const char* name, const char* path)
         : name(name), path(path), mesh(nullptr), coll(nullptr)
