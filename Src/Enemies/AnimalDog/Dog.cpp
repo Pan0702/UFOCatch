@@ -10,7 +10,6 @@
 #include "../Component/Walk.h"
 #include "../Component/Suction.h"
 #include "../Component/Destroy.h"
-#include "../../Utils/MyLib.h"
 #include "../../Common/ShadowObject.h"
 
 CADog::CADog(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)

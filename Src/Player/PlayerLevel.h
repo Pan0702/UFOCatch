@@ -2,7 +2,7 @@
 #include "../Common/Object3D.h"
 #include "../Utils/LerpValue.h"
 
-// EXP繝ｻLV繝ｻ蜷ｸ縺・ｾｼ縺ｿ繧ｳ繝ｼ繝ｳ縺ｮ繧ｵ繧､繧ｺ繧堤ｮ｡逅・☆繧九け繝ｩ繧ｹ //
+// EXP・LV・吸引コーンのサイズを管理するクラス //
 class CPlayerLevel : public Object3D
 {
 public:

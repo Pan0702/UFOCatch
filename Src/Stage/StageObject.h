@@ -36,7 +36,7 @@ public:
     /// OBBを取得
     /// </summary>
     /// <returns>OBBのポインタ</returns>
-    CBBox* GetOBB() { return m_pOBB; }
+    CBBox* GetOBB() const { return m_pOBB; }
 
     // 四分木登録用：XZ平面でのAABB中心と大きさを返す
     bool GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const;

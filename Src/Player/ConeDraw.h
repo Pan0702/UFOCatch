@@ -9,6 +9,7 @@ class CConeDraw : public Object3D
 {
 public:
     CConeDraw(float coneTopPos);
+    CConeDraw(float coneTopPos, CPlayer* p);
     ~CConeDraw() override;
 
 private:
@@ -23,6 +24,7 @@ class CCircleDraw : public Object3D
 {
 public:
     CCircleDraw();
+    CCircleDraw(CPlayer* p);
     ~CCircleDraw() override;
 
 private:

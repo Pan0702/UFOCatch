@@ -1,10 +1,10 @@
 // -----------------------------------------------------------------------------------------------------------  // -- 2020.8.7
 // 
-// ImGui Windows API —p‚Ìƒ\[ƒXƒtƒ@ƒCƒ‹
+// ImGui Windows API ï¿½pï¿½Ìƒ\ï¿½[ï¿½Xï¿½tï¿½@ï¿½Cï¿½ï¿½
 // 
-//   “ú–{Œê“ü—Í‚É‘Î‰ž‚·‚é‚½‚ß‚Æ‰æ–Ê‚ÌŠgkEƒtƒ‹ƒXƒNƒŠ[ƒ“‚É‘Î‰ž‚·‚é‚½‚ß‚ÉƒJƒXƒ^ƒ}ƒCƒY‚µ‚Ä‚ ‚é
-//   ƒJƒXƒ^ƒ}ƒCƒY‰ÓŠ‚É‚ÍAu// -- 2020.8.7v‚Ìˆó‚ª‚Â‚¯‚Ä‚ ‚éB
-//   ‚Ü‚½A•ÏX‘O‚Ì‰ÓŠ‚É‚ÍAu// Œ³‚Ì“à—ev‚Ìˆó‚ª‚Â‚¯‚Ä‚ ‚éB
+//   ï¿½ï¿½ï¿½{ï¿½ï¿½ï¿½ï¿½Í‚É‘Î‰ï¿½ï¿½ï¿½ï¿½é‚½ï¿½ß‚Æ‰ï¿½Ê‚ÌŠgï¿½kï¿½Eï¿½tï¿½ï¿½ï¿½Xï¿½Nï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½É‘Î‰ï¿½ï¿½ï¿½ï¿½é‚½ï¿½ß‚ÉƒJï¿½Xï¿½^ï¿½}ï¿½Cï¿½Yï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½
+//   ï¿½Jï¿½Xï¿½^ï¿½}ï¿½Cï¿½Yï¿½Óï¿½ï¿½É‚ÍAï¿½u// -- 2020.8.7ï¿½vï¿½Ìˆó‚ª‚Â‚ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½B
+//   ï¿½Ü‚ï¿½ï¿½Aï¿½ÏXï¿½Oï¿½Ì‰Óï¿½ï¿½É‚ÍAï¿½u// ï¿½ï¿½ï¿½Ì“ï¿½ï¿½eï¿½vï¿½Ìˆó‚ª‚Â‚ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½B
 //   
 // -----------------------------------------------------------------------------------------------------------
 
@@ -16,7 +16,7 @@
 //  [X] Platform: Mouse cursor shape and visibility. Disable with 'io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange'.
 //  [X] Platform: Keyboard arrays indexed using VK_* Virtual Key Codes, e.g. ImGui::IsKeyPressed(VK_SPACE).
 //  [X] Platform: Gamepad support. Enabled with 'io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad'.
-
+#define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #ifndef WIN32_LEAN_AND_MEAN
@@ -60,20 +60,20 @@ static ImGuiMouseCursor     g_LastMouseCursor = ImGuiMouseCursor_COUNT;
 static bool                 g_HasGamepad = false;
 static bool                 g_WantUpdateHasGamepad = true;
 
-// ‰æ–Ê‚ÌŠgkˆ—‚Ì‚½‚ßƒEƒCƒ“ƒhƒE‚Ì‰ŠúƒTƒCƒY‚ð’Ç‰Á                   // -- 2020.8.7
+// ï¿½ï¿½Ê‚ÌŠgï¿½kï¿½ï¿½ï¿½ï¿½ï¿½Ì‚ï¿½ï¿½ßƒEï¿½Cï¿½ï¿½ï¿½hï¿½Eï¿½Ìï¿½ï¿½ï¿½ï¿½Tï¿½Cï¿½Yï¿½ï¿½Ç‰ï¿½                   // -- 2020.8.7
 static int                  g_Window_Width  = 0;
 static int                  g_Window_Height = 0;
 
 // Functions
 // 
-//   ‰æ–Ê‚ÌŠgkˆ—‚É‘Î‰ž‚Å‚«‚é‚æ‚¤‚É
-//   ƒEƒCƒ“ƒhƒE‚Ì‰ŠúƒTƒCƒY‚ðÝ’è‚·‚é     int WidthIn, int HeightIn   // -- 2020.8.7
+//   ï¿½ï¿½Ê‚ÌŠgï¿½kï¿½ï¿½ï¿½ï¿½ï¿½É‘Î‰ï¿½ï¿½Å‚ï¿½ï¿½ï¿½æ‚¤ï¿½ï¿½
+//   ï¿½Eï¿½Cï¿½ï¿½ï¿½hï¿½Eï¿½Ìï¿½ï¿½ï¿½ï¿½Tï¿½Cï¿½Yï¿½ï¿½Ý’è‚·ï¿½ï¿½     int WidthIn, int HeightIn   // -- 2020.8.7
 // 
 bool    ImGui_ImplWin32_Init(void* hwnd, int WidthIn, int HeightIn)
-//bool    ImGui_ImplWin32_Init(void* hwnd)    // Œ³‚Ì“à—e
+//bool    ImGui_ImplWin32_Init(void* hwnd)    // ï¿½ï¿½ï¿½Ì“ï¿½ï¿½e
 {
 
-	// ƒEƒCƒ“ƒhƒE‚Ì‰ŠúƒTƒCƒY‚ðÝ’è
+	// ï¿½Eï¿½Cï¿½ï¿½ï¿½hï¿½Eï¿½Ìï¿½ï¿½ï¿½ï¿½Tï¿½Cï¿½Yï¿½ï¿½Ý’ï¿½
 	g_Window_Width  = WidthIn;                                        // -- 2020.8.7
 	g_Window_Height = HeightIn;                                       // -- 2020.8.7
 
@@ -173,18 +173,18 @@ static void ImGui_ImplWin32_UpdateMousePos()
     if (HWND active_window = ::GetForegroundWindow())
 		if (active_window == g_hWnd || ::IsChild(active_window, g_hWnd))
 		{
-			// Œ»Ý‚Ì‰æ–ÊƒTƒCƒY‚ð“¾‚é                                       // -- 2020.8.7
+			// ï¿½ï¿½ï¿½Ý‚Ì‰ï¿½ÊƒTï¿½Cï¿½Yï¿½ð“¾‚ï¿½                                       // -- 2020.8.7
 			RECT rect;
 			::GetClientRect(g_hWnd, &rect);
 			ImVec2 DispSize = ImVec2((float)(rect.right - rect.left), (float)(rect.bottom - rect.top));
 
-			// ‰æ–Ê‚ÌŠgk‚É‘Î‰ž‚µ‚½ƒ}ƒEƒXÀ•W‚É’²®‚·‚é                     // -- 2020.8.7
+			// ï¿½ï¿½Ê‚ÌŠgï¿½kï¿½É‘Î‰ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½}ï¿½Eï¿½Xï¿½ï¿½ï¿½Wï¿½É’ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½                     // -- 2020.8.7
 			if (::GetCursorPos(&pos) && ::ScreenToClient(g_hWnd, &pos))
 			{
                 io.MousePos = ImVec2((float)pos.x * (g_Window_Width/DispSize.x), (float)pos.y * (g_Window_Height/DispSize.y));
 			}
 
-			// Œ³‚Ì“à—e
+			// ï¿½ï¿½ï¿½Ì“ï¿½ï¿½e
             //if (::GetCursorPos(&pos) && ::ScreenToClient(g_hWnd, &pos))
             //    io.MousePos = ImVec2((float)pos.x, (float)pos.y);
 
@@ -249,10 +249,10 @@ void    ImGui_ImplWin32_NewFrame()
 
     // Setup display size (every frame to accommodate for window resizing)
 
-	// ‰æ–Ê‚ªŠgk‚µ‚Ä‚à•`‰æƒTƒCƒY‚Í•Ï‚í‚ç‚È‚¢           // -- 2020.8.7
+	// ï¿½ï¿½Ê‚ï¿½ï¿½gï¿½kï¿½ï¿½ï¿½Ä‚ï¿½ï¿½`ï¿½ï¿½Tï¿½Cï¿½Yï¿½Í•Ï‚ï¿½ï¿½È‚ï¿½           // -- 2020.8.7
 	io.DisplaySize = ImVec2((float)g_Window_Width, (float)g_Window_Height);                   // -- 2020.8.7
 
-    //RECT rect;                                        // Œ³‚Ì“à—e
+    //RECT rect;                                        // ï¿½ï¿½ï¿½Ì“ï¿½ï¿½e
     //::GetClientRect(g_hWnd, &rect);
     //io.DisplaySize = ImVec2((float)(rect.right - rect.left), (float)(rect.bottom - rect.top));
 
@@ -357,16 +357,16 @@ IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARA
 	{
 		// You can also use ToAscii()+GetKeyboardState() to retrieve characters.
 
-		// “ú–{Œê“ü—Í‚ª‚Å‚«‚é‚æ‚¤‚É•ÏX‚µ‚½                                           // -- 2020.8.7
+		// ï¿½ï¿½ï¿½{ï¿½ï¿½ï¿½ï¿½Í‚ï¿½ï¿½Å‚ï¿½ï¿½ï¿½æ‚¤ï¿½É•ÏXï¿½ï¿½ï¿½ï¿½                                           // -- 2020.8.7
 		if ((unsigned int)wParam>0 &&  (unsigned int)wParam< 256)
 		{
-			// ”¼Šp•¶Žš‚Í]—ˆ’Ê‚è‚Ì“ü—Í•û–@
+			// ï¿½ï¿½ï¿½pï¿½ï¿½ï¿½ï¿½ï¿½Í]ï¿½ï¿½ï¿½Ê‚ï¿½Ì“ï¿½ï¿½Í•ï¿½ï¿½@
 			io.AddInputCharacter((unsigned int)wParam);
 		}
 		else if((unsigned int)wParam > 255 && (unsigned int)wParam < 0x10000)
 		{
-			// ‘SŠp•¶Žš‚Í“ú–{Œê“ü—Íˆ—                                               // -- 2020.8.7
-			// i“ü—Í‚³‚ê‚Ä‚«‚½UTF16‚ðUTF8‚É•ÏŠ·‚·‚éj
+			// ï¿½Sï¿½pï¿½ï¿½ï¿½ï¿½ï¿½Í“ï¿½ï¿½{ï¿½ï¿½ï¿½ï¿½Íï¿½ï¿½ï¿½                                               // -- 2020.8.7
+			// ï¿½iï¿½ï¿½ï¿½Í‚ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½UTF16ï¿½ï¿½UTF8ï¿½É•ÏŠï¿½ï¿½ï¿½ï¿½ï¿½j
 			std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> convt;
 			std::string tch = convt.to_bytes((wchar_t)wParam);
 			io.AddInputCharactersUTF8(tch.c_str());
@@ -374,7 +374,7 @@ IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARA
 		}
 
 
-		// Œ³‚Ì“à—e
+		// ï¿½ï¿½ï¿½Ì“ï¿½ï¿½e
 		//io.AddInputCharacter((unsigned int)wParam);
 
 	}

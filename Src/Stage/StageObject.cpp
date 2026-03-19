@@ -16,8 +16,8 @@ CStageObject::CStageObject(const char* name, const VECTOR3& pos, float scale, bo
     m_pOBB = nullptr;
 
     // ResourceManagerからメッシュを取得（キャッシュされる）
-    m_pMesh = ResourceManager::GetModel(name);
-
+    m_pMesh = ResourceManager::LoadFbx(name);
+    if (m_pMesh == nullptr)assert(false);
     // OBBの作成
     if (m_bUseOBB)
     {
@@ -28,7 +28,7 @@ CStageObject::CStageObject(const char* name, const VECTOR3& pos, float scale, bo
         // OBBを作成
         m_pOBB = new CBBox(vMin, vMax);
     }
-
+    
     // 初期位置
     transform.position = pos;
     transform.scale = VECTOR3(1.0f, 1.0f, 1.0f) * scale;
@@ -66,13 +66,17 @@ void CStageObject::Update()
 void CStageObject::Draw()
 {
     Object3D::Draw();
-
-
-    // // デバッグ用: OBBを描画（必要に応じてコメントアウト）
-    // if (m_pOBB)
-    // {
-    //     m_pOBB->Render();
-    // }
+    
+    //デバック用　: メッシュの大きさを描画
+    ImGui::Begin("StageObject Debug");  
+    ImGui::DragFloat3("m_vMin",&m_pMesh->m_vMin.x, 0.01f);
+    ImGui::DragFloat3("m_vMax",&m_pMesh->m_vMax.x, 0.01f);
+    ImGui::End();
+    // デバッグ用: OBBを描画
+    if (m_pOBB)
+    {
+        m_pOBB->Render();
+    }
 }
 
 bool CStageObject::GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const

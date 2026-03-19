@@ -1,4 +1,5 @@
-﻿#include <vector>
+﻿#pragma once
+#include <vector>
 
 template <typename T>
 class CQuadTreeCell

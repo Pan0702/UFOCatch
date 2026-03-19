@@ -8,10 +8,10 @@
 
 using json = nlohmann::json;
 
-// JSON繝輔ぃ繧､繝ｫ繧定ｪｭ縺ｿ霎ｼ縺ｿ縲∬ｨ倬鹸縺輔ｌ縺溘Δ繝・Ν繧偵せ繝・・繧ｸ縺ｫ蠕ｩ蜈・☆繧・
+// JSONファイルを読み込み、記録されたモデルをステージに復元する
 void Import::ImportFromFile(const std::string& path)
 {
-    // 繝輔ぃ繧､繝ｫ繧帝幕縺・
+    // ファイルを開く
     std::ifstream file(path);
     if (!file.is_open()) return;
 
@@ -28,7 +28,7 @@ void Import::ImportFromFile(const std::string& path)
         std::string modelName = item["model_name"];
         std::string modelPath = item["path"];
 
-        // 繝｢繝・Ν縺後せ繝医Ξ繝ｼ繧ｸ縺ｫ譛ｪ逋ｻ骭ｲ縺ｪ繧芽ｪｭ縺ｿ霎ｼ繧薙〒繝懊ち繝ｳ縺ｫ繧りｿｽ蜉縺吶ｋ
+        // モデルが未ロードの場合、自動的にロードしてボタンにも追加する
         if (ResourceManager::GetModel(modelName.c_str()) == nullptr)
         {
             ResourceManager::LoadFbx(modelName.c_str(), modelPath.c_str());
@@ -38,7 +38,7 @@ void Import::ImportFromFile(const std::string& path)
             }
         }
 
-        // JSON 縺九ｉ Transform 繧貞ｾｩ蜈・
+        // JSON から Transformを読み込む
         Transform transform;
         transform.position = VECTOR3(
             item["transform"]["position"]["x"],

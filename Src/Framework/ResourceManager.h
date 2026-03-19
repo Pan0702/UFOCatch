@@ -9,7 +9,7 @@ namespace ResourceManager
     void Reset();
     CFbxMesh* LoadFbx(const std::string& filename);
     void LoadFbx(const char* name, const char* path);
-    void LoadFbx(const char* name);
+    CFbxMesh* LoadFbx(const char* path);
     CFbxMesh* GetModel(const char* name);
     std::vector<std::string> GetModelNames();
     MeshCollider* GetColl(const char* name);

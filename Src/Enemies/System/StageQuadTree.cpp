@@ -2,18 +2,17 @@
 #include "../../Stage/StageObject.h"
 #include <list>
 
+#include "../../System/GameInstance.h"
+
 CStageQuadTree::CStageQuadTree()
     : m_pTree(nullptr)
 {
+    VECTOR4 size = CGameInstance::Get()->GetMapSize();
     // NormalScene(ﾂｱ40)繝ｻPlayScene(ﾂｱ30)縺ｮ荳｡譁ｹ繧偵き繝舌・縺吶ｋ遽・峇
-    m_pTree = new CLiner4Tree<CStageObject>(3, VECTOR4(-50, -50, 50, 50));
+    m_pTree = std::make_unique<CLiner4Tree<CStageObject>>(3, size);
 }
 
-CStageQuadTree::~CStageQuadTree()
-{
-    delete m_pTree;
-    m_pTree = nullptr;
-}
+CStageQuadTree::~CStageQuadTree() = default;
 
 void CStageQuadTree::Build() const
 {
@@ -37,6 +36,6 @@ std::vector<CStageObject*> CStageQuadTree::GetNearbyObjects(
 {
     if (m_pTree == nullptr) return {};
 
-    // nullptr貂｡縺励〒閾ｪ蟾ｱ髯､螟悶↑縺暦ｼ磯撕逧・が繝悶ず繧ｧ繧ｯ繝医・閾ｪ蛻・・霄ｫ繧帝勁縺丞ｿ・ｦ√′縺ｪ縺・ｼ・
+    // nullptr渡しで自己除外なし（動的オブジェクトは自身の身を除く必要がない）
     return m_pTree->GetObjects(nullptr, pos, size);
 }

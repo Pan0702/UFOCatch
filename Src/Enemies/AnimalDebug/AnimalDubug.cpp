@@ -8,7 +8,6 @@
 #include "../Component/Walk.h"
 #include "../Component/Destroy.h"
 #include "../System/EnemyManager.h"
-#include "../../Utils/MyLib.h"
 
 CADebug::CADebug(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos)

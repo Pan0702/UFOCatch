@@ -14,10 +14,9 @@ void CWalk::Enter()
 {
     m_isFinish = false;
     
-    m_totalPosZMoveAmount = 0.0f;
     // 現在の Transform を取得
-    Transform transform = m_pOwner->GetTransform();
-    m_position = transform.position;
+    Transform trans = m_pOwner->GetTransform();
+    m_position = trans.position;
 
     bool foundValidMove = CalcRandomMove();
     
@@ -25,10 +24,15 @@ void CWalk::Enter()
     // 「移動しない」にして、回転だけランダムに決める
     if (!foundValidMove)
     {
-        m_turnAmount = Randomf(-kTurnAngleDeg, kTurnAngleDeg) * DegToRad;
+        m_turnAmount = Randomf(-TURN_ANGLE_DEG, TURN_ANGLE_DEG) * DegToRad;
     }
 
-    m_currentRotation = transform.rotation.y;
+    VECTOR2 start = {ToVec2XZ(m_position)};
+    VECTOR2 end = {ToVec2XZ(m_targetPos)};
+    m_path = m_pathFinder.SerchRoute(start, end);
+    m_pathIndex = 0;
+    
+    m_currentRotation = trans.rotation.y;
 
     //目標回転
     m_targetRotation = m_currentRotation + m_turnAmount;
@@ -44,9 +48,9 @@ void CWalk::Enter()
 /// @return 妥当な移動パラメータが見つかった場合true、最大試行回数を超えた場合false
 bool CWalk::CalcRandomMove()
 {
-    static constexpr int kMaxRetry = 50;// ランダム移動の試行回数上限（境界外に出ない組み合わせが見つかるまで最大 N 回試す）
-    static constexpr float kMinMove = 1.0f;// ランダム移動距離の範囲（最小～最大）
-    static constexpr float kMaxMove = 3.5f;// ランダム移動距離の範囲（最小～最大）
+    static constexpr int MAX_RETRY = 50;// ランダム移動の試行回数上限（境界外に出ない組み合わせが見つかるまで最大 N 回試す）
+    static constexpr float MIN_MOVE = 1.0f;// ランダム移動距離の範囲（最小～最大）
+    static constexpr float MAX_MOVE = 3.5f;// ランダム移動距離の範囲（最小～最大）
 
     // Sheep専用の範囲チェック
     CSheep* sheep = dynamic_cast<CSheep*>(m_pOwner);
@@ -57,21 +61,21 @@ bool CWalk::CalcRandomMove()
     }
 
     // ランダムに「回転量」「移動距離」を作って、境界内に収まるまでリトライ
-    for (int retry = 0; retry < kMaxRetry; ++retry)
+    for (int retry = 0; retry < MAX_RETRY; ++retry)
     {
         // 回転量[-180°, +180°] をランダムに選んでラジアンに変換
-        m_turnAmount = Randomf(-kTurnAngleDeg, kTurnAngleDeg) * DegToRad;
+        m_turnAmount = Randomf(-TURN_ANGLE_DEG, TURN_ANGLE_DEG) * DegToRad;
 
         // 移動距離[1.0, 3.5] をランダムに選ぶ
-        m_moveAmount = Randomf(kMinMove, kMaxMove);
-
-        VECTOR3 tmpPos = m_position + VECTOR3(0, 0,
-                                      m_moveAmount) * XMMatrixRotationY(m_turnAmount);
+        float moveAmount = Randomf(MIN_MOVE, MAX_MOVE);
+        
+        m_targetPos = m_position + VECTOR3(0, 0,
+                                      moveAmount) * XMMatrixRotationY(m_turnAmount);
 
         // Sheepの場合：Flogの範囲内かチェック
         if (flog != nullptr)
         {
-            VECTOR3 toCenter = flog->GetFlockCenter() - tmpPos;
+            VECTOR3 toCenter = flog->GetFlockCenter() - m_targetPos;
             toCenter.y = 0;
             float distanceToCenter = sqrtf(toCenter.LengthSquare());
             if (distanceToCenter <= flog->GetFlockRadius())
@@ -80,7 +84,7 @@ bool CWalk::CalcRandomMove()
             }
         }
         // それ以外のエネミーの場合、自身のAreaSizeチェック
-        else if (IsInsideAreaXZ(tmpPos, m_pOwner->GetAreaSize()))
+        else if (IsInsideAreaXZ(m_targetPos, m_pOwner->GetAreaSize()))
         {
             return true;
         }
@@ -115,32 +119,82 @@ void CWalk::PlayWalkAnimation()
 
 void CWalk::Update()
 {
-    if (m_rotation)
+    if (m_path.empty())
     {
         static constexpr float ROTATION_LERP_SPEED = 10.0f;
         float t = ROTATION_LERP_SPEED * SceneManager::DeltaTime();
         m_currentRotation = m_currentRotation + (m_targetRotation - m_currentRotation) * t;
         if (abs(m_targetRotation - m_currentRotation) < 0.01f)
         {
-            m_currentRotation = m_targetRotation;
-            m_rotation = false;
+            m_isFinish = true;
         }
         m_pOwner->SetRotateY(ClampRotateY(m_currentRotation));
     }
+    const VECTOR2 nextPoint = m_path[m_pathIndex];
+    const VECTOR3 nextPos = {nextPoint.x, m_position.y, nextPoint.y};
+    
+    // ウェイポイントの方向を向く
+    VECTOR3 dir = nextPos - m_pOwner->GetTransform().position;
+    dir.y = 0;
+    float targetAngle = atan2f(dir.x, dir.z);
 
-    VECTOR3 moveVec = VECTOR3(0, 0, m_moveSpeed * SceneManager::DeltaTime()) * XMMatrixRotationY(m_currentRotation);
+    // 回転
+    float current = m_pOwner->GetTransform().rotation.y;
+    float t = 10.0f * SceneManager::DeltaTime();
+    float newAngle = current + (targetAngle - current) * t;
+    m_pOwner->SetRotateY(newAngle);
+
+    // 移動
+    VECTOR3 moveVec = VECTOR3(0, 0, m_moveSpeed * SceneManager::DeltaTime()) 
+                      * XMMatrixRotationY(newAngle);
     moveVec = m_pOwner->CalcSlideMove(moveVec);
     m_pOwner->AddPosition(moveVec);
-    m_totalPosZMoveAmount += m_moveSpeed * SceneManager::DeltaTime();
 
-    if (m_totalPosZMoveAmount > m_moveAmount)
+    //目的地の計算
+    VECTOR3 toTarget = nextPos - m_pOwner->GetTransform().position;
+    toTarget.y = 0;
+    //距離の計算
+    const float disSq = toTarget.LengthSquare();
+    const float cellSize = m_pathFinder.GetCellSize();
+    const float reachDistSq = cellSize * 0.5f * cellSize * 0.5f;
+    if (disSq < reachDistSq)
     {
-        m_isFinish = true;
+        m_pathIndex++;
+        if (m_pathIndex >= m_path.size() - 1)
+        {
+            m_isFinish = true;
+            return;
+        }
     }
     if (m_pOwner->IsHuman())
     {
         m_pOwner->IsSuctionCheck();
     }
+    //
+    // if (m_rotation)
+    // {
+    //     static constexpr float ROTATION_LERP_SPEED = 10.0f;
+    //     float t = ROTATION_LERP_SPEED * SceneManager::DeltaTime();
+    //     m_currentRotation = m_currentRotation + (m_targetRotation - m_currentRotation) * t;
+    //     if (abs(m_targetRotation - m_currentRotation) < 0.01f)
+    //     {
+    //         m_currentRotation = m_targetRotation;
+    //         m_rotation = false;
+    //     }
+    //     m_pOwner->SetRotateY(ClampRotateY(m_currentRotation));
+    // }
+    //
+    // VECTOR3 moveVec = VECTOR3(0, 0, m_moveSpeed * SceneManager::DeltaTime()) * XMMatrixRotationY(m_currentRotation);
+    // moveVec = m_pOwner->CalcSlideMove(moveVec);
+    // m_pOwner->AddPosition(moveVec);
+    //
+    //
+    // if (m_pOwner->IsHuman())
+    // {
+    //     m_pOwner->IsSuctionCheck();
+    // }
+
+    
 }
 
 float CWalk::ClampRotateY(float angle)

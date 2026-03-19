@@ -2,22 +2,35 @@
 #include "../Common/Object3D.h"
 #include "PlayerLevel.h"
 
-// 繝励Ξ繧､繝､繝ｼ縺ｮUFO繧貞宛蠕｡縺吶ｋ繧ｯ繝ｩ繧ｹ //
+// プレイヤーのUFOを制御するクラス //
 class CPlayer : public Object3D
 {
 public:
-    // 蜴溽せ縺九ｉ遘ｻ蜍輔〒縺阪ｋ霍晞屬
-    // 萓九∴縺ｰ-20~20縺ｪ繧・0縺ｨ蜈･蜉・/
+    // 原点から移動できる距離
+    // 例えば-20~20なら20と入力 //
     CPlayer(float moveRange);
     ~CPlayer();
 
     ///
-    /// 繧ｪ繝悶ず繧ｧ繧ｯ繝医・蝣ｴ謇繧呈ｸ｡縺励√◎繧後′繧ｳ繝ｼ繝ｳ縺ｮ遽・峇蜀・↑繧液rue,螟悶↑繧映alse
-    /// @param targetPos
-    /// @return bool
+    /// 指定した座標が、吸い込みコーンの範囲内にあるか判定する
+    /// @param targetPos 判定したい対象の座標
+    /// @return true: コーン内 / false: コーン外
     ///
     bool IsWithSuctionCone(const VECTOR3& targetPos) const;
+
+    ///
+    /// 経過時間と対象位置をもとに、吸い込みによって移動する量を計算する
+    /// @param moveTimeSecond 経過時間[秒]
+    /// @param animalPos 対象オブジェクトの座標
+    /// @return 吸い込み移動量
+    ///
     VECTOR3 CalcSuctionDisplacement(float moveTimeSecond, const VECTOR3& animalPos) const;
+
+    ///
+    /// 指定した座標が、吸い込み円の範囲内にあるか判定する
+    /// @param targetPos 判定したい対象の座標
+    /// @return true: 円内 / false: 円外
+    ///
     bool IsInsideSuctionCircle(const VECTOR3& targetPos) const;
 
     const VECTOR3& GetPos() const { return transform.position; }

@@ -5,7 +5,6 @@
 #include "../Utils/Animator.h"
 #include "../Enemies/System/EnemyManager.h"
 #include "../Stage/Ground.h"
-#include "../Utils/MyLib.h"
 
 
 CTutorialAnimal::CTutorialAnimal(const VECTOR3& pos)

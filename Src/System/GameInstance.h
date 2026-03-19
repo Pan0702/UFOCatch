@@ -14,7 +14,8 @@ public:
     int GetDiscovery() const { return m_discovery; }
     int GetCapture() const { return m_capture; }
     int GetSaw() const{ return m_saw; }
-    
+    const VECTOR4& GetMapSize() const { return m_mapSize; }
+    void SetMapSize(const VECTOR4& size) { m_mapSize = size; }
     //Add髢｢謨ｰ
     void AddScore(int score) { m_score += score; }
     void AddDiscovery(int dis) { m_discovery += dis; }
@@ -31,5 +32,6 @@ private:
     int m_saw;
     int m_discovery;
     int m_capture;
+    VECTOR4 m_mapSize;
 };
 

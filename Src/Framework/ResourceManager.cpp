@@ -1,5 +1,5 @@
 ﻿#include "ResourceManager.h"
-#include <unordered_map>
+#include "../Utils/MyLib.h"
 #include <fstream>
 #include "../Utils/MeshCollider.h"
 #include "GameObject.h"
@@ -32,6 +32,25 @@ void ResourceManager::LoadFbx(const char* name, const char* path)
     }
     modelInfos.push_back(m);
     
+}
+
+CFbxMesh* ResourceManager::LoadFbx(const char* path)
+{
+    ModelInfo m(path);
+    m.mesh = std::make_unique<CFbxMesh>();
+    m.coll = std::make_unique<MeshCollider>();
+    m.mesh->Load(path);
+    std::string n = MyLib::ChangePathToName(path);
+    for (auto& f : modelInfos)
+    {
+        if (f.name == n)
+        {
+            return f.mesh.get();
+        }
+    }
+    m.name = n.c_str();
+    modelInfos.push_back(m);
+    return m.mesh.get();
 }
 
 CFbxMesh* ResourceManager::GetModel(const char* name)

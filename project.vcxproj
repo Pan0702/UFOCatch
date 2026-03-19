@@ -550,6 +550,7 @@
     <ClInclude Include="Src\Enemies\Human\Human.h" />
     <ClInclude Include="Src\Enemies\Liner4Tree.h" />
     <ClInclude Include="Src\Enemies\System\AnimalFactor.h" />
+    <ClInclude Include="Src\Enemies\System\AStarPathFinder.h" />
     <ClInclude Include="Src\Enemies\System\EnemyManager.h" />
     <ClInclude Include="Src\Enemies\System\EnemyQuadTree.h" />
     <ClInclude Include="Src\Enemies\System\Flog.h" />
@@ -1100,6 +1101,7 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Src\Enemies\System\AStarPathFinder.cpp" />
     <ClCompile Include="Src\Enemies\System\EnemyManager.cpp">
       <AssemblerOutput>NoListing</AssemblerOutput>
       <AssemblerListingLocation>project\x64\Debug\</AssemblerListingLocation>

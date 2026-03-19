@@ -2,27 +2,26 @@
 #include "../Common/Object3D.h"
 #include "../Utils/LerpValue.h"
 
-// 繝励Ξ繧､繝､繝ｼ繧定ｿｽ蠕薙☆繧九き繝｡繝ｩ繧ｯ繝ｩ繧ｹ //
+// プレイヤーを追従するカメラクラス //
 class CPlayerCamera:public Object3D
 {
 public:
     CPlayerCamera();
     ~CPlayerCamera();
-    // 繧ｫ繝｡繝ｩ菴咲ｽｮ繧定ｨｭ螳壹☆繧・
-    // @param pos 繝励Ξ繧､繝､繝ｼ縺ｮ菴咲ｽｮ
-    // @param distance 繧ｳ繝ｼ繝ｳ縺ｮ鬮倥＆ //
+    // カメラ位置を設定する
+    // @param pos プレイヤーの位置
+    // @param distance コーンの高さ //
     void PosSet(const VECTOR3& pos, const float& distance);
-    // 繧ｫ繝｡繝ｩ繧偵ぜ繝ｼ繝繧､繝ｳ縺輔○繧・
-    // @param pos 繝励Ξ繧､繝､繝ｼ縺ｮ菴咲ｽｮ //
+    // カメラをズームインさせる
+    // @param pos プレイヤーの位置 //
     void ZoomIn(const VECTOR3& pos);
-    // 繧ｫ繝｡繝ｩ繧偵ぜ繝ｼ繝繧｢繧ｦ繝医＆縺帙ｋ
-    // @param pos 繝励Ξ繧､繝､繝ｼ縺ｮ菴咲ｽｮ //
+    // カメラをズームアウトさせる
+    // @param pos プレイヤーの位置 //
     void ZoomOut(const VECTOR3& pos);
 private:
     //void DebugImGui();
     void Update() override;
     void UpdateCameraBezier();
-
 
     VECTOR3 m_camPos;
     VECTOR3 m_camLook;
@@ -31,8 +30,8 @@ private:
     LerpValueVec3 m_camLookBezier;
     uint8_t state;
 
-    VECTOR3 m_animStartPlayerPos;  // 繧｢繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ髢句ｧ区凾縺ｮ繝励Ξ繧､繝､繝ｼ菴咲ｽｮ
-    VECTOR3 m_playerOffset;        // 繝励Ξ繧､繝､繝ｼ遘ｻ蜍輔↓繧医ｋ蟾ｮ蛻・
+    VECTOR3 m_animStartPlayerPos;  // アニメーション開始時のプレイヤー位置
+    VECTOR3 m_playerOffset;        // プレイヤー移動による差分
     enum : uint8_t
     {
         zoomIn = 0,

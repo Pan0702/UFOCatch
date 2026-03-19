@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "ComponentBase.h"
-
+#include "../System/AStarPathFinder.h"
 class CWalk : public CComponentBase
 {
 public:
@@ -16,12 +16,6 @@ private:
     /// @return 妥当な移動パラメータが見つかった場合true、最大試行回数を超えた場合false
     bool CalcRandomMove();
     
-    /*
-    ///  回転・移動後の座標が境界内に収まるかチェック
-    /// @param areaSize エリアのサイズ
-    /// @return 境界内ならtrue、境界外ならfalse
-    bool BoundaryCheck(const VECTOR2& areaSize) const;
-    */
     ///Walkのアニメーションを1.0fの速度で再生する
     void PlayWalkAnimation();
     
@@ -32,12 +26,18 @@ private:
     
 
     VECTOR3 m_position;
-    float m_moveAmount;
-    float m_totalPosZMoveAmount;
+    VECTOR3 m_targetPos;
     float m_turnAmount;
     float m_currentRotation;
     float m_targetRotation;
     float m_moveSpeed;
     bool m_rotation;
-    static constexpr float kTurnAngleDeg = 180.0f; // ランダム回転の範囲（度）
+    static constexpr float TURN_ANGLE_DEG = 180.0f; // ランダム回転の範囲（度）
+    
+    //A*の経路
+    std::vector<VECTOR2> m_path;      
+    //今どのウェイポイントに向かってるか
+    int m_pathIndex;                   
+    //A*
+    CAStarPathFinder m_pathFinder;  
 };

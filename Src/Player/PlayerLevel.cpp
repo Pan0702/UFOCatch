@@ -17,7 +17,7 @@ void CPlayerLevel::Update()
 }
 
 ////////////////////
-// 荳螳壽焚蜷ｸ縺・ｾｼ繧薙□縺九メ繧ｧ繝・け //
+// 一定数吸引したかチェック //
 ////////////////////
 void CPlayerLevel::CheckLevel()
 {
@@ -32,7 +32,7 @@ void CPlayerLevel::CheckLevel()
 }
 
 ////////////////////
-// 蜷ｸ縺・ｾｼ縺ｿ繧ｳ繝ｼ繝ｳ縺ｮ鬮倥＆繧貞｢怜刈縺輔○繧・//
+// 吸引コーンの高さを増加させる //
 ////////////////////
 void CPlayerLevel::IncreaseSuctionConeHeight()
 {
@@ -44,7 +44,7 @@ void CPlayerLevel::IncreaseSuctionConeHeight()
 }
 
 ////////////////////
-// 鬮倥＆縺ｨ蜊雁ｾ・・Lerp蜃ｦ逅・//
+// 高さと半径のLerp処理 //
 ////////////////////
 void CPlayerLevel::UpdateHeightAndRadiusLerp()
 {
