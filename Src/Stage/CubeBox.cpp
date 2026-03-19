@@ -1,8 +1,8 @@
 ﻿#include "CubeBox.h"
 
 ////////////////////
-// 繝｡繝・す繝･繝輔ぃ繧､繝ｫ縺ｮ繝代せ繧呈欠螳壹＠縺ｦ繧､繝ｳ繧ｹ繧ｿ繝ｳ繧ｹ繧堤函謌舌☆繧・
-// @param meshPath 繝｡繝・す繝･繝輔ぃ繧､繝ｫ縺ｮ繝代せ //
+// メッシュファイルのパスを指定してインスタンスを生成する
+// @param meshPath メッシュファイルのパス //
 ////////////////////
 CCubeBox::CCubeBox(const char* meshPath)
 {
@@ -18,4 +18,3 @@ void CCubeBox::Draw()
 {
     Object3D::Draw();
 }
-

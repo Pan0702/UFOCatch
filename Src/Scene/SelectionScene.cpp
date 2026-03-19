@@ -142,7 +142,7 @@ void CSelectionScene::Draw()
     static constexpr float imageWidthMaxSize = 1366;
     static constexpr float imageHeightMaxSize = 768;
     CSprite spr;
-    //閭梧勹縺ｮ縺ｲ繧・≧縺・//
+    //背景の描画//
     spr.Draw(m_pImageBackGround, 0, 0, 0, 0, imageWidthMaxSize, imageHeightMaxSize);
     ButtonsDraw();
     spr.Draw(m_images[m_selectedIndex], 0, 0, 0, 0, imageWidthMaxSize, imageHeightMaxSize);
@@ -151,7 +151,7 @@ void CSelectionScene::Draw()
         VECTOR2 playSize = m_buttons[1].imageSize;
         spr.Draw(m_buttons[1].image, 1083, 489, 0, 0, playSize.x, playSize.y);
     }
-    //譁・ｭ励・陦ｨ遉ｺ
+    //文字の表示
     int arryEnd = static_cast<int>(m_buttons.size() - 1);
     VECTOR2 strSize = m_buttons[arryEnd].imageSize;
     spr.Draw(m_buttons[arryEnd].image, 0, 0, 0, 0, strSize.x, strSize.y);
@@ -167,17 +167,18 @@ void CSelectionScene::ButtonsDraw()
     {
         float yBase = 113.0f + (float)i * (80.0f + offSize.y);
 
-        // Off逕ｻ蜒擾ｼ亥ｸｸ縺ｫ陦ｨ遉ｺ・・
+        // Off画像（常に表示）
         spr.Draw(m_buttons[3].image, 30.0f, yBase, 0, 0, offSize.x, offSize.y);
 
-        // On逕ｻ蜒上ｒ繝ｯ繧､繝玲緒逕ｻ
+        // On画像をワイプ描画
         m_wipeAnim.Draw(spr, i, m_buttons[0].image, 30.0f - 9.0f, yBase, onSize.x, onSize.y);
     }
 
-    // Play Off逕ｻ蜒・
+    // Play Off画像
     VECTOR2 playSize = m_buttons[5].imageSize;
     spr.Draw(m_buttons[5].image, 1083, 489, 0, 0, playSize.x, playSize.y);
 }
+
 
 
 

@@ -47,7 +47,7 @@ void CIdle::Update()
 void CIdle::IdleStop()
 {
     m_timerCnt += SceneManager::DeltaTime();
-    //1遘偵↓縺ｪ縺｣縺溘ｉ繧ｷ繝ｼ繝ｳ繧堤ｵゆｺ・
+    //1秒になったらシーンを終了
     if (m_timerCnt > 1)
     {
         m_isFinish = true;
@@ -70,4 +70,3 @@ bool CIdle::AnimationFinish() const
     }
     return false;
 }
-

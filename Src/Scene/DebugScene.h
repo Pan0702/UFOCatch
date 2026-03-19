@@ -7,7 +7,7 @@ public:
     CDebugScene();
     ~CDebugScene();
 
-    // 繝ｪ繧ｶ繝ｫ繝医す繝ｼ繝ｳ縺ｸ驕ｷ遘ｻ縺吶ｋ //
+    // リザルトシーンへ遷移する //
     void ChangeResultScene();
 private:
     void Update() override;

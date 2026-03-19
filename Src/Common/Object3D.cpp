@@ -11,7 +11,11 @@ Object3D::Object3D()
 
 Object3D::~Object3D()
 {
-	// mesh 縺ｨ meshCol 縺ｯ蜷・け繝ｩ繧ｹ縺ｧ邂｡逅・＆繧後ｋ縺溘ａ蜑企勁縺励↑縺・
+	// mesh と meshCol は各クラスで管理されるため削除しない
+	if (m_pAnimator != nullptr) {
+		delete m_pAnimator;
+		m_pAnimator = nullptr;
+	}
 }
 
 void Object3D::Update()
@@ -30,7 +34,7 @@ void Object3D::Draw()
 		m_pMesh->Render(transform.matrix());
 	}
 	else {
-		m_pMesh->Render(m_pAnimator.get(), transform.matrix());
+		m_pMesh->Render(m_pAnimator, transform.matrix());
 	}
 
 }
@@ -51,18 +55,18 @@ bool Object3D::HitSphereToMeshPush(const SphereCollider& sphere, VECTOR3* push)
 	std::list<MeshCollider::CollInfo> meshes = m_pMeshCol->CheckCollisionSphereList(mat, sphere.center, sphere.radius);
 	if (meshes.size() == 0)
 		return false;
-	if (push != nullptr) { // ・ｽ・ｽ・ｽW・ｽ・ｽ・ｽK・ｽv・ｽﾈのでゑｿｽ・ｽ・ｽ・ｽ
-		VECTOR3 pushVec = VECTOR3(0, 0, 0); // ・ｽﾅ終・ｽI・ｽﾉ会ｿｽ・ｽ・ｽ・ｽx・ｽN・ｽg・ｽ・ｽ
-		for (const MeshCollider::CollInfo& m : meshes) { // ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽﾄゑｿｽ・ｽ驍ｷ・ｽﾗてのポ・ｽ・ｽ・ｽS・ｽ・ｽ・ｽ・ｽ
+	if (push != nullptr) { // 座標が必要なので
+		VECTOR3 pushVec = VECTOR3(0, 0, 0); // 最終的に押し戻すベクトル
+		for (const MeshCollider::CollInfo& m : meshes) { // 接触しているすべてのポリゴン
 			VECTOR3 move = sphere.center - m.hitPosition;
-			float len = move.Length(); // ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ_・ｽ・ｽ・ｽ迺・ｿｽS・ｽﾖの具ｿｽ・ｽ・ｽ
+			float len = move.Length(); // 接触した点から中心への距離
 			move = move * ((sphere.radius - len) / len);
-			VECTOR3 push = m.normal * Dot(move, m.normal); // ・ｽ・ｽ・ｽ・ｽ・ｽﾔゑｿｽ・ｽ・ｽ・ｽ・ｽ・ｽx・ｽN・ｽg・ｽ・ｽ
-			// ・ｽ・ｽ・ｽ・ｽpushVec・ｽﾆ搾ｿｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ
-			VECTOR3 pushVecNorm = XMVector3Normalize(pushVec); // ・ｽ・ｽ・ｽ・ｽ・ｽﾏみベ・ｽN・ｽg・ｽ・ｽ・ｽﾌ鯉ｿｽ・ｽ・ｽ
-			float dot = Dot(push, pushVecNorm);	// ・ｽ・ｽ・ｽﾌ撰ｿｽ・ｽ・ｽ・ｽﾌ抵ｿｽ・ｽ・ｽ
+			VECTOR3 push = m.normal * Dot(move, m.normal); // 押し戻すためのベクトル
+			// これをpushVecと合成する
+			VECTOR3 pushVecNorm = XMVector3Normalize(pushVec); // 押し戻し済みベクトルの向き
+			float dot = Dot(push, pushVecNorm);	// その成分の長さ
 			if (dot < pushVec.Length()) {
-				pushVec += push - pushVecNorm * dot; // ・ｽ・ｽ・ｽﾌ撰ｿｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ轤ｵ・ｽﾄゑｿｽ・ｽ・ｽ
+				pushVec += push - pushVecNorm * dot; // その成分を差し引いて足す
 			}
 			else {
 				pushVec = push;
@@ -126,13 +130,13 @@ bool Object3D::HitSphereToSpherePush(const SphereCollider& target, bool withY, V
 	if (withY == false)
 		pushVec.y = 0.0f;
 	float rsum = my.radius + target.radius;
-	if (pushVec.LengthSquare() < rsum * rsum) {	  // ・ｽ・ｽ・ｽﾌ難ｿｽ・ｽ・ｽ・ｽ阡ｻ・ｽ・ｽ
-		// ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽﾄゑｿｽﾆゑｿｽ
+	if (pushVec.LengthSquare() < rsum * rsum) {	  // 球の当たり判定
+		// 接触してるとき
 		if (push != nullptr) {
-			// ・ｽ・ｽ・ｽ・ｽ・ｽo・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽpushVec  ・ｽ・ｽ・ｽ・ｽ・ｽo・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ・ｽpushLen
-			// ・ｽ・ｽ・ｽ・ｽ・ｽo・ｽ・ｽ・ｽx・ｽN・ｽg・ｽ・ｽpush・ｽ・ｽ・ｽ・ｽ・ｽﾟゑｿｽ
+			// 押し出し方向pushVec  押し出し距離pushLen
+			// 押し出しベクトルpushを求める
 			float pushLen = rsum - pushVec.Length();
-			pushVec = XMVector3Normalize(pushVec); // pushVec・ｽﾌ抵ｿｽ・ｽ・ｽ・ｽ・ｽ・ｽP・ｽﾉゑｿｽ・ｽ・ｽ
+			pushVec = XMVector3Normalize(pushVec); // pushVecの長さを１にする
 			*push = pushVec * pushLen;
 		}
 		return true;
@@ -148,4 +152,4 @@ SphereCollider  Object3D::GetSphereCollider()
 		m_pMeshCol->GetBall(&col.center, &col.radius);
 	}
 	return col;
-}//縲
+}

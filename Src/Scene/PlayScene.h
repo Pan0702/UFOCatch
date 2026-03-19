@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "../Framework/SceneBase.h"
 
-// 繝｡繧､繝ｳ縺ｮ繝励Ξ繧､繧ｷ繝ｼ繝ｳ //
+// メインのプレイシーン //
 class PlayScene : public SceneBase
 {
 public:
@@ -9,12 +9,11 @@ public:
 	~PlayScene();
 	void Update() override;
 	void Draw() override;
-	// 繝ｪ繧ｶ繝ｫ繝医す繝ｼ繝ｳ縺ｸ驕ｷ遘ｻ縺吶ｋ //
+	// リザルトシーンへ遷移する //
 	void ChangeResultScene();
 private:
 	CXAudioSource* m_pBGM;
-	//4縺ｶ繧薙″險育ｮ優ebug
+	//4分木デバッグ
 	void QTreeDebug();
 	
 };
-

@@ -3,19 +3,19 @@
 #include "../Utils/BBox.h"
 
 /// <summary>
-/// 繧ｹ繝・・繧ｸ繧ｪ繝悶ず繧ｧ繧ｯ繝茨ｼ磯撕逧・↑髫懷ｮｳ迚ｩ縲∝｣√↑縺ｩ・・
-/// OBB・・BBox・峨↓繧医ｋ陦晉ｪ∝愛螳壹ｒ謠蝉ｾ・
+/// ステージオブジェクト（静的な障害物、壁など）
+/// OBB（BBox）による衝突判定を提供する
 /// </summary>
 class CStageObject : public Object3D
 {
 public:
     /// <summary>
-    /// 繧ｳ繝ｳ繧ｹ繝医Λ繧ｯ繧ｿ
+    /// コンストラクタ
     /// </summary>
-    /// <param name="name">繝｡繝・す繝･繝輔ぃ繧､繝ｫ縺ｮ繝代せ</param>
-    /// <param name="pos">繧ｪ繝悶ず繧ｧ繧ｯ繝医・菴咲ｽｮ</param>
-    /// <param name="scale">繧ｪ繝悶ず繧ｧ繧ｯ繝医・繧ｵ繧､繧ｺ</param>
-    /// <param name="useOBB">OBB繧剃ｽｿ逕ｨ縺吶ｋ縺具ｼ医ョ繝輔か繝ｫ繝・ true・・/param>
+    /// <param name="name">メッシュファイルのパス</param>
+    /// <param name="pos">オブジェクトの位置</param>
+    /// <param name="scale">オブジェクトのサイズ</param>
+    /// <param name="useOBB">OBBを使用するか（デフォルト: true）</param>
     CStageObject(const char* name, const VECTOR3& pos = VECTOR3(0,0,0), float scale = 1.0f, bool useOBB = true);
     virtual ~CStageObject();
 
@@ -23,32 +23,32 @@ public:
     void Draw() override;
 
     /// <summary>
-    /// OBB縺ｨ縺ｮ陦晉ｪ∝愛螳壹ｒ陦後≧
-    /// 謚ｼ縺玲綾縺玲ｳ慕ｷ壹・XZ蟷ｳ髱｢縺ｮ縺ｿ・・謌仙・=0・峨〒霑斐☆
+    /// OBBとの衝突判定を行う
+    /// 押し戻し法線はXZ平面のみ（Y成分=0）で返す
     /// </summary>
-    /// <param name="other">逶ｸ謇九・OBB</param>
-    /// <param name="vHit">陦晉ｪ∽ｽ咲ｽｮ・・ut・・/param>
-    /// <param name="vNormal">陦晉ｪ∵ｳ慕ｷ夲ｼ・ut・俄ｻXZ蟷ｳ髱｢縺ｮ縺ｿ</param>
-    /// <returns>陦晉ｪ√＠縺ｦ縺・◆繧液rue</returns>
+    /// <param name="other">相手のOBB</param>
+    /// <param name="vHit">衝突位置（Out）</param>
+    /// <param name="vNormal">衝突法線（Out）※XZ平面のみ</param>
+    /// <returns>衝突していたらtrue</returns>
     bool HitOBB(CBBox* other, VECTOR3* vHit = nullptr, VECTOR3* vNormal = nullptr);
 
     /// <summary>
-    /// OBB繧貞叙蠕・
+    /// OBBを取得
     /// </summary>
-    /// <returns>OBB縺ｮ繝昴う繝ｳ繧ｿ</returns>
+    /// <returns>OBBのポインタ</returns>
     CBBox* GetOBB() { return m_pOBB; }
 
-    // 蝗帛・譛ｨ逋ｻ骭ｲ逕ｨ・唸Z蟷ｳ髱｢縺ｧ縺ｮAABB荳ｭ蠢・→螟ｧ縺阪＆繧定ｿ斐☆
+    // 四分木登録用：XZ平面でのAABB中心と大きさを返す
     bool GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const;
 
     /// <summary>
-    /// 繧ｨ繝阪Α繝ｼ縺ｨ縺ｮ陦晉ｪ√ｒ隗｣豸医☆繧・
+    /// エネミーとの衝突を解決する
     /// </summary>
-    /// <param name="pEnemy">蛻､螳壼ｯｾ雎｡縺ｮ繧ｨ繝阪Α繝ｼ</param>
+    /// <param name="pEnemy">判定対象のエネミー</param>
     void ResolveEnemyCollision(class CEnemyBase* pEnemy);
 
 protected:
-    CBBox* m_pOBB;      // OBB陦晉ｪ∝愛螳・
-    bool   m_bUseOBB;   // OBB繧剃ｽｿ逕ｨ縺吶ｋ縺・
+    CBBox* m_pOBB;      // OBB衝突判定
+    bool   m_bUseOBB;   // OBBを使用するか
 };
 

@@ -19,9 +19,8 @@ public:
     bool IsHerding() const { return m_isHerding; }
 private:
     std::vector<CSheep*> m_sheeps;
-    std::vector<CSheep*> m_rescueQueue;  // 謨大勧蠕・■縺ｮ鄒翫Μ繧ｹ繝・
+    std::vector<CSheep*> m_rescueQueue;  // 救出待ちの羊リスト
     LerpValue m_lerpValue;
     bool m_isHerding = false;
-    bool m_isRescuing = false;  // 迴ｾ蝨ｨ謨大勧荳ｭ縺・
+    bool m_isRescuing = false;  // 現在救出中か
 };
-    

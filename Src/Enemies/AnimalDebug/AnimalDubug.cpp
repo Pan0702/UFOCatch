@@ -44,8 +44,8 @@ void CADebug::Update()
 
     CEnemyBase::Update();
 
-    // 蜑企勁繝輔Λ繧ｰ縺檎ｫ九▲縺ｦ縺・ｋ・・EnemyBase::Update縺ｧ蜃ｦ逅・′繧ｹ繧ｭ繝・・縺輔ｌ縺滂ｼ牙ｴ蜷医・縲・
-    // 縺薙ｌ莉･荳翫・蜃ｦ逅・ｼ郁｡晉ｪ∝愛螳壹↑縺ｩ・峨ｒ陦後ｏ縺ｪ縺・
+    // 削除フラグが立っている（EnemyBase::Updateで処理がスキップされた）場合は、
+    // これ以上の処理（衝突判定など）を行わない
     if (m_pState != nullptr && m_pComponent == m_components[CBaseState::State::DESTROY].get())
     {
         return;
@@ -55,7 +55,7 @@ void CADebug::Update()
     ResolveOBBCollisions();
     UpdateBBox();
 
-    // 繧ｹ繝・・繧ｸ繧ｪ繝悶ず繧ｧ繧ｯ繝医→縺ｮ陦晉ｪ∝愛螳壹→謚ｼ縺玲綾縺暦ｼ域怙蠕後↓螳溯｡鯉ｼ・
+    // ステージオブジェクトとの衝突判定と押し戻し（最後に実行）
     ResolveStageCollisions();
 }
 

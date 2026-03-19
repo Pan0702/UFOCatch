@@ -32,7 +32,6 @@ private:
     float currentAngle = 0;
     float animationTime = 0;
 
-    // CIdleHuman蟆ら畑縺ｮ繧ｪ繝ｼ繝翫・・・Human蝙具ｼ・//
+    // CIdleHuman専用のオーナー（CHuman型） //
     CHuman* m_pOwner;
 };
-

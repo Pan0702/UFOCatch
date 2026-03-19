@@ -18,7 +18,7 @@ private:
     void LevelButton();
     void ButtonsDraw();
     void InitImage();
-    //Button縺ｫ髢｢縺吶ｋ諠・ｱ
+    //Buttonに関する情報
     struct ButtomInfo
     {
         CSpriteImage* image;

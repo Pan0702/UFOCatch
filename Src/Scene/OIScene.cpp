@@ -18,4 +18,3 @@ void OIScene::Update()
         SceneManager::ChangeSceneWithTransition("TitleScene");
     }
 }
-

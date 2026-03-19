@@ -18,4 +18,3 @@ private:
     CPlayer* m_pPlayer;
     bool m_isInConeArea = false;
 };
-

@@ -40,4 +40,3 @@ void CSuction::Update()
         m_isFinish = true;
     }
 }
-

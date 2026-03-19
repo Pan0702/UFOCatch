@@ -44,4 +44,3 @@ void CDebugScene::Update()
 void CDebugScene::Draw()
 {
 }
-

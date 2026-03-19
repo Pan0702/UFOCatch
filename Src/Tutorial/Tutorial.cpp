@@ -29,7 +29,6 @@ CTutorial::CTutorial()
     Instantiate< CTutorialAnimal>(VECTOR3(0, 0, INITIAL_ANIMAL_Z));
 }
 
-
 void CTutorial::Update()
 {
     if (m_pCurrentState != nullptr)

@@ -4,38 +4,38 @@
 #include "../Framework/ResourceManager.h"
 
 ////////////////////
-// 繧ｳ繝ｳ繧ｹ繝医Λ繧ｯ繧ｿ
-// @param meshPath 繝｡繝・す繝･繝輔ぃ繧､繝ｫ縺ｮ繝代せ
-// @param pos 繧ｪ繝悶ず繧ｧ繧ｯ繝医・菴咲ｽｮ
-// @param scale 繧ｪ繝悶ず繧ｧ繧ｯ繝医・繧ｵ繧､繧ｺ
-// @param useOBB OBB繧剃ｽｿ逕ｨ縺吶ｋ縺・//
+// コンストラクタ
+// @param meshPath メッシュファイルのパス
+// @param pos オブジェクトの位置
+// @param scale オブジェクトのサイズ
+// @param useOBB OBBを使用するか //
 ////////////////////
 CStageObject::CStageObject(const char* name, const VECTOR3& pos, float scale, bool useOBB)
 {
     m_bUseOBB = useOBB;
     m_pOBB = nullptr;
 
-    // ResourceManager縺九ｉ繝｡繝・す繝･繧貞叙蠕暦ｼ医く繝｣繝・す繝･縺輔ｌ繧具ｼ・
+    // ResourceManagerからメッシュを取得（キャッシュされる）
     m_pMesh = ResourceManager::GetModel(name);
 
-    // OBB縺ｮ菴懈・
+    // OBBの作成
     if (m_bUseOBB)
     {
-        // 繝｡繝・す繝･縺九ｉ逶ｴ謗･繝舌え繝ｳ繝・ぅ繝ｳ繧ｰ繝懊ャ繧ｯ繧ｹ繧貞叙蠕・
+        // メッシュから境界バウンディングボックスを取得
         VECTOR3 vMin = m_pMesh->m_vMin;
         VECTOR3 vMax = m_pMesh->m_vMax;
 
-        // OBB繧剃ｽ懈・
+        // OBBを作成
         m_pOBB = new CBBox(vMin, vMax);
     }
 
-    // 蛻晄悄菴咲ｽｮ
+    // 初期位置
     transform.position = pos;
     transform.scale = VECTOR3(1.0f, 1.0f, 1.0f) * scale;
 }
 
 //------------------------------------------------------------------------
-// 繝・せ繝医Λ繧ｯ繧ｿ
+// デストラクタ
 //------------------------------------------------------------------------
 CStageObject::~CStageObject()
 {
@@ -47,13 +47,13 @@ CStageObject::~CStageObject()
 }
 
 //------------------------------------------------------------------------
-// 譖ｴ譁ｰ蜃ｦ逅・
+// 更新処理
 //------------------------------------------------------------------------
 void CStageObject::Update()
 {
     Object3D::Update();
 
-    // OBB縺ｮ繝ｯ繝ｼ繝ｫ繝芽｡悟・繧呈峩譁ｰ
+    // OBBのワールド行列を更新
     if (m_pOBB)
     {
         m_pOBB->m_mWorld = transform.matrix();
@@ -61,14 +61,14 @@ void CStageObject::Update()
 }
 
 //------------------------------------------------------------------------
-// 謠冗判蜃ｦ逅・
+// 描画処理
 //------------------------------------------------------------------------
 void CStageObject::Draw()
 {
     Object3D::Draw();
 
 
-    // // 繝・ヰ繝・げ逕ｨ: OBB繧呈緒逕ｻ・亥ｿ・ｦ√↓蠢懊§縺ｦ繧ｳ繝｡繝ｳ繝医い繧ｦ繝茨ｼ・
+    // // デバッグ用: OBBを描画（必要に応じてコメントアウト）
     // if (m_pOBB)
     // {
     //     m_pOBB->Render();
@@ -111,11 +111,11 @@ bool CStageObject::GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const
 }
 
 ////////////////////
-// OBB縺ｨ縺ｮ陦晉ｪ∝愛螳壹ｒ陦後≧
-// @param other 逶ｸ謇九・OBB
-// @param vHit 陦晉ｪ∽ｽ咲ｽｮ・・ut・・
-// @param vNormal 陦晉ｪ∵ｳ慕ｷ夲ｼ・ut・俄ｻXZ蟷ｳ髱｢縺ｮ縺ｿ・・謌仙・縺ｯ0・・
-// @return 陦晉ｪ√＠縺ｦ縺・◆繧液rue //
+// OBBとの衝突判定を行う
+// @param other 相手のOBB
+// @param vHit 衝突位置（Out）
+// @param vNormal 衝突法線（Out）※XZ平面のみ（Y成分は0）
+// @return 衝突していたらtrue //
 ////////////////////
 bool CStageObject::HitOBB(CBBox* other, VECTOR3* vHit, VECTOR3* vNormal)
 {
@@ -127,14 +127,14 @@ bool CStageObject::HitOBB(CBBox* other, VECTOR3* vHit, VECTOR3* vNormal)
     VECTOR3 vHitTemp, vNormalTemp;
     bool bHit = m_pOBB->OBBCollisionDetection(other, &vHitTemp, &vNormalTemp);
 
-    // 邨先棡繧呈ｼ邏・
+    // 結果を格納
     if (bHit)
     {
         if (vHit) *vHit = vHitTemp;
 
         if (vNormal)
         {
-            // XZ蟷ｳ髱｢縺ｮ縺ｿ縺ｧ謚ｼ縺玲綾縺暦ｼ・霆ｸ繧貞性繧√ｋ縺ｨ荳九↓繧√ｊ霎ｼ繧・・
+            // XZ平面のみで押し戻す（Y成分を0にすると地面にめり込む）
             vNormalTemp.y = 0.0f;
             *vNormal = XMVector3Normalize(vNormalTemp);
         }
@@ -144,8 +144,8 @@ bool CStageObject::HitOBB(CBBox* other, VECTOR3* vHit, VECTOR3* vNormal)
 }
 
 ////////////////////
-// 繧ｨ繝阪Α繝ｼ縺ｨ縺ｮ陦晉ｪ√ｒ隗｣豸医☆繧・
-// @param pEnemy 蛻､螳壼ｯｾ雎｡縺ｮ繧ｨ繝阪Α繝ｼ //
+// エネミーとの衝突を解決する
+// @param pEnemy 判定対象のエネミー //
 ////////////////////
 void CStageObject::ResolveEnemyCollision(CEnemyBase* pEnemy)
 {
@@ -154,8 +154,8 @@ void CStageObject::ResolveEnemyCollision(CEnemyBase* pEnemy)
     VECTOR3 hitPos, hitNormal;
     if (HitOBB(pEnemy->GetBBox(), &hitPos, &hitNormal))
     {
-        // OBBCollisionDetection 縺ｯ豕慕ｷ壹ｒ (0,1,0) 蝗ｺ螳壹〒霑斐☆縺溘ａ hitNormal 縺ｯ菴ｿ逕ｨ荳榊庄
-        // 繧ｹ繝・・繧ｸ荳ｭ蠢・竊・繧ｨ繝阪Α繝ｼ荳ｭ蠢・縺ｮ譁ｹ蜷代〒謚ｼ縺玲綾縺・
+        // OBBCollisionDetection は法線を (0,1,0) 固定で返すため hitNormal は使用不可
+        // ステージ中心 → エネミー中心 の方向で押し戻す
         MATRIX4X4 stageCenterMat = XMMatrixTranslation(
             m_pOBB->m_fLengthX + m_pOBB->m_vMin.x,
             m_pOBB->m_fLengthY + m_pOBB->m_vMin.y,
@@ -184,4 +184,3 @@ void CStageObject::ResolveEnemyCollision(CEnemyBase* pEnemy)
         }
     }
 }
-

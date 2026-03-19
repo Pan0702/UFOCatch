@@ -172,7 +172,7 @@ void CChickenSuction::Enter(State type)
 {
    m_pOwner->GetAudio()->Play();
 
-   // 霍晞屬縺・莉･荳九・Human繧偵メ繧ｭ繝ｳ縺ｮ譁ｹ縺ｫ蜷代°縺帙ｋ
+   // 距離5以下のHumanをチキンの方向に向かせる
    VECTOR3 chickenPos = m_pOwner->GetTransform().position;
    auto humans = ObjectManager::FindGameObjects<CHuman>();
    for (auto* human : humans)
@@ -224,4 +224,3 @@ void CChickenDestroy::Enter(State type)
     ObjectManager::FindGameObject<CPlayerLevel>()->AddExp(1.5f);
     m_pOwner->DestroyMe();
 }
-

@@ -54,4 +54,3 @@ void CNormalScene::Draw()
 {
     SceneBase::Draw();
 }
-

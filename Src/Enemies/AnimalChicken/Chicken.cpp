@@ -12,7 +12,6 @@
 #include "../Component/Suction.h"
 #include "../Component/Walk.h"
 #include "../Component/Destroy.h"
-#include "../../Utils/MyLib.h"
 #include "../../Common/ShadowObject.h"
 #include "../Human/Human.h"
 
@@ -51,7 +50,7 @@ CAnimalChicken::~CAnimalChicken()
 void CAnimalChicken::Cry() const
 {
     m_pCry->Play();
-    // 霍晞屬縺・莉･荳九・Human繧偵メ繧ｭ繝ｳ縺ｮ譁ｹ縺ｫ蜷代°縺帙ｋ
+    // 距離5以下のHumanをチキンの方向に向かせる
     auto humans = ObjectManager::FindGameObjects<CHuman>();
     for (auto* human : humans)
     {

@@ -4,10 +4,10 @@
 #include "../Utils/CsvReader.h"
 
 ////////////////////
-// .mesh縺ｮPath縺ｨmesh縺ｮ螟ｧ縺阪＆繧呈ｸ｡縺・
-// 蛻晄悄迥ｶ諷九・10ﾃ・0縲∽ｸｭ蠢・せ縺ｯ5,0,5
-// @param mesh 繝｡繝・す繝･繝輔ぃ繧､繝ｫ縺ｮ繝代せ
-// @param scale 繝｡繝・す繝･縺ｮ繧ｹ繧ｱ繝ｼ繝ｫ //
+// .meshのPathとmeshの大きさを渡す
+// 初期化状態は10×10、中心点は5,0,5
+// @param mesh メッシュファイルのパス
+// @param scale メッシュのスケール //
 ////////////////////
 CGround::CGround(const char* mesh,const VECTOR3& scale)
 {

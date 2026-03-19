@@ -2,8 +2,8 @@
 #include "../Framework/ResourceManager.h"
 
 namespace {
-    // �X�L�����b�V����ό`������Ƃ��̃t���[���|�[�Y�ϊ����~�b�g
-    // (�O�ɋ߂��قǐ��m�����d���Ȃ�)
+    // スキンメッシュを変形させるときのフレームのポーズ更新しきい値
+    // (0に近いほど正確だが重くなる)
     const float FrameLimit = 8;
 };
 
@@ -33,24 +33,24 @@ void MeshCollider::MakeFromMesh(CFbxMesh* meshIn, Animator* animatorIn)
     std::vector<PolygonInfo> pi;
     std::vector<Vertex> ve;
 
-    // CFbxMesh����f�[�^���擾����
-    // �������b�V���ɕʂ�Ă���̂ŁA�e���b�V�����Ƃɍ쐬����
+    // CFbxMeshからデータを取得する
+    // 複数のメッシュに分かれているので、各メッシュごとに作成する
     for (DWORD m = 0; m < mesh->m_dwMeshNum; m++) {
         vertices.emplace_back(ve);
         polygons.emplace_back(pi);
         CFbxMeshArray* arr = &mesh->m_pMeshArray[m];
 
-        // ���_���
+        // 頂点数
         int vNum = arr->m_dwVerticesNum;
         vertices.back().reserve(vertices.size() + vNum);
         for (int v = 0; v < vNum; v++) {
             Vertex vt = {};
-            if (mesh->m_nMeshType == 1)  // �X�^�e�B�b�N���b�V��
+            if (mesh->m_nMeshType == 1)  // スタティックメッシュ
             {
                 vt.pos = arr->m_vStaticVerticesNormal[v].Pos;
                 vertices.back().push_back(vt);
             }
-            else {     // �X�L�����b�V��
+            else {     // スキンメッシュ
                 vt.pos = arr->m_vSkinVerticesNormal[v].Pos;
                 vt.bone[0] = arr->m_vSkinVerticesNormal[v].ClusterNum[0];
                 vt.bone[1] = arr->m_vSkinVerticesNormal[v].ClusterNum[1];
@@ -61,7 +61,7 @@ void MeshCollider::MakeFromMesh(CFbxMesh* meshIn, Animator* animatorIn)
             }
         }
 
-        // �C���f�b�N�X���
+        // インデックス数
         int iNum = arr->m_dwIndicesNum / 3;
         polygons.back().reserve(polygons.size() + iNum);
         for (int i = 0; i < iNum; i++) {
@@ -77,13 +77,13 @@ void MeshCollider::MakeFromMesh(CFbxMesh* meshIn, Animator* animatorIn)
         }
     }
 
-    // AABB�o�E���f�B���O�{�b�N�X
+    // AABBバウンディングボックス
     bBox.min = mesh->m_vMin;
     bBox.max = mesh->m_vMax;
 
-    // �o�E���f�B���O�{�[��
-    bBall.center = (bBox.min + bBox.max) / 2;   // ���������b�V���̒��S�ɂȂ�
-    bBall.radius = magnitude(bBox.max - bBall.center);    // ���b�V���̔��a(���b�V����S�Ĉ͂ލő唼�a)
+    // バウンディングボール
+    bBall.center = (bBox.min + bBox.max) / 2;   // 全体のメッシュの中心になる
+    bBall.radius = magnitude(bBox.max - bBall.center);    // メッシュの半径(メッシュを全て包む最大半径)
 }
 
 void MeshCollider::MakeFromFile(std::string fileName)
@@ -98,15 +98,15 @@ int MeshCollider::SelectBoneNo(Vertex vt[3])
 {
     int bone = 0;
 
-    if (vt[0].bone[0] == vt[1].bone[0] || vt[0].bone[0] == vt[2].bone[0])    // �Q���_�ȏオ����̃{�[���ԍ��̂Ƃ�
+    if (vt[0].bone[0] == vt[1].bone[0] || vt[0].bone[0] == vt[2].bone[0])    // 2点以上が同じボーン番号のとき
     {
         bone = vt[0].bone[0];
     }
-    else if (vt[1].bone[0] == vt[2].bone[0])      // �Q���_�ȏオ����̃{�[���ԍ��̂Ƃ�
+    else if (vt[1].bone[0] == vt[2].bone[0])      // 2点以上が同じボーン番号のとき
     {
         bone = vt[1].bone[0];
     }
-    else {  // �R���_�Ƃ��{�[���ԍ����قȂ�Ƃ��̓E�F�C�g�̍������̂�D�悷��
+    else {  // 3点ともボーン番号が異なるときはウェイトが高いものを優先する
         if (vt[0].weits.x > vt[1].weits.x)
         {
             if (vt[0].weits.x > vt[2].weits.x) bone = vt[0].bone[0];
@@ -121,7 +121,7 @@ int MeshCollider::SelectBoneNo(Vertex vt[3])
     return bone;
 }
 
-// �X�L�����b�V���̂Ƃ��{�[���s��ɂ��ό`���s��
+// スキンメッシュのときボーン行列による変形を行う
 void MeshCollider::transformSkinVertices()
 {
     if (animator == nullptr)  return;
@@ -135,7 +135,7 @@ void MeshCollider::transformSkinVertices()
 
     for (int m = 0; m < static_cast<int>(mesh->m_dwMeshNum); m++)
     {
-        // �{�[���s��ɂ�钸�_�̕ό`
+        // ボーン行列による頂点の変形
         int i = 0;
         for (Vertex& vt : vertices[m])
         {
@@ -147,7 +147,7 @@ void MeshCollider::transformSkinVertices()
             i++;
         }
 
-        // �ʖ@���̍Čv�Z
+        // 面法線の再計算
         for ( PolygonInfo &inf : polygons[m] )
         {
             VECTOR3 v0 = vertices[m][inf.indices[0]].pos;
@@ -164,15 +164,15 @@ bool MeshCollider::CheckCollisionLine(const MATRIX4X4& trans, const VECTOR3& fro
     VECTOR3 invFrom = from * invTrans;
     VECTOR3 invTo = to * invTrans;
 
-    // �o�E���f�B���O�{�[���Ŕ���
-    //VECTOR3 center = (invTo - invFrom) / 2.0f;   // ??????????????
+    // バウンディングボールで判定
+    //VECTOR3 center = (invTo - invFrom) / 2.0f;   // ←間違いだった！！
     VECTOR3 center = (invTo + invFrom) / 2.0f;
     float radius = (invTo - invFrom).Length() / 2.0f;
     float radiusSq = (radius + bBall.radius) * (radius + bBall.radius);
     if ((center - bBall.center).LengthSquare() > radiusSq) {
         return false;
     }
-    // AABB�o�E���f�B���O�{�b�N�X�Ŕ���(�X�^�e�B�b�N���b�V���̂�)
+    // AABBバウンディングボックスで判定(スタティックメッシュのみ)
     if (animator == nullptr)
     {
         if (bBox.min.x > invFrom.x && bBox.min.x > invTo.x) return false;
@@ -183,30 +183,30 @@ bool MeshCollider::CheckCollisionLine(const MATRIX4X4& trans, const VECTOR3& fro
         if (bBox.max.z < invFrom.z && bBox.max.z < to.z) return false;
     }
 
-    // �X�L�����b�V���̂Ƃ��{�[���s��ɂ��ό`���s��
+    // スキンメッシュのときボーン行列による変形を行う
     transformSkinVertices();
 
-    // �|���S���Ƃ̐ڐG����
+    // ポリゴンとの接触判定
     float maxLengthSq = (to - from).LengthSquare();
     float minLengthSq = maxLengthSq;
     CollInfo minColl;
     int m = 0;
-    for( const std::vector<PolygonInfo> &pi : polygons) { // �S���b�V���̃|���S���Ƃ̐ڐG����
-        for (const PolygonInfo& pol : pi) {   // �P�̃��b�V���̑S�|���S���Ƃ̐ڐG����
+    for( const std::vector<PolygonInfo> &pi : polygons) { // 全メッシュのポリゴンとの接触判定
+        for (const PolygonInfo& pol : pi) {   // 1つのメッシュの全ポリゴンとの接触判定
             CollInfo coll;
-            if (checkPolygonToLine(m, pol, invFrom, invTo, &coll)) {     // �P�̃|���S���Ƃ̐ڐG����
+            if (checkPolygonToLine(m, pol, invFrom, invTo, &coll)) {     // 1つのポリゴンとの接触判定
                 float lenSq = (coll.hitPosition - invFrom).LengthSquare();
-                if (minLengthSq > lenSq) {    // ���߂��ŐڐG�����|���S�������邩�ǂ������ׂ�
+                if (minLengthSq > lenSq) {    // 一番近い接触するポリゴンであるかどうか調べる
                     minColl = coll;
-                    minLengthSq = lenSq;   // ���߂��ڐG�ʒu
+                    minLengthSq = lenSq;   // 一番近い接触位置
                 }
             }
         }
         m++;
     }
-    if (minLengthSq < maxLengthSq) { // 1�ȏ㌩�����Ă���
+    if (minLengthSq < maxLengthSq) { // 1個以上見つかっている
         if (hitOut != nullptr) {
-            hitOut->hitPosition = minColl.hitPosition * trans;   // �ڐG�����|���S���̏���Ԃ�
+            hitOut->hitPosition = minColl.hitPosition * trans;   // 接触するポリゴンの情報を返す
             hitOut->triangle[0] = minColl.triangle[0];
             hitOut->triangle[0].pos = minColl.triangle[0].pos * trans;
             hitOut->triangle[1] = minColl.triangle[1];
@@ -218,9 +218,9 @@ bool MeshCollider::CheckCollisionLine(const MATRIX4X4& trans, const VECTOR3& fro
             hitOut->normal = XMVector4Transform(n, trans);
             hitOut->meshNo = minColl.meshNo;
         }
-        return true;          // �ڐG���Ă���
+        return true;          // 接触してる
     }
-    return false;             // �ڐG���Ă��Ȃ�
+    return false;             // 接触してない
 }
 
 bool MeshCollider::CheckCollisionSphere(const MATRIX4X4& trans, const VECTOR3& center, float radius, CollInfo* hitOut)
@@ -228,10 +228,10 @@ bool MeshCollider::CheckCollisionSphere(const MATRIX4X4& trans, const VECTOR3& c
     MATRIX4X4 invTrans = XMMatrixInverse(nullptr, trans);
     VECTOR3 invCenter = center * invTrans;
 
-    // �o�E���f�B���O�{�[��
+    // バウンディングボール
     if ((invCenter - bBall.center).LengthSquare() > (bBall.radius + radius) * (bBall.radius + radius)) return false;
 
-    // AABB�o�E���f�B���O�{�b�N�X�Ŕ���(�X�^�e�B�b�N���b�V���̂�)
+    // AABBバウンディングボックスで判定(スタティックメッシュのみ)
     if (animator == nullptr)
     {
         if (bBox.min.x > invCenter.x + radius) return false;
@@ -242,20 +242,20 @@ bool MeshCollider::CheckCollisionSphere(const MATRIX4X4& trans, const VECTOR3& c
         if (bBox.max.z < invCenter.z - radius) return false;
     }
 
-    // �X�L�����b�V���̂Ƃ��{�[���s��ɂ��ό`���s��
+    // スキンメッシュのときボーン行列による変形を行う
     transformSkinVertices();
 
-    // ���̒��S����A���ʂɉ��������������߂�
+    // 球の中心から、表面に一番近いものを求める
     float minLengthSq = radius*radius;
     CollInfo minColl;
     bool found = false;
     int m = 0;
-    for (const std::vector<PolygonInfo>& pi : polygons) { // �S���b�V���̃|���S���Ƃ̐ڐG����
-        for (const PolygonInfo& pol : pi) {   // �P�̃��b�V���̑S�|���S���Ƃ̐ڐG����
+    for (const std::vector<PolygonInfo>& pi : polygons) { // 全メッシュのポリゴンとの接触判定
+        for (const PolygonInfo& pol : pi) {   // 1つのメッシュの全ポリゴンとの接触判定
             CollInfo coll;
-            if (checkPolygonToSphere(m, pol, invCenter, radius, &coll)) {           // �P�̃|���S���Ƃ̐ڐG����  // -- 2024.9.27
+            if (checkPolygonToSphere(m, pol, invCenter, radius, &coll)) {           // 1つのポリゴンとの接触判定  // -- 2024.9.27
                 float lenSq = (coll.hitPosition - invCenter).LengthSquare();
-                if (lenSq < minLengthSq) {         // ���߂��ŐڐG�����|���S�������邩�ǂ������ׂ�
+                if (lenSq < minLengthSq) {         // 一番近い接触するポリゴンであるかどうか調べる
                     minColl = coll;
                     found = true;
                 }
@@ -266,7 +266,7 @@ bool MeshCollider::CheckCollisionSphere(const MATRIX4X4& trans, const VECTOR3& c
     if (!found) return false;
 
     if (hitOut != nullptr) {
-        hitOut->hitPosition = minColl.hitPosition * trans;       // �ڐG�����|���S���̏���Ԃ�
+        hitOut->hitPosition = minColl.hitPosition * trans;       // 接触するポリゴンの情報を返す
         hitOut->triangle[0] = minColl.triangle[0];
         hitOut->triangle[0].pos = minColl.triangle[0].pos * trans;
         hitOut->triangle[1] = minColl.triangle[1];
@@ -287,10 +287,10 @@ std::list<MeshCollider::CollInfo> MeshCollider::CheckCollisionSphereList(const M
     VECTOR3 invCenter = center * invTrans;
     std::list<CollInfo> meshes;
 
-    // �o�E���f�B���O�{�[��
+    // バウンディングボール
     if ((invCenter - bBall.center).LengthSquare() > (bBall.radius + radius) * (bBall.radius + radius)) return meshes;
 
-    // AABB�o�E���f�B���O�{�b�N�X�Ŕ���(�X�^�e�B�b�N���b�V���̂�)
+    // AABBバウンディングボックスで判定(スタティックメッシュのみ)
     if (animator == nullptr)
     {
         if (bBox.min.x > invCenter.x + radius) return meshes;
@@ -301,13 +301,13 @@ std::list<MeshCollider::CollInfo> MeshCollider::CheckCollisionSphereList(const M
         if (bBox.max.z < invCenter.z - radius) return meshes;
     }
 
-    // �X�L�����b�V���̂Ƃ��{�[���s��ɂ��ό`���s��
+    // スキンメッシュのときボーン行列による変形を行う
     transformSkinVertices();
 
-    // ���̒��S����A���ʂɉ��������������߂�
+    // 球の中心から、表面に一番近いものを求める
     int m = 0;
-    for (const std::vector<PolygonInfo>& pi : polygons) { // �S���b�V���̃|���S���Ƃ̐ڐG����
-        for (const PolygonInfo& pol : pi) {   // �P�̃��b�V���̑S�|���S���Ƃ̐ڐG����
+    for (const std::vector<PolygonInfo>& pi : polygons) { // 全メッシュのポリゴンとの接触判定
+        for (const PolygonInfo& pol : pi) {   // 1つのメッシュの全ポリゴンとの接触判定
             CollInfo coll;
             if (checkPolygonToSphere(m, pol, invCenter, radius, &coll)) {
                 coll.hitPosition = coll.hitPosition * trans;
@@ -334,7 +334,7 @@ std::list<MeshCollider::CollInfo> MeshCollider::CheckCollisionSphereList(const M
 
 //bool MeshCollider::CheckCollisionTriangle(const MATRIX4X4& trans, const VECTOR3* vertexes, CollInfo* info)
 //{
-//    // triangle�̂R�̃G�b�W����_�������A���݂��𒲂ׂ��OK
+//    // triangleの3つのエッジ上の点でひとつも、内側かどうか調べるでOK
 //    VECTOR3 pos[4];
 //    MATRIX4X4 invTrans = XMMatrixInverse(nullptr, trans);
 //    for (int i = 0; i < 3; i++) {
@@ -348,7 +348,7 @@ std::list<MeshCollider::CollInfo> MeshCollider::CheckCollisionSphereList(const M
 //    float minZ = min(min(pos[0].z, pos[1].z), pos[2].z);
 //    float maxZ = max(max(pos[0].z, pos[1].z), pos[2].z);
 //
-//    // �o�E���f�B���O�{�b�N�X�Ŕ���
+//    // バウンディングボックスで判定
 //    if (bBox.min.x > maxX) return false;
 //    if (bBox.max.x < minX) return false;
 //    if (bBox.min.y > maxY) return false;
@@ -375,15 +375,15 @@ bool MeshCollider::CheckBoundingLine(const MATRIX4X4& trans, const VECTOR3& from
     VECTOR3 invFrom = from * invTrans;
     VECTOR3 invTo = to * invTrans;
 
-    // �o�E���f�B���O�{�[���Ŕ���
-    //VECTOR3 center = (invTo - invFrom) / 2.0f;      // ????????????????
+    // バウンディングボールで判定
+    //VECTOR3 center = (invTo - invFrom) / 2.0f;      // ←間違いだった！！
     VECTOR3 center = (invTo + invFrom) / 2.0f;
     float radius = (invTo - invFrom).Length() / 2.0f;
     float radiusSq = (radius + bBall.radius) * (radius + bBall.radius);
     if ((center - bBall.center).LengthSquare() > radiusSq) {
         return false;
     }
-    // �o�E���f�B���O�{�b�N�X�Ŕ���
+    // バウンディングボックスで判定
     if (bBox.min.x > invFrom.x && bBox.min.x > invTo.x) return false;
     if (bBox.max.x < invFrom.x && bBox.max.x < invTo.x) return false;
     if (bBox.min.y > invFrom.y && bBox.min.y > invTo.y) return false;
@@ -396,22 +396,22 @@ bool MeshCollider::CheckBoundingLine(const MATRIX4X4& trans, const VECTOR3& from
 
 bool MeshCollider::checkPolygonToLine(const int m, const PolygonInfo& info, const VECTOR3& from, const VECTOR3& to, CollInfo* hit)
 {
-    // �@����0���ƁA�����_�Ȃ̂ŁA��_�͋��߂Ȃ�
+    // 法線が0の時、縮退点なので、交点は求めない
     if (info.normal.LengthSquare() == 0.0f)
         return false;
-    // �|���S�����܂ޖʂƂ̌��������邩�����߂�
+    // ポリゴンを含む面との交差があるか調べる
     VECTOR3 v0 = vertices[m][info.indices[0]].pos;
     VECTOR3 v1 = vertices[m][info.indices[1]].pos;
     VECTOR3 v2 = vertices[m][info.indices[2]].pos;
     float nFrom = Dot(from - v0, info.normal);
     float nTo = Dot(to - v0, info.normal);
-    if (nFrom * nTo > 0.0f) // �x�N�g�������������Ȃ̂Ō������Ă��Ȃ�
+    if (nFrom * nTo > 0.0f) // ベクトルが面をまたいでいないので交差していない
         return false;
     nFrom = fabsf(nFrom);
     nTo = fabsf(nTo);
-    // ��_�̍��W�����߂�
+    // 交点の座標を求める
     VECTOR3 pos = from + (to - from) * nFrom / (nFrom + nTo);
-    // �O�p�`�̒����𒲂ׂ�i�O�σx�N�g�����@���Ɠ��������j
+    // 三角形の内側を調べる(外積ベクトルと法線が同方向か)
     float n = Dot(XMVector3Cross(v1 - v0, pos - v0), info.normal);
     if (n < 0.0f)
         return false;
@@ -433,13 +433,13 @@ bool MeshCollider::checkPolygonToLine(const int m, const PolygonInfo& info, cons
 bool MeshCollider::checkPolygonToSphere(const int m, const PolygonInfo& info, const VECTOR3& center, float radius, CollInfo* hit)
 {
 
-#define EDGE_HIT 0    // �G�b�W�̃q�b�g���v�Z����ꍇ�P
+#define EDGE_HIT 0    // エッジのヒットを計算する場合１
 
-    // �@����0���ƁA�����_
+    // 法線が0の時、縮退点
     if (info.normal.LengthSquare() == 0.0f)
         return false;
 
-    // ���S����|���S�����܂ޕ��ʂւ̐����̒��������߂�
+    // 球中心からポリゴンを含む平面への垂線の長さを求める
     VECTOR3 v[3];
     v[0] = vertices[m][info.indices[0]].pos;
     v[1] = vertices[m][info.indices[1]].pos;
@@ -448,16 +448,16 @@ bool MeshCollider::checkPolygonToSphere(const int m, const PolygonInfo& info, co
 
 #if EDGE_HIT>0
     
-    if (len < 0 || len > radius) return false; // �����̒��������a���傫��
-    VECTOR3 pos = center - info.normal * len; // �����Ƃ̌�_�i��������_�j
-    if (Dot(center - pos, info.normal) < 0) // �@�������Ȃ瓖����Ȃ�
+    if (len < 0 || len > radius) return false; // 垂線の長さが半径より大きい
+    VECTOR3 pos = center - info.normal * len; // 垂線との交点(平面上の交点)
+    if (Dot(center - pos, info.normal) < 0) // 法線側から当たってない
         return false;
 #else
-    if (fabs(len) > radius) return false; // �����̒��������a���傫���B���S���|���S���̓����ł��ΏۂƂ���
-    VECTOR3 pos = center - info.normal * len; // �����Ƃ̌�_�i��������_�j
+    if (fabs(len) > radius) return false; // 垂線の長さが半径より大きい。球中心がポリゴンの内側にある対象とする
+    VECTOR3 pos = center - info.normal * len; // 垂線との交点(平面上の交点)
 #endif
 
-    // ��_���|���S���̓��������ׂ�i�O�ς̌������@���Ɠ����ɂȂ�͂��j
+    // 交点がポリゴンの内側か調べる(外積の向きが法線と同じになるはず)
 #if EDGE_HIT>0
     int hitIdx[3];
 #endif
@@ -466,8 +466,8 @@ bool MeshCollider::checkPolygonToSphere(const int m, const PolygonInfo& info, co
         VECTOR3& v0 = v[vi];
         VECTOR3& v1 = v[(vi + 1) % 3];
         float n = Dot(XMVector3Cross(v1 - v0, pos - v0), info.normal);
-        if (n < 0.0f)       // �O�ς̌������@���ƈقȂ�ƃ}�C�i�X�ɂȂ�
-        {                   // �ӂ̏�Ɍ�_������ƁA�O�ς�0�Ȃ̂ŁAn��0�ɂȂ�
+        if (n < 0.0f)       // 外積の向きが法線と異なるとマイナスになる
+        {                   // 辺の上にあると、外積が0なので、nも0になる
 #if EDGE_HIT>0
             hitIdx[hitNum++] = vi;
 #else
@@ -487,9 +487,9 @@ bool MeshCollider::checkPolygonToSphere(const int m, const PolygonInfo& info, co
         return true;
     }
 #if EDGE_HIT>0
-    else if (hitNum==1) { // �P�����O���Ȃ̂ŁA���̃G�b�W�Ɋ񂹂�
+    else if (hitNum==1) { // １つだけ外なので、そのエッジに落とす
         int vi = hitIdx[0];
-        VECTOR3 edge = XMVector3Normalize(v[(vi + 1) % 3] - v[vi]); // ���������G�b�W�̌���
+        VECTOR3 edge = XMVector3Normalize(v[(vi + 1) % 3] - v[vi]); // 当たっているエッジの向き
         float len = Dot(center - v[vi], edge);
         VECTOR3 hitPos = edge * len + v[vi];
         if ((hitPos-center).LengthSquare() > radius*radius)
@@ -503,8 +503,8 @@ bool MeshCollider::checkPolygonToSphere(const int m, const PolygonInfo& info, co
             hit->meshNo = m;
         }
         return true;
-    } else { // �Q�̊O���Ȃ̂ŁA���̒��_�ɓ�����
-        // 0-1��1-2�ɓ������Ă����1�A1-2��2-0�ɓ������Ă����2�A2-0��0-1�ɓ������Ă����0�̒��_���g���Ƃ����v�Z
+    } else { // ２つの外なので、その頂点に当たる
+        // 0-1と1-2に当たっていたら1、1-2と2-0に当たっていたら2、2-0と0-1に当たっていたら0の頂点が該当と逆算
         int n = hitIdx[0] + hitIdx[1];
         n = 2 - (n % 3);
 
@@ -524,5 +524,3 @@ bool MeshCollider::checkPolygonToSphere(const int m, const PolygonInfo& info, co
 #endif
     return false;
 }
-
-

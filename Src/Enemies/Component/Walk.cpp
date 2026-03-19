@@ -15,14 +15,14 @@ void CWalk::Enter()
     m_isFinish = false;
     
     m_totalPosZMoveAmount = 0.0f;
-    // 迴ｾ蝨ｨ縺ｮ Transform 繧貞叙蠕・
+    // 現在の Transform を取得
     Transform transform = m_pOwner->GetTransform();
     m_position = transform.position;
 
     bool foundValidMove = CalcRandomMove();
     
-    // 譛蠕後∪縺ｧ隕九▽縺九ｉ縺ｪ縺九▲縺溷ｴ蜷茨ｼ・
-    // 縲檎ｧｻ蜍輔＠縺ｪ縺・ｼ・・峨阪↓縺励※縲∝屓霆｢縺縺代・繝ｩ繝ｳ繝繝縺ｫ荳弱∴繧・
+    // 最後まで見つからなかった場合、
+    // 「移動しない」にして、回転だけランダムに決める
     if (!foundValidMove)
     {
         m_turnAmount = Randomf(-kTurnAngleDeg, kTurnAngleDeg) * DegToRad;
@@ -30,25 +30,25 @@ void CWalk::Enter()
 
     m_currentRotation = transform.rotation.y;
 
-    //逶ｮ讓吝屓霆｢
+    //目標回転
     m_targetRotation = m_currentRotation + m_turnAmount;
 
-    //蝗櫁ｻ｢陬憺俣繧定ｵｰ繧峨○繧九◆繧√・繝輔Λ繧ｰ
+    //回転処理を終わらせるためのフラグ
     m_rotation = true;
     PlayWalkAnimation();
 }
 
-/// 蠅・阜蜀・↓蜿弱∪繧九Λ繝ｳ繝繝縺ｪ蝗櫁ｻ｢驥上→遘ｻ蜍戊ｷ晞屬繧・逕滓・縺吶ｋ
-/// 繝ｩ繝ｳ繝繝縺ｫ蝗櫁ｻ｢驥擾ｼ・180ﾂｰ・・180ﾂｰ・峨→遘ｻ蜍戊ｷ晞屬  ・・ .0・・.5・峨ｒ逕滓・縺励・蠅・阜繝√ぉ繝・け縺ｫ騾壹ｋ縺ｾ縺ｧ譛螟ｧ50蝗槭Μ繝医Λ繧､縺吶ｋ縲・
-/// 譛牙柑縺ｪ邨・∩蜷医ｏ縺帙′隕九▽縺九▲縺溷ｴ蜷医［_turnAm  ount縺ｨm_moveAmount縺ｫ險ｭ螳壹＆繧後ｋ縲・
-/// @return 譛牙柑縺ｪ遘ｻ蜍輔ヱ繝ｩ繝｡繝ｼ繧ｿ縺瑚ｦ九▽縺九▲縺溷ｴ  蜷・rue縲・譛螟ｧ隧ｦ陦悟屓謨ｰ繧定ｶ・∴縺溷ｴ蜷・alse
+/// 境界内に収まるランダムな回転量と移動距離を決定する
+/// ランダムに回転量（-180°～180°）と移動距離（1.0～3.5）を決定し、境界チェックに通るまで最大50回リトライする。
+/// 妥当な組み合わせが見つかった場合、m_turnAmountとm_moveAmountに設定される。
+/// @return 妥当な移動パラメータが見つかった場合true、最大試行回数を超えた場合false
 bool CWalk::CalcRandomMove()
 {
-    static constexpr int kMaxRetry = 50;// 繝ｩ繝ｳ繝繝遘ｻ蜍輔・隧ｦ陦悟屓謨ｰ荳企剞・亥｢・阜螟悶↓蜃ｺ縺ｪ縺・ｵ・∩蜷医ｏ縺帙′隕九▽縺九ｋ縺ｾ縺ｧ譛螟ｧ N 蝗櫁ｩｦ縺呻ｼ・
-    static constexpr float kMinMove = 1.0f;// 繝ｩ繝ｳ繝繝遘ｻ蜍戊ｷ晞屬縺ｮ遽・峇・域怙蟆擾ｽ樊怙螟ｧ・・
-    static constexpr float kMaxMove = 3.5f;// 繝ｩ繝ｳ繝繝遘ｻ蜍戊ｷ晞屬縺ｮ遽・峇・域怙蟆擾ｽ樊怙螟ｧ・・
+    static constexpr int kMaxRetry = 50;// ランダム移動の試行回数上限（境界外に出ない組み合わせが見つかるまで最大 N 回試す）
+    static constexpr float kMinMove = 1.0f;// ランダム移動距離の範囲（最小～最大）
+    static constexpr float kMaxMove = 3.5f;// ランダム移動距離の範囲（最小～最大）
 
-    // Sheep蟆ら畑縺ｮ遽・峇繝√ぉ繝・け
+    // Sheep専用の範囲チェック
     CSheep* sheep = dynamic_cast<CSheep*>(m_pOwner);
     CFlog* flog = nullptr;
     if (sheep != nullptr)
@@ -56,19 +56,19 @@ bool CWalk::CalcRandomMove()
         flog = ObjectManager::FindGameObject<CFlog>();
     }
 
-    // 繝ｩ繝ｳ繝繝縺ｫ・亥屓霆｢驥擾ｼ狗ｧｻ蜍戊ｷ晞屬・峨ｒ菴懊▲縺ｦ縲∝｢・阜蜀・↓蜿弱∪繧九∪縺ｧ繝ｪ繝医Λ繧､
+    // ランダムに「回転量」「移動距離」を作って、境界内に収まるまでリトライ
     for (int retry = 0; retry < kMaxRetry; ++retry)
     {
-        // 蝗櫁ｻ｢驥擾ｼ喙-180ﾂｰ, +180ﾂｰ] 繧偵Λ繝ｳ繝繝縺ｫ驕ｸ繧薙〒繝ｩ繧ｸ繧｢繝ｳ縺ｸ螟画鋤
+        // 回転量[-180°, +180°] をランダムに選んでラジアンに変換
         m_turnAmount = Randomf(-kTurnAngleDeg, kTurnAngleDeg) * DegToRad;
 
-        // 遘ｻ蜍戊ｷ晞屬・喙1.0, 3.5] 繧偵Λ繝ｳ繝繝縺ｫ驕ｸ縺ｶ
+        // 移動距離[1.0, 3.5] をランダムに選ぶ
         m_moveAmount = Randomf(kMinMove, kMaxMove);
 
         VECTOR3 tmpPos = m_position + VECTOR3(0, 0,
                                       m_moveAmount) * XMMatrixRotationY(m_turnAmount);
 
-        // Sheep縺ｮ蝣ｴ蜷医：log縺ｮ遽・峇蜀・°繝√ぉ繝・け
+        // Sheepの場合：Flogの範囲内かチェック
         if (flog != nullptr)
         {
             VECTOR3 toCenter = flog->GetFlockCenter() - tmpPos;
@@ -79,7 +79,7 @@ bool CWalk::CalcRandomMove()
                 return true;
             }
         }
-        // 莉悶・繧ｨ繝阪Α繝ｼ縺ｮ蝣ｴ蜷医∵里蟄倥・AreaSize繝√ぉ繝・け
+        // それ以外のエネミーの場合、自身のAreaSizeチェック
         else if (IsInsideAreaXZ(tmpPos, m_pOwner->GetAreaSize()))
         {
             return true;
@@ -87,10 +87,10 @@ bool CWalk::CalcRandomMove()
     }
     return false;
 }
-//蛻･縺ｮ縺ｨ縺薙ｍ縺ｫ譖ｸ縺・◆髢｢謨ｰ縺ｧ蜍輔￥縺玖ｩｦ縺吶◆繧√さ繝｡繝ｳ繝医い繧ｦ繝・
-// /// 蝗櫁ｻ｢繝ｻ遘ｻ蜍募ｾ後・菴咲ｽｮ縺悟｢・阜蜀・↓蜿弱∪繧九°繝√ぉ繝・け
-// /// @param areaSize 繧ｨ繝ｪ繧｢縺ｮ繧ｵ繧､繧ｺ
-// /// @return 蠅・阜蜀・↑繧液rue縲∝｢・阜螟悶↑繧映alse
+//別のところに書いた関数で動くためコメントアウト
+// /// 回転・移動後の座標が境界内に収まるかチェック
+// /// @param areaSize エリアのサイズ
+// /// @return 境界内ならtrue、境界外ならfalse
 // bool CWalk::BoundaryCheck(const VECTOR2&
 //     areaSize) const
 // {
@@ -147,4 +147,3 @@ float CWalk::ClampRotateY(float angle)
 {
     return std::remainder(angle, XM_2PI);
 }
-
