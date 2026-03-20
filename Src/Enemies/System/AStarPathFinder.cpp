@@ -1,28 +1,21 @@
 #include "AStarPathFinder.h"
 
+#include <array>
 #include <queue>
-
+#include <numbers>
 #include "StageQuadTree.h"
 #include "../../Stage/StageObject.h"
 #include "../../System/GameInstance.h"
 
 CAStarPathFinder::CAStarPathFinder(float cellSize)
 {
-    VECTOR4 size = CGameInstance::Get()->GetMapSize();
-    float mapRange = size.x + size.z;
-    mapRange /= Pow(2, cellSize);
-    m_cellSize = mapRange;
+    m_cellSize = cellSize;
 }
 
-Vec2IntKey CAStarPathFinder::ToKey(const VECTOR2& pos) const
-{
-    return { static_cast<int>(pos.x), static_cast<int>(pos.y) };
-}
-
-std::vector<VECTOR2> CAStarPathFinder::SerchRoute(VECTOR2 start, VECTOR2 goal)
+std::vector<VECTOR2> CAStarPathFinder::SearchRoute(VECTOR2 start, VECTOR2 goal)
 {
     start = Snap(start);
-    goal  = Snap(goal);
+    goal = Snap(goal);
 
     // Openリスト（f値が小さい順）
     std::priority_queue<AStarNode, std::vector<AStarNode>, std::greater<AStarNode>> open;
@@ -30,13 +23,17 @@ std::vector<VECTOR2> CAStarPathFinder::SerchRoute(VECTOR2 start, VECTOR2 goal)
     // Closedリスト（探索済み）
     std::unordered_set<Vec2IntKey, Vec2IntKeyHash> closed;
 
-    // コストと親の管理（文字列キーをやめて整数ペアキーに変更）
-    std::unordered_map<Vec2IntKey, float,   Vec2IntKeyHash> gScore;
+    // コストと親の管理
+    std::unordered_map<Vec2IntKey, float, Vec2IntKeyHash> gScore;
     std::unordered_map<Vec2IntKey, VECTOR2, Vec2IntKeyHash> cameFrom;
 
-    // ヒューリスティック（マンハッタン距離）
-    auto heuristic = [](VECTOR2 a, VECTOR2 b) {
-        return std::abs(a.x - b.x) + std::abs(a.y - b.y);
+    constexpr float DIAGONAL_COST = std::numbers::sqrt2_v<float>;
+    //オクタイル距離を求める
+    auto heuristic = [this](const VECTOR2& a, const VECTOR2& b)
+    {
+        const float dx = std::abs(a.x - b.x);
+        const float dy = std::abs(a.y - b.y);
+        return (std::max)(dx, dy) + (DIAGONAL_COST - 1.0f) * (std::min)(dx, dy);
     };
 
     // QuadTreeを1回だけ取得してA*全体で使いまわす
@@ -49,13 +46,21 @@ std::vector<VECTOR2> CAStarPathFinder::SerchRoute(VECTOR2 start, VECTOR2 goal)
 
     Vec2IntKey goalKey = ToKey(goal);
 
+
+    const std::array<VECTOR2, 8> DIRS = {{
+        {0, -m_cellSize}, {0,  m_cellSize},                
+        {-m_cellSize, 0}, {m_cellSize,  0},
+        {-m_cellSize, -m_cellSize}, {m_cellSize,-m_cellSize},   
+        {-m_cellSize,  m_cellSize}, {m_cellSize, m_cellSize}                                            
+    }};
+    
     while (!open.empty())
     {
         // f値が最小のノードを取り出す
         AStarNode cur = open.top();
         open.pop();
 
-        Vec2IntKey curKey = ToKey(cur.pos);
+        const Vec2IntKey curKey = ToKey(cur.pos);
 
         // 探索済みならスキップ
         if (closed.contains(curKey)) continue;
@@ -76,35 +81,29 @@ std::vector<VECTOR2> CAStarPathFinder::SerchRoute(VECTOR2 start, VECTOR2 goal)
             std::ranges::reverse(path);
             return path;
         }
-
-        const VECTOR2 DIRS[8] = {
-            {0, -m_cellSize}, {0,  m_cellSize},
-            {-m_cellSize, 0}, {m_cellSize,  0},
-            {-m_cellSize, -m_cellSize}, {m_cellSize, -m_cellSize},
-            {-m_cellSize,  m_cellSize}, {m_cellSize,  m_cellSize}
-        };
+        
 
         for (auto& d : DIRS)
         {
-            VECTOR2 next = {cur.pos.x + d.x, cur.pos.y + d.y};
-            Vec2IntKey nextKey = ToKey(next);
+            const VECTOR2 next = {cur.pos.x + d.x, cur.pos.y + d.y};
+            const Vec2IntKey nextKey = ToKey(next);
 
             // 探索済みならスキップ
             if (closed.contains(nextKey)) continue;
 
-            // 障害物チェック（QuadTreeはループ外でキャッシュ済み）
+            // 障害物チェック
             if (HasObstacle(next, pQuadTree)) continue;
 
             // gコストを計算
-            float cost = (d.x != 0 && d.y != 0) ? m_cellSize * 1.414f : m_cellSize;
-            float ng = gScore[curKey] + cost;
+            const float cost = (d.x != 0 && d.y != 0) ? m_cellSize * DIAGONAL_COST : m_cellSize;
+            const float ng = gScore[curKey] + cost;
 
             // より良いルートなら更新
             if (!gScore.contains(nextKey) || ng < gScore[nextKey])
             {
-                gScore[nextKey]   = ng;
+                gScore[nextKey] = ng;
                 cameFrom[nextKey] = cur.pos;
-                float nh = heuristic(next, goal);
+                const float nh = heuristic(next, goal);
                 open.push({next, ng, nh, ng + nh, cur.pos});
             }
         }
@@ -112,17 +111,31 @@ std::vector<VECTOR2> CAStarPathFinder::SerchRoute(VECTOR2 start, VECTOR2 goal)
     return {};
 }
 
-VECTOR2 CAStarPathFinder::Snap(const VECTOR2& pos)
+void CAStarPathFinder::SetAnimSize(const VECTOR2& size)
+{
+    m_agentSize = size;
+}
+
+VECTOR2 CAStarPathFinder::Snap(const VECTOR2& pos) const
 {
     return {
-        std::round(pos.x / m_cellSize) * m_cellSize,
-        std::round(pos.y / m_cellSize) * m_cellSize
+         std::round(pos.x / m_cellSize) * m_cellSize,
+          std::round(pos.y / m_cellSize) * m_cellSize
+    };
+}
+Vec2IntKey CAStarPathFinder::ToKey(const VECTOR2& pos) const
+{
+    return {
+        .x = static_cast<int>(std::round(pos.x / m_cellSize)),
+        .y = static_cast<int>(std::round(pos.y / m_cellSize))
     };
 }
 
-bool CAStarPathFinder::HasObstacle(const VECTOR2& pos, CStageQuadTree* pQuadTree)
+bool CAStarPathFinder::HasObstacle(const VECTOR2& pos, const CStageQuadTree* pQuadTree) const
 {
     if (pQuadTree == nullptr) return false;
-    VECTOR2 checkSize = {m_cellSize, m_cellSize};
+    const VECTOR2 checkSize = 
+        {m_cellSize + m_agentSize.x,
+        m_cellSize + m_agentSize.y};
     return !pQuadTree->GetNearbyObjects(pos, checkSize).empty();
 }

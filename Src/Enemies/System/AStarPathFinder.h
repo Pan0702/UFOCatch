@@ -31,29 +31,31 @@ struct Vec2IntKeyHash
 {
     size_t operator()(const Vec2IntKey& k) const
     {
-        return std::hash<int>()(k.x) ^ (std::hash<int>()(k.y) << 16);
+        return std::hash<long long>()(static_cast<long long>(k.x) << 32 |static_cast<unsigned int>(k.y));
     }
 };
 
 class CAStarPathFinder
 {
 public:
-    CAStarPathFinder(float cellSize = 2.0f);
+    CAStarPathFinder(float cellSize = 0.4f);
 
     ///経路探索
     /// @param start 自身のいる場所
     /// @param goal 目的地
     /// @return
-    std::vector<VECTOR2> SerchRoute(VECTOR2 start, VECTOR2 goal);
+    std::vector<VECTOR2> SearchRoute(VECTOR2 start, VECTOR2 goal);
 
     float GetCellSize() const { return m_cellSize; }
-
+    
+    void SetAnimSize(const VECTOR2& size);
 private:
-    VECTOR2 Snap(const VECTOR2& pos);
+    VECTOR2 Snap(const VECTOR2& pos) const;
     Vec2IntKey ToKey(const VECTOR2& pos) const;
-    bool HasObstacle(const VECTOR2& pos, CStageQuadTree* pQuadTree);
+    bool HasObstacle(const VECTOR2& pos, const CStageQuadTree* pQuadTree) const;
 
 private:
     //セルの大きさ
     float m_cellSize = 0;
+    VECTOR2 m_agentSize = {};
 };

@@ -8,8 +8,8 @@ CStageQuadTree::CStageQuadTree()
     : m_pTree(nullptr)
 {
     VECTOR4 size = CGameInstance::Get()->GetMapSize();
-    // NormalScene(ﾂｱ40)繝ｻPlayScene(ﾂｱ30)縺ｮ荳｡譁ｹ繧偵き繝舌・縺吶ｋ遽・峇
-    m_pTree = std::make_unique<CLiner4Tree<CStageObject>>(3, size);
+    
+    m_pTree = std::make_unique<CLiner4Tree<CStageObject>>(7, size);
 }
 
 CStageQuadTree::~CStageQuadTree() = default;

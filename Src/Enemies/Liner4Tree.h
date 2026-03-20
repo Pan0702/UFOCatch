@@ -19,6 +19,9 @@ public:
     // 要素を全削除
     void AllClear() { for (auto& cell : m_cells) cell.Clear(); }
 
+    const VECTOR4& GetArea()     const { return m_area; }
+    int            GetMaxLevel() const { return m_maxLevel; }
+
     /// オブジェクトの追加
     /// @param obj オブジェクトのポインタ
     /// @param pos XZ平面での場所

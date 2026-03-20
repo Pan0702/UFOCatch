@@ -26,11 +26,13 @@ void CWalk::Enter()
     {
         m_turnAmount = Randomf(-TURN_ANGLE_DEG, TURN_ANGLE_DEG) * DegToRad;
     }
-
-    VECTOR2 start = {ToVec2XZ(m_position)};
-    VECTOR2 end = {ToVec2XZ(m_targetPos)};
-    m_path = m_pathFinder.SerchRoute(start, end);
-    m_pathIndex = 0;
+    VECTOR2 pos,size;
+    m_pOwner->GetBounds2D(pos,size);
+    m_pathFinder.SetAnimSize(size);
+    const VECTOR2 start = {ToVec2XZ(m_position)};
+    const VECTOR2 end = {ToVec2XZ(m_targetPos)};
+    m_path = m_pathFinder.SearchRoute(start, end);
+    m_pathIndex = 1;
     
     m_currentRotation = trans.rotation.y;
 
@@ -67,7 +69,7 @@ bool CWalk::CalcRandomMove()
         m_turnAmount = Randomf(-TURN_ANGLE_DEG, TURN_ANGLE_DEG) * DegToRad;
 
         // 移動距離[1.0, 3.5] をランダムに選ぶ
-        float moveAmount = Randomf(MIN_MOVE, MAX_MOVE);
+        const float moveAmount = Randomf(MIN_MOVE, MAX_MOVE);
         
         m_targetPos = m_position + VECTOR3(0, 0,
                                       moveAmount) * XMMatrixRotationY(m_turnAmount);
@@ -109,7 +111,7 @@ bool CWalk::CalcRandomMove()
 //     return false;
 // }
 
-void CWalk::PlayWalkAnimation()
+void CWalk::PlayWalkAnimation() const
 {
     Animator* animator = m_pOwner->GetAnimator();
     animator->MergePlay(AnimationType::A_WALK);
@@ -119,16 +121,23 @@ void CWalk::PlayWalkAnimation()
 
 void CWalk::Update()
 {
+    if (m_isFinish)return;
+    
+    if (m_pOwner->IsHuman())
+    {
+        m_pOwner->IsSuctionCheck();
+    }
     if (m_path.empty())
     {
         static constexpr float ROTATION_LERP_SPEED = 10.0f;
-        float t = ROTATION_LERP_SPEED * SceneManager::DeltaTime();
+        const float t = ROTATION_LERP_SPEED * SceneManager::DeltaTime();
         m_currentRotation = m_currentRotation + (m_targetRotation - m_currentRotation) * t;
         if (abs(m_targetRotation - m_currentRotation) < 0.01f)
         {
             m_isFinish = true;
         }
         m_pOwner->SetRotateY(ClampRotateY(m_currentRotation));
+        return;
     }
     const VECTOR2 nextPoint = m_path[m_pathIndex];
     const VECTOR3 nextPos = {nextPoint.x, m_position.y, nextPoint.y};
@@ -136,12 +145,14 @@ void CWalk::Update()
     // ウェイポイントの方向を向く
     VECTOR3 dir = nextPos - m_pOwner->GetTransform().position;
     dir.y = 0;
-    float targetAngle = atan2f(dir.x, dir.z);
+    const float targetAngle = atan2f(dir.x, dir.z);
 
     // 回転
-    float current = m_pOwner->GetTransform().rotation.y;
-    float t = 10.0f * SceneManager::DeltaTime();
-    float newAngle = current + (targetAngle - current) * t;
+    const float current = m_pOwner->GetTransform().rotation.y;
+    const float t = 10.0f * SceneManager::DeltaTime();
+    float angleDiff = targetAngle - current;
+    angleDiff = std::remainder(angleDiff, XM_2PI); 
+    const float newAngle = current + angleDiff * t;
     m_pOwner->SetRotateY(newAngle);
 
     // 移動
@@ -165,11 +176,21 @@ void CWalk::Update()
             m_isFinish = true;
             return;
         }
+        while (m_pathIndex < m_path.size() - 1)
+        {
+            // 現在地 → 次のウェイポイントの方向
+            VECTOR2 toNext = m_path[m_pathIndex] - ToVec2XZ(m_pOwner->GetTransform().position);
+            // 現在地 → さらに先のウェイポイントの方向
+            VECTOR2 toAfter = m_path[m_pathIndex + 1] - ToVec2XZ(m_pOwner->GetTransform().position);
+
+            // 2つの方向の角度差が小さければ次をスキップ
+            const float angleCos = dot(normalize(toNext), normalize(toAfter));
+            const float threshold = cos(30.0f * DegToRad);
+            if (angleCos > threshold) m_pathIndex++;
+            else break;
+        }
     }
-    if (m_pOwner->IsHuman())
-    {
-        m_pOwner->IsSuctionCheck();
-    }
+
     //
     // if (m_rotation)
     // {

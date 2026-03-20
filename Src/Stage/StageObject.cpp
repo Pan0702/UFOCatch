@@ -67,11 +67,11 @@ void CStageObject::Draw()
 {
     Object3D::Draw();
     
-    //デバック用　: メッシュの大きさを描画
-    ImGui::Begin("StageObject Debug");  
-    ImGui::DragFloat3("m_vMin",&m_pMesh->m_vMin.x, 0.01f);
-    ImGui::DragFloat3("m_vMax",&m_pMesh->m_vMax.x, 0.01f);
-    ImGui::End();
+    // //デバック用　: メッシュの大きさを描画
+    // ImGui::Begin("StageObject Debug");  
+    // ImGui::DragFloat3("m_vMin",&m_pMesh->m_vMin.x, 0.01f);
+    // ImGui::DragFloat3("m_vMax",&m_pMesh->m_vMax.x, 0.01f);
+    // ImGui::End();
     // デバッグ用: OBBを描画
     if (m_pOBB)
     {

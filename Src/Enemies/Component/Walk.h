@@ -17,7 +17,7 @@ private:
     bool CalcRandomMove();
     
     ///Walkのアニメーションを1.0fの速度で再生する
-    void PlayWalkAnimation();
+    void PlayWalkAnimation() const;
     
     /// 回転角をRadで-π～πの範囲に正規化する
     /// @param angle 回転角
