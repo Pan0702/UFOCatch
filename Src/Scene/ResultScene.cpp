@@ -9,7 +9,7 @@ CResultScene::CResultScene()
     m_pSprite = std::make_unique<CSprite>(); 
     m_pResultImage = std::make_unique<CSpriteImage>("data/ScoreBG.jpg");
     m_pRankImage = std::make_unique<CSpriteImage>("data/PlayUIParts.png");
-    m_pGI = ObjectManager::FindGameObject<CGameInstance>();
+    m_pGI = CGameInstance::Get();
 }
 
 CResultScene::~CResultScene()

@@ -129,6 +129,7 @@ void CWalk::Update()
             m_isFinish = true;
         }
         m_pOwner->SetRotateY(ClampRotateY(m_currentRotation));
+        return;
     }
     const VECTOR2 nextPoint = m_path[m_pathIndex];
     const VECTOR3 nextPos = {nextPoint.x, m_position.y, nextPoint.y};
