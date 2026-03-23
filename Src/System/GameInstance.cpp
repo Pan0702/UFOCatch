@@ -9,7 +9,7 @@ CGameInstance::CGameInstance() : m_score(0)
     m_discovery = 0;
     m_saw = 0;
     m_capture = 0;
-    m_mapSize = VECTOR4(51.4f, 51.4f, 51.4f, 51.4f);
+    m_mapSize = VECTOR4(-51.4f, -51.4f, 51.4f, 51.4f);
 }
 
 void CGameInstance::Update()

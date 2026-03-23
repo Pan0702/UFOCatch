@@ -9,6 +9,8 @@
 #include <list>
 #include <memory>
 #include <string>
+
+class CQuadtreeSystem;
 class GameObject;
 
 namespace ObjectManager {
@@ -34,6 +36,9 @@ namespace ObjectManager {
 	void Destroy(GameObject* obj);
 
 	std::list<GameObject*> GetAllObjects();
+	
+	std::list<CQuadtreeSystem*> GetAllQuadTree();
+	void PushTree(std::unique_ptr<CQuadtreeSystem>  tree);
 
 	/// <summary>
 	/// クラス名でオブジェクトを探す
@@ -114,7 +119,18 @@ namespace ObjectManager {
 		}
 		return out;
 	}
+	
+	template<class C> C* FindQuadTree()
+	{
+		const std::list<CQuadtreeSystem*> objs = GetAllQuadTree();
 
+		for (CQuadtreeSystem* node : objs) {
+			C* obj = dynamic_cast<C*>(node);
+			if (obj != nullptr)
+				return obj;
+		}
+		return nullptr;
+	}
 	/// <summary>
 	/// 描画のプライオリティを設定する
 	/// 数値が少ない順に描画されるので、２Ｄでは奥に表示される
@@ -143,7 +159,7 @@ namespace ObjectManager {
 	/// 全てのGameObjectを削除する
 	/// </summary>
 	void DeleteAllGameObject();
-
+	
 	void DontDestroy(const GameObject* obj, bool dont = true);
 
 	/// <summary>
@@ -167,5 +183,8 @@ namespace ObjectManager {
 	/// <param name="obj">GameObjectのインスタンス</param>
 	/// <returns>存在すれtrue</returns>
 	bool IsExist(GameObject* obj);
+
+
+	void DeleteAllQuadTree();
 };
 

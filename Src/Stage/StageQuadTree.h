@@ -1,14 +1,14 @@
 ﻿#pragma once
 #include <vector>
-#include "../Liner4Tree.h"
-
+#include "../Core/Spatial/Liner4Tree.h"
+#include "../Framework/QuadtreeSystem.h"
 class CStageObject;
 using treePtr = std::unique_ptr<CLiner4Tree<CStageObject>>;
 
 
 // 髱咏噪繧ｹ繝・・繧ｸ繧ｪ繝悶ず繧ｧ繧ｯ繝育畑縺ｮ遨ｺ髢薙う繝ｳ繝・ャ繧ｯ繧ｹ
 // 繧ｷ繝ｼ繝ｳ蛻晄悄蛹匁凾縺ｫ1蝗槭□縺腺uild()繧貞他縺ｶ・域ｯ弱ヵ繝ｬ繝ｼ繝譖ｴ譁ｰ荳崎ｦ・ｼ・
-class CStageQuadTree
+class CStageQuadTree : public CQuadtreeSystem
 {
 public:
     CStageQuadTree();

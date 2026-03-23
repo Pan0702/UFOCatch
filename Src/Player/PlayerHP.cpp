@@ -30,7 +30,7 @@ void CPlayerHP::SubHP()
     {
         if (not m_found)
         {
-            ObjectManager::FindGameObject<CGameInstance>()->AddSaw(1);
+            CGameInstance::Get()->AddSaw(1);
             m_seemToFind = true;
         }
     }
@@ -38,7 +38,6 @@ void CPlayerHP::SubHP()
 
 void CPlayerHP::Update()
 {
-    CGameInstance* pGI = ObjectManager::FindGameObject<CGameInstance>();
     // 疑惑でみつかったか
     if (m_seemToFind)
     {
@@ -52,7 +51,7 @@ void CPlayerHP::Update()
             // いまのHPから1引く
             m_currentHp--;
             // 見つかった回数を追加
-            pGI->AddDiscovery(1);
+             CGameInstance::Get()->AddDiscovery(1);
         }
     }
     // 見つかったか（確信状態）

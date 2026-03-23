@@ -24,7 +24,7 @@ CNormalScene::CNormalScene()
      Instantiate<CFlog>();           
     Instantiate<CVisionSystem>();
     Instantiate<CDisplayInfo>();
-    ObjectManager::FindGameObject<CGameInstance>()->Init(6000 );
+     CGameInstance::Get()->Init(6000 );
 
   AudioManager::Play(_T("Play"));
 }

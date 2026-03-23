@@ -105,7 +105,7 @@ void CExpands::Enter()
 void CExpands::Update()
 {
     RemoveCaughtAnimals();
-    int captureCount = ObjectManager::FindGameObject<CGameInstance>()->GetCapture();
+    int captureCount = CGameInstance::Get()->GetCapture();
     if (captureCount > REQUIRED_CAPTURE_COUNT)
     {
         m_pTutorial->SetState(State::Discovery);

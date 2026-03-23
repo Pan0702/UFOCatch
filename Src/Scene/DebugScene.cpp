@@ -25,7 +25,7 @@ CDebugScene::CDebugScene()
     Instantiate<CVisionSystem>();
     Instantiate<CDisplayInfo>();
     Instantiate<CFlog>();
-    ObjectManager::FindGameObject<CGameInstance>()->Init(1000);
+    CGameInstance::Get()->Init(1000);
 }
 
 CDebugScene::~CDebugScene()

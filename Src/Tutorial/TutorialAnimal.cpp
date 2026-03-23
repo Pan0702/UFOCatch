@@ -53,8 +53,8 @@ void CTutorialAnimal::Destroy()
     // 謐慕佐譎ゅ↓蜉邂励☆繧区黒迯ｲ謨ｰ //
     constexpr int CAPTURE_COUNT = 1;
     ObjectManager::FindGameObject<CPlayerLevel>()->AddExp(CAPTURE_EXP);
-    ObjectManager::FindGameObject<CGameInstance>()->AddScore(CAPTURE_SCORE);
-    ObjectManager::FindGameObject<CGameInstance>()->AddCapture(CAPTURE_COUNT);
+    CGameInstance::Get()->AddScore(CAPTURE_SCORE);
+    CGameInstance::Get()->AddCapture(CAPTURE_COUNT);
     DestroyMe();
 }
 

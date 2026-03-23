@@ -32,9 +32,17 @@ namespace
         {
         }
     };
+    struct QuadTreeObject
+    {
+        std::unique_ptr<CQuadtreeSystem> object;
+        QuadTreeObject() : object(nullptr)
+        {
+        }
+    };
 
     std::list<UpdateObject> updateObjects;
     std::list<DrawObject> drawObjects;
+    std::list<QuadTreeObject> quadTreeObject;
     bool needSortUpdate;
     bool needSortDraw;
 };
@@ -115,6 +123,7 @@ void ObjectManager::Draw()
 void ObjectManager::Release()
 {
     DeleteAllGameObject();
+    DeleteAllQuadTree();
 }
 
 void ObjectManager::ChangeScene()
@@ -128,7 +137,13 @@ void ObjectManager::ChangeScene()
             it = updateObjects.erase(it);
         }
         else
-            it++;
+        {
+            ++it;
+        }
+    }
+    for (auto it = quadTreeObject.begin(); it != quadTreeObject.end();)
+    {
+        it = quadTreeObject.erase(it);
     }
 }
 
@@ -264,4 +279,31 @@ bool ObjectManager::IsExist(GameObject* obj)
         }
     }
     return false;
+}
+
+ std::list<CQuadtreeSystem*> ObjectManager::GetAllQuadTree()
+{
+    std::list<CQuadtreeSystem*> objs;
+    for (const QuadTreeObject& obj : quadTreeObject)
+    {
+        objs.push_back(obj.object.get());
+    }
+    return objs;
+}
+
+void ObjectManager::PushTree(std::unique_ptr<CQuadtreeSystem> tree)
+{
+    CQuadtreeSystem* treePtr = tree.get();
+    QuadTreeObject q;
+    q.object = std::move(tree);
+    quadTreeObject.push_back(std::move(q));
+}
+
+void ObjectManager::DeleteAllQuadTree()
+{
+    for (auto it = quadTreeObject.begin(); it != quadTreeObject.end();)
+    {
+       it = quadTreeObject.erase(it);
+    }
+    quadTreeObject.clear();
 }

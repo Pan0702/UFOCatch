@@ -1,8 +1,8 @@
 ﻿#include "StageQuadTree.h"
-#include "../../Stage/StageObject.h"
+#include "../Stage/StageObject.h"
 #include <list>
 
-#include "../../System/GameInstance.h"
+#include "../System/GameInstance.h"
 
 CStageQuadTree::CStageQuadTree()
     : m_pTree(nullptr)

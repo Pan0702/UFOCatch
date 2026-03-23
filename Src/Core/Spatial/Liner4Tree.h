@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <algorithm>
 #include <vector>
-#include "../Utils/MyMath.h"
+#include "../../Utils/MyMath.h"
 
 #include "QuadTreeCell.h"
 
