@@ -13,27 +13,29 @@ CWalk::CWalk(CEnemyBase* e, float speed)
 void CWalk::Enter()
 {
     m_isFinish = false;
-    
+
     // 現在の Transform を取得
     Transform trans = m_pOwner->GetTransform();
     m_position = trans.position;
 
     bool foundValidMove = CalcRandomMove();
-    
+
     // 最後まで見つからなかった場合、
     // 「移動しない」にして、回転だけランダムに決める
     if (!foundValidMove)
     {
         m_turnAmount = Randomf(-TURN_ANGLE_DEG, TURN_ANGLE_DEG) * DegToRad;
     }
-    VECTOR2 pos,size;
-    m_pOwner->GetBounds2D(pos,size);
+    VECTOR2 pos, size;
+    m_pOwner->GetBounds2D(pos, size);
     m_pathFinder.SetAnimSize(size);
     const VECTOR2 start = {ToVec2XZ(m_position)};
     const VECTOR2 end = {ToVec2XZ(m_targetPos)};
+
     m_path = m_pathFinder.SearchRoute(start, end);
-    m_pathIndex = 1;
     
+    m_pathIndex = 1;
+
     m_currentRotation = trans.rotation.y;
 
     //目標回転
@@ -45,14 +47,14 @@ void CWalk::Enter()
 }
 
 /// 境界内に収まるランダムな回転量と移動距離を決定する
-/// ランダムに回転量（-180°～180°）と移動距離（1.0～3.5）を決定し、境界チェックに通るまで最大50回リトライする。
+/// ランダムに回転量（-180°～180°）と移動距離（1.5～4.0）を決定し、境界チェックに通るまで最大50回リトライする。
 /// 妥当な組み合わせが見つかった場合、m_turnAmountとm_moveAmountに設定される。
 /// @return 妥当な移動パラメータが見つかった場合true、最大試行回数を超えた場合false
 bool CWalk::CalcRandomMove()
 {
-    static constexpr int MAX_RETRY = 50;// ランダム移動の試行回数上限（境界外に出ない組み合わせが見つかるまで最大 N 回試す）
-    static constexpr float MIN_MOVE = 1.0f;// ランダム移動距離の範囲（最小～最大）
-    static constexpr float MAX_MOVE = 3.5f;// ランダム移動距離の範囲（最小～最大）
+    static constexpr int MAX_RETRY = 50; // ランダム移動の試行回数上限（境界外に出ない組み合わせが見つかるまで最大 N 回試す）
+    static constexpr float MIN_MOVE = 1.5f; // ランダム移動距離の範囲（最小）
+    static constexpr float MAX_MOVE = 4.0f; // ランダム移動距離の範囲（最大）
 
     // Sheep専用の範囲チェック
     CSheep* sheep = dynamic_cast<CSheep*>(m_pOwner);
@@ -70,9 +72,9 @@ bool CWalk::CalcRandomMove()
 
         // 移動距離[1.0, 3.5] をランダムに選ぶ
         const float moveAmount = Randomf(MIN_MOVE, MAX_MOVE);
-        
+
         m_targetPos = m_position + VECTOR3(0, 0,
-                                      moveAmount) * XMMatrixRotationY(m_turnAmount);
+                                           moveAmount) * XMMatrixRotationY(m_turnAmount);
 
         // Sheepの場合：Flogの範囲内かチェック
         if (flog != nullptr)
@@ -93,6 +95,7 @@ bool CWalk::CalcRandomMove()
     }
     return false;
 }
+
 //別のところに書いた関数で動くためコメントアウト
 // /// 回転・移動後の座標が境界内に収まるかチェック
 // /// @param areaSize エリアのサイズ
@@ -122,7 +125,6 @@ void CWalk::PlayWalkAnimation() const
 void CWalk::Update()
 {
     if (m_isFinish)return;
-    
     if (m_pOwner->IsHuman())
     {
         m_pOwner->IsSuctionCheck();
@@ -139,9 +141,14 @@ void CWalk::Update()
         m_pOwner->SetRotateY(ClampRotateY(m_currentRotation));
         return;
     }
+    if (m_pathIndex >= static_cast<int>(m_path.size()))
+    {
+        m_isFinish = true;
+        return;
+    }
     const VECTOR2 nextPoint = m_path[m_pathIndex];
     const VECTOR3 nextPos = {nextPoint.x, m_position.y, nextPoint.y};
-    
+
     // ウェイポイントの方向を向く
     VECTOR3 dir = nextPos - m_pOwner->GetTransform().position;
     dir.y = 0;
@@ -151,13 +158,13 @@ void CWalk::Update()
     const float current = m_pOwner->GetTransform().rotation.y;
     const float t = 10.0f * SceneManager::DeltaTime();
     float angleDiff = targetAngle - current;
-    angleDiff = std::remainder(angleDiff, XM_2PI); 
+    angleDiff = ClampRotateY(angleDiff);
     const float newAngle = current + angleDiff * t;
     m_pOwner->SetRotateY(newAngle);
 
     // 移動
-    VECTOR3 moveVec = VECTOR3(0, 0, m_moveSpeed * SceneManager::DeltaTime()) 
-                      * XMMatrixRotationY(newAngle);
+    VECTOR3 moveVec = VECTOR3(0, 0, m_moveSpeed * SceneManager::DeltaTime())
+        * XMMatrixRotationY(newAngle);
     moveVec = m_pOwner->CalcSlideMove(moveVec);
     m_pOwner->AddPosition(moveVec);
 
@@ -214,8 +221,6 @@ void CWalk::Update()
     // {
     //     m_pOwner->IsSuctionCheck();
     // }
-
-    
 }
 
 float CWalk::ClampRotateY(float angle)

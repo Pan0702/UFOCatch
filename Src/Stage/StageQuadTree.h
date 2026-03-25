@@ -19,8 +19,11 @@ public:
 
     // 霑代￥縺ｮ髱咏噪繧ｪ繝悶ず繧ｧ繧ｯ繝医ｒ蜿門ｾ・
     std::vector<CStageObject*> GetNearbyObjects(
-        const VECTOR2& pos,
-        const VECTOR2& size) const;
+        const VECTOR2& pos, const VECTOR2& size) const;
+
+    // 実際にAABBが重なっているオブジェクトのみ返す
+    std::vector<CStageObject*> GetOverlappingObjects(
+        const VECTOR2& pos, const VECTOR2& size) const;
 
 private:
     treePtr m_pTree;

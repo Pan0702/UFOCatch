@@ -2,7 +2,7 @@
 #include "../../Common/Object3D.h"
 #include "ModelRegistry.h"
 #include "EnemyQuadTree.h"
-#include "StageQuadTree.h"
+#include "../../Stage/StageQuadTree.h"
 #include <vector>
 
 class CPlayer;
@@ -45,8 +45,8 @@ public:
 
     // 蜷・け繝ｩ繧ｹ縺ｸ縺ｮ逶ｴ謗･繧｢繧ｯ繧ｻ繧ｹ・亥ｿ・ｦ√↓蠢懊§縺ｦ・・
     CModelRegistry* GetModelRegistry() const { return m_pModelRegistry.get(); }
-    CEnemyQuadTree* GetQuadTreeIndex() const { return m_pQuadTreeIndex.get(); }
-    CStageQuadTree* GetStaticQuadTreeIndex() const { return m_pStaticQuadTreeIndex.get(); }
+    CEnemyQuadTree* GetQuadTreeIndex() const { return m_pQuadTreeIndex; }
+    CStageQuadTree* GetStaticQuadTreeIndex() const { return m_pStaticQuadTreeIndex; }
 
 public:
     CPlayer* m_pPlayer;
@@ -55,8 +55,8 @@ private:
     void Update() override;
 
     std::unique_ptr<CModelRegistry> m_pModelRegistry;
-    std::unique_ptr<CEnemyQuadTree> m_pQuadTreeIndex;
-    std::unique_ptr<CStageQuadTree> m_pStaticQuadTreeIndex;
+   CEnemyQuadTree* m_pQuadTreeIndex;
+    CStageQuadTree* m_pStaticQuadTreeIndex;
     std::vector<CEnemyBase*> m_enemies;
 
     // 莠呈鋤諤ｧ縺ｮ縺溘ａ谿九☆・域悴菴ｿ逕ｨ・・

@@ -9,8 +9,8 @@ CDestroy::CDestroy(CEnemyBase* e,int score,float exp)
 
 void CDestroy::Enter()
 {
-    ObjectManager::FindGameObject<CGameInstance>()->AddScore(m_score);
-    ObjectManager::FindGameObject<CGameInstance>()->AddCapture(1);
+    CGameInstance::Get()->AddScore(m_score);
+    CGameInstance::Get()->AddCapture(1);
     ObjectManager::FindGameObject<CPlayerLevel>()->AddExp(m_exp);
     m_pOwner->DestroyMe();
 }

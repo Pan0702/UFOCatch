@@ -219,8 +219,8 @@ CChickenDestroy::CChickenDestroy(CAnimalChicken* chicken)
 
 void CChickenDestroy::Enter(State type)
 {
-    ObjectManager::FindGameObject<CGameInstance>()->AddScore(150);
-    ObjectManager::FindGameObject<CGameInstance>()->AddCapture(1);
+    CGameInstance::Get()->AddScore(150);
+    CGameInstance::Get()->AddCapture(1);
     ObjectManager::FindGameObject<CPlayerLevel>()->AddExp(1.5f);
     m_pOwner->DestroyMe();
 }

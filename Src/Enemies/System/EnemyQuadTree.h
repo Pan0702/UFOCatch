@@ -1,9 +1,10 @@
 ﻿#pragma once
 #include <vector>
 #include <chrono>
-#include "../Liner4Tree.h"
-
+#include "../../Core/Spatial/Liner4Tree.h"
+#include "../../Framework/QuadtreeSystem.h"
 class CEnemyBase;
+
 
 // 当たり判定の統計情報
 struct CollisionStats
@@ -21,7 +22,7 @@ struct CollisionStats
 };
 
 // 四分木による空間インデックス
-class CEnemyQuadTree
+class CEnemyQuadTree : public CQuadtreeSystem
 {
 public:
     CEnemyQuadTree();

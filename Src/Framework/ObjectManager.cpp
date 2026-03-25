@@ -141,10 +141,6 @@ void ObjectManager::ChangeScene()
             ++it;
         }
     }
-    for (auto it = quadTreeObject.begin(); it != quadTreeObject.end();)
-    {
-        it = quadTreeObject.erase(it);
-    }
 }
 
 std::list<GameObject*> ObjectManager::GetAllObjects()

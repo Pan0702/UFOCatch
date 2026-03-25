@@ -1,4 +1,5 @@
 #pragma once
+#include <queue>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -16,8 +17,6 @@ struct AStarNode
     float h;
     //g + h
     float f;
-    //どこから来たか
-    VECTOR2 parent;
     bool operator>(const AStarNode& o) const { return f > o.f; }
 };
 

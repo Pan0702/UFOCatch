@@ -8,7 +8,7 @@ CEnemyQuadTree::CEnemyQuadTree()
 {
     const VECTOR4 size = CGameInstance::Get()->GetMapSize();
     // 4蛻・惠縺ｮ蛻晄悄蛹厄ｼ医Ξ繝吶Ν3縲∫ｯ・峇-20縲・0・・
-    m_pTree =  std::make_unique<CLiner4Tree<CEnemyBase>>(3, size);
+    m_pTree =  std::make_unique<CLiner4Tree<CEnemyBase>>(4, size);
 
     // 邨ｱ險域ュ蝣ｱ縺ｮ蛻晄悄蛹・
     m_processTimes.reserve(60);  // 60繝輔Ξ繝ｼ繝蛻・・螻･豁ｴ
@@ -23,7 +23,7 @@ void CEnemyQuadTree::Update(const std::vector<CEnemyBase*>& enemies)
     m_lastEnemyCount = static_cast<int>(enemies.size());
     m_pTree->AllClear();
 
-    for (auto* enemy : enemies)
+    for (CEnemyBase* enemy : enemies)
     {
         VECTOR2 pos, size;
         if (enemy->GetBounds2D(pos, size))

@@ -15,8 +15,8 @@ CEnemyManager::CEnemyManager()
     : m_pMesh(nullptr)
     , m_pMeshCol(nullptr)
     , m_pModelRegistry(std::make_unique<CModelRegistry>())
-    , m_pQuadTreeIndex(std::make_unique<CEnemyQuadTree>())
-    , m_pStaticQuadTreeIndex(std::make_unique<CStageQuadTree>())
+    , m_pQuadTreeIndex(InstanceQTree<CEnemyQuadTree>())
+    , m_pStaticQuadTreeIndex(InstanceQTree<CStageQuadTree>())
     , m_pPlayer(nullptr)
 {
     ObjectManager::DontDestroy(this);
