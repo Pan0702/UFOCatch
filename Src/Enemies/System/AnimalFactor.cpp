@@ -1,40 +1,59 @@
 ﻿#include "AnimalFactor.h"
-
 #include "../AnimalChicken/Chicken.h"
 #include "../AnimalDog/Dog.h"
 #include "../Human/Human.h"
 
+namespace
+{
+    constexpr int   MAX_SPAWN_ATTEMPTS = 30;
+    constexpr float SPAWN_CHECK_HALF   = 0.5f; // モブのフットプリント半径（ワールド単位）
+
+    // 障害物のないスポーン位置を探す。見つからなければ最後の候補をそのまま返す
+    VECTOR2 FindFreeSpawn(float sizeX, float sizeZ, const CStageQuadTree* pTree)
+    {
+        VECTOR2 pos = { Randomf(-sizeX, sizeX), Randomf(-sizeZ, sizeZ) };
+        if (pTree == nullptr) return pos;
+
+        for (int attempt = 0; attempt < MAX_SPAWN_ATTEMPTS; ++attempt)
+        {
+            const VECTOR2 topLeft = { pos.x - SPAWN_CHECK_HALF, pos.y - SPAWN_CHECK_HALF };
+            const VECTOR2 size    = { SPAWN_CHECK_HALF * 2.0f,  SPAWN_CHECK_HALF * 2.0f  };
+            if (pTree->GetOverlappingObjects(topLeft, size).empty())
+                return pos;
+            pos = VECTOR2(Randomf(-sizeX, sizeX), Randomf(-sizeZ, sizeZ));
+        }
+        return pos;
+    }
+}
+
 ///蜍慕黄繧堤函謌・
-/// @param sizeX 逕滓・縺吶ｋ蜍慕黄縺ｮX縺ｮ遽・峇 
+/// @param sizeX 逕滓・縺吶ｋ蜍慕黄縺ｮX縺ｮ遽・峇
 /// @param sizeZ 逕滓・縺吶ｋ蜍慕黄縺ｮZ縺ｮ遽・峇 //
 CAnimalFactor::CAnimalFactor(float sizeX, float sizeZ, int type)
 {
-    float f1;
-    float f2;
+    CStageQuadTree* pTree = ObjectManager::FindQuadTree<CStageQuadTree>();
+    if (pTree == nullptr) assert(false);
+
     for (int i = 0; i < 60; i++)
     {
-        f1 = Randomf(-sizeX, sizeX);
-        f2 = Randomf(-sizeZ, sizeZ);
-        Instantiate<CADog>(VECTOR3(f1, 0, f2), VECTOR2(sizeX, sizeZ));
+        VECTOR2 p = FindFreeSpawn(sizeX, sizeZ, pTree);
+        Instantiate<CADog>(VECTOR3(p.x, 0, p.y), VECTOR2(sizeX, sizeZ));
     }
-    f1 = Randomf(-sizeX, sizeX);
-    f2 = Randomf(-sizeZ, sizeZ);
-    Instantiate<CHuman>(VECTOR3(f1, 0, f2), VECTOR2(sizeX, sizeZ));
+    {
+        VECTOR2 p = FindFreeSpawn(sizeX, sizeZ, pTree);
+        Instantiate<CHuman>(VECTOR3(p.x, 0, p.y), VECTOR2(sizeX, sizeZ));
+    }
     if (type == 1)
     {
-        float f1;
-        float f2;
         for (int i = 0; i < 10; i++)
         {
-            f1 = Randomf(-sizeX, sizeX);
-            f2 = Randomf(-sizeZ, sizeZ);
-            Instantiate<CAnimalChicken>(VECTOR3(f1, 0, f2), VECTOR2(sizeX, sizeZ));
+            VECTOR2 p = FindFreeSpawn(sizeX, sizeZ, pTree);
+            Instantiate<CAnimalChicken>(VECTOR3(p.x, 0, p.y), VECTOR2(sizeX, sizeZ));
         }
         for (int i = 0; i < 3; i++)
         {
-            f1 = Randomf(-sizeX, sizeX);
-            f2 = Randomf(-sizeZ, sizeZ);
-            Instantiate<CHuman>(VECTOR3(f1, 0, f2), VECTOR2(sizeX, sizeZ));
+            VECTOR2 p = FindFreeSpawn(sizeX, sizeZ, pTree);
+            Instantiate<CHuman>(VECTOR3(p.x, 0, p.y), VECTOR2(sizeX, sizeZ));
         }
     }
 }

@@ -28,7 +28,7 @@ void CWalk::Enter()
     }
     VECTOR2 pos, size;
     m_pOwner->GetBounds2D(pos, size);
-    m_pathFinder.SetAnimSize(size);
+    m_pathFinder.SetAgentSize(size);
     const VECTOR2 start = {ToVec2XZ(m_position)};
     const VECTOR2 end = {ToVec2XZ(m_targetPos)};
 
@@ -178,12 +178,12 @@ void CWalk::Update()
     if (disSq < reachDistSq)
     {
         m_pathIndex++;
-        if (m_pathIndex >= m_path.size() - 1)
+        if (m_pathIndex >= static_cast<int>(m_path.size()))
         {
             m_isFinish = true;
             return;
         }
-        while (m_pathIndex < m_path.size() - 1)
+        while (m_pathIndex < static_cast<int>(m_path.size()) - 1)
         {
             // 現在地 → 次のウェイポイントの方向
             VECTOR2 toNext = m_path[m_pathIndex] - ToVec2XZ(m_pOwner->GetTransform().position);

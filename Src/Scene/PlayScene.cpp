@@ -15,11 +15,9 @@
 
 PlayScene::PlayScene()
 {
-    Instantiate<CStageFactor>();
-    ObjectManager::FindGameObject<CStageFactor>()->SpawnObjects(30, 30,90);
+    Instantiate<CStageFactor>()->SpawnObjects(30, 30,90);
     Instantiate<CPlayerCamera>();
-    SingleInstantiate<CEnemyManager>();
-    ObjectManager::FindGameObject<CEnemyManager>()->BuildStaticTree();
+    SingleInstantiate<CEnemyManager>()->BuildStaticTree();
     Instantiate<CTimer>(30);
     Instantiate<CPlayer>(25);             
     Instantiate<CAnimalFactor>(20,20,0);
