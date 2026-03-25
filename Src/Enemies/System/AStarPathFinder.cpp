@@ -2,6 +2,8 @@
 
 #include <array>
 #include <numbers>
+#include <windows.h>
+#include <string>
 
 #include "../../Stage/StageQuadTree.h"
 #include "../../Stage/StageObject.h"
@@ -51,8 +53,16 @@ std::vector<VECTOR2> CAStarPathFinder::SearchRoute(VECTOR2 start, VECTOR2 goal)
         }
     };
 
+    int mainLoopCount = 0;
+    constexpr int MAX_MAIN_LOOP = 10000;
     while (!open.empty())
     {
+        if (++mainLoopCount > MAX_MAIN_LOOP)
+        {
+            OutputDebugStringA("AStarPathFinder: Main loop limit exceeded!\n");
+            break;
+        }
+
         // f値が最小のノードを取り出す
         AStarNode cur = open.top();
         open.pop();
@@ -71,10 +81,29 @@ std::vector<VECTOR2> CAStarPathFinder::SearchRoute(VECTOR2 start, VECTOR2 goal)
             // 経路復元（cur.posを実効ゴールとして使う）
             std::vector<VECTOR2> path;
             VECTOR2 c = cur.pos;
+            int reconstructCount = 0;
+            constexpr int MAX_RECONSTRUCT = 1000;
             while (ToKey(c) != startKey)
             {
+                if (++reconstructCount > MAX_RECONSTRUCT)
+                {
+                    OutputDebugStringA("AStarPathFinder: Reconstruct loop limit exceeded!\n");
+                    break;
+                }
                 path.push_back(c);
-                c = cameFrom[ToKey(c)];
+                const Vec2IntKey cKey = ToKey(c);
+                if (!cameFrom.contains(cKey))
+                {
+                    OutputDebugStringA("AStarPathFinder: cameFrom key not found during reconstruction!\n");
+                    break;
+                }
+                VECTOR2 nextC = cameFrom[cKey];
+                if (ToKey(nextC) == cKey)
+                {
+                    OutputDebugStringA("AStarPathFinder: Self-reference in cameFrom during reconstruction!\n");
+                    break;
+                }
+                c = nextC;
             }
             path.push_back(start);
             std::ranges::reverse(path);
