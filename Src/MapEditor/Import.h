@@ -1,9 +1,8 @@
 ﻿#pragma once
 #include <string>
 
-class Import
+namespace Import
 {
-public:
     /// <summary>
     /// JSONファイルを読み込み、記録されたモデルをステージに復元する。
     /// 未ロードのモデルは自動的にロードしてボタンにも追加する。

@@ -56,13 +56,21 @@ private:
 public:
     Button();
     ~Button();
-    void Update() override;
 
     /// <summary>指定IDのボタンをリストに追加する。メッシュが渡された場合はプレビューテクスチャを生成する</summary>
     /// <param name="buttonId">ボタンの識別ID（モデル名）</param>
     /// <param name="pMesh">プレビュー用メッシュ（省略可）</param>
     /// <param name="size">ボタンサイズ（デフォルト64x64）</param>
     void AddButton(const std::string& buttonId, CFbxMesh* pMesh = nullptr,const ImVec2& size = ImVec2(64, 64));
+
+    /// <summary>"Editor Tools"ウィンドウの中身を描画する（Begin/Endなし）</summary>
+    void DrawEditorToolsPanel();
+
+    /// <summary>"Setting"ウィンドウのGrid・Export・Import部分を描画する（Begin/Endなし）</summary>
+    void DrawSettingPanel();
+
+    /// <summary>"Hierarchy"ウィンドウの中身を描画する（Begin/Endなし）</summary>
+    void DrawHierarchyPanel();
 
 private:
     /// <summary>isRenderTextureでないボタンのテクスチャをすべて解放してリストをクリアする</summary>
@@ -76,9 +84,6 @@ private:
     /// <param name="buttonId">クリックされたボタンのID</param>
     static void HandleButtonClick(const std::string& buttonId);
 
-    /// <summary>エディタUIのImGuiウィンドウ（モデル追加・エクスポート・グリッド設定）を描画する</summary>
-    void DebugImGui();
-
     // pMesh は CModelStorage が所有するので delete しない
     /// <summary>
     /// メッシュをオフスクリーンに1回描画し、ImGuiボタン用のSRVを返す
@@ -90,8 +95,6 @@ private:
 
     /// <summary>全モデルプレビューのD3Dリソースを解放してリストをクリアする</summary>
     void ReleaseModelPreviews();
-
-    void DrawHierarchy();
 
 };
 

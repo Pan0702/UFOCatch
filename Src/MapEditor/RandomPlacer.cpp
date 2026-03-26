@@ -9,8 +9,9 @@ Transform* RandomPlacer::GetTransform()
 
 void RandomPlacer::Draw()
 {
-    if (not is_draw_)return;
-    DrawImGui();
+    if (not is_draw_) return;
+
+    //範囲の描画
     CSprite spr;
     DWORD color = 0xFF0000FF;
     spr.DrawLine3D(point_min_, VECTOR3(point_max_.x, point_min_.y, point_min_.z), color);
@@ -93,11 +94,10 @@ void RandomPlacer::SpawnObject(int model, bool flag)
     }
 }
 
-void RandomPlacer::DrawImGui()
+void RandomPlacer::DrawPanel()
 {
     static int selected_model = 0;
     static bool changed = false;
-    ImGui::Begin("Setting");
     if (ImGui::Button("Spawn"))
     {
         SpawnObject(selected_model, changed);
@@ -127,5 +127,4 @@ void RandomPlacer::DrawImGui()
         }
         ImGui::EndCombo();
     }
-    ImGui::End();
 }

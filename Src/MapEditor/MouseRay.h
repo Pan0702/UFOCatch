@@ -12,6 +12,7 @@ struct Ray
 
 /// <summary>
 /// マウスカーソルからレイを生成し、オブジェクトとの当たり判定を行うユーティリティクラス
+///  Object3Dを継承しないクラスとして定義
 /// </summary>
 class MouseRay
 {

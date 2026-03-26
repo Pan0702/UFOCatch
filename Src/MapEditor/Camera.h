@@ -1,12 +1,8 @@
 ﻿#pragma once
 #include "../Common/Object3D.h"
-class Camera : public Object3D
-{
-public:
-    Camera();
-    ~Camera();
-    void Update() override;
 
+namespace Camera
+{
     /// <summary>選択オブジェクトにカメラをフォーカスする</summary>
     static void Focus();
 

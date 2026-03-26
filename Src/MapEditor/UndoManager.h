@@ -2,6 +2,7 @@
 #include <stack>
 #include "StageData.h"
 
+//Object3Dを継承しないクラスとして定義
 class UndoManager
 {
 private:

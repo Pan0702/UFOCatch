@@ -6,14 +6,14 @@
 #include "StageData.h"
 class Transform;
 
-class ExportData
+namespace ExportData
 {
-public:
+    
     /// <summary>単一オブジェクトのTransformをJSONファイルにエクスポートする</summary>
     /// <param name="name">ファイル名（拡張子なし）</param>
     /// <param name="t">エクスポートするtransform</param>
     /// <returns>成功でtrue</returns>
-    bool Export(const std::string& name, const Transform& t);
+    //bool Export(const std::string& name, const Transform& t);
 
     /// <summary>モデル名とTransformをJSONオブジェクトに変換して返す</summary>
     /// <param name="modelName">モデルの名前</param>

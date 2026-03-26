@@ -208,16 +208,12 @@ void TRS::Draw()
         break;
     default: break;
     }
-    DrawImGui();
 }
 
 
-// ImGuiでTRSモード切替と各設定UIをまとめて描画する
-void TRS::DrawImGui()
+// "MoveAmount"ウィンドウの中身を描画する（Begin/Endなし）
+void TRS::DrawPanel()
 {
-    ImGui::SetNextWindowPos(ImVec2(350, 10), ImGuiCond_Once);
-    ImGui::Begin("MoveAmount", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-
     ImGui::RadioButton("Translation", &m_selected, kTranslation);
     ImGui::SameLine();
     ImGui::RadioButton("Rotation", &m_selected, kRotation);
@@ -244,8 +240,6 @@ void TRS::DrawImGui()
     {
         ImGui::Text("None");
     }
-
-    ImGui::End();
 }
 
 

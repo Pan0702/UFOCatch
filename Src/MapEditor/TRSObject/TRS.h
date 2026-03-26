@@ -24,12 +24,13 @@ private:
     float m_scaleSpeed = 1.0f;
     float m_translateAccum = 0.0f;
     float m_rotateAccum = 0.0f;
+public:
+    /// <summary>"MoveAmount"ウィンドウの中身を描画する（Begin/Endなし）</summary>
+    void DrawPanel();
+
 private:
     /// <summary>ImGuiで移動スナップ量を選択するラジオボタンを描画する</summary>
     void RadioTranslate();
-
-    /// <summary>ImGuiでTRSモード切替と各設定UIをまとめて描画する</summary>
-    void DrawImGui();
 
     /// <summary>ImGuiで回転スナップ量を選択するラジオボタンを描画する</summary>
     void RadioRotate();

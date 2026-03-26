@@ -22,14 +22,17 @@ private:
 
 private:
     void Update() override;
+    void Draw() override;
     void SpawnObject(int model, bool flag);
-    void DrawImGui();
+
 public:
     RandomPlacer();
     ~RandomPlacer() = default;
     Transform* GetTransform();
 
-    void Draw() override;
+    /// <summary>"Setting"ウィンドウのRandomPlacer部分を描画する（Begin/Endなし）</summary>
+    void DrawPanel();
+
     void SetDrawFlag(bool flag) { is_draw_ = flag; }
 };
 

@@ -30,7 +30,6 @@ Button::~Button()
 
 void Button::Update()
 {
-    DebugImGui();
 }
 
 // 指定IDのボタンをリストに追加する。メッシュが渡された場合はプレビューテクスチャを生成する
@@ -193,21 +192,9 @@ void Button::HandleButtonClick(const std::string& buttonId)
     ObjectManager::FindGameObject<StageData>()->AddModel(init_pos, buttonId);
 }
 
-// エディタUIのImGuiウィンドウ（モデル追加・エクスポート・グリッド設定）を描画する
-void Button::DebugImGui()
+void Button::DrawEditorToolsPanel()
 {
-    // UI ウィンドウのレイアウト定数
-    constexpr float EDITOR_TOOL_WINDOW_Y = 10.0f;
-    // 画面右端からの距離
-    constexpr float EDITOR_TOOLS_OFFSERT_FROM_RIGHT = 320.0f;
-    // モデル追加・ボタン一覧ウィンドウ（画面右端に固定）
-    ImGui::SetNextWindowPos(
-        ImVec2(ImGui::GetIO().DisplaySize.x - EDITOR_TOOLS_OFFSERT_FROM_RIGHT, EDITOR_TOOL_WINDOW_Y),
-        ImGuiCond_FirstUseEver);
-    ImGui::Begin("Editor Tools");
-
     ImGui::Separator();
-    //モデルの読み込み
     ImGui::Text("Add Model");
     if (ImGui::Button("OpenModel"))
     {
@@ -237,13 +224,10 @@ void Button::DebugImGui()
     }
     ImGui::EndGroup();
     ImGui::Separator();
-    ImGui::End();
+}
 
-    constexpr float SETTING_WINDOW_Y = 300.0f;
-    // 設定ウィンドウ（グリッド表示切替・エクスポート）
-    ImGui::SetNextWindowPos(
-        ImVec2(ImGui::GetIO().DisplaySize.x - EDITOR_TOOLS_OFFSERT_FROM_RIGHT, SETTING_WINDOW_Y));
-    ImGui::Begin("Setting", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+void Button::DrawSettingPanel()
+{
     bool flag = m_pGridDraw->GetDrawFlag();
     if (ImGui::Checkbox("Grid", &flag))
     {
@@ -267,16 +251,10 @@ void Button::DebugImGui()
             Import::ImportFromFile(path);
         }
     }
-    ImGui::End();
-    DrawHierarchy();
 }
 
-void Button::DrawHierarchy()
+void Button::DrawHierarchyPanel()
 {
-    ImGui::SetNextWindowPos(ImVec2(10, 180), ImGuiCond_Once);
-    ImGui::SetNextWindowSizeConstraints(ImVec2(120, 0), ImVec2(FLT_MAX, FLT_MAX));
-    ImGui::Begin("Hierarchy", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-
     const std::vector<StageDataInfo>& stage_data = m_pData->GetStageDataInfo();
 
     std::unordered_map<std::string, int> nameCounts;
@@ -304,5 +282,4 @@ void Button::DrawHierarchy()
             m_pSelectId = i;
         }
     }
-    ImGui::End();
 }

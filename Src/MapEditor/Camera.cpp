@@ -9,15 +9,6 @@ namespace
     constexpr float WHEEL_SCALE = 100.0f;
 }
 
-Camera::Camera()
-{
-}
-
-Camera::~Camera() = default;
-
-void Camera::Update()
-{
-}
 
 // 選択オブジェクトを仰角45度で見下ろす位置にカメラを配置する
 void Camera::Focus()

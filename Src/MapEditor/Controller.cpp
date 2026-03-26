@@ -1,5 +1,4 @@
 ﻿#include "Controller.h"
-
 #include "MouseRay.h"
 #include "UndoManager.h"
 #include "StageData.h"
@@ -19,7 +18,6 @@ namespace
 
 Controller::Controller()
 {
-    m_pCamera = ObjectManager::FindGameObject<Camera>();
     m_pTrs = ObjectManager::FindGameObject<TRS>();
     m_pStageData = ObjectManager::FindGameObject<StageData>();
     m_pInput = GameDevice()->m_pDI;
@@ -215,57 +213,47 @@ void Controller::CameraControl() const
 
 void Controller::Draw()
 {
-    ImGui::Begin("Setting");
-    if (ImGui::Checkbox("Random Placer", &m_isRandomPlacer))
-    {
-        Random();
-    }
-
-    ImGui::End();
     if (m_isRandomPlacer)
-    {
-        m_pRandomPlacer->Draw(); 
-    }
+        m_pRandomPlacer->Draw();
+}
+
+void Controller::DrawSettingPanel()
+{
+    if (ImGui::Checkbox("Random Placer", &m_isRandomPlacer))
+        Random();
+    if (m_isRandomPlacer)
+        m_pRandomPlacer->DrawPanel();
+}
+
+void Controller::DrawTransformPanel()
+{
     Transform* t = m_pStageData ? m_pStageData->GetSelectedTransform() : nullptr;
-    if (not t) return;
-    if (not m_isCatch)return;
-    ImGui::SetNextWindowPos(ImVec2(kTransformWindowX, kTransformWindowY), ImGuiCond_Once);
-    ImGui::SetNextWindowSize(ImVec2(kTransformWindowW, kTransformWindowH), ImGuiCond_Once);
-    ImGui::Begin("Transform");
+    if (!t || !m_isCatch) return;
 
     ImGui::Separator();
     ImGui::Text("Position: %.2f, %.2f, %.2f", t->position.x,
                 t->position.y, t->position.z);
-    if (ImGui::DragFloat3("Position", &t->position.x, kDragSpeed))
-    {
-    }
-    if (ImGui::IsItemActivated())
-    {
-        m_pUndoManager->Push();
-    }
+    if (ImGui::DragFloat3("Position", &t->position.x, kDragSpeed)) {}
+    if (ImGui::IsItemActivated()) m_pUndoManager->Push();
+
     ImGui::Separator();
     VECTOR3& tmp_r = t->rotation;
     ImGui::Text("Rotation: %.2f, %.2f, %.2f", tmp_r.x,
                 tmp_r.y, tmp_r.z);
-    if (ImGui::DragFloat3("Rotation", &tmp_r.x, kDragSpeed))
-    {
-    }
-    if (ImGui::IsItemActivated())
-    {
-        m_pUndoManager->Push();
-    }
+    if (ImGui::DragFloat3("Rotation", &tmp_r.x, kDragSpeed)) {}
+    if (ImGui::IsItemActivated()) m_pUndoManager->Push();
+
     ImGui::Separator();
     ImGui::Text("Scale:    %.2f, %.2f, %.2f", t->scale.x,
                 t->scale.y, t->scale.z);
-    if (ImGui::DragFloat3("Scale", &t->scale.x, kDragSpeed))
-    {
-    }
-    if (ImGui::IsItemActivated())
-    {
-        m_pUndoManager->Push();
-    }
-    ImGui::Separator();
-    ImGui::End();
+    if (ImGui::DragFloat3("Scale", &t->scale.x, kDragSpeed)) {}
+    if (ImGui::IsItemActivated()) m_pUndoManager->Push();
 
+    ImGui::Separator();
+}
+
+bool Controller::HasSelectedObject() const
+{
+    return m_isCatch && m_pStageData && m_pStageData->GetSelectedTransform() != nullptr;
 }
 
