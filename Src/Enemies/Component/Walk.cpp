@@ -1,4 +1,6 @@
 ﻿#include "Walk.h"
+
+#include "../../System/GameInstance.h"
 #include "../Base/EnemyBase.h"
 #include "../Human/Human.h"
 #include "../AnimalSheep/Sheep.h"
@@ -26,14 +28,18 @@ void CWalk::Enter()
     {
         m_turnAmount = Randomf(-TURN_ANGLE_DEG, TURN_ANGLE_DEG) * DegToRad;
     }
+    
+    CStageQuadTree* pTree = ObjectManager::FindQuadTree<CStageQuadTree>();
+    AdjustTargetToFreeCell(pTree,CGameInstance::Get()->GetMapSize(),m_pathFinder.GetCellSize());
+    
     VECTOR2 pos, size;
     m_pOwner->GetBounds2D(pos, size);
     m_pathFinder.SetAgentSize(size);
     const VECTOR2 start = {ToVec2XZ(m_position)};
     const VECTOR2 end = {ToVec2XZ(m_targetPos)};
-
-    m_path = m_pathFinder.SearchRoute(start, end);
     
+    m_path = m_pathFinder.SearchRoute(start, end);
+
     m_pathIndex = 1;
 
     m_currentRotation = trans.rotation.y;
@@ -95,24 +101,6 @@ bool CWalk::CalcRandomMove()
     }
     return false;
 }
-
-//別のところに書いた関数で動くためコメントアウト
-// /// 回転・移動後の座標が境界内に収まるかチェック
-// /// @param areaSize エリアのサイズ
-// /// @return 境界内ならtrue、境界外ならfalse
-// bool CWalk::BoundaryCheck(const VECTOR2&
-//     areaSize) const
-// {
-//     VECTOR3 tmpPos = m_position + VECTOR3(0, 0,
-//                                           m_moveAmount) * XMMatrixRotationY(m_turnAmount);
-//     if (tmpPos.x <= areaSize.x && tmpPos.x >=
-//         -areaSize.x && tmpPos.z <= areaSize.y &&
-//         tmpPos.z >= -areaSize.y)
-//     {
-//         return true;
-//     }
-//     return false;
-// }
 
 void CWalk::PlayWalkAnimation() const
 {
@@ -197,33 +185,71 @@ void CWalk::Update()
             else break;
         }
     }
-
-    //
-    // if (m_rotation)
-    // {
-    //     static constexpr float ROTATION_LERP_SPEED = 10.0f;
-    //     float t = ROTATION_LERP_SPEED * SceneManager::DeltaTime();
-    //     m_currentRotation = m_currentRotation + (m_targetRotation - m_currentRotation) * t;
-    //     if (abs(m_targetRotation - m_currentRotation) < 0.01f)
-    //     {
-    //         m_currentRotation = m_targetRotation;
-    //         m_rotation = false;
-    //     }
-    //     m_pOwner->SetRotateY(ClampRotateY(m_currentRotation));
-    // }
-    //
-    // VECTOR3 moveVec = VECTOR3(0, 0, m_moveSpeed * SceneManager::DeltaTime()) * XMMatrixRotationY(m_currentRotation);
-    // moveVec = m_pOwner->CalcSlideMove(moveVec);
-    // m_pOwner->AddPosition(moveVec);
-    //
-    //
-    // if (m_pOwner->IsHuman())
-    // {
-    //     m_pOwner->IsSuctionCheck();
-    // }
 }
 
 float CWalk::ClampRotateY(float angle)
 {
     return std::remainder(angle, XM_2PI);
+}
+
+void CWalk::AdjustTargetToFreeCell(CStageQuadTree* pTree, const VECTOR4& mapBounds, float cellSize)
+{
+    if (pTree == nullptr) return;
+    const int startIX = static_cast<int>(std::round(m_targetPos.x / cellSize));
+    const int startIZ = static_cast<int>(std::round(m_targetPos.z / cellSize));
+
+    auto makeKey = [](int ix, int iz) -> long long
+    {
+        return (static_cast<long long>(ix) << 32) |
+            static_cast<unsigned int>(iz);
+    };
+    //障害物チェックAABB
+    
+    const float half = cellSize * 0.5f;
+    {
+        const VECTOR2 c = {static_cast<float>(startIX) * cellSize, static_cast<float>(startIZ) * cellSize};
+        const VECTOR2 topLeft = {c.x - half, c.y - half};
+        const VECTOR2 size = {cellSize, cellSize};
+        //trueなら障害物無し
+        if (pTree->GetOverlappingObjects(topLeft, size).empty()) return;
+    }
+
+    //最大探索リング数
+    constexpr int MAX_RING = 10;
+    constexpr int DIR[8][2] = {
+        {1, 0}, {-1, 0}, {0, 1}, {0, -1},
+        {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
+    };
+    std::queue<Vec2Int> openQueue;
+    std::unordered_set<long long> visited;
+    openQueue.push({startIX, startIZ});
+    visited.insert(makeKey(startIX, startIZ));
+    while (!openQueue.empty())
+    {
+        Vec2Int cur = openQueue.front();
+        openQueue.pop();
+        const int ring = (std::max)(std::abs(cur.x - startIX), std::abs(cur.y - startIZ));
+        if (ring > MAX_RING) continue;
+        const VECTOR2 c = {static_cast<float>(cur.x) * cellSize,static_cast<float>(cur.y) * cellSize};
+        const bool inMap =(c.x > mapBounds.x + half && c.x <mapBounds.z - half &&
+                           c.y > mapBounds.y + half && c.y < mapBounds.w - half);
+        if (!inMap) continue;
+        const bool inArea = IsInsideAreaXZ(VECTOR3(c.x,0.0f,c.y),m_pOwner->GetAreaSize());
+        VECTOR2 topLeft = c - half;
+        VECTOR2 size2d = {cellSize,cellSize};
+        const bool onObstacle = pTree->GetOverlappingObjects(topLeft, size2d).empty();
+        if (onObstacle && inArea)
+        {
+            m_targetPos = VECTOR3(c.x, 0.0f, c.y);
+            return;
+        }
+        for (auto& d : DIR)
+        {
+            Vec2Int n = {cur.x + d[0], cur.y + d[1]};
+            long long key = makeKey(n.x, n.y);
+            if (visited.contains(key)) continue;  
+            visited.insert(key);
+            openQueue.push(n);
+        }
+    }
 }

@@ -24,8 +24,8 @@ std::vector<VECTOR2> CAStarPathFinder::SearchRoute(VECTOR2 start, VECTOR2 goal)
 
     // gScore：スタートから各ノードへの最小コスト//
     // cameFrom：経路復元用の親ノード座標マップ//
-    std::unordered_map<Vec2IntKey, float, Vec2IntKeyHash> gScore;
-    std::unordered_map<Vec2IntKey, VECTOR2, Vec2IntKeyHash> cameFrom;
+    std::unordered_map<Vec2Int, float, Vec2IntKeyHash> gScore;
+    std::unordered_map<Vec2Int, VECTOR2, Vec2IntKeyHash> cameFrom;
 
     constexpr float DIAGONAL_COST = std::numbers::sqrt2_v<float>;
 
@@ -43,11 +43,11 @@ std::vector<VECTOR2> CAStarPathFinder::SearchRoute(VECTOR2 start, VECTOR2 goal)
     CStageQuadTree* pQuadTree = ObjectManager::FindQuadTree<CStageQuadTree>();
 
     // スタートノードをOpenリストに追加
-    const Vec2IntKey startKey = ToKey(start);
+    const Vec2Int startKey = ToKey(start);
     gScore[startKey] = 0;
     const float startH = heuristic(start, goal);
     open.push({start, 0, startH, startH});
-    const Vec2IntKey goalKey = ToKey(goal);
+    const Vec2Int goalKey = ToKey(goal);
 
     // 8方向への移動ベクター（上下左右 + 斜め4方向）//
     const std::array<VECTOR2, 8> DIRS = {
@@ -76,7 +76,7 @@ std::vector<VECTOR2> CAStarPathFinder::SearchRoute(VECTOR2 start, VECTOR2 goal)
         AStarNode cur = open.top();
         open.pop();
 
-        const Vec2IntKey curKey = ToKey(cur.pos);
+        const Vec2Int curKey = ToKey(cur.pos);
 
         // staleなエントリをスキップ
         // 同一ノードが複数回Openに積まれることがあるため、
@@ -99,7 +99,7 @@ std::vector<VECTOR2> CAStarPathFinder::SearchRoute(VECTOR2 start, VECTOR2 goal)
         for (auto& d : DIRS)
         {
             const VECTOR2 next = {cur.pos.x + d.x, cur.pos.y + d.y};
-            const Vec2IntKey nextKey = ToKey(next);
+            const Vec2Int nextKey = ToKey(next);
 
             // 障害物があるセルはスキップ（ゴール自体は障害物判定から除外）//
             if (nextKey != goalKey && HasObstacle(next, pQuadTree)) continue;
@@ -137,7 +137,7 @@ VECTOR2 CAStarPathFinder::Snap(const VECTOR2& pos) const
     };
 }
 
-Vec2IntKey CAStarPathFinder::ToKey(const VECTOR2& pos) const
+Vec2Int CAStarPathFinder::ToKey(const VECTOR2& pos) const
 {
     // ワールド座標をグリッド整数インデックスに変換する//
     // roundで浮動小数点誤差による不一致を防ぐ//
@@ -161,8 +161,8 @@ bool CAStarPathFinder::HasObstacle(const VECTOR2& pos, const CStageQuadTree* pQu
 }
 
 std::vector<VECTOR2> CAStarPathFinder::ReconstructPath(
-    const VECTOR2& effectiveGoal,const VECTOR2& start,const Vec2IntKey& startKey,
-    const std::unordered_map<Vec2IntKey, VECTOR2, Vec2IntKeyHash>& cameFrom) const
+    const VECTOR2& effectiveGoal,const VECTOR2& start,const Vec2Int& startKey,
+    const std::unordered_map<Vec2Int, VECTOR2, Vec2IntKeyHash>& cameFrom) const
 {
     std::vector<VECTOR2> path;
     VECTOR2 c = effectiveGoal;
@@ -180,7 +180,7 @@ std::vector<VECTOR2> CAStarPathFinder::ReconstructPath(
         }
 
         path.push_back(c);
-        const Vec2IntKey cKey = ToKey(c);
+        const Vec2Int cKey = ToKey(c);
 
         // 対応する親ノードが存在しない場合は空のベクターを返す//
         if (!cameFrom.contains(cKey))

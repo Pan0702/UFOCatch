@@ -192,6 +192,7 @@ struct VECTOR2 : public XMFLOAT2
     inline bool operator != (const VECTOR2& r) const { return x != r.x || y != r.y; }
     inline VECTOR2 operator +(const VECTOR2& r) const { return VECTOR2(x + r.x, y + r.y); }
     inline VECTOR2 operator -(const VECTOR2& r) const { return VECTOR2(x - r.x, y - r.y); }
+    inline VECTOR2 operator -(const float& r) const { return VECTOR2(x - r, y - r); }
     inline VECTOR2 operator +=(const VECTOR2& r) {
        x += r.x, y += r.y;
        return *this;

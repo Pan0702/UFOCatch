@@ -18,16 +18,16 @@ struct AStarNode
 };
 
 /// @brief VECTOR2をハッシュマップのキーに使うためのグリッド座標キー//
-struct Vec2IntKey
+struct Vec2Int
 {
     int x, y;
-    bool operator==(const Vec2IntKey& o) const { return x == o.x && y == o.y; }
+    bool operator==(const Vec2Int& o) const { return x == o.x && y == o.y; }
 };
 
 /// @brief Vec2IntKey 用のハッシュ関数
 struct Vec2IntKeyHash
 {
-    size_t operator()(const Vec2IntKey& k) const
+    size_t operator()(const Vec2Int& k) const
     {
         return std::hash<long long>()(static_cast<long long>(k.x) << 32 | static_cast<unsigned int>(k.y));
     }
@@ -66,7 +66,7 @@ private:
     /// @brief ワールド座標をグリッド整数キーに変換する
     /// @param pos ワールド座標
     /// @return グリッドキー
-    Vec2IntKey ToKey(const VECTOR2& pos) const;
+    Vec2Int ToKey(const VECTOR2& pos) const;
 
     /// @brief 指定セルが障害物と重なっているか判定する
     /// @param pos        判定するセルのワールド座標（中心）
@@ -83,8 +83,8 @@ private:
     std::vector<VECTOR2> ReconstructPath(
         const VECTOR2& effectiveGoal,
         const VECTOR2& start,
-        const Vec2IntKey& startKey,
-        const std::unordered_map<Vec2IntKey, VECTOR2, Vec2IntKeyHash>& cameFrom) const;
+        const Vec2Int& startKey,
+        const std::unordered_map<Vec2Int, VECTOR2, Vec2IntKeyHash>& cameFrom) const;
 
 private:
     float m_cellSize = 0;    //!< グリッド1セルのサイズ//
