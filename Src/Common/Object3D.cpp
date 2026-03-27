@@ -1,7 +1,6 @@
 ﻿#include "Object3D.h"
 #include "../Utils/MeshCollider.h"
 #include "../Utils/Animator.h"
-
 Object3D::Object3D()
 {
 	m_pAnimator = nullptr;

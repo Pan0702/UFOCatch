@@ -6,10 +6,11 @@
 #include "../MapEditor/Import.h"
 #include "../Framework/ResourceManager.h"
 #include "../Utils/MyLib.h"
+using namespace Constants;
 CStageFactor::CStageFactor()
 {
-    Instantiate<CGround>("data/Ground/Prefabs/MapPlane001.mesh",VECTOR3(5.0f,3.0f,5.0f));
-    Instantiate<CCubeBox>("data/Ground/CubeBoxSky.mesh");
+    Instantiate<CGround>(Model::GROUND,VECTOR3(5.0f,3.0f,5.0f));
+    Instantiate<CCubeBox>(Model::BACK_DROP);
    // new CStageObject("data/Ground/Prefabs/Tree1a.mesh",VECTOR3(1.0f,0.0f,1.0f),2);
     
 }
@@ -28,16 +29,7 @@ void CStageFactor::SpawnObjects(const std::string& path,const VECTOR2& size, int
 {
     if (MyLib::IsSameFormat(path,"json"))
     {
-        for (int i = 0; i < num; ++i)
-        {
-            float randomX = Randomf(-size.x, size.x);
-            float randomZ = Randomf(-size.y, size.y);
-            Instantiate< CStageObject>("data/Ground/Prefabs/Tree1a.mesh",VECTOR3(randomX,0.0f,randomZ),true);
-        }
-    }
-    else
-    {
-            std::vector<Info> vector = Import::ImportFromFile(path);
+        std::vector<Info> vector = Import::StageInfo(path);
         for (auto v : vector)
         {
             // モデルが未ロードの場合、自動的にロードする。
@@ -45,7 +37,16 @@ void CStageFactor::SpawnObjects(const std::string& path,const VECTOR2& size, int
             {
                 ResourceManager::LoadFbx(v.modelName.c_str(), v.modelPath.c_str());
             }
-            Instantiate<CStageObject>(path.c_str(),v.transform,true);
+            Instantiate<CStageObject>(v.modelPath.c_str(),v.transform,true);
+        }
+    }else
+    {
+        for (int i = 0; i < num; ++i)
+        {
+            float randomX = Randomf(-size.x, size.x);
+            float randomZ = Randomf(-size.y, size.y);
+            Instantiate< CStageObject>("data/Ground/Prefabs/Tree1a.mesh",VECTOR3(randomX,0.0f,randomZ),true);
         }
     }
+
 }

@@ -44,7 +44,7 @@ public:
         const VECTOR2& pos, const VECTOR2& size) const;
 
     // 蜷・け繝ｩ繧ｹ縺ｸ縺ｮ逶ｴ謗･繧｢繧ｯ繧ｻ繧ｹ・亥ｿ・ｦ√↓蠢懊§縺ｦ・・
-    CModelRegistry* GetModelRegistry() const { return m_pModelRegistry.get(); }
+    CModelRegistry* GetModelRegistry() const { return m_pModelRegistry; }
     CEnemyQuadTree* GetQuadTreeIndex() const { return m_pQuadTreeIndex; }
     CStageQuadTree* GetStaticQuadTreeIndex() const { return m_pStaticQuadTreeIndex; }
 
@@ -54,8 +54,8 @@ public:
 private:
     void Update() override;
 
-    std::unique_ptr<CModelRegistry> m_pModelRegistry;
-   CEnemyQuadTree* m_pQuadTreeIndex;
+    CModelRegistry* m_pModelRegistry;
+    CEnemyQuadTree* m_pQuadTreeIndex;
     CStageQuadTree* m_pStaticQuadTreeIndex;
     std::vector<CEnemyBase*> m_enemies;
 

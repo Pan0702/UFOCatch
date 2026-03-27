@@ -14,14 +14,13 @@ namespace
 CEnemyManager::CEnemyManager()
     : m_pMesh(nullptr)
     , m_pMeshCol(nullptr)
-    , m_pModelRegistry(std::make_unique<CModelRegistry>())
     , m_pQuadTreeIndex(InstanceQTree<CEnemyQuadTree>())
     , m_pStaticQuadTreeIndex(InstanceQTree<CStageQuadTree>())
     , m_pPlayer(nullptr)
 {
     ObjectManager::DontDestroy(this);
     ObjectManager::SetVisible(this, false);
-    
+    m_pModelRegistry = ObjectManager::FindGameObject<CModelRegistry>();
 }
 
 CEnemyManager::~CEnemyManager()

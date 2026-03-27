@@ -2,6 +2,8 @@
 #include <string>
 #include <list>
 
+#include "../../Common/Object3D.h"
+
 class CFbxMesh;
 
 // 繧｢繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ繧ｿ繧､繝・
@@ -14,7 +16,7 @@ enum AnimationType
 };
 
 // 繝｢繝・Ν逋ｻ骭ｲ繝ｻ蜿門ｾ励け繝ｩ繧ｹ
-class CModelRegistry
+class CModelRegistry : public Object3D
 {
 public:
     CModelRegistry();

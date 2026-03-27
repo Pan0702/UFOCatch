@@ -2,6 +2,7 @@
 
 #include "../../System/GameInstance.h"
 #include "../Base/EnemyBase.h"
+#include "../System/EnemyManager.h"
 #include "../Human/Human.h"
 #include "../AnimalSheep/Sheep.h"
 #include "../System/Flog.h"

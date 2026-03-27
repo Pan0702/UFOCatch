@@ -442,3 +442,16 @@ inline VECTOR2 ToVec2XZ(const VECTOR3& pos)
 {
     return VECTOR2(pos.x, pos.z);
 }
+
+inline int Clamp(int num, int max)
+{
+   if ( num > max )
+   {
+      return max;
+   }
+   if (num < 0)
+   {
+      return 0;
+   }
+   return num;
+}

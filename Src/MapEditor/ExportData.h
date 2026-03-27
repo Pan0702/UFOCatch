@@ -22,8 +22,12 @@ namespace ExportData
      nlohmann::json TransformToJson(const std::string& modelName, const Transform& transform);
 
     /// <summary>ステージ上の全オブジェクトをJSON配列にシリアライズしてファイルに書き出す</summary>
-    /// <param name="file_name">出力ファイル名（拡張子なし）</param>
+    /// <param name="fileName">出力ファイル名（拡張子なし）</param>
     /// <param name="modelList">エクスポートするオブジェクトのリスト</param>
-     void ExportAllModels(const std::string& file_name, const std::vector<StageDataInfo>& modelList);
+     void AllModelsInfo(const std::string& fileName, const std::vector<StageDataInfo>& modelList);
+    
+    ///<summary>ステージ上の全オブジェクトのパスをJSON配列にシリアライズしてファイルに書き出す</summary>
+    ///<param name="fileName">出力ファイル名（拡張子なし）</param>
+    void AllModelsPath(const std::string& fileName);
 };
 

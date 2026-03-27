@@ -1,4 +1,5 @@
 ﻿#include "StateBase.h"
+#include "EnemyBase.h"
 #include "../../Utils/MyMath.h"
 #include "../Component/Suction.h"
 # define STR(var) #var

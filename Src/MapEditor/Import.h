@@ -16,5 +16,11 @@ namespace Import
     /// 未ロードのモデルは自動的にロードしてボタンにも追加する。
     /// </summary>
     /// <param name="path">インポートするJSONファイルのパス</param>
-    std::vector<Info> ImportFromFile(const std::string& path);
+    std::vector<Info> StageInfo(const std::string& path);
+    
+    ///<summary>JSONファイルからモデルのパスを読み込む</summary>
+    ///<param name="path">インポートするJSONファイルのパス</param>
+    std::vector<std::string> ModelPath(const std::string& path);
+    
+    
 };

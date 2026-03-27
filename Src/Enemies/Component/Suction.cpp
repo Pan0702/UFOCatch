@@ -1,5 +1,7 @@
 ﻿#include "Suction.h"
 #include "../Base/EnemyBase.h"
+#include "../../Player/Player.h"
+#include "../System/EnemyManager.h"
 
 
 CSuction::CSuction(CEnemyBase* e)

@@ -1,4 +1,5 @@
 ﻿#include "Idle.h"
+#include "../../Player/Player.h"
 
 #include "../Human/Human.h"
 #include "../System/EnemyManager.h"

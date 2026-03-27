@@ -1,5 +1,7 @@
 ﻿#include "Destroy.h"
+#include "../Base/EnemyBase.h"
 #include "../../System/GameInstance.h"
+#include "../../Player/PlayerLevel.h"
 CDestroy::CDestroy(CEnemyBase* e,int score,float exp)
     :m_score(score),m_exp(exp)
 {

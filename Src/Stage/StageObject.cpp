@@ -36,8 +36,6 @@ CStageObject::CStageObject(const char* name, const Transform& t, bool useOBB)
     if (m_pMesh == nullptr)assert(false);
     
     MakeOBB();
-    
-    m_pMesh = ResourceManager::LoadFbx(name);
     transform = t;
 }
 

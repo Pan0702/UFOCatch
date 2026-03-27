@@ -12,7 +12,8 @@
 #include "../System/VisionSystem.h"
 #include "../Stage/StageFactor.h"
 #include "../System/Timer.h"
-
+using namespace Constants;
+   
 PlayScene::PlayScene()
 {
     Instantiate<CStageFactor>()->SpawnObjects(30, 30,90);
@@ -25,37 +26,25 @@ PlayScene::PlayScene()
     Instantiate<CVisionSystem>();
     Instantiate<CDisplayInfo>();
     CGameInstance::Get()->Init(3000 );
-    AudioManager::Load(_T("Play"), _T("data/Sound/yukai.wav"));
-    AudioManager::Play(_T("Play"));
+    AudioManager::Load(_T(Sound::Key::PLAY_BGM), _T(Sound::Path::PLAY_BGM));
+    AudioManager::Play(_T(Sound::Key::PLAY_BGM));
 }
 
 PlayScene::~PlayScene()
 {
-    AudioManager::Stop(_T("Play"));
+    AudioManager::Stop(_T(Sound::Key::PLAY_BGM));
 }
 
 void PlayScene::Update()
 {
-    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_T))
-    {
-        SceneManager::ChangeScene("TitleScene");
-    }
-    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_1))
-    {
-        SceneManager::ChangeScene("ResultScene");
-    }
-    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_2))
-    {
-        SceneManager::ChangeScene("SelectScene");
-    }
 }
 
 void PlayScene::Draw()
 {
-    GameDevice()->m_pFont->Draw(
-        20, 20, "PlayScene", 16, RGB(255, 255, 0));
+#ifdef _DEBUG 
     //Debug
     QTreeDebug();
+#endif _DEBUG
 }
 
 ////////////////////
@@ -63,8 +52,7 @@ void PlayScene::Draw()
 ////////////////////
 void PlayScene::ChangeResultScene()
 {
-    SceneManager::ChangeSceneWithTransition("ResultScene");
-    m_pBGM->Stop();
+    SceneManager::ChangeSceneWithTransition(SceneName::RESULT);
 }
 //4分木の統計情報Debug
 void PlayScene::QTreeDebug()

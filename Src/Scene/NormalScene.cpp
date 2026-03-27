@@ -11,13 +11,12 @@
 #include "../System/VisionSystem.h"
 #include "../Stage/StageFactor.h"
 #include "../System/Timer.h"
+using namespace Constants;
 CNormalScene::CNormalScene()
 {
-    Instantiate<CStageFactor>();
-    ObjectManager::FindGameObject<CStageFactor>()->SpawnObjects(40, 40,90);
+    Instantiate<CStageFactor>()->SpawnObjects(40, 40,90);
     Instantiate<CPlayerCamera>();
-    SingleInstantiate<CEnemyManager>();
-    ObjectManager::FindGameObject<CEnemyManager>()->BuildStaticTree();
+    SingleInstantiate<CEnemyManager>()->BuildStaticTree();
     Instantiate<CTimer>(70);
     Instantiate<CPlayer>(45);             
     Instantiate<CAnimalFactor>(30,30,1);
@@ -25,29 +24,18 @@ CNormalScene::CNormalScene()
     Instantiate<CVisionSystem>();
     Instantiate<CDisplayInfo>();
      CGameInstance::Get()->Init(6000 );
-
-  AudioManager::Play(_T("Play"));
+    AudioManager::Load(Sound::Path::PLAY_BGM,_T(Sound::Key::PLAY_BGM));
+    AudioManager::Play(_T(Sound::Key::PLAY_BGM));
 }
 
 CNormalScene::~CNormalScene()
 {
-    AudioManager::Stop(_T("Play"));
+    AudioManager::Stop(_T(Sound::Key::PLAY_BGM));
 }
 
 void CNormalScene::Update()
 {
-    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_T))
-    {
-        SceneManager::ChangeScene("TitleScene");
-    }
-    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_1))
-    {
-        SceneManager::ChangeScene("ResultScene");
-    }
-    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_2))
-    {
-        SceneManager::ChangeScene("SelectScene");
-    }
+
 }
 
 void CNormalScene::Draw()

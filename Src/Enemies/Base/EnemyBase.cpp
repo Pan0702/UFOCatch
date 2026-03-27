@@ -1,5 +1,6 @@
 ﻿#define NOMINMAX
 #include "EnemyBase.h"
+#include "../../Player/Player.h"
 #include "../../Stage/Ground.h"
 #include "../../Stage/StageObject.h"
 #include "../System/EnemyManager.h"

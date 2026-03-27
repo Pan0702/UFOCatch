@@ -2,11 +2,16 @@
 #include "../Core/Game/GameMain.h"
 #include "../Framework/AudioManager.h"
 #include "../Enemies/System/EnemyManager.h"
-
+#include "../Framework/ResourceManager.h"
+#include "../MapEditor/Import.h"
+using namespace Constants;
 TitleScene::TitleScene()
 {
-    // PlayScene逕ｨ繝｢繝・Ν繧定ｵｷ蜍墓凾縺ｫ蜈郁ｪｭ縺ｿ縺励※縺翫￥
-    SingleInstantiate<CEnemyManager>();
+    //PlayScene用モデルを起動時に先読みしておく
+    SingleInstantiate<CModelRegistry>();
+
+    std::vector<std::string> modelNames = Import::ModelPath(FileName::MODEL_LIST);
+    ResourceManager::LoadFbx(modelNames);
 
     m_imageInfos.push_back(ImageInfo(
         VECTOR2(42, 301),
@@ -26,10 +31,10 @@ TitleScene::TitleScene()
     m_text.push_back("SelectScene");
     m_text.push_back("OI");
     m_selectedIndex = 0;
-    AudioManager::Load("TitleBGM",_T("data/Sound/Sunny_day.wav"));
-    AudioManager::Play(_T("TitleBGM"), true);
-    AudioManager::Load("Decide",_T("data/Sound/decide.wav"));
-    AudioManager::Load("Select",_T("data/Sound/select_002.wav"));
+    AudioManager::Load(Sound::Key::TITLE_BGM,_T(Sound::Path::TITLE_BGM));
+    AudioManager::Play(_T(Sound::Key::TITLE_BGM), true);
+    AudioManager::Load(Sound::Key::DECIDE_SE,_T(Sound::Path::DECIDE_SE));
+    AudioManager::Load(Sound::Key::SELECT_SE,_T(Sound::Path::SELECT_SE));
 }
 
 TitleScene::~TitleScene()
@@ -39,7 +44,7 @@ TitleScene::~TitleScene()
         SAFE_DELETE(info.pImage);
         info.pImage = nullptr;
     }
-    AudioManager::Stop(_T("TitleBGM"));
+    AudioManager::Stop(_T(Sound::Key::DECIDE_SE));
 }
 
 void TitleScene::Update()
@@ -50,13 +55,13 @@ void TitleScene::Update()
     {
         newIndex  = (m_selectedIndex - 1 + 2) % 2;
         direction = -1;
-        AudioManager::Play(_T("Select"), false);
+        AudioManager::Play(_T(Sound::Key::SELECT_SE), false);
     }
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_S))
     {
         newIndex  = (m_selectedIndex + 1) % 2;
         direction = 1;
-        AudioManager::Play(_T("Select"), false);
+        AudioManager::Play(_T(Sound::Key::SELECT_SE), false);
     }
     if (newIndex != m_selectedIndex)
     {
@@ -68,29 +73,8 @@ void TitleScene::Update()
 
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_RETURN))
     {
-        AudioManager::Play(_T("Decide"), false);
+        AudioManager::Play(_T(Sound::Key::DECIDE_SE), false);
         SceneManager::ChangeSceneWithTransition(m_text[m_selectedIndex].c_str());
-    }
-    //Debug
-    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_1))
-    {
-        SceneManager::ChangeSceneWithTransition("ResultScene");
-    }
-    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_2))
-    {
-        SceneManager::ChangeSceneWithTransition("SelectScene");
-    }
-    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_3))
-    {
-        SceneManager::ChangeSceneWithTransition("TutorialScene");
-    }
-    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_0))
-    {
-        SceneManager::ChangeSceneWithTransition("Debug");
-    }
-    if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_4))
-    {
-        SceneManager::ChangeSceneWithTransition("PlayScene");
     }
 }
 

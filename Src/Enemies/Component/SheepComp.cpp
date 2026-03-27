@@ -1,5 +1,6 @@
 ﻿#include "SheepComp.h"
 #include "../System/Flog.h"
+#include "../System/EnemyManager.h"
 CHerded::CHerded(CSheep* sheep)
     : m_wanderTimer(0.0f), m_walkTimer(0.0f), m_walkDuration(0.0f), m_currentRotation(0.0f)
 {

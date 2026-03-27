@@ -1,9 +1,6 @@
 ﻿#include "Sheep.h"
 
-#include "../Component/Destroy.h"
-#include "../Component/Idle.h"
-#include "../Component/Suction.h"
-#include "../Component/Walk.h"
+#include "../Component/ComponentFwd.h"
 #include "../../Common/ShadowObject.h"
 
 CSheep::CSheep(const VECTOR3& iniPos)

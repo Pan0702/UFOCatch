@@ -5,9 +5,12 @@
 #include "sceneManager.h"
 #include "sceneBase.h"
 #include "SceneFactory.h"
+#include "../Common/Constants.h"
+#include "../MapEditor/ExportData.h"
+#include "../MapEditor/Import.h"
 #include "../Utils/ScreenTransition.h"
 
-
+using namespace Constants;
 namespace
 {
     std::string currentName;
@@ -47,9 +50,9 @@ namespace
         if (recCount >= REC_SIZE)
         {
             float sum = 0;
-            for (int i = 0; i < REC_SIZE; i++)
+            for (float i : record)
             {
-                sum += record[i];
+                sum += i;
             }
             sum /= REC_SIZE;
             t2 = (std::min)(t2, sum * 3.0f);
@@ -88,6 +91,10 @@ void SceneManager::Update()
     {
         if (currentScene != nullptr)
         {
+            if (currentName == SceneName::EDITOR)                                
+            {   
+                ExportData::AllModelsPath(FileName::MODEL_LIST);
+            }
             currentScene.reset();
         }
         currentName = nextName;
@@ -192,12 +199,13 @@ void SceneManager::DebugInput()
 
 void SceneManager::DebugSceneInit()
 {
-    sceneTable.emplace(DIK_1, "TitleScene");
-    sceneTable.emplace(DIK_2, "SelectScene");
-    sceneTable.emplace(DIK_3, "Easy");
-    sceneTable.emplace(DIK_4, "Normal");
-    sceneTable.emplace(DIK_5, "ResultScene");
-    sceneTable.emplace(DIK_6, "Tutorial");
-    sceneTable.emplace(DIK_7, "OI");
-    sceneTable.emplace(DIK_8, "Editor");
+  
+    sceneTable.emplace(DIK_1, SceneName::TITLE);
+    sceneTable.emplace(DIK_2, SceneName::SELECT);
+    sceneTable.emplace(DIK_3, SceneName::EASY);
+    sceneTable.emplace(DIK_4, SceneName::NORMAL);
+    sceneTable.emplace(DIK_5, SceneName::RESULT);
+    sceneTable.emplace(DIK_6, SceneName::TUTORIAL);
+    sceneTable.emplace(DIK_7, SceneName::OI);
+    sceneTable.emplace(DIK_8, SceneName::EDITOR);
 }

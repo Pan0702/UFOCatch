@@ -2,20 +2,11 @@
 
 #include <iostream>
 
-#include "../../Player/Player.h"
-#include "../../Stage/Ground.h"
-#include "../System/EnemyManager.h"
-#include "../Base/StateBase.h"
 #include "State/ChickenState.h"
-#include "../../Utils/BBox.h"
-#include "../Component/Idle.h"
-#include "../Component/Suction.h"
-#include "../Component/Walk.h"
-#include "../Component/Destroy.h"
+
 #include "../../Common/ShadowObject.h"
 #include "../Human/Human.h"
-
-class CHuman;
+#include "../Component/ComponentFwd.h"
 
 CAnimalChicken::CAnimalChicken(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos), m_areaSize(moveAreaSize)

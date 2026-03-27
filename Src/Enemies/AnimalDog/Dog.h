@@ -1,9 +1,9 @@
-﻿#pragma once
+﻿#include "../Component/ComponentBase.h"
+#pragma once
 
 #include "../../Common/Object3D.h"
 #include "../Base/EnemyBase.h"
 #include "../../Player/Player.h"
-#include "../Component/ComponentBase.h"
 
 
 class CCubeBase;

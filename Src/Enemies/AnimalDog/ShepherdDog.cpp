@@ -1,10 +1,8 @@
 ﻿#include "ShepherdDog.h"
 
-#include "../Component/Idle.h"
+#include "../Component/ComponentFwd.h"
 #include "../System/Flog.h"
 #include "../Component/SheperdDogComp.h"
-#include "../System/EnemyManager.h"
-#include "../Component/Walk.h"
 
 CAShepherdDog::CAShepherdDog()
 {

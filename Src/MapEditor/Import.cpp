@@ -10,7 +10,7 @@ using json = nlohmann::json;
 
 
 // JSONファイルを読み込み、記録されたモデルをステージに復元する
-std::vector<Info> Import::ImportFromFile(const std::string& path)
+std::vector<Info> Import::StageInfo(const std::string& path)
 {
     // ファイルを開く
     std::ifstream file(path);
@@ -45,4 +45,22 @@ std::vector<Info> Import::ImportFromFile(const std::string& path)
         infos.push_back(info);
     }
     return infos;
+}
+
+std::vector<std::string> Import::ModelPath(const std::string& path)
+{
+    std::vector<std::string> paths;
+    
+    std::ifstream file(path);
+    if (!file.is_open()) return {};
+    json root;
+    file >> root;
+    
+    for (const auto& item : root)
+    {
+        if (item.contains("path"))
+            paths.push_back(item["path"]);
+    }
+    
+    return paths;
 }

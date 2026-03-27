@@ -7,6 +7,8 @@
 #include "../../Stage/Ground.h"
 #include "../Component/ComponentBase.h"
 
+class CEnemyManager;
+
 class CEnemyBase : public Object3D
 {
 public:

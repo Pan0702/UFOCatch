@@ -11,6 +11,6 @@ public:
     /// @param path ファイルパス
     /// @param size オブジェクトのサイズ
     /// @param num 出現させるオブジェクトの数
-    void SpawnObjects(const std::string& path, const VECTOR2& size = VECTOR2(51.0f, 51.0f), int num = 90);
+    static void SpawnObjects(const std::string& path, const VECTOR2& size = VECTOR2(51.0f, 51.0f), int num = 90);
 };
 

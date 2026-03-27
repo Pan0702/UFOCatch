@@ -1,14 +1,6 @@
 ﻿#include "AnimalDubug.h"
 
-#include "../../Player/Player.h"
-#include "../../Stage/Ground.h"
-#include "../Base/StateBase.h"
-#include "../Component/Idle.h"
-#include "../Component/Suction.h"
-#include "../Component/Walk.h"
-#include "../Component/Destroy.h"
-#include "../System/EnemyManager.h"
-
+#include "../Component/ComponentFwd.h"
 CADebug::CADebug(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos)
 {

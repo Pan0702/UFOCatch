@@ -1,4 +1,6 @@
 ﻿#include "IdleHuman.h"
+#include "../System/EnemyManager.h"
+#include "../../Utils/Lerp.h"
 
 #include "../Human/Human.h"
 

@@ -4,7 +4,7 @@
 #include "../Utils/FbxMesh.h"
 #include "../Utils/MeshCollider.h"
 #include "../Utils/Animator.h"
-
+#include "Constants.h"
 class Transform {
 public:
 	VECTOR3 position;

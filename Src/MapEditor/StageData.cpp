@@ -40,7 +40,7 @@ void StageData::AddModelWithTransform(const std::string& modelName, const Transf
 // ステージデータをJSONファイルにエクスポートする
 void StageData::Export(const std::string& filename) const
 {
-    ExportData::ExportAllModels(filename, m_stageData);
+    ExportData::AllModelsInfo(filename, m_stageData);
 }
 
 

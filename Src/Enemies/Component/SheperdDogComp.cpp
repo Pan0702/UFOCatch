@@ -1,4 +1,5 @@
 ﻿#include "SheperdDogComp.h"
+#include "../System/EnemyManager.h"
 #include "../AnimalDog//ShepherdDog.h"  // パスは適宜修正してください
 #include "../System/Flog.h"
 

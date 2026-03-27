@@ -6,9 +6,7 @@
 #include "../System/EnemyManager.h"
 #include "../../Utils/BBox.h"
 #include "../../Stage/Ground.h"
-#include "../Component/Find.h"
-#include "../Component/IdleHuman.h"
-#include "../Component/Walk.h"
+#include "../Component/ComponentFwd.h"
 
 CHuman::CHuman(const VECTOR3& pos, const VECTOR2& areaSize)
     : m_AreaSize(areaSize)

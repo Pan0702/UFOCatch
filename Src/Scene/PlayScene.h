@@ -12,7 +12,6 @@ public:
 	// リザルトシーンへ遷移する //
 	void ChangeResultScene();
 private:
-	CXAudioSource* m_pBGM;
 	//4分木デバッグ
 	void QTreeDebug();
 	

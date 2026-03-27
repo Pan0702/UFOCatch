@@ -9,7 +9,7 @@
 #include "../Tutorial/Tutorial.h"
 #include "../Tutorial/TutorialDisplayInfo.h"
 #include "../System/GameInstance.h"
-
+using namespace Constants;
 CTutorialScene::CTutorialScene()
 {
     Instantiate<CStageFactor>();
@@ -21,10 +21,13 @@ CTutorialScene::CTutorialScene()
     Instantiate<CTutorial>();
     Instantiate<CTutorialDisplayInfo>();
     Instantiate<CDisplayInfo>();
-    AudioManager::Load(_T("Play"), _T("data/Sound/yukai.wav"));
-    AudioManager::Play(_T("Play"), true);
+    AudioManager::Load(_T(Sound::Key::PLAY_BGM), _T(Sound::Path::PLAY_BGM));
+    AudioManager::Play(_T(Sound::Key::PLAY_BGM), true);
     CGameInstance::Get()->Init(1000);
 }
 
-CTutorialScene::~CTutorialScene() = default;
+CTutorialScene::~CTutorialScene()
+{
+    AudioManager::Stop(_T(Sound::Key::PLAY_BGM));
+}
 

@@ -1,6 +1,8 @@
 ﻿#include "ExportData.h"
 #include <nlohmann/json.hpp>
 #include <fstream>
+
+#include "Import.h"
 #include "StageData.h"
 
 using json = nlohmann::json;
@@ -22,23 +24,43 @@ json ExportData::TransformToJson(const std::string& modelName, const Transform& 
 }
 
 // ステージ上の全オブジェクトをJSON配列にシリアライズしてファイルに書き出す
-void ExportData::ExportAllModels(const std::string& file_name,
-                                 const std::vector<StageDataInfo>& model_list)
+void ExportData::AllModelsInfo(const std::string& fileName,
+                                 const std::vector<StageDataInfo>& modelList)
 {
     json root = json::array();// 全体を配列として定義
 
-    for (const auto& item : model_list)
+    for (const auto& item : modelList)
     {
         root.push_back(TransformToJson(item.modelName, item.transform));
     }
     
-    std::ofstream file(file_name);
+    std::ofstream file(fileName);
     if (file.is_open())
     {
         // JSON ダンプ時のインデント幅（スペース数）
         constexpr int  kJsonIndent = 4;
         file << root.dump(kJsonIndent);// インデント付きで保存
     }
-    MessageBox(nullptr, _T("Export Success"), nullptr, MB_OK);
 }
+
+void ExportData::AllModelsPath(const std::string& fileName)
+{
+    json root = json::array();
+    std::vector<std::string> models = ResourceManager::GetAllModelPath();
+    for (auto model : models)
+    {  
+        json item;
+        item["path"] = model;
+        root.push_back(item);
+    }
+    
+    std::ofstream file(fileName);
+    if (file.is_open())
+    {
+        constexpr int kJsonIndent = 4;   
+        file << root.dump(kJsonIndent);
+    }
+}
+
+
 

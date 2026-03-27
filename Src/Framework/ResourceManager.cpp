@@ -20,18 +20,24 @@ void ResourceManager::Reset()
 
 void ResourceManager::LoadFbx(const char* name, const char* path)
 {
-    
+    for (auto& f : modelInfos)
+    {
+        if (f.name == name) return;
+    }
     ModelInfo m(name, path);
     m.mesh = std::make_unique<CFbxMesh>();
     m.coll = std::make_unique<MeshCollider>();
     m.mesh->Load(path);
     m.coll->MakeFromMesh(m.mesh.get());
-    for (auto& f : modelInfos)
-    {
-        if (f.name == name)return;
-    }
     modelInfos.push_back(m);
-    
+}
+
+void ResourceManager::LoadFbx(const std::vector<std::string>& paths)
+{
+    for (std::string path : paths)
+    {
+        LoadFbx(path.c_str());
+    }
 }
 
 CFbxMesh* ResourceManager::LoadFbx(const char* path)
@@ -39,7 +45,6 @@ CFbxMesh* ResourceManager::LoadFbx(const char* path)
     ModelInfo m(path);
     m.mesh = std::make_unique<CFbxMesh>();
     m.coll = std::make_unique<MeshCollider>();
-    m.mesh->Load(path);
     std::string n = MyLib::ChangePathToName(path);
     for (auto& f : modelInfos)
     {
@@ -48,6 +53,7 @@ CFbxMesh* ResourceManager::LoadFbx(const char* path)
             return f.mesh.get();
         }
     }
+    m.mesh->Load(path);
     m.name = n.c_str();
     modelInfos.push_back(m);
     return m.mesh.get();
@@ -89,6 +95,16 @@ const char* ResourceManager::GetPath(const char* name)
     }
     assert("ModelのPathが見つかりません");
     return nullptr;
+}
+
+std::vector<std::string> ResourceManager::GetAllModelPath()
+{
+    std::vector<std::string> paths;
+    for (auto& m : modelInfos)
+    {
+        paths.push_back(m.path);
+    }
+    return paths; 
 }
 
 

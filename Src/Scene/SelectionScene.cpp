@@ -1,4 +1,6 @@
 ﻿#include "SelectionScene.h"
+
+#include "../Common/Constants.h"
 #include "../Framework/AudioManager.h"
 #include "../Framework/GameObject.h"
 
@@ -6,7 +8,7 @@ namespace
 {
     constexpr int BUTTON_COUNT = 3;
 }
-
+using namespace Constants;
 CSelectionScene::CSelectionScene()
 {
     m_pImageBackGround = new CSpriteImage("data/Select/_0006_Base.png"); //("data/Select/Select.png");
@@ -14,8 +16,8 @@ CSelectionScene::CSelectionScene()
     InitButtons();
     InitScene();
     InitImage();
-    AudioManager::Load("Select",_T("data/Sound/himitu.wav"));
-    AudioManager::Play("Select");
+    AudioManager::Load(Sound::Key::SELECT_BGM,_T(Sound::Path::SELECT_BGM));
+    AudioManager::Play(Sound::Key::SELECT_BGM);
 }
 
 void CSelectionScene::InitButtons()
@@ -81,7 +83,7 @@ CSelectionScene::~CSelectionScene()
     {
         SAFE_DELETE(button.image);
     }
-    AudioManager::Stop(_T("Select"));
+    AudioManager::Stop(_T(Sound::Key::SELECT_BGM));
 }
 
 void CSelectionScene::Update()
@@ -89,7 +91,7 @@ void CSelectionScene::Update()
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_RETURN))
     {
         SceneManager::ChangeSceneWithTransition(m_sceneName[m_selectedIndex].c_str());
-        AudioManager::Play(_T("Decide"), false);
+        AudioManager::Play(_T(Sound::Key::DECIDE_SE), false);
     }
 
     PlayButton();
@@ -102,12 +104,12 @@ void CSelectionScene::PlayButton()
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_D))
     {
         m_play = (m_play + 1) % 2;
-        AudioManager::Play(_T("Select"), false);
+        AudioManager::Play(_T(Sound::Key::SELECT_SE), false);
     }
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_A))
     {
         m_play = (m_play - 1 + 2) % 2;
-        AudioManager::Play(_T("Select"), false);
+        AudioManager::Play(_T(Sound::Key::SELECT_SE), false);
     }
 }
 
@@ -120,13 +122,13 @@ void CSelectionScene::LevelButton()
     {
         newIndex  = (m_selectedIndex + 1) % BUTTON_COUNT;
         direction = 1;
-        AudioManager::Play(_T("Select"), false);
+        AudioManager::Play(_T(Sound::Key::SELECT_SE), false);
     }
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_W))
     {
         newIndex  = (m_selectedIndex - 1 + BUTTON_COUNT) % BUTTON_COUNT;
         direction = -1;
-        AudioManager::Play(_T("Select"), false);
+        AudioManager::Play(_T(Sound::Key::SELECT_SE), false);
     }
 
     if (newIndex != m_selectedIndex)

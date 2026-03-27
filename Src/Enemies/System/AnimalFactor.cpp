@@ -1,4 +1,5 @@
 ﻿#include "AnimalFactor.h"
+#include "../../Stage/StageQuadTree.h"
 #include "../AnimalChicken/Chicken.h"
 #include "../AnimalDog/Dog.h"
 #include "../Human/Human.h"

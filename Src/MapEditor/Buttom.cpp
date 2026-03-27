@@ -248,7 +248,7 @@ void Button::DrawSettingPanel()
             auto* stage_data = ObjectManager::FindGameObject<StageData>();
 
             auto* button = ObjectManager::FindGameObject<Button>();
-            std::vector<Info> vector = Import::ImportFromFile(path);
+            std::vector<Info> vector = Import::StageInfo(path);
             for (auto v : vector)
             {
                 // モデルが未ロードの場合、自動的にロードしてボタンにも追加する
