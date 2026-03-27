@@ -17,6 +17,9 @@ public:
     /// <param name="scale">オブジェクトのサイズ</param>
     /// <param name="useOBB">OBBを使用するか（デフォルト: true）</param>
     CStageObject(const char* name, const VECTOR3& pos = VECTOR3(0,0,0), float scale = 1.0f, bool useOBB = true);
+    CStageObject(const char* name, const Transform& t, bool useOBB);
+    
+    void MakeOBB();
     virtual ~CStageObject();
 
     void Update() override;
@@ -30,7 +33,7 @@ public:
     /// <param name="vHit">衝突位置（Out）</param>
     /// <param name="vNormal">衝突法線（Out）※XZ平面のみ</param>
     /// <returns>衝突していたらtrue</returns>
-    bool HitOBB(CBBox* other, VECTOR3* vHit = nullptr, VECTOR3* vNormal = nullptr);
+    bool HitOBB(CBBox* other, VECTOR3* vHit = nullptr, VECTOR3* vNormal = nullptr) const;
 
     /// <summary>
     /// OBBを取得

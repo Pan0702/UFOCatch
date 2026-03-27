@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include "DInput.h"
 
+#include <tchar.h>
+
 
 // ・ｽO・ｽ・ｽ・ｽ[・ｽo・ｽ・ｽ・ｽﾏ撰ｿｽ(・ｽR・ｽ[・ｽ・ｽ・ｽo・ｽb・ｽN・ｽﾖ撰ｿｽ・ｽ・ｽ・ｽg・ｽp・ｽ・ｽ・ｽ驍ｽ・ｽﾟ必・ｽv)
 static CDirectInput*    g_pDI = nullptr;

@@ -62,4 +62,8 @@ namespace SceneManager {
 	float DeltaTime();
     
 	void Exit();
+
+	void DebugInput();
+	
+	void DebugSceneInit();
 };

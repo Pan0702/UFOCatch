@@ -1,11 +1,12 @@
 ﻿#include <algorithm>
 #include <cassert>
-
+#include <Windows.h>
+#include <unordered_map>
 #include "sceneManager.h"
 #include "sceneBase.h"
 #include "SceneFactory.h"
 #include "../Utils/ScreenTransition.h"
-#include <Windows.h>
+
 
 namespace
 {
@@ -13,17 +14,18 @@ namespace
     std::string nextName;
     std::unique_ptr<SceneBase> currentScene;
     std::unique_ptr<SceneFactory> factory;
-
-    // 繝医Λ繝ｳ繧ｸ繧ｷ繝ｧ繝ｳ
+    std::unordered_map<BYTE,std::string> sceneTable; 
+    
+    // トランジション（画面遷移演出）
     std::unique_ptr<CScreenTransition> transition;
-    std::string pendingSceneName; // 繝医Λ繝ｳ繧ｸ繧ｷ繝ｧ繝ｳ荳ｭ縺ｮ谺｡縺ｮ繧ｷ繝ｼ繝ｳ蜷・
-    bool waitingForFadeIn = false; // FadeIn蠕・■迥ｶ諷・
+    std::string pendingSceneName; // トランジション中の次のシーン名
+    bool waitingForFadeIn = false; // フェードイン待ち状態
 
-    // DeltaTime逕ｨ
+    // DeltaTime（フレーム間経過時間）用
     LARGE_INTEGER freq;
     LARGE_INTEGER current;
     float deltaTime;
-     constexpr int REC_SIZE = 60;
+    constexpr int REC_SIZE = 60;
     float record[REC_SIZE];
     int recCount = 0;
 
@@ -40,7 +42,8 @@ namespace
         QueryPerformanceCounter(&current);
         float t = static_cast<float>(current.QuadPart - last.QuadPart) / freq.QuadPart;
         float t2 = t;
-        // deltaTime縺ｯ縲∝ｹｳ蝮・ヵ繝ｬ繝ｼ繝繝ｬ繝ｼ繝医・2蛟阪ｒ雜・∴縺ｪ縺・ｈ縺・↓縺吶ｋ
+        
+        // deltaTimeは、平均フレームレートの3倍を超えないように制限する（スパイク対策）
         if (recCount >= REC_SIZE)
         {
             float sum = 0;
@@ -65,17 +68,22 @@ void SceneManager::Start()
 
     factory =  std::make_unique<SceneFactory>();
     transition = std::make_unique<CScreenTransition>();
+    DebugSceneInit();
     currentScene = factory->CreateFirst();
 }
 
 void SceneManager::Update()
 {
     timeUpdate();
+#ifdef _DEBUG 
+    DebugInput();
+#endif _DEBUG 
 
-    // 繝医Λ繝ｳ繧ｸ繧ｷ繝ｧ繝ｳ譖ｴ譁ｰ
+    // トランジション更新
     if (transition)
         transition->Update(deltaTime);
 
+    // シーンの切り替え判定
     if (nextName != currentName)
     {
         if (currentScene != nullptr)
@@ -84,18 +92,20 @@ void SceneManager::Update()
         }
         currentName = nextName;
         currentScene = factory->Create(nextName);
-        // 繧ｷ繝ｼ繝ｳ逕滓・縺ｯ繝ｭ繝ｼ繝牙・逅・〒譎る俣縺後°縺九ｋ蝣ｴ蜷医′縺ゅｋ縲・
-        // 繝ｭ繝ｼ繝画凾髢薙ｒ谺｡繝輔Ξ繝ｼ繝縺ｮ deltaTime 縺ｫ蜷ｫ繧√↑縺・ｈ縺・ち繧､繝繧ｹ繧ｿ繝ｳ繝励ｒ繝ｪ繧ｻ繝・ヨ縺吶ｋ縲・
+
+        // シーン生成はロード処理で時間がかかる場合がある。
+        // ロード時間を次フレームの deltaTime に含めないようタイムスタンプをリセットする。
         QueryPerformanceCounter(&current);
     }
 
-    // 繧ｷ繝ｼ繝ｳ蛻・ｊ譖ｿ縺亥ｾ後↓FadeIn髢句ｧ・
+    // シーン切り替え後にFadeIn開始
     if (waitingForFadeIn && nextName == currentName)
     {
         waitingForFadeIn = false;
-        // 繧ｷ繝ｼ繝ｳ縺ｮ繝ｭ繝ｼ繝会ｼ・urrentScene縺ｮ逕滓・・峨′螳御ｺ・＠縺溽峩蠕後↓FadeIn繧帝幕蟋九☆繧・
+        // シーンのロード（currentSceneの生成）が完了した直後にFadeInを開始する
         transition->StartFadeIn();
     }
+
     if (currentScene != nullptr)
         currentScene->Update();
 }
@@ -108,7 +118,7 @@ void SceneManager::Draw()
 
 void SceneManager::DrawTransition()
 {
-    // 繝医Λ繝ｳ繧ｸ繧ｷ繝ｧ繝ｳ縺ｯ譛蜑埼擇縺ｫ謠冗判・・bjectManager::Draw()繧医ｊ蠕後↓蜻ｼ縺ｶ縺薙→・・
+    // トランジションは最前面に描画（ObjectManager::Draw()より後に呼ぶこと）
     if (transition)
         transition->Draw();
 }
@@ -128,7 +138,7 @@ SceneBase* SceneManager::CurrentScene()
     return currentScene.get();
 }
 
-static void SceneManager::SetCurrentScene(std::unique_ptr<SceneBase> scene)
+void SceneManager::SetCurrentScene(std::unique_ptr<SceneBase> scene)
 {
     currentScene = std::move(scene);
 }
@@ -141,12 +151,12 @@ void SceneManager::ChangeScene(const std::string& sceneName)
 void SceneManager::ChangeSceneWithTransition(const std::string& sceneName)
 {
     if (transition->IsTransitioning())
-        return; // 繝医Λ繝ｳ繧ｸ繧ｷ繝ｧ繝ｳ荳ｭ縺ｯ辟｡隕・
+        return; // トランジション中は入力を無視
 
     pendingSceneName = sceneName;
     transition->StartFadeOut([&]()
     {
-        // FadeOut螳御ｺ・凾縺ｫ繧ｷ繝ｼ繝ｳ蛻・ｊ譖ｿ縺・
+        // FadeOut完了時にシーン切り替えを実行
         nextName = pendingSceneName;
         waitingForFadeIn = true;
     });
@@ -162,9 +172,32 @@ float SceneManager::DeltaTime()
     return deltaTime;
 }
 
-
 void SceneManager::Exit()
 {
     PostQuitMessage(0);
 }
 
+void SceneManager::DebugInput()
+{
+    auto input = GameDevice()->m_pDI;
+    for (auto s : sceneTable)
+    {
+        if (input->CheckKey(KD_TRG, s.first))       
+        {
+            ChangeSceneWithTransition(s.second);    
+            return ;
+        }
+    }
+}
+
+void SceneManager::DebugSceneInit()
+{
+    sceneTable.emplace(DIK_1, "TitleScene");
+    sceneTable.emplace(DIK_2, "SelectScene");
+    sceneTable.emplace(DIK_3, "Easy");
+    sceneTable.emplace(DIK_4, "Normal");
+    sceneTable.emplace(DIK_5, "ResultScene");
+    sceneTable.emplace(DIK_6, "Tutorial");
+    sceneTable.emplace(DIK_7, "OI");
+    sceneTable.emplace(DIK_8, "Editor");
+}

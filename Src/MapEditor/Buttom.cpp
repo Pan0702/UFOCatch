@@ -28,9 +28,6 @@ Button::~Button()
     ReleaseModelPreviews();
 }
 
-void Button::Update()
-{
-}
 
 // 指定IDのボタンをリストに追加する。メッシュが渡された場合はプレビューテクスチャを生成する
 void Button::AddButton(const std::string& buttonId, CFbxMesh* pMesh, const ImVec2& size)
@@ -248,7 +245,20 @@ void Button::DrawSettingPanel()
         std::string path = Platform::OpenFileDialog(L"*.json");
         if (!path.empty())
         {
-            Import::ImportFromFile(path);
+            auto* stage_data = ObjectManager::FindGameObject<StageData>();
+
+            auto* button = ObjectManager::FindGameObject<Button>();
+            std::vector<Info> vector = Import::ImportFromFile(path);
+            for (auto v : vector)
+            {
+                // モデルが未ロードの場合、自動的にロードしてボタンにも追加する
+                if (ResourceManager::GetModel(v.modelName.c_str()) == nullptr)
+                {
+                    ResourceManager::LoadFbx(v.modelName.c_str(), v.modelPath.c_str());
+                    AddButton(v.modelName, ResourceManager::GetModel(v.modelName.c_str()));
+                }
+                stage_data->AddModelWithTransform(v.modelName, transform);
+            }
         }
     }
 }

@@ -18,6 +18,31 @@ CStageObject::CStageObject(const char* name, const VECTOR3& pos, float scale, bo
     // ResourceManagerからメッシュを取得（キャッシュされる）
     m_pMesh = ResourceManager::LoadFbx(name);
     if (m_pMesh == nullptr)assert(false);
+    
+    MakeOBB();
+    
+    // 初期位置
+    transform.position = pos;
+    transform.scale = VECTOR3(1.0f, 1.0f, 1.0f) * scale;
+}
+
+CStageObject::CStageObject(const char* name, const Transform& t, bool useOBB)
+{
+    m_bUseOBB = useOBB;
+    m_pOBB = nullptr;
+
+    // ResourceManagerからメッシュを取得（キャッシュされる）
+    m_pMesh = ResourceManager::LoadFbx(name);
+    if (m_pMesh == nullptr)assert(false);
+    
+    MakeOBB();
+    
+    m_pMesh = ResourceManager::LoadFbx(name);
+    transform = t;
+}
+
+void CStageObject::MakeOBB()
+{
     // OBBの作成
     if (m_bUseOBB)
     {
@@ -28,10 +53,6 @@ CStageObject::CStageObject(const char* name, const VECTOR3& pos, float scale, bo
         // OBBを作成
         m_pOBB = new CBBox(vMin, vMax);
     }
-    
-    // 初期位置
-    transform.position = pos;
-    transform.scale = VECTOR3(1.0f, 1.0f, 1.0f) * scale;
 }
 
 //------------------------------------------------------------------------
@@ -121,7 +142,7 @@ bool CStageObject::GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const
 // @param vNormal 衝突法線（Out）※XZ平面のみ（Y成分は0）
 // @return 衝突していたらtrue //
 ////////////////////
-bool CStageObject::HitOBB(CBBox* other, VECTOR3* vHit, VECTOR3* vNormal)
+bool CStageObject::HitOBB(CBBox* other, VECTOR3* vHit, VECTOR3* vNormal) const
 {
     if (!m_pOBB || !other || !m_bUseOBB)
     {

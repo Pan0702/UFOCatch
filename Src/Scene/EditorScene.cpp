@@ -5,7 +5,7 @@
 #include "../MapEditor/EditorUI.h"
 #include "../MapEditor/TRSObject/TRS.h"
 #include "../MapEditor/StageData.h"
-EditorScene::EditorScene()
+CEditorScene::CEditorScene()
 {
     Instantiate<StageData>();
     Instantiate<Button>();
@@ -15,6 +15,6 @@ EditorScene::EditorScene()
     Instantiate<BackGraund>();
 }
 
-EditorScene::~EditorScene()
+CEditorScene::~CEditorScene()
 {
 }

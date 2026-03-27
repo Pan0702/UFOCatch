@@ -22,12 +22,12 @@ private:
 
 private:
     void Update() override;
-    void Draw() override;
     void SpawnObject(int model, bool flag);
 
 public:
     RandomPlacer();
     ~RandomPlacer() = default;
+    void Draw() override;
     Transform* GetTransform();
 
     /// <summary>"Setting"ウィンドウのRandomPlacer部分を描画する（Begin/Endなし）</summary>

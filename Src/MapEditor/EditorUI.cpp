@@ -3,6 +3,11 @@
 #include "Controller.h"
 #include "TRSObject/TRS.h"
 
+namespace 
+{
+    constexpr float WINDOW_Y = 10.0f; 
+    constexpr float OFFSET_FROM_RIGHT = 320.0f;
+}
 EditorUI::EditorUI()
 {
     m_pButton     = ObjectManager::FindGameObject<Button>();

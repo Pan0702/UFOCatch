@@ -8,35 +8,24 @@
 
 using json = nlohmann::json;
 
+
 // JSONファイルを読み込み、記録されたモデルをステージに復元する
-void Import::ImportFromFile(const std::string& path)
+std::vector<Info> Import::ImportFromFile(const std::string& path)
 {
     // ファイルを開く
     std::ifstream file(path);
-    if (!file.is_open()) return;
+    if (!file.is_open()) return {};
 
     json root;
     file >> root;
 
-    auto* stage_data = ObjectManager::FindGameObject<StageData>();
-    auto* button     = ObjectManager::FindGameObject<Button>();
-
-    if (!stage_data ) return;
-
+    std::vector<Info> infos;
     for (const auto& item : root)
     {
-        std::string modelName = item["model_name"];
-        std::string modelPath = item["path"];
+        Info info{};
+        info.modelName = item["model_name"];
+        info.modelPath = item["path"];
 
-        // モデルが未ロードの場合、自動的にロードしてボタンにも追加する
-        if (ResourceManager::GetModel(modelName.c_str()) == nullptr)
-        {
-            ResourceManager::LoadFbx(modelName.c_str(), modelPath.c_str());
-            if (button)
-            {
-                button->AddButton(modelName, ResourceManager::GetModel(modelName.c_str()));
-            }
-        }
 
         // JSON から Transformを読み込む
         Transform transform;
@@ -52,7 +41,8 @@ void Import::ImportFromFile(const std::string& path)
             item["transform"]["scale"]["x"],
             item["transform"]["scale"]["y"],
             item["transform"]["scale"]["z"]);
-
-        stage_data->AddModelWithTransform(modelName, transform);
+        info.transform = transform;
+        infos.push_back(info);
     }
+    return infos;
 }
