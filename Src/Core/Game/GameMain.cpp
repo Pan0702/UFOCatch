@@ -1,7 +1,7 @@
-//=============================================================================
-//     3Dゲームプログラム                     ver 3.2        2023.1.31
+﻿//=============================================================================
+//     3D繧ｲ繝ｼ繝繝励Ο繧ｰ繝ｩ繝                     ver 3.2        2023.1.31
 //
-//     ゲームのメイン処理
+//     繧ｲ繝ｼ繝縺ｮ繝｡繧､繝ｳ蜃ｦ逅・
 //                                               GameMain.cpp
 //=============================================================================
 #include "GameMain.h"
@@ -15,48 +15,48 @@ namespace {
 
 // ============================================================================================
 //
-// CGameMain ゲームメインクラスの処理
+// CGameMain 繧ｲ繝ｼ繝繝｡繧､繝ｳ繧ｯ繝ｩ繧ｹ縺ｮ蜃ｦ逅・
 //
 // ============================================================================================
 //------------------------------------------------------------------------
 //
-//  CGameMain コンストラクタ  
+//  CGameMain 繧ｳ繝ｳ繧ｹ繝医Λ繧ｯ繧ｿ  
 //
-//  引数：なし
+//  蠑墓焚・壹↑縺・
 //
 //------------------------------------------------------------------------
 CGameMain::CGameMain(CMain* pMain)
 {
     gameMainInstance = this;
-    m_pMain = pMain;      // メインクラス（WindowsOS層）
+    m_pMain = pMain;      // 繝｡繧､繝ｳ繧ｯ繝ｩ繧ｹ・・indowsOS螻､・・
 
-    m_pD3D = nullptr;        // Direct3Dオブジェクト
-    m_pXAudio = nullptr;      // XAudio2オブジェクト
-    m_pDI = nullptr;         // DirectInputオブジェクト
-    m_pFont = nullptr;       // フォントテクスチャ
-    m_pShader = nullptr;      // シェーダー管理
-    m_pFbxMeshCtrl = nullptr;  // FBXメッシュコントロールクラス
+    m_pD3D = nullptr;        // Direct3D繧ｪ繝悶ず繧ｧ繧ｯ繝・
+    m_pXAudio = nullptr;      // XAudio2繧ｪ繝悶ず繧ｧ繧ｯ繝・
+    m_pDI = nullptr;         // DirectInput繧ｪ繝悶ず繧ｧ繧ｯ繝・
+    m_pFont = nullptr;       // 繝輔か繝ｳ繝医ユ繧ｯ繧ｹ繝√Ε
+    m_pShader = nullptr;      // 繧ｷ繧ｧ繝ｼ繝繝ｼ邂｡逅・
+    m_pFbxMeshCtrl = nullptr;  // FBX繝｡繝・す繝･繧ｳ繝ｳ繝医Ο繝ｼ繝ｫ繧ｯ繝ｩ繧ｹ
 
-    // カメラ・ライト・ビューの初期化
-    m_vEyePt = VECTOR3(0,0,0);    // カメラ（視点）位置
-    m_vLookatPt = VECTOR3(0,0,0);  // 注視点位置
-    m_mView = XMMatrixIdentity();  // ビュー行列
-    m_mProj = XMMatrixIdentity();  // プロジェクション行列
-    m_vLightDir = VECTOR3(0,0,0);  // ディレクショナルライトの方向
-    m_vLightIntensity = VECTOR4(1,1,1,1);  // ライトの強度(デフォルトは通常)
+    // 繧ｫ繝｡繝ｩ繝ｻ繝ｩ繧､繝医・繝薙Η繝ｼ縺ｮ蛻晄悄蛹・
+    m_vEyePt = VECTOR3(0,0,0);    // 繧ｫ繝｡繝ｩ・郁ｦ也せ・我ｽ咲ｽｮ
+    m_vLookatPt = VECTOR3(0,0,0);  // 豕ｨ隕也せ菴咲ｽｮ
+    m_mView = XMMatrixIdentity();  // 繝薙Η繝ｼ陦悟・
+    m_mProj = XMMatrixIdentity();  // 繝励Ο繧ｸ繧ｧ繧ｯ繧ｷ繝ｧ繝ｳ陦悟・
+    m_vLightDir = VECTOR3(0,0,0);  // 繝・ぅ繝ｬ繧ｯ繧ｷ繝ｧ繝翫Ν繝ｩ繧､繝医・譁ｹ蜷・
+    m_vLightIntensity = VECTOR4(1,1,1,1);  // 繝ｩ繧､繝医・蠑ｷ蠎ｦ(繝・ヵ繧ｩ繝ｫ繝医・騾壼ｸｸ)
 }
 //------------------------------------------------------------------------
 //
-//  CGameMain デストラクタ    
+//  CGameMain 繝・せ繝医Λ繧ｯ繧ｿ    
 //
 //------------------------------------------------------------------------
 CGameMain::~CGameMain()
 {
-    // 各マネージャーの解放処理
+    // 蜷・・繝阪・繧ｸ繝｣繝ｼ縺ｮ隗｣謾ｾ蜃ｦ逅・
     SceneManager::Release();
     ObjectManager::Release();
     ResourceManager::Reset();
-    MyImgui::ImguiQuit();          // -- 2020.11.15    // MyImguiの終了処理
+    MyImgui::ImguiQuit();          // -- 2020.11.15    // MyImgui縺ｮ邨ゆｺ・・逅・
 
     SAFE_DELETE(m_pFbxMeshCtrl);    // -- 2021.2.4
     SAFE_DELETE(m_pShader);
@@ -65,108 +65,108 @@ CGameMain::~CGameMain()
     SAFE_DELETE(m_pXAudio);
     SAFE_DELETE(m_pD3D);
 
-    CoUninitialize();   // COMライブラリの終了
+    CoUninitialize();   // COM繝ｩ繧､繝悶Λ繝ｪ縺ｮ邨ゆｺ・
 }
 
 //------------------------------------------------------------------------
 //
-//  アプリケーションの初期化処理    
+//  繧｢繝励Μ繧ｱ繝ｼ繧ｷ繝ｧ繝ｳ縺ｮ蛻晄悄蛹門・逅・   
 //
-//  引数：なし
+//  蠑墓焚・壹↑縺・
 //
-//  戻り値 HRESULT
-//     S_OK   = 成功
-//     E_FAIL = 異常
+//  謌ｻ繧雁､ HRESULT
+//     S_OK   = 謌仙粥
+//     E_FAIL = 逡ｰ蟶ｸ
 //
 //------------------------------------------------------------------------
 HRESULT CGameMain::Init()
 {
-    // COMライブラリの初期化
+    // COM繝ｩ繧､繝悶Λ繝ｪ縺ｮ蛻晄悄蛹・
     CoInitialize(nullptr);
 
-    // Direct3Dの初期化
+    // Direct3D縺ｮ蛻晄悄蛹・
     m_pD3D = new CDirect3D;
     if (FAILED(m_pD3D->InitD3D(m_pMain->m_hWnd, WINDOW_WIDTH, WINDOW_HEIGHT))) {
-       MessageBox(0, _T("Direct3Dの初期化に失敗しました"), nullptr, MB_OK);
+       MessageBox(0, _T("Direct3D縺ｮ蛻晄悄蛹悶↓螟ｱ謨励＠縺ｾ縺励◆"), nullptr, MB_OK);
        return E_FAIL;
     }
 
-    // シェーダーの初期化
+    // 繧ｷ繧ｧ繝ｼ繝繝ｼ縺ｮ蛻晄悄蛹・
     m_pShader = new CShader(m_pD3D);
     if (FAILED(m_pShader->InitShader())) {
-       MessageBox(0, _T("Shaderの生成・初期化に失敗しました"), nullptr, MB_OK);
+       MessageBox(0, _T("Shader縺ｮ逕滓・繝ｻ蛻晄悄蛹悶↓螟ｱ謨励＠縺ｾ縺励◆"), nullptr, MB_OK);
        return E_FAIL;
     }
 
-    // XAudio2（オーディオ）の初期化
+    // XAudio2・医が繝ｼ繝・ぅ繧ｪ・峨・蛻晄悄蛹・
     m_pXAudio = new CXAudio;
     if (FAILED(m_pXAudio->InitAudio(m_pMain->m_hWnd))) {
-       MessageBox(0, _T("XAudio2の初期化に失敗しました"), nullptr, MB_OK);
+       MessageBox(0, _T("XAudio2縺ｮ蛻晄悄蛹悶↓螟ｱ謨励＠縺ｾ縺励◆"), nullptr, MB_OK);
        return E_FAIL;
     }
 
-    // DirectInput（入力デバイス）の初期化
+    // DirectInput・亥・蜉帙ョ繝舌う繧ｹ・峨・蛻晄悄蛹・
     m_pDI = new CDirectInput;
     if (!(m_pDI->StartDirectInput(m_pMain->m_hInstance, m_pMain->m_hWnd, 
                     INIT_KEYBOARD | INIT_MOUSE | INIT_JOYSTICK, WINDOW_WIDTH, WINDOW_HEIGHT))) {
-       MessageBox(0, _T("DirectInputの初期化に失敗しました"), nullptr, MB_OK);
+       MessageBox(0, _T("DirectInput縺ｮ蛻晄悄蛹悶↓螟ｱ謨励＠縺ｾ縺励◆"), nullptr, MB_OK);
        return E_FAIL;
     }
 
-    // フォントテクスチャの初期化
+    // 繝輔か繝ｳ繝医ユ繧ｯ繧ｹ繝√Ε縺ｮ蛻晄悄蛹・
     m_pFont = new CFontTexture(m_pShader);
 
-    // MyImgui（デバッグUI）の初期化
+    // MyImgui・医ョ繝舌ャ繧ｰUI・峨・蛻晄悄蛹・
     MyImgui::ImguiInit(m_pMain->m_hWnd, m_pD3D, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    // FBXメッシュコントロールクラスの生成
+    // FBX繝｡繝・す繝･繧ｳ繝ｳ繝医Ο繝ｼ繝ｫ繧ｯ繝ｩ繧ｹ縺ｮ逕滓・
     m_pFbxMeshCtrl = new CFbxMeshCtrl(m_pShader);
 
     // ----------------------------------------------------------------------------------------
-    // 各種レンダリング変数の初期値設定
-    m_vLightDir = normalize( VECTOR3(0.8f, 1, -1) );  // ライト方向の初期値（正規化）
+    // 蜷・ｨｮ繝ｬ繝ｳ繝繝ｪ繝ｳ繧ｰ螟画焚縺ｮ蛻晄悄蛟､險ｭ螳・
+    m_vLightDir = normalize( VECTOR3(0.8f, 1, -1) );  // 繝ｩ繧､繝域婿蜷代・蛻晄悄蛟､・域ｭ｣隕丞喧・・
 
-    // プロジェクション行列（透視変換）の初期化
+    // 繝励Ο繧ｸ繧ｧ繧ｯ繧ｷ繝ｧ繝ｳ陦悟・・磯剰ｦ門､画鋤・峨・蛻晄悄蛹・
     m_mProj = XMMatrixPerspectiveFovLH(XMConvertToRadians(38.0f), (FLOAT)WINDOW_WIDTH / (FLOAT)WINDOW_HEIGHT, 0.1f, 1000.0);
 
-    // ビュー行列（視点変換）の初期化
-    VECTOR3 vUpVec(0.0f, 1.0f, 0.0f); // 上方向
+    // 繝薙Η繝ｼ陦悟・・郁ｦ也せ螟画鋤・峨・蛻晄悄蛹・
+    VECTOR3 vUpVec(0.0f, 1.0f, 0.0f); // 荳頑婿蜷・
     m_vEyePt = VECTOR3(0.0f, 4.0f, -5.0f);
     m_vLookatPt = VECTOR3(0.0f, 2.0f, 0.0f);
     m_mView = XMMatrixLookAtLH(m_vEyePt, m_vLookatPt, vUpVec);
 
-    // 各マネージャーの開始処理
+    // 蜷・・繝阪・繧ｸ繝｣繝ｼ縺ｮ髢句ｧ句・逅・
     SceneManager::Start();
     ObjectManager::Start();
 
-    // メイン制御：フレームレートの固定設定 (1/60s)
-    MainControl::UseFrameTimer(1.0f / 60.0f);
+    // 繝｡繧､繝ｳ蛻ｶ蠕｡・・
+    MainControl::UseRefreshMessage();
 
     return S_OK;
 }
 
 //------------------------------------------------------------------------
 //
-//  ゲームの更新処理（毎フレーム実行）  
+//  繧ｲ繝ｼ繝縺ｮ譖ｴ譁ｰ蜃ｦ逅・ｼ域ｯ弱ヵ繝ｬ繝ｼ繝螳溯｡鯉ｼ・ 
 //
 //------------------------------------------------------------------------
 void CGameMain::Update()
 {
-    MyImgui::ImguiNewFrame();   // ImGuiフレーム開始処理
+    MyImgui::ImguiNewFrame();   // ImGui繝輔Ξ繝ｼ繝髢句ｧ句・逅・
 
-    m_pDI->GetInput();          // 入力デバイス情報の取得
-    m_pFont->Refresh();         // 動的フォント管理の更新
+    m_pDI->GetInput();          // 蜈･蜉帙ョ繝舌う繧ｹ諠・ｱ縺ｮ蜿門ｾ・
+    m_pFont->Refresh();         // 蜍慕噪繝輔か繝ｳ繝育ｮ｡逅・・譖ｴ譁ｰ
 
-    // F4キーによる画面モード（ウィンドウ/フルスクリーン）切り替え
+    // F4繧ｭ繝ｼ縺ｫ繧医ｋ逕ｻ髱｢繝｢繝ｼ繝会ｼ医え繧｣繝ｳ繝峨え/繝輔Ν繧ｹ繧ｯ繝ｪ繝ｼ繝ｳ・牙・繧頑崛縺・
     if (m_pDI->CheckKey(KD_TRG, DIK_F4)) ChangeScreenMode();
 
-    SceneManager::Update();     // シーン遷移と現在のシーンの更新
-    ObjectManager::Update();    // 全ゲームオブジェクトの更新
+    SceneManager::Update();     // 繧ｷ繝ｼ繝ｳ驕ｷ遘ｻ縺ｨ迴ｾ蝨ｨ縺ｮ繧ｷ繝ｼ繝ｳ縺ｮ譖ｴ譁ｰ
+    ObjectManager::Update();    // 蜈ｨ繧ｲ繝ｼ繝繧ｪ繝悶ず繧ｧ繧ｯ繝医・譖ｴ譁ｰ
 }
 
 //------------------------------------------------------------------------
 //
-//  ゲームのメインロジック（自由記述用）
+//  繧ｲ繝ｼ繝縺ｮ繝｡繧､繝ｳ繝ｭ繧ｸ繝・け・郁・逕ｱ險倩ｿｰ逕ｨ・・
 //
 //------------------------------------------------------------------------
 void CGameMain::GameMain()
@@ -175,41 +175,41 @@ void CGameMain::GameMain()
 
 //------------------------------------------------------------------------
 //
-//  ゲームの描画処理（毎フレーム実行）  
+//  繧ｲ繝ｼ繝縺ｮ謠冗判蜃ｦ逅・ｼ域ｯ弱ヵ繝ｬ繝ｼ繝螳溯｡鯉ｼ・ 
 //
 //------------------------------------------------------------------------
 void CGameMain::Draw()
 {
-    // レンダーターゲットのクリア（黒色で塗りつぶし）
+    // 繝ｬ繝ｳ繝繝ｼ繧ｿ繝ｼ繧ｲ繝・ヨ縺ｮ繧ｯ繝ｪ繧｢・磯ｻ定牡縺ｧ蝪励ｊ縺､縺ｶ縺暦ｼ・
     float ClearColor[4] = { 0, 0, 0, 1 }; // RGBA
     m_pD3D->ClearRenderTarget(ClearColor);
 
-    // 各要素のレンダリング
-    SceneManager::Draw();           // 現在のシーンを描画
-    ObjectManager::Draw();          // 全オブジェクトを描画
-    SceneManager::DrawTransition(); // シーン切り替え時のフェード等を描画
+    // 蜷・ｦ∫ｴ縺ｮ繝ｬ繝ｳ繝繝ｪ繝ｳ繧ｰ
+    SceneManager::Draw();           // 迴ｾ蝨ｨ縺ｮ繧ｷ繝ｼ繝ｳ繧呈緒逕ｻ
+    ObjectManager::Draw();          // 蜈ｨ繧ｪ繝悶ず繧ｧ繧ｯ繝医ｒ謠冗判
+    SceneManager::DrawTransition(); // 繧ｷ繝ｼ繝ｳ蛻・ｊ譖ｿ縺域凾縺ｮ繝輔ぉ繝ｼ繝臥ｭ峨ｒ謠冗判
 
-    MyImgui::ImguiRender();         // ImGuiの描画実行
+    MyImgui::ImguiRender();         // ImGui縺ｮ謠冗判螳溯｡・
 
-    // バックバッファを画面に表示（フリップ）
-    m_pD3D->m_pSwapChain->Present(1, 0); // Vsync（垂直同期）を待つ
+    // 繝舌ャ繧ｯ繝舌ャ繝輔ぃ繧堤判髱｢縺ｫ陦ｨ遉ｺ・医ヵ繝ｪ繝・・・・
+    m_pD3D->m_pSwapChain->Present(1, 0); // Vsync・亥桙逶ｴ蜷梧悄・峨ｒ蠕・▽
 }
 
 //------------------------------------------------------------------------
 //
-//  アプリケーションの終了処理
+//  繧｢繝励Μ繧ｱ繝ｼ繧ｷ繝ｧ繝ｳ縺ｮ邨ゆｺ・・逅・
 //
 //------------------------------------------------------------------------
 void CGameMain::Quit()
 {
-    // 必要に応じて追加の終了処理を記述
+    // 蠢・ｦ√↓蠢懊§縺ｦ霑ｽ蜉縺ｮ邨ゆｺ・・逅・ｒ險倩ｿｰ
 }
 
 //------------------------------------------------------------------------
 //
-//  ウィンドウモードとフルスクリーンモードを切り替える処理    
+//  繧ｦ繧｣繝ｳ繝峨え繝｢繝ｼ繝峨→繝輔Ν繧ｹ繧ｯ繝ｪ繝ｼ繝ｳ繝｢繝ｼ繝峨ｒ蛻・ｊ譖ｿ縺医ｋ蜃ｦ逅・   
 //
-//  引数：nMode  0:ウィンドウ 1:フルスクリーン -1:トグル(反転)
+//  蠑墓焚・嗜Mode  0:繧ｦ繧｣繝ｳ繝峨え 1:繝輔Ν繧ｹ繧ｯ繝ｪ繝ｼ繝ｳ -1:繝医げ繝ｫ(蜿崎ｻ｢)
 //
 //------------------------------------------------------------------------
 HRESULT CGameMain::ChangeScreenMode(int nMode)
@@ -217,18 +217,18 @@ HRESULT CGameMain::ChangeScreenMode(int nMode)
     HRESULT Ret = S_OK;
     BOOL bFullScreen;
 
-    // 現在のスクリーンモードを取得
+    // 迴ｾ蝨ｨ縺ｮ繧ｹ繧ｯ繝ｪ繝ｼ繝ｳ繝｢繝ｼ繝峨ｒ蜿門ｾ・
     m_pD3D->m_pSwapChain->GetFullscreenState(&bFullScreen, nullptr);
 
     switch (nMode)
     {
-    case 0:    // ウィンドウモードへ
+    case 0:    // 繧ｦ繧｣繝ｳ繝峨え繝｢繝ｼ繝峨∈
        if( bFullScreen ) Ret = m_pD3D->m_pSwapChain->SetFullscreenState(false, nullptr);
        break;
-    case 1:    // フルスクリーンモードへ
+    case 1:    // 繝輔Ν繧ｹ繧ｯ繝ｪ繝ｼ繝ｳ繝｢繝ｼ繝峨∈
        if( !bFullScreen ) Ret = m_pD3D->m_pSwapChain->SetFullscreenState(true, nullptr);
        break; 
-    default:   // 現在の状態を反転
+    default:   // 迴ｾ蝨ｨ縺ｮ迥ｶ諷九ｒ蜿崎ｻ｢
        Ret = m_pD3D->m_pSwapChain->SetFullscreenState(!bFullScreen, nullptr);
     }
 
@@ -242,9 +242,9 @@ void CGameMain::SetWindowName(const char* name)
 
 //------------------------------------------------------------------------
 //
-//  ライトの強度を設定（RGBA）
+//  繝ｩ繧､繝医・蠑ｷ蠎ｦ繧定ｨｭ螳夲ｼ・GBA・・
 //
-//  引数：float r, g, b, a  (0.0f～1.0f)
+//  蠑墓焚・喃loat r, g, b, a  (0.0f・・.0f)
 //
 //------------------------------------------------------------------------
 void CGameMain::SetLightIntensity(float r, float g, float b, float a)
@@ -257,7 +257,7 @@ void CGameMain::SetLightIntensity(VECTOR4 intensity)
     m_vLightIntensity = intensity;
 }
 
-// デバイスアクセスのためのグローバルな取得関数
+// 繝・ヰ繧､繧ｹ繧｢繧ｯ繧ｻ繧ｹ縺ｮ縺溘ａ縺ｮ繧ｰ繝ｭ繝ｼ繝舌Ν縺ｪ蜿門ｾ鈴未謨ｰ
 CGameMain* GameDevice()
 {
     return gameMainInstance;

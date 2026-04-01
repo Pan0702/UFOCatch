@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../Framework/SceneBase.h"
 #include "../Utils/Sprite3D.h"
 
@@ -11,5 +11,6 @@ public:
 private:
     void Draw() override;
     void Update() override;
-    CSpriteImage* m_pSpriteImage;
+    std::unique_ptr<CSpriteImage> m_pSpriteImage;
 };
+

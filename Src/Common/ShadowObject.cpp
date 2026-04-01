@@ -1,4 +1,4 @@
-#include "ShadowObject.h"
+﻿#include "ShadowObject.h"
 #include "Object3D.h"
 #include "../Framework/ObjectManager.h"
 
@@ -70,3 +70,4 @@ void CShadowObject::Draw()
         CIRCLE_ALPHA
     );
 }
+

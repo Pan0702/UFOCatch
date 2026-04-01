@@ -1,9 +1,9 @@
+﻿#include "../Component/ComponentBase.h"
 #pragma once
 
 #include "../../Common/Object3D.h"
 #include "../Base/EnemyBase.h"
 #include "../../Player/Player.h"
-#include "../Component/ComponentBase.h"
 
 
 class CCubeBase;
@@ -15,7 +15,7 @@ public:
     ~CADog();
 
     ///
-    ///吸い込み範囲にオブジェクトがいて、吸い込みボタンが押されていたらStateをSuctionにかえる
+    ///蜷ｸ縺・ｾｼ縺ｿ遽・峇縺ｫ繧ｪ繝悶ず繧ｧ繧ｯ繝医′縺・※縲∝精縺・ｾｼ縺ｿ繝懊ち繝ｳ縺梧款縺輔ｌ縺ｦ縺・◆繧唄tate繧担uction縺ｫ縺九∴繧・
     ///
     // void IsSuctionCheck();
 
@@ -35,3 +35,4 @@ private:
     const VECTOR2 m_areaSize;
 
 };
+

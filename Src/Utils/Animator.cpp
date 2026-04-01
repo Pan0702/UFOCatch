@@ -74,16 +74,16 @@ void Animator::Play(int id, bool force)
 
 	const ANIMATION &info = base->m_Animation[id];
 	if (!info.used) {
-		MessageBox(nullptr, "Animator::Play()", _T("������ �A�j���[�V������Load����Ă��܂��� ������"), MB_OK);
+		MessageBox(nullptr, "Animator::Play()", _T("AnimationLoading"), MB_OK);
 	}
 	if (main.id == id && !Finished()) {
 		if (force) {
-			main.frame = info.startFrame;
+			main.frame = static_cast<float>(info.startFrame);
 		}
 	}
 	else {
 		main.id = id;
-		main.frame = info.startFrame;
+		main.frame = static_cast<float>(info.startFrame);
 	}
 }
 
@@ -157,3 +157,4 @@ bool Animator::HasAnimation(int id) const
 		return false;
 	return base->m_Animation[id].used;
 }
+

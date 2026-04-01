@@ -1,11 +1,11 @@
-#include "Ground.h"
+﻿#include "Ground.h"
 #define NOMINMAX
 #include <Windows.h>
 #include "../Utils/CsvReader.h"
 
 ////////////////////
 // .meshのPathとmeshの大きさを渡す
-// 初期状態は10×10、中心点は5,0,5
+// 初期化状態は10×10、中心点は5,0,5
 // @param mesh メッシュファイルのパス
 // @param scale メッシュのスケール //
 ////////////////////
@@ -28,5 +28,6 @@ CGround::CGround(const char* mesh,const VECTOR3& scale)
 // }
 
 CGround::~CGround() = default;
+
 
 

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../Framework/SceneBase.h"
 
 class CDebugScene : public SceneBase
@@ -13,4 +13,5 @@ private:
     void Update() override;
     void Draw() override;
 };
+
 

@@ -1,4 +1,5 @@
-#include "Find.h"
+﻿#include "Find.h"
+#include "../System/EnemyManager.h"
 #include "../../Player/PlayerHP.h"
 #include "../Human/Human.h"
 CFind::CFind(CHuman* human)

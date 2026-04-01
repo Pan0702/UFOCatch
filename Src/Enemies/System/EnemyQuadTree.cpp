@@ -1,22 +1,20 @@
-#include "EnemyQuadTree.h"
+﻿#include "EnemyQuadTree.h"
 #include "../Base/EnemyBase.h"
 #include "../../Common/Object3D.h"
+#include "../../System/GameInstance.h"
 
 CEnemyQuadTree::CEnemyQuadTree()
     : m_pTree(nullptr), m_lastEnemyCount(0), m_frameCount(0)
 {
-    // 4分木の初期化（レベル3、範囲-20〜20）
-    m_pTree = new CLiner4Tree<CEnemyBase>(3, VECTOR4(-20, -20, 20, 20));
+    const VECTOR4 size = CGameInstance::Get()->GetMapSize();
+    // 四分木の初期化（レベル3、範囲-200～200など）
+    m_pTree =  std::make_unique<CLiner4Tree<CEnemyBase>>(4, size);
 
     // 統計情報の初期化
     m_processTimes.reserve(60);  // 60フレーム分の履歴
 }
 
-CEnemyQuadTree::~CEnemyQuadTree()
-{
-    delete m_pTree;
-    m_pTree = nullptr;
-}
+CEnemyQuadTree::~CEnemyQuadTree() = default;
 
 void CEnemyQuadTree::Update(const std::vector<CEnemyBase*>& enemies)
 {
@@ -25,7 +23,7 @@ void CEnemyQuadTree::Update(const std::vector<CEnemyBase*>& enemies)
     m_lastEnemyCount = static_cast<int>(enemies.size());
     m_pTree->AllClear();
 
-    for (auto* enemy : enemies)
+    for (CEnemyBase* enemy : enemies)
     {
         VECTOR2 pos, size;
         if (enemy->GetBounds2D(pos, size))

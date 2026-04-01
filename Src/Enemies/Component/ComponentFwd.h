@@ -1,0 +1,12 @@
+#pragma once
+#include "../Component/Idle.h"
+#include "../Component/Suction.h"
+#include "../Component/Walk.h"
+#include "../Component/Destroy.h"
+#include "../Component/Find.h"
+#include "../Component/IdleHuman.h"
+#include "../../Utils/BBox.h"
+#include "../../Player/Player.h"
+#include "../../Stage/Ground.h"
+#include "../System/EnemyManager.h"
+#include "../Base/StateBase.h"

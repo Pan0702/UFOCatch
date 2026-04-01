@@ -1,3 +1,4 @@
+﻿#pragma once
 #include <vector>
 
 template <typename T>
@@ -20,3 +21,4 @@ public:
 private:
     std::vector<T*> m_objects;
 };
+

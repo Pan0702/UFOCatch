@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../Common/Object3D.h"
 
 // プレイヤーのHP及び発見状態を管理するクラス //
@@ -19,8 +19,8 @@ public:
     float GetInvincible() const { return m_invincible; }
 
 private:
-    void Update() override;;
-    
+    void Update() override;
+
     int m_currentHp;
     int m_maxHp;
     bool m_found;

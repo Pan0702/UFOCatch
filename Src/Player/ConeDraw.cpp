@@ -1,16 +1,16 @@
-#include "ConeDraw.h"
+﻿#include "ConeDraw.h"
 #include "../Framework/ObjectManager.h"
 #include "../Core/Game/GameMain.h"
 #include "../Utils/Sprite3D.h"
 #include "../Utils/FbxMesh.h"
 
-CConeDraw::CConeDraw(float coneTopPos)
+CConeDraw::CConeDraw(float coneTopPos,CPlayer* p)
 {
-    m_pMesh = new CFbxMesh();
+    m_pMesh =  new CFbxMesh();
     m_pMesh->Load("data/Player/Cone2.mesh");
     m_pMesh->SetLightIntensity(1.0f, 1.0f, 1.0f, 1.0f);
     transform.position = VECTOR3(0, 0, 0);
-    m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
+    m_pPlayer = p;
     m_pLevel  = ObjectManager::FindGameObject<CPlayerLevel>();
     transform.scale.y = coneTopPos;
     SetDrawOrder(-1);
@@ -49,21 +49,20 @@ void CConeDraw::Draw()
 }
 
 ////////////////////
-// 地面に吸い込み範囲の円を描画する //
+// 地面に吸引範囲の円を描画する //
 ////////////////////
 
 
-CCircleDraw::CCircleDraw()
+CCircleDraw::CCircleDraw(CPlayer* p)
 {
     SetDrawOrder(1);
-    m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
+    m_pPlayer = p;
     m_pLevel  = ObjectManager::FindGameObject<CPlayerLevel>();
-    m_pCircleImage = new CSpriteImage(TEXT("data/CircleSuction.png"));
+    m_pCircleImage = std::make_unique<CSpriteImage>(TEXT("data/CircleSuction.png"));
 }
 
 CCircleDraw::~CCircleDraw()
 {
-    SAFE_DELETE(m_pCircleImage);
 }
 
 void CCircleDraw::Update()
@@ -73,11 +72,18 @@ void CCircleDraw::Update()
 
 void CCircleDraw::Draw()
 {
-    if (!m_pCircleImage || !m_pPlayer) return;
-
+    if (!m_pPlayer)
+    {
+        return;
+    }
+    if (!m_pCircleImage )
+    {
+        printf("CCircleDraw");
+        return;
+    }
     CSprite spr;
     VECTOR3 plPos = m_pPlayer->GetPos();
-    spr.DrawWorld(m_pCircleImage, VECTOR3(plPos.x,0,plPos.z), m_pLevel->GetRadius(),0.7f);
+    spr.DrawWorld(m_pCircleImage.get(), VECTOR3(plPos.x,0,plPos.z), m_pLevel->GetRadius(),0.7f);
 }
 
 ///Debug///

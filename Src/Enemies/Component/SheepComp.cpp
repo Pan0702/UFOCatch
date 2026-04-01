@@ -1,5 +1,6 @@
-#include "SheepComp.h"
+﻿#include "SheepComp.h"
 #include "../System/Flog.h"
+#include "../System/EnemyManager.h"
 CHerded::CHerded(CSheep* sheep)
     : m_wanderTimer(0.0f), m_walkTimer(0.0f), m_walkDuration(0.0f), m_currentRotation(0.0f)
 {
@@ -106,7 +107,7 @@ VECTOR3 CHerded::CalculateBoids() const
         isSucking = m_pPlayer->GetIsSuckUp();
     }
 
-    constexpr float neighborRadius = 30.0f;   // 仲間と認識する距離（ストロンボム: 30m）
+    constexpr float neighborRadius = 30.0f;   // 仲間と認識する距離（ストロングボム: 30m）
     constexpr float separationRadius = 2.0f;  // 近すぎると判定する距離
 
     const float neighborRadiusSq = Pow2(neighborRadius);
@@ -145,7 +146,7 @@ VECTOR3 CHerded::CalculateBoids() const
         if (cohesion.LengthSquare() > 0.0001f)
         {
             normalize(cohesion);
-            // 吸い込み中は凝集力が強くなる、通常時は弱く（自由な動きを優先）
+            // 吸い込み中は凝集力が強くなる。通常時は弱く（自由な動きを優先）
             float cohesionWeight = isSucking ? 1.5f : 0.1f;
             cohesion *= cohesionWeight;
         }
@@ -179,10 +180,10 @@ VECTOR3 CHerded::CalculateEscapeFromDog() const
     diff.y = 0;
     const float distanceSq = diff.LengthSquare();
 
-    // 犬を感知する距離（ストロンボムモデル: 50m）
+    // 犬を感知する距離（ストロングボムモデル: 50m）
     constexpr float detectionRadiusSq = 50.0f * 50.0f;
 
-    // 犬が検知範囲内にいる場合のみ逃げる
+    // 犬が感知範囲内にいる場合のみ逃げる
     if (distanceSq < detectionRadiusSq && distanceSq > 0.0001f)
     {
         normalize(diff);

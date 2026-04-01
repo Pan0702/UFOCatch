@@ -1,88 +1,82 @@
-#pragma once
+﻿#pragma once
 #include "../Common/Object3D.h"
 
-// 視界判定システムクラス（扇形と円の衝突判定を管理） //
+// 隕也阜蛻､螳壹す繧ｹ繝・Β繧ｯ繝ｩ繧ｹ・域援蠖｢縺ｨ蜀・・陦晉ｪ∝愛螳壹ｒ邂｡逅・ｼ・//
 class CVisionSystem : public Object3D
 {
 public:
-    // コンストラクタ //
+    // 繧ｳ繝ｳ繧ｹ繝医Λ繧ｯ繧ｿ //
     CVisionSystem();
 
-    // デストラクタ //
+    // 繝・せ繝医Λ繧ｯ繧ｿ //
     ~CVisionSystem();
 
-    // 指定された角度が扇形の視野角内にあるか判定
-    // @param angle 判定する角度（ラジアン）
-    // @return 角度が視野角内ならtrue、範囲外ならfalse //
-    bool IsAngleInSector(const float& angle);
+    // 謖・ｮ壹＆繧後◆隗貞ｺｦ縺梧援蠖｢縺ｮ隕夜㍽隗貞・縺ｫ縺ゅｋ縺句愛螳・
+    // @param angle 蛻､螳壹☆繧玖ｧ貞ｺｦ・医Λ繧ｸ繧｢繝ｳ・・
+    // @return 隗貞ｺｦ縺瑚ｦ夜㍽隗貞・縺ｪ繧液rue縲∫ｯ・峇螟悶↑繧映alse //
+    bool IsAngleInSector(const float& angle) const;
 
-    // 扇形と円の衝突判定（人間の視界範囲内にプレイヤーがいるかチェック）
-    // @param humanPos 人間の位置（2Dベクトル）
-    // @param humanAngle 人間の向き（ラジアン）
-    // @return 円が視界扇形内、または扇形の境界と交差している場合true、それ以外はfalse //
+    // 謇・ｽ｢縺ｨ蜀・・陦晉ｪ∝愛螳夲ｼ井ｺｺ髢薙・隕也阜遽・峇蜀・↓繝励Ξ繧､繝､繝ｼ縺後＞繧九°繝√ぉ繝・け・・
+    // @param humanPos 莠ｺ髢薙・菴咲ｽｮ・・D繝吶け繝医Ν・・
+    // @param humanAngle 莠ｺ髢薙・蜷代″・医Λ繧ｸ繧｢繝ｳ・・
+    // @return 蜀・′隕也阜謇・ｽ｢蜀・√∪縺溘・謇・ｽ｢縺ｮ蠅・阜縺ｨ莠､蟾ｮ縺励※縺・ｋ蝣ｴ蜷・rue縲√◎繧御ｻ･螟悶・false //
     bool SectorCircleCollision(const VECTOR2& humanPos, float humanAngle);
+    
+    // 蜀・・荳ｭ蠢・ｺｧ讓吶ｒ險ｭ螳・
+    // @param pos 險ｭ螳壹☆繧・D蠎ｧ讓・//
+    void SetCircleCenter(const VECTOR3& pos);
+
+    // 蜀・・蜊雁ｾ・ｒ險ｭ螳・
+    // @param radius 險ｭ螳壹☆繧句濠蠕・//
+    void SetCircleRadius(const float& radius);
 
 private:
-    // 線分と円の交差判定（扇形の辺と円が交わっているかチェック）
-    // @param lineStart 線分の開始点
-    // @param lineEnd 線分の終了点
-    // @param circleCenter 円の中心座標
-    // @param circleRadius 円の半径
-    // @return 線分と円が交差している場合true、それ以外はfalse //
+    // 邱壼・縺ｨ蜀・・莠､蟾ｮ蛻､螳夲ｼ域援蠖｢縺ｮ霎ｺ縺ｨ蜀・′莠､繧上▲縺ｦ縺・ｋ縺九メ繧ｧ繝・け・・
+    // @param lineStart 邱壼・縺ｮ髢句ｧ狗せ
+    // @param lineEnd 邱壼・縺ｮ邨ゆｺ・せ
+    // @param circleCenter 蜀・・荳ｭ蠢・ｺｧ讓・
+    // @param circleRadius 蜀・・蜊雁ｾ・
+    // @return 邱壼・縺ｨ蜀・′莠､蟾ｮ縺励※縺・ｋ蝣ｴ蜷・rue縲√◎繧御ｻ･螟悶・false //
     bool LineSegmentCircleIntersection(const VECTOR2& lineStart, const VECTOR2& lineEnd, const VECTOR2& circleCenter, float circleRadius) const;
     
-    // 円の情報を保持する構造体 //
+    // 蜀・・諠・ｱ繧剃ｿ晄戟縺吶ｋ讒矩菴・//
     struct CircleInfo
     {
-        VECTOR2 center;  // 円の中心座標 //
-        float radius;    // 円の半径 //
+        VECTOR2 center;  // 蜀・・荳ｭ蠢・ｺｧ讓・//
+        float radius;    // 蜀・・蜊雁ｾ・//
 
         CircleInfo(const VECTOR2& pos_ = VECTOR2(0,0),const float& radius_ = 0.0f)
             : center(pos_),radius(radius_)
         {}
 
-        // 3D座標からXZ平面の2D座標に変換して中心座標を設定
-        // @param pos_ 3D座標 //
+        // 3D蠎ｧ讓吶°繧厩Z蟷ｳ髱｢縺ｮ2D蠎ｧ讓吶↓螟画鋤縺励※荳ｭ蠢・ｺｧ讓吶ｒ險ｭ螳・
+        // @param pos_ 3D蠎ｧ讓・//
         void SetCenter(const VECTOR3& pos_) { center = ToVec2XZ(pos_); }
 
-        // 円の半径を設定
-        // @param radius_ 設定する半径 //
+        // 蜀・・蜊雁ｾ・ｒ險ｭ螳・
+        // @param radius_ 險ｭ螳壹☆繧句濠蠕・//
         void SetRadius(const float& radius_) { radius = radius_; }
     };
 
-    CircleInfo m_circleInfo;  // プレイヤーの円情報 //
+    CircleInfo m_circleInfo;  // 繝励Ξ繧､繝､繝ｼ縺ｮ蜀・ュ蝣ｱ //
 
-    // 扇形の情報を保持する構造体 //
+    // 謇・ｽ｢縺ｮ諠・ｱ繧剃ｿ晄戟縺吶ｋ讒矩菴・//
     struct SectorInfo
     {
-        float radius;       // 扇形の半径（視界距離） ///Rad/// //
-        float startAngle;   // 扇形の開始角度（ラジアン） //
-        float endAngle;     // 扇形の終了角度（ラジアン） //
+        float radius;       // 謇・ｽ｢縺ｮ蜊雁ｾ・ｼ郁ｦ也阜霍晞屬・・///Rad/// //
+        float startAngle;   // 謇・ｽ｢縺ｮ髢句ｧ玖ｧ貞ｺｦ・医Λ繧ｸ繧｢繝ｳ・・//
+        float endAngle;     // 謇・ｽ｢縺ｮ邨ゆｺ・ｧ貞ｺｦ・医Λ繧ｸ繧｢繝ｳ・・//
 
         SectorInfo()
-            : radius(7.0f),startAngle(0),endAngle(0)  // デフォルト視界距離7.0f //
+            : radius(7.0f),startAngle(0),endAngle(0)  // 繝・ヵ繧ｩ繝ｫ繝郁ｦ也阜霍晞屬7.0f //
         {}
 
-        // 扇形の半径を設定
-        // @param radius_ 設定する半径 //
-        void SetRadius(const float& radius_) { radius = radius_; }
+        // 謇・ｽ｢縺ｮ蜊雁ｾ・ｒ險ｭ螳・
+        // @param radius_ 險ｭ螳壹☆繧句濠蠕・//
+        void SetRadius(float radius_) { radius = radius_; }
     };
 
-    SectorInfo m_sectorInfo;  // 人間の扇形視界情報 //
-public:
-    // 円情報を取得
-    // @return 円の情報 //
-    CircleInfo GetCircleInfo() const { return m_circleInfo; }
+    SectorInfo m_sectorInfo;  // 莠ｺ髢薙・謇・ｽ｢隕也阜諠・ｱ //
 
-    // 扇形情報を取得
-    // @return 扇形の情報 //
-    SectorInfo GetSectorInfo() const { return m_sectorInfo; }
-
-    // 円の中心座標を設定
-    // @param pos 設定する3D座標 //
-    void SetCircleCenter(const VECTOR3& pos) { m_circleInfo.SetCenter(pos); }
-
-    // 円の半径を設定
-    // @param radius 設定する半径 //
-    void SetCircleRadius(const float& radius) { m_circleInfo.SetRadius(radius); }
 };
+

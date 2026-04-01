@@ -1,4 +1,4 @@
-#include "PCamera.h"
+﻿#include "PCamera.h"
 #include "Player.h"
 
 namespace
@@ -62,14 +62,14 @@ void CPlayerCamera::UpdateCameraBezier()
 ////////////////////
 void CPlayerCamera::PosSet(const VECTOR3& pos, const float& coneHeight)
 {
-    // ベジエアニメーション中は差分で追従
+    // ベジェアニメーション中は差分で追従
     if (m_camPosBezier.IsAnimating() || m_camLookBezier.IsAnimating())
     {
         m_playerOffset = pos - m_animStartPlayerPos;
         return;
     }
 
-    // コーンの高さに応じてカメラ距離をスケーリング//
+    // コーンの高さに応じてカメラ距離をスケーリング //
     float scale = coneHeight / REFERENCE_HEIGHT;
     VECTOR3 scaledCamOffset = INIT_CAM_POS * scale;
 
@@ -93,11 +93,11 @@ void CPlayerCamera::ZoomIn(const VECTOR3& pos)
     VECTOR3 startLook = m_camLook;
     VECTOR3 targetLook = pos + VECTOR3(0, -(pos.y / 2), 0);
 
-    // // デバッグ用に保存//
+    // // デバッグ用に保存 //
     // m_debugStartLook = startLook;
     // m_debugTargetLook = targetLook;
 
-    // 制御点はプレイヤー位置を基準にオフセット//
+    // 制御点はプレイヤー位置を基準にオフセット //
     VECTOR3 controlPoint1 = startLook  + offsetPoint1;
     VECTOR3 controlPoint2 = targetLook + offsetPoint2;
     
@@ -127,7 +127,7 @@ void CPlayerCamera::ZoomOut(const VECTOR3& pos)
     VECTOR3 startLook = m_camLook;
     VECTOR3 targetLook = pos + INIT_CAM_LOOK;
 
-    // 制御点はプレイヤー位置を基準にオフセット//
+    // 制御点はプレイヤー位置を基準にオフセット //
     VECTOR3 controlPoint1 = pos + offsetPoint2 ;
     VECTOR3 controlPoint2 = pos + offsetPoint1;
 
@@ -174,7 +174,7 @@ void CPlayerCamera::DebugImGui()
     ImGui::Text("Current Camera Pos: %.2f, %.2f, %.2f", m_camPos.x, m_camPos.y, m_camPos.z);
     ImGui::Text("Current Camera Look: %.2f, %.2f, %.2f", m_camLook.x, m_camLook.y, m_camLook.z);
 
-    // === デバッグ：始点・終点 ===
+    // === デバッグ：開始点・終了点 ===
     ImGui::Separator();
     ImGui::Text("DEBUG - Look Animation:");
     ImGui::Text("  Start:  %.2f, %.2f, %.2f", m_debugStartLook.x, m_debugStartLook.y, m_debugStartLook.z);

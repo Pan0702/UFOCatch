@@ -27,3 +27,4 @@ inline VECTOR3 CubicBezier(const VECTOR3& p0, const VECTOR3& p1, const VECTOR3& 
 	       p2 * (3.0f * oneMinusT * t2) +
 	       p3 * t3;
 }
+

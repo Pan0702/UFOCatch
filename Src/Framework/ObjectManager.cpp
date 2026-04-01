@@ -1,40 +1,66 @@
-#include "ObjectManager.h"
+﻿#include "ObjectManager.h"
+#include "QuadtreeSystem.h"
 #include "GameObject.h"
-#include <algorithm>
-#include "Time.h"
+#include "../Enemies/AnimalDebug/AnimalDubug.h"
+#include "../Enemies/AnimalDebug/AnimalDubug.h"
+#include "../Enemies/AnimalDebug/AnimalDubug.h"
 
-namespace {
-	struct UpdateObject {
-		GameObject* object;
-		bool initialized;
-		bool destroyMe;
-		bool dontDestroy;
-		int priority;
-		bool active;
-		UpdateObject() : object(nullptr), initialized(false), destroyMe(false), dontDestroy(false), priority(0), active(true) {}
-	};
-	struct DrawObject {
-		GameObject* object;
-		int order;
-		bool visible;
-		DrawObject() : object(nullptr), order(0), visible(true) {}
-	};
-	std::list<UpdateObject> updateObjects;
-	std::list<DrawObject> drawObjects;
-	bool needSortUpdate;
-	bool needSortDraw;
+
+namespace
+{
+    struct UpdateObject
+    {
+        std::unique_ptr<GameObject> object;
+        bool initialized;
+        bool destroyMe;
+        bool dontDestroy;
+        int priority;
+        bool active;
+
+        UpdateObject() : object(nullptr), initialized(false), destroyMe(false), dontDestroy(false), priority(0),
+                         active(true)
+        {
+        }
+    };
+
+    struct DrawObject
+    {
+        GameObject* object;
+        int order;
+        bool visible;
+
+        DrawObject() : object(nullptr), order(0), visible(true)
+        {
+        }
+    };
+    struct QuadTreeObject
+    {
+        std::unique_ptr<CQuadtreeSystem> object;
+        QuadTreeObject() : object(nullptr)
+        {
+        }
+    };
+
+    std::list<UpdateObject> updateObjects;
+    std::list<DrawObject> drawObjects;
+    std::list<QuadTreeObject> quadTreeObject;
+    bool needSortUpdate;
+    bool needSortDraw;
 };
 
-void deleteDrawObject(GameObject* obj)
+static void deleteDrawObject(GameObject* obj)
 {
-	for (auto it = drawObjects.begin(); it != drawObjects.end(); ) {
-		if ((*it).object == obj) {
-			it = drawObjects.erase(it);
-		}
-		else {
-			it++;
-		}
-	}
+    for (auto it = drawObjects.begin(); it != drawObjects.end();)
+    {
+        if ((*it).object == obj)
+        {
+            it = drawObjects.erase(it);
+        }
+        else
+        {
+            it++;
+        }
+    }
 }
 
 void ObjectManager::Start()
@@ -43,184 +69,238 @@ void ObjectManager::Start()
 
 void ObjectManager::Update()
 {
-	if (needSortUpdate) {
-		updateObjects.sort([](UpdateObject& a, UpdateObject& b) {return a.priority > b.priority; });
-		needSortUpdate = false;
-	}
-	for (auto it = updateObjects.begin(); it != updateObjects.end(); ) {
-		UpdateObject& node = *it;
-		GameObject* obj = node.object;
-		if (!node.initialized) {
-			obj->Start();
-			node.initialized = true;
-		}
-		if (node.active) {
-			obj->Update();
-		}
-		it++;
-	}
+    if (needSortUpdate)
+    {
+        updateObjects.sort([](UpdateObject& a, UpdateObject& b) { return a.priority > b.priority; });
+        needSortUpdate = false;
+    }
+    for (auto it = updateObjects.begin(); it != updateObjects.end();)
+    {
+        UpdateObject& node = *it;
+        GameObject* obj = node.object.get();
+        if (!node.initialized)
+        {
+            obj->Start();
+            node.initialized = true;
+        }
+        if (node.active)
+        {
+            obj->Update();
+        }
+        it++;
+    }
 
-	for (auto it = updateObjects.begin(); it != updateObjects.end(); ) {
-		UpdateObject& node = *it;
-		if (node.destroyMe) {
-			deleteDrawObject(node.object);
-			delete node.object;
-			it = updateObjects.erase(it);
-		}
-		else {
-			it++;
-		}
-	}
+    for (auto it = updateObjects.begin(); it != updateObjects.end();)
+    {
+        UpdateObject& node = *it;
+        if (node.destroyMe)
+        {
+            deleteDrawObject(node.object.get());
+            it = updateObjects.erase(it);
+        }
+        else
+        {
+            it++;
+        }
+    }
 }
 
 void ObjectManager::Draw()
 {
-	if (needSortDraw) {
-		drawObjects.sort([](DrawObject& a, DrawObject& b) {return a.order > b.order; });
-		needSortDraw = false;
-	}
-	for (DrawObject node : drawObjects) {
-		if (node.visible) {
-			node.object->Draw();
-		}
-	}
+    if (needSortDraw)
+    {
+        drawObjects.sort([](DrawObject& a, DrawObject& b) { return a.order > b.order; });
+        needSortDraw = false;
+    }
+    for (DrawObject node : drawObjects)
+    {
+        if (node.visible)
+        {
+            node.object->Draw();
+        }
+    }
 }
 
 void ObjectManager::Release()
 {
-	DeleteAllGameObject();
+    DeleteAllGameObject();
+    DeleteAllQuadTree();
 }
 
 void ObjectManager::ChangeScene()
 {
-	for (auto it = updateObjects.begin(); it != updateObjects.end();) {
-		UpdateObject& node = *it;
-		if (!node.dontDestroy) {
-			deleteDrawObject(node.object);
-			delete node.object;
-			it = updateObjects.erase(it);
-		} else
-			it++;
-	}
+    for (auto it = updateObjects.begin(); it != updateObjects.end();)
+    {
+        const UpdateObject& node = *it;
+        if (!node.dontDestroy)
+        {
+            deleteDrawObject(node.object.get());
+            it = updateObjects.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
 }
 
 std::list<GameObject*> ObjectManager::GetAllObjects()
 {
-	std::list<GameObject*> objs;
-	for (UpdateObject obj : updateObjects) {
-		objs.push_back(obj.object);
-	}
-	return objs;
+    std::list<GameObject*> objs;
+    for (const UpdateObject& obj : updateObjects)
+    {
+        objs.push_back(obj.object.get());
+    }
+    return objs;
 }
 
-void ObjectManager::Push(GameObject* obj)
+void ObjectManager::Push(std::unique_ptr<GameObject> obj)
 {
-	{
-		UpdateObject node;
-		node.object = obj;
-		updateObjects.push_back(node);
-		needSortUpdate = true;
-	}
-	{
-		DrawObject node;
-		node.object = obj;
-		drawObjects.push_back(node);
-		needSortDraw = true;
-	}
+    GameObject* raw = obj.get();
+    UpdateObject uNode;
+    uNode.object = std::move(obj);
+    updateObjects.push_back(std::move(uNode));
+    needSortUpdate = true;
+
+    DrawObject dNode;
+    dNode.object = raw;
+    drawObjects.push_back(dNode);
+    needSortDraw = true;
 }
 
 void ObjectManager::Destroy(GameObject* obj)
 {
-	for (UpdateObject& ou : updateObjects) {
-		if (ou.object == obj)
-			ou.destroyMe = true;
-	}
+    for (UpdateObject& ou : updateObjects)
+    {
+        if (ou.object.get() == obj)
+            ou.destroyMe = true;
+    }
 }
 
-void ObjectManager::SetDrawOrder(GameObject* obj, int _order)
+void ObjectManager::SetDrawOrder(const GameObject* obj, int _order)
 {
-	for (DrawObject& od : drawObjects) {
-		if (od.object == obj) {
-			od.order = _order;
-		}
-	}
-	needSortDraw = true;
+    for (DrawObject& od : drawObjects)
+    {
+        if (od.object == obj)
+        {
+            od.order = _order;
+        }
+    }
+    needSortDraw = true;
 }
 
-void ObjectManager::SetPriority(GameObject* _obj, int _priority)
+void ObjectManager::SetPriority(const GameObject* obj, int _priority)
 {
-	for (UpdateObject& ou : updateObjects) {
-		if (ou.object == _obj) {
-			ou.priority = _priority;
-		}
-	}
-	needSortUpdate = true;
+    for (UpdateObject& ou : updateObjects)
+    {
+        if (ou.object.get() == obj)
+        {
+            ou.priority = _priority;
+        }
+    }
+    needSortUpdate = true;
 }
 
 void ObjectManager::DeleteGameObject(GameObject* obj)
 {
-	deleteDrawObject(obj);
-	for (auto it = updateObjects.begin(); it != updateObjects.end(); ) {
-		UpdateObject& node = (*it);
-		if (node.object == obj) {
-			delete obj;
-			it = updateObjects.erase(it);
-		}
-		else
-			it++;
-	}
+    deleteDrawObject(obj);
+    for (auto it = updateObjects.begin(); it != updateObjects.end();)
+    {
+        UpdateObject& node = (*it);
+        if (node.object.get() == obj)
+        {
+            it = updateObjects.erase(it);
+        }
+        else
+            it++;
+    }
 }
 
 void ObjectManager::DeleteAllGameObject()
 {
-	for (auto it = updateObjects.begin(); it != updateObjects.end();) {
-		UpdateObject& node = *it;
-		delete node.object;
-		it = updateObjects.erase(it);
-	}
-	updateObjects.clear();
+    for (auto it = updateObjects.begin(); it != updateObjects.end();)
+    {
+        it = updateObjects.erase(it);
+    }
+    updateObjects.clear();
 
-	for (auto it = drawObjects.begin(); it != drawObjects.end();) {
-		it = drawObjects.erase(it);
-	}
-	drawObjects.clear();
+    for (auto it = drawObjects.begin(); it != drawObjects.end();)
+    {
+        it = drawObjects.erase(it);
+    }
+    drawObjects.clear();
 }
 
-void ObjectManager::DontDestroy(GameObject* obj, bool dont)
+void ObjectManager::DontDestroy(const GameObject* obj, bool dont)
 {
-	for (auto it = updateObjects.begin(); it != updateObjects.end(); it++) {
-		UpdateObject& node = *it;
-		if (node.object == obj) {
-			node.dontDestroy = dont;
-		}
-	}
+    for (auto it = updateObjects.begin(); it != updateObjects.end(); it++)
+    {
+        UpdateObject& node = *it;
+        if (node.object.get() == obj)
+        {
+            node.dontDestroy = dont;
+        }
+    }
 }
 
-void ObjectManager::SetActive(GameObject* obj, bool active)
+void ObjectManager::SetActive(const GameObject* obj, bool active)
 {
-	for (auto it = updateObjects.begin(); it != updateObjects.end(); it++) {
-		UpdateObject& node = *it;
-		if (node.object == obj) {
-			node.active = active;
-		}
-	}
+    for (auto it = updateObjects.begin(); it != updateObjects.end(); it++)
+    {
+        UpdateObject& node = *it;
+        if (node.object.get() == obj)
+        {
+            node.active = active;
+        }
+    }
 }
 
-void ObjectManager::SetVisible(GameObject* obj, bool visible)
+void ObjectManager::SetVisible(const GameObject* obj, bool visible)
 {
-	for (DrawObject& od : drawObjects) {
-		if (od.object == obj) {
-			od.visible = visible;
-		}
-	}
+    for (DrawObject& od : drawObjects)
+    {
+        if (od.object == obj)
+        {
+            od.visible = visible;
+        }
+    }
 }
 
 bool ObjectManager::IsExist(GameObject* obj)
 {
-	for (DrawObject& od : drawObjects) {
-		if (od.object == obj) {
-			return true;
-		}
-	}
-	return false;
+    for (DrawObject& od : drawObjects)
+    {
+        if (od.object == obj)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+ std::list<CQuadtreeSystem*> ObjectManager::GetAllQuadTree()
+{
+    std::list<CQuadtreeSystem*> objs;
+    for (const QuadTreeObject& obj : quadTreeObject)
+    {
+        objs.push_back(obj.object.get());
+    }
+    return objs;
+}
+
+void ObjectManager::PushTree(std::unique_ptr<CQuadtreeSystem> tree)
+{
+    CQuadtreeSystem* treePtr = tree.get();
+    QuadTreeObject q;
+    q.object = std::move(tree);
+    quadTreeObject.push_back(std::move(q));
+}
+
+void ObjectManager::DeleteAllQuadTree()
+{
+    for (auto it = quadTreeObject.begin(); it != quadTreeObject.end();)
+    {
+       it = quadTreeObject.erase(it);
+    }
+    quadTreeObject.clear();
 }

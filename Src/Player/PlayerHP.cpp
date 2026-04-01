@@ -1,4 +1,4 @@
-#include "PlayerHP.h"
+﻿#include "PlayerHP.h"
 #include "Player.h"
 #include "../System/GameInstance.h"
 #include "../Scene/PlayScene.h"
@@ -30,7 +30,7 @@ void CPlayerHP::SubHP()
     {
         if (not m_found)
         {
-            ObjectManager::FindGameObject<CGameInstance>()->AddSaw(1);
+            CGameInstance::Get()->AddSaw(1);
             m_seemToFind = true;
         }
     }
@@ -38,28 +38,27 @@ void CPlayerHP::SubHP()
 
 void CPlayerHP::Update()
 {
-    CGameInstance* pGI = ObjectManager::FindGameObject<CGameInstance>();
-    //疑惑でみつかったか
+    // 疑惑でみつかったか
     if (m_seemToFind)
     {
         m_findCount += SceneManager::DeltaTime();
-        //一定時間しかいにいたので確信に変化
+        // 一定時間視界にいたので確信に変化
         if (m_findCount >= m_findMaxCount)
         {
             m_invincible = 0;
             m_found = true;
             m_seemToFind = false;
-            //いまのHPから１引く
+            // いまのHPから1引く
             m_currentHp--;
-            //見つかった回数を追加
-            pGI->AddDiscovery(1);
+            // 見つかった回数を追加
+             CGameInstance::Get()->AddDiscovery(1);
         }
     }
-    //見つかったか
+    // 見つかったか（確信状態）
     if (m_found)
     {
         m_invincible += SceneManager::DeltaTime();
-        //1.5s経過したら無敵時間を解除
+        // 1.5s経過したら無敵時間を解除
         if (m_invincible >= 1.5f)
         {
             m_findCount = 0;
@@ -73,7 +72,7 @@ void CPlayerHP::Update()
             m_findCount -= SceneManager::DeltaTime();
         }
     }
-    //死亡したのでシーンを切り替え
+    // 死亡したのでシーンを切り替える
     if (m_currentHp <= 0)
     {
         SceneManager::ChangeSceneWithTransition("ResultScene");

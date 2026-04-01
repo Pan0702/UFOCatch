@@ -2122,3 +2122,4 @@ VECTOR3 CAABB::GetVecPos(const int& nIdx)
     }
     return vPos;
 }
+

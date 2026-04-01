@@ -1,4 +1,4 @@
-#define NOMINMAX
+﻿#define NOMINMAX
 #include "Player.h"
 #include "PCamera.h"
 #include <algorithm>
@@ -23,11 +23,11 @@ CPlayer::CPlayer(float moveRange)
     constexpr float INITIAL_CONE_HEIGHT = 4.0f;
     constexpr float CONE_DEGREE = 4.0f;
 
-    m_pLevel = new CPlayerLevel(transform.position.y + INITIAL_CONE_HEIGHT, CONE_DEGREE);
+    m_pLevel = Instantiate<CPlayerLevel>(transform.position.y + INITIAL_CONE_HEIGHT, CONE_DEGREE);
 
-    new CPlayerHP(3);
-    new CConeDraw(transform.position.y);
-    new CCircleDraw();
+    Instantiate<CPlayerHP>(3);
+    Instantiate<CConeDraw>(transform.position.y,this);
+    Instantiate<CCircleDraw>(this);
 
     transform.scale = VECTOR3(0.5f, 0.5f, 0.5f);
     m_SuctionActive = false;
@@ -46,7 +46,7 @@ CPlayer::~CPlayer()
 
 void CPlayer::Update()
 {
-    // カメラ位置を更新//
+    // カメラ位置を更新 //
     UpdateCameraPos();
 
     // ゲーム開始前は操作を受け付けない
@@ -61,7 +61,7 @@ void CPlayer::Update()
         HandleMovementInput();
     }
 
-    // 吸い込みキーの状態を取得
+    // 吸引キーの状態を取得
     if (!ObjectManager::FindGameObject<CPlayerHP>()->GetFoundFlag())
     {
         m_SuctionActive = GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_J);
@@ -71,7 +71,7 @@ void CPlayer::Update()
         m_SuctionActive = false;
     }
 
-    // 吸い込み状態が変化したときだけ音声を制御
+    // 吸引状態が変化したときだけ音声を制御
     if (m_SuctionActive && !m_prevSuctionActive)
     {
         AudioManager::Play(_T("Suction"), false);
@@ -140,7 +140,7 @@ void CPlayer::UpdateCameraPos()
 
 ////////////////////
 // 引き寄せるための移動量を計算する
-// 高さの差が大きいほど遅く、近いほど速く吸い込む
+// 高さの差が大きいほど遠く、近いほど速く吸引する
 // @param moveTimeSecond  移動にかける時間
 // @param animalPos  動物の位置
 // @return 1回当たりの移動量

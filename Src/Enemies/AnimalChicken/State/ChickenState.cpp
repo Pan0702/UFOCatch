@@ -1,4 +1,4 @@
-#include "ChickenState.h"
+﻿#include "ChickenState.h"
 
 #include "../../../System/GameInstance.h"
 #include "../Chicken.h"
@@ -172,7 +172,7 @@ void CChickenSuction::Enter(State type)
 {
    m_pOwner->GetAudio()->Play();
 
-   // 距離が5以下のHumanをチキンの方に向かせる
+   // 距離5以下のHumanをチキンの方向に向かせる
    VECTOR3 chickenPos = m_pOwner->GetTransform().position;
    auto humans = ObjectManager::FindGameObjects<CHuman>();
    for (auto* human : humans)
@@ -219,8 +219,8 @@ CChickenDestroy::CChickenDestroy(CAnimalChicken* chicken)
 
 void CChickenDestroy::Enter(State type)
 {
-    ObjectManager::FindGameObject<CGameInstance>()->AddScore(150);
-    ObjectManager::FindGameObject<CGameInstance>()->AddCapture(1);
+    CGameInstance::Get()->AddScore(150);
+    CGameInstance::Get()->AddCapture(1);
     ObjectManager::FindGameObject<CPlayerLevel>()->AddExp(1.5f);
     m_pOwner->DestroyMe();
 }

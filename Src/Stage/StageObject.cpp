@@ -1,4 +1,4 @@
-#define NOMINMAX
+﻿#define NOMINMAX
 #include "StageObject.h"
 #include "../Enemies/Base/EnemyBase.h"
 #include "../Framework/ResourceManager.h"
@@ -10,28 +10,47 @@
 // @param scale オブジェクトのサイズ
 // @param useOBB OBBを使用するか //
 ////////////////////
-CStageObject::CStageObject(const char* meshPath, const VECTOR3& pos, float scale, bool useOBB)
+CStageObject::CStageObject(const char* name, const VECTOR3& pos, float scale, bool useOBB)
 {
     m_bUseOBB = useOBB;
     m_pOBB = nullptr;
 
     // ResourceManagerからメッシュを取得（キャッシュされる）
-    m_pMesh = ResourceManager::LoadFbx(meshPath);
+    m_pMesh = ResourceManager::LoadFbx(name);
+    if (m_pMesh == nullptr)assert(false);
+    
+    MakeOBB();
+    
+    // 初期位置
+    transform.position = pos;
+    transform.scale = VECTOR3(1.0f, 1.0f, 1.0f) * scale;
+}
 
+CStageObject::CStageObject(const char* name, const Transform& t, bool useOBB)
+{
+    m_bUseOBB = useOBB;
+    m_pOBB = nullptr;
+
+    // ResourceManagerからメッシュを取得（キャッシュされる）
+    m_pMesh = ResourceManager::LoadFbx(name);
+    if (m_pMesh == nullptr)assert(false);
+    
+    MakeOBB();
+    transform = t;
+}
+
+void CStageObject::MakeOBB()
+{
     // OBBの作成
     if (m_bUseOBB)
     {
-        // メッシュから直接バウンディングボックスを取得
+        // メッシュから境界バウンディングボックスを取得
         VECTOR3 vMin = m_pMesh->m_vMin;
         VECTOR3 vMax = m_pMesh->m_vMax;
 
         // OBBを作成
         m_pOBB = new CBBox(vMin, vMax);
     }
-
-    // 初期位置
-    transform.position = pos;
-    transform.scale = VECTOR3(1.0f, 1.0f, 1.0f) * scale;
 }
 
 //------------------------------------------------------------------------
@@ -66,13 +85,17 @@ void CStageObject::Update()
 void CStageObject::Draw()
 {
     Object3D::Draw();
-
-
-    // // デバッグ用: OBBを描画（必要に応じてコメントアウト）
-    // if (m_pOBB)
-    // {
-    //     m_pOBB->Render();
-    // }
+    
+    // //デバック用　: メッシュの大きさを描画
+    // ImGui::Begin("StageObject Debug");  
+    // ImGui::DragFloat3("m_vMin",&m_pMesh->m_vMin.x, 0.01f);
+    // ImGui::DragFloat3("m_vMax",&m_pMesh->m_vMax.x, 0.01f);
+    // ImGui::End();
+    // デバッグ用: OBBを描画
+    if (m_pOBB)
+    {
+        m_pOBB->Render();
+    }
 }
 
 bool CStageObject::GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const
@@ -117,7 +140,7 @@ bool CStageObject::GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const
 // @param vNormal 衝突法線（Out）※XZ平面のみ（Y成分は0）
 // @return 衝突していたらtrue //
 ////////////////////
-bool CStageObject::HitOBB(CBBox* other, VECTOR3* vHit, VECTOR3* vNormal)
+bool CStageObject::HitOBB(CBBox* other, VECTOR3* vHit, VECTOR3* vNormal) const
 {
     if (!m_pOBB || !other || !m_bUseOBB)
     {
@@ -134,7 +157,7 @@ bool CStageObject::HitOBB(CBBox* other, VECTOR3* vHit, VECTOR3* vNormal)
 
         if (vNormal)
         {
-            // XZ平面のみで押し戻し（Y軸を含めると下にめり込む）
+            // XZ平面のみで押し戻す（Y成分を0にすると地面にめり込む）
             vNormalTemp.y = 0.0f;
             *vNormal = XMVector3Normalize(vNormalTemp);
         }
@@ -144,7 +167,7 @@ bool CStageObject::HitOBB(CBBox* other, VECTOR3* vHit, VECTOR3* vNormal)
 }
 
 ////////////////////
-// エネミーとの衝突を解消する
+// エネミーとの衝突を解決する
 // @param pEnemy 判定対象のエネミー //
 ////////////////////
 void CStageObject::ResolveEnemyCollision(CEnemyBase* pEnemy)

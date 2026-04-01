@@ -1,5 +1,6 @@
-#define NOMINMAX
+﻿#define NOMINMAX
 #include "EnemyBase.h"
+#include "../../Player/Player.h"
 #include "../../Stage/Ground.h"
 #include "../../Stage/StageObject.h"
 #include "../System/EnemyManager.h"
@@ -7,48 +8,42 @@
 CEnemyBase::CEnemyBase()
     : m_velocityY(0.0f)
 {
-    CEnemyManager* manager = ObjectManager::FindGameObject<CEnemyManager>();
-    if (manager)
+    m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
+    m_pEnemyManager = ObjectManager::FindGameObject<CEnemyManager>();
+    if (m_pEnemyManager)
     {
-        manager->RegisterEnemy(this);
+        m_pEnemyManager->RegisterEnemy(this);
     }
+
 }
 
 
-CBBox* CEnemyBase::CreateBBox()
+std::unique_ptr<CBBox> CEnemyBase::CreateBBox()
 {
     if (m_pBBox == nullptr && m_pMesh != nullptr)
     {
-        m_pBBox = new CBBox(m_pMesh->m_vMin, m_pMesh->m_vMax);
+        m_pBBox = std::make_unique<CBBox>(m_pMesh->m_vMin, m_pMesh->m_vMax);
     }
-    return m_pBBox;
+    return move(m_pBBox);
 }
+
 
 
 void CEnemyBase::ChangeState(CBaseState::State type)
 {
-    // 同じ状態なら何もしない
-    if (m_pComponent == m_components[type]) return;
+    // 蜷後§迥ｶ諷九↑繧我ｽ輔ｂ縺励↑縺・
+    if (m_pComponent == m_components[type].get()) return;
 
     m_pState->Exit();
-    m_pComponent = m_components[type];
+    m_pComponent = m_components[type].get();
     m_pState->Enter(type);
 }
 
 CEnemyBase::~CEnemyBase()
 {
-    CEnemyManager* manager = ObjectManager::FindGameObject<CEnemyManager>();
-    if (manager)
+    if (m_pEnemyManager)
     {
-        manager->UnregisterEnemy(this);
-    }
-
-    SAFE_DELETE(m_pBBox);
-    SAFE_DELETE(m_pState);
-
-    for (auto& component : m_components)
-    {
-        SAFE_DELETE(component.second);
+        m_pEnemyManager->UnregisterEnemy(this);
     }
 
 }
@@ -61,10 +56,10 @@ void CEnemyBase::Update()
     {
         m_pState->Update();
     }
-    //近くにいるオブジェクトを取得し、当たっていたら押し戻す
+    //霑代￥縺ｫ縺・ｋ繧ｪ繝悶ず繧ｧ繧ｯ繝医ｒ蜿門ｾ励＠縲∝ｽ薙◆縺｣縺ｦ縺・◆繧画款縺玲綾縺・
     ResolveOBBCollisions();
     UpdateBBox();
-    // ステージオブジェクトとの衝突判定と押し戻し（最後に実行）
+    // 繧ｹ繝・・繧ｸ繧ｪ繝悶ず繧ｧ繧ｯ繝医→縺ｮ陦晉ｪ∝愛螳壹→謚ｼ縺玲綾縺暦ｼ域怙蠕後↓螳溯｡鯉ｼ・
     ResolveStageCollisions();
 }
 
@@ -77,7 +72,7 @@ void CEnemyBase::ApplyGravity()
     }
     static constexpr float GRAVITY = 9.8f;
 
-    static constexpr float GROUND_SKIN = 0.02f; // 地面との接触時のめり込み防止用のスキン値 //
+    static constexpr float GROUND_SKIN = 0.02f; // 蝨ｰ髱｢縺ｨ縺ｮ謗･隗ｦ譎ゅ・繧√ｊ霎ｼ縺ｿ髦ｲ豁｢逕ｨ縺ｮ繧ｹ繧ｭ繝ｳ蛟､ //
     m_velocityY -= GRAVITY * SceneManager::DeltaTime();
     const float dt = SceneManager::DeltaTime();
     const float nextY = transform.position.y + m_velocityY * dt;
@@ -85,10 +80,10 @@ void CEnemyBase::ApplyGravity()
     if (m_pGround != nullptr)
     {
         static constexpr float GROUND_CHECK_OFFSET = 0.1f;
-        // 現在の位置と次の位置を使って、オフセットを考慮したレイキャストの範囲を決定 //
+        // 迴ｾ蝨ｨ縺ｮ菴咲ｽｮ縺ｨ谺｡縺ｮ菴咲ｽｮ繧剃ｽｿ縺｣縺ｦ縲√が繝輔そ繝・ヨ繧定・・縺励◆繝ｬ繧､繧ｭ繝｣繧ｹ繝医・遽・峇繧呈ｱｺ螳・//
         const float fromY = transform.position.y + GROUND_CHECK_OFFSET;
         const float toY = nextY - GROUND_CHECK_OFFSET;
-        // 下向きの地面チェック //
+        // 荳句髄縺阪・蝨ｰ髱｢繝√ぉ繝・け //
         if (toY < fromY)
         {
             const VECTOR3 rayStart = VECTOR3(transform.position.x, fromY, transform.position.z);
@@ -99,7 +94,7 @@ void CEnemyBase::ApplyGravity()
 
             if (hit)
             {
-                // 衝突した場合、地面の位置にスキン値を加えて位置を調整 //
+                // 陦晉ｪ√＠縺溷ｴ蜷医∝慍髱｢縺ｮ菴咲ｽｮ縺ｫ繧ｹ繧ｭ繝ｳ蛟､繧貞刈縺医※菴咲ｽｮ繧定ｪｿ謨ｴ //
                 transform.position.y = collInfo.hitPosition.y + GROUND_SKIN;
                 m_velocityY = 0.0f;
                 return;
@@ -114,11 +109,11 @@ bool CEnemyBase::GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const
 {
     if (m_pMesh == nullptr)
     {
-        //Meshがなければ終わる//
+        //Mesh縺後↑縺代ｌ縺ｰ邨ゅｏ繧・/
         return false;
     }
     
-    // XZ平面での4頂点を取得//
+    // XZ蟷ｳ髱｢縺ｧ縺ｮ4鬆らせ繧貞叙蠕・/
     const VECTOR3 min = m_pMesh->m_vMin;
     const VECTOR3 max = m_pMesh->m_vMax;
     
@@ -129,12 +124,12 @@ bool CEnemyBase::GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const
         VECTOR3(max.x, 0, max.z)
     };
 
-    // 回転行列を取得//
+    // 蝗櫁ｻ｢陦悟・繧貞叙蠕・/
     MATRIX4X4 rotY = XMMatrixRotationY(transform.rotation.y);
     MATRIX4X4 scaleM = XMMatrixScaling(transform.scale.x, transform.scale.y, transform.scale.z);
     MATRIX4X4 transformMatrix = scaleM * rotY;
 
-    // 変換後の頂点の最小・最大値を求める //
+    // 螟画鋤蠕後・鬆らせ縺ｮ譛蟆上・譛螟ｧ蛟､繧呈ｱゅａ繧・//
     float minX = FLT_MAX, maxX = -FLT_MAX;
     float minZ = FLT_MAX, maxZ = -FLT_MAX;
 
@@ -147,7 +142,7 @@ bool CEnemyBase::GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const
         maxZ = std::max(maxZ, transformed.z);
     }
 
-    // ワールド座標に変換
+    // 繝ｯ繝ｼ繝ｫ繝牙ｺｧ讓吶↓螟画鋤
     outPos = VECTOR2(
         (minX + maxX) * 0.5f + transform.position.x,
         (minZ + maxZ) * 0.5f + transform.position.z
@@ -159,22 +154,21 @@ bool CEnemyBase::GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const
 
 std::vector<CEnemyBase*> CEnemyBase::GetNearbyEnemies() const
 {
-    // AnimalManagerを取得 //
-    CEnemyManager* manager = ObjectManager::FindGameObject<CEnemyManager>();
-    if (manager == nullptr)
+    // AnimalManager繧貞叙蠕・//
+    if (m_pEnemyManager == nullptr)
     {
         return std::vector<CEnemyBase*>();
     }
 
-    // 自分の2D境界ボックス（XZ平面での位置とサイズ）を取得 //
+    // 閾ｪ蛻・・2D蠅・阜繝懊ャ繧ｯ繧ｹ・・Z蟷ｳ髱｢縺ｧ縺ｮ菴咲ｽｮ縺ｨ繧ｵ繧､繧ｺ・峨ｒ蜿門ｾ・//
     VECTOR2 pos, size;
     if (!GetBounds2D(pos, size))
     {
         return std::vector<CEnemyBase*>();
     }
 
-    // マネージャーの四分木を使って、周辺のエネミーを効率的に取得 //
-    return manager->GetNearbyEnemies(const_cast<CEnemyBase*>(this), pos, size);
+    // 繝槭ロ繝ｼ繧ｸ繝｣繝ｼ縺ｮ蝗帛・譛ｨ繧剃ｽｿ縺｣縺ｦ縲∝捉霎ｺ縺ｮ繧ｨ繝阪Α繝ｼ繧貞柑邇・噪縺ｫ蜿門ｾ・//
+    return m_pEnemyManager->GetNearbyEnemies(const_cast<CEnemyBase*>(this), pos, size);
 }
 
 void CEnemyBase::UpdateBBox() const
@@ -189,19 +183,19 @@ void CEnemyBase::ResolveOBBCollisions()
 {
     if (m_pBBox == nullptr) return;
 
-    // 四分木から周辺のエネミーを効率的に取得//
+    // 蝗帛・譛ｨ縺九ｉ蜻ｨ霎ｺ縺ｮ繧ｨ繝阪Α繝ｼ繧貞柑邇・噪縺ｫ蜿門ｾ・/
     std::vector<CEnemyBase*> nearbyEnemies = GetNearbyEnemies();
 
-    // 周辺エネミーと当たり判定//
+    // 蜻ｨ霎ｺ繧ｨ繝阪Α繝ｼ縺ｨ蠖薙◆繧雁愛螳・/
     for (auto* enemy : nearbyEnemies)
     {
-        if (enemy == this) continue;  // 自分自身はスキップ//
+        if (enemy == this) continue;  // 閾ｪ蛻・・霄ｫ縺ｯ繧ｹ繧ｭ繝・・//
         if (enemy->GetBBox() == nullptr) continue;
 
         VECTOR3 hitPos, hitNormal;
         if (m_pBBox->OBBCollisionDetection(enemy->GetBBox(), &hitPos, &hitNormal))
         {
-            // 衝突した場合、押し戻し処理を実行//
+            // 陦晉ｪ√＠縺溷ｴ蜷医∵款縺玲綾縺怜・逅・ｒ螳溯｡・/
             CalcApplyPushback(enemy);
         }
     }
@@ -211,44 +205,44 @@ void CEnemyBase::CalcApplyPushback(CEnemyBase* other)
 {
     if (m_pBBox == nullptr || other == nullptr || other->GetBBox() == nullptr) return;
 
-    // 自分と相手のOBB中心座標を計算//
+    // 閾ｪ蛻・→逶ｸ謇九・OBB荳ｭ蠢・ｺｧ讓吶ｒ險育ｮ・/
     MATRIX4X4 myCenterMat = XMMatrixTranslation(
         m_pBBox->m_fLengthX + m_pBBox->m_vMin.x,
         m_pBBox->m_fLengthY + m_pBBox->m_vMin.y,
         m_pBBox->m_fLengthZ + m_pBBox->m_vMin.z
     );
-    // ワールド空間に変換//
+    // 繝ｯ繝ｼ繝ｫ繝臥ｩｺ髢薙↓螟画鋤//
     myCenterMat = myCenterMat * m_pBBox->m_mWorld;
-    // 行列から位置成分を抽出して自分の中心座標を取得//
+    // 陦悟・縺九ｉ菴咲ｽｮ謌仙・繧呈歓蜃ｺ縺励※閾ｪ蛻・・荳ｭ蠢・ｺｧ讓吶ｒ蜿門ｾ・/
     VECTOR3 myCenter =GetPositionVector(myCenterMat);
 
-    // 相手のOBB中心座標を計算//
+    // 逶ｸ謇九・OBB荳ｭ蠢・ｺｧ讓吶ｒ險育ｮ・/
     CBBox* otherBBox = other->GetBBox();
     MATRIX4X4 otherCenterMat = XMMatrixTranslation(
         otherBBox->m_fLengthX + otherBBox->m_vMin.x,
         otherBBox->m_fLengthY + otherBBox->m_vMin.y,
         otherBBox->m_fLengthZ + otherBBox->m_vMin.z
     );
-    // ワールド空間に変換//
+    // 繝ｯ繝ｼ繝ｫ繝臥ｩｺ髢薙↓螟画鋤//
     otherCenterMat = otherCenterMat * otherBBox->m_mWorld;
-    // 行列から位置成分を抽出して相手の中心座標を取得//
+    // 陦悟・縺九ｉ菴咲ｽｮ謌仙・繧呈歓蜃ｺ縺励※逶ｸ謇九・荳ｭ蠢・ｺｧ讓吶ｒ蜿門ｾ・/
     VECTOR3 otherCenter =  GetPositionVector(otherCenterMat);
 
-    // 押し戻しベクトルを計算//
+    // 謚ｼ縺玲綾縺励・繧ｯ繝医Ν繧定ｨ育ｮ・/
     VECTOR3 pushDirection = myCenter - otherCenter;
-    pushDirection.y = 0.0f;  // Y成分を無視してXZ平面のみで押し戻す//
+    pushDirection.y = 0.0f;  // Y謌仙・繧堤┌隕悶＠縺ｦXZ蟷ｳ髱｢縺ｮ縺ｿ縺ｧ謚ｼ縺玲綾縺・/
     float distance = magnitude(pushDirection);
 
-    if (distance > 0.001f)  // 0除算をnormで起こさないために値がい小さい場合はスキップ//
+    if (distance > 0.001f)  // 0髯､邂励ｒnorm縺ｧ襍ｷ縺薙＆縺ｪ縺・◆繧√↓蛟､縺後＞蟆上＆縺・ｴ蜷医・繧ｹ繧ｭ繝・・//
     {
         pushDirection = normalize(pushDirection);
 
-        static constexpr float PUSHBACK_SPEED = 6.0f;  // 1秒あたりの押し戻し速度
+        static constexpr float PUSHBACK_SPEED = 6.0f;  // 1遘偵≠縺溘ｊ縺ｮ謚ｼ縺玲綾縺鈴溷ｺｦ
 
-        // 押し戻し距離//
+        // 謚ｼ縺玲綾縺苓ｷ晞屬//
         float pushDistance = PUSHBACK_SPEED * SceneManager::DeltaTime();
 
-        // 位置を更新//
+        // 菴咲ｽｮ繧呈峩譁ｰ//
         transform.position += pushDirection * pushDistance;
     }
 }
@@ -258,18 +252,17 @@ VECTOR3 CEnemyBase::CalcSlideMove(const VECTOR3& desiredMove) const
     if (m_pBBox == nullptr) return desiredMove;
 
 
-    // ここで現在の transform を使って BBox を更新
+    // 縺薙％縺ｧ迴ｾ蝨ｨ縺ｮ transform 繧剃ｽｿ縺｣縺ｦ BBox 繧呈峩譁ｰ
     m_pBBox->m_mWorld = transform.matrix();
 
     VECTOR3 moveVec = desiredMove;
 
-    // 四分木で近傍オブジェクトのみ取得
+    // 蝗帛・譛ｨ縺ｧ霑大ｍ繧ｪ繝悶ず繧ｧ繧ｯ繝医・縺ｿ蜿門ｾ・
     VECTOR2 pos2d, size2d;
     std::vector<CStageObject*> stageObjects;
-    CEnemyManager* manager = ObjectManager::FindGameObject<CEnemyManager>();
-    if (manager && GetBounds2D(pos2d, size2d))
+    if (m_pEnemyManager && GetBounds2D(pos2d, size2d))
     {
-        stageObjects = manager->GetNearbyStageObjects(pos2d, size2d);
+        stageObjects = m_pEnemyManager->GetNearbyStageObjects(pos2d, size2d);
     }
 
     for (CStageObject* stage : stageObjects)
@@ -277,10 +270,10 @@ VECTOR3 CEnemyBase::CalcSlideMove(const VECTOR3& desiredMove) const
         if (stage == nullptr || stage->GetOBB() == nullptr) continue;
 
         VECTOR3 hitPos, hitNormal;
-        if (stage->HitOBB(m_pBBox, &hitPos, &hitNormal))
+        if (stage->HitOBB(m_pBBox.get(), &hitPos, &hitNormal))
         {
-            // OBBCollisionDetection は法線を (0,1,0) 固定で返すため hitNormal は使用不可
-            // ステージ中心 → 敵中心 の方向を壁法線の代わりに使う
+            // OBBCollisionDetection 縺ｯ豕慕ｷ壹ｒ (0,1,0) 蝗ｺ螳壹〒霑斐☆縺溘ａ hitNormal 縺ｯ菴ｿ逕ｨ荳榊庄
+            // 繧ｹ繝・・繧ｸ荳ｭ蠢・竊・謨ｵ荳ｭ蠢・縺ｮ譁ｹ蜷代ｒ螢∵ｳ慕ｷ壹・莉｣繧上ｊ縺ｫ菴ｿ縺・
             CBBox* stageOBB = stage->GetOBB();
             MATRIX4X4 stageCenterMat = XMMatrixTranslation(
                 stageOBB->m_fLengthX + stageOBB->m_vMin.x,
@@ -304,10 +297,10 @@ VECTOR3 CEnemyBase::CalcSlideMove(const VECTOR3& desiredMove) const
             if (dist > 0.001f)
             {
                 awayDir = normalize(awayDir);
-                // awayDir は「木から離れる方向」= 壁法線の近似
-                // moveVec の「木に向かう成分」だけを除去する
+                // awayDir 縺ｯ縲梧惠縺九ｉ髮｢繧後ｋ譁ｹ蜷代・ 螢∵ｳ慕ｷ壹・霑台ｼｼ
+                // moveVec 縺ｮ縲梧惠縺ｫ蜷代°縺・・蛻・阪□縺代ｒ髯､蜴ｻ縺吶ｋ
                 float d = Dot(moveVec, awayDir);
-                if (d < 0.0f)  // 木方向に向かっているときだけ
+                if (d < 0.0f)  // 譛ｨ譁ｹ蜷代↓蜷代°縺｣縺ｦ縺・ｋ縺ｨ縺阪□縺・
                 {
                     moveVec -= awayDir * d;
                 }
@@ -318,20 +311,19 @@ VECTOR3 CEnemyBase::CalcSlideMove(const VECTOR3& desiredMove) const
 }
 
 //
-// ステージオブジェクトとの衝突判定と押し戻し処理
+// 繧ｹ繝・・繧ｸ繧ｪ繝悶ず繧ｧ繧ｯ繝医→縺ｮ陦晉ｪ∝愛螳壹→謚ｼ縺玲綾縺怜・逅・
 //
 void CEnemyBase::ResolveStageCollisions()
 {
     if (m_pBBox == nullptr) return;
 
-    // 四分木で近傍オブジェクトのみ取得
-    CEnemyManager* manager = ObjectManager::FindGameObject<CEnemyManager>();
-    if (manager == nullptr) return;
+    // 蝗帛・譛ｨ縺ｧ霑大ｍ繧ｪ繝悶ず繧ｧ繧ｯ繝医・縺ｿ蜿門ｾ・
+    if (m_pEnemyManager == nullptr) return;
 
     VECTOR2 pos, size;
     if (!GetBounds2D(pos, size)) return;
 
-    std::vector<CStageObject*> stageObjects = manager->GetNearbyStageObjects(pos, size);
+    std::vector<CStageObject*> stageObjects = m_pEnemyManager->GetNearbyStageObjects(pos, size);
 
     for (CStageObject* stage : stageObjects)
     {
@@ -347,7 +339,7 @@ CComponentBase* CEnemyBase::GetComponent(CBaseState::State type) const
     {
         return nullptr;
     }
-    return itr->second;
+    return itr->second.get();
 }
 
 VECTOR3 CEnemyBase::SuctionSpeed() const
@@ -357,13 +349,13 @@ VECTOR3 CEnemyBase::SuctionSpeed() const
 
 void CEnemyBase::IsSuctionCheck() 
 {
-    const CPlayer* pl = ObjectManager::FindGameObject<CPlayer>();
-    if (pl == nullptr)return;
-    if (pl->GetIsSuckUp() && pl->IsInsideSuctionCircle(transform.position))
+    if (m_pPlayer == nullptr)return;
+    if (m_pPlayer->GetIsSuckUp() && m_pPlayer->IsInsideSuctionCircle(transform.position))
     {
         ChangeState(CBaseState::State::SUCTION);
     }
 }
+
 
 
 

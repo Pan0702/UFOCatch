@@ -1,7 +1,7 @@
-#pragma once
+﻿#pragma once
 
 /// <summary>
-/// �V�[���̊��N���X
+/// ・ｽV・ｽ[・ｽ・ｽ・ｽﾌ奇ｿｽ・ｽN・ｽ・ｽ・ｽX
 /// </summary>
 /// <author>N.Hanai</author>
 
@@ -17,3 +17,4 @@ public:
 	virtual void Update() {}
 	virtual void Draw() {}
 };
+

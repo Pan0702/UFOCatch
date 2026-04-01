@@ -1,11 +1,14 @@
-#include "SelectionScene.h"
+﻿#include "SelectionScene.h"
+
+#include "../Common/Constants.h"
 #include "../Framework/AudioManager.h"
+#include "../Framework/GameObject.h"
 
 namespace
 {
     constexpr int BUTTON_COUNT = 3;
 }
-
+using namespace Constants;
 CSelectionScene::CSelectionScene()
 {
     m_pImageBackGround = new CSpriteImage("data/Select/_0006_Base.png"); //("data/Select/Select.png");
@@ -13,8 +16,8 @@ CSelectionScene::CSelectionScene()
     InitButtons();
     InitScene();
     InitImage();
-    AudioManager::Load("Select",_T("data/Sound/himitu.wav"));
-    AudioManager::Play("Select");
+    AudioManager::Load(Sound::Key::SELECT_BGM,_T(Sound::Path::SELECT_BGM));
+    AudioManager::Play(Sound::Key::SELECT_BGM);
 }
 
 void CSelectionScene::InitButtons()
@@ -80,7 +83,7 @@ CSelectionScene::~CSelectionScene()
     {
         SAFE_DELETE(button.image);
     }
-    AudioManager::Stop(_T("Select"));
+    AudioManager::Stop(_T(Sound::Key::SELECT_BGM));
 }
 
 void CSelectionScene::Update()
@@ -88,25 +91,25 @@ void CSelectionScene::Update()
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_RETURN))
     {
         SceneManager::ChangeSceneWithTransition(m_sceneName[m_selectedIndex].c_str());
-        AudioManager::Play(_T("Decide"), false);
+        AudioManager::Play(_T(Sound::Key::DECIDE_SE), false);
     }
 
     PlayButton();
     LevelButton();
 
-    m_wipeAnim.Update(0.05f);
+    m_wipeAnim.Update(5.0f, SceneManager::DeltaTime());
 }
 void CSelectionScene::PlayButton()
 {
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_D))
     {
         m_play = (m_play + 1) % 2;
-        AudioManager::Play(_T("Select"), false);
+        AudioManager::Play(_T(Sound::Key::SELECT_SE), false);
     }
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_A))
     {
         m_play = (m_play - 1 + 2) % 2;
-        AudioManager::Play(_T("Select"), false);
+        AudioManager::Play(_T(Sound::Key::SELECT_SE), false);
     }
 }
 
@@ -119,13 +122,13 @@ void CSelectionScene::LevelButton()
     {
         newIndex  = (m_selectedIndex + 1) % BUTTON_COUNT;
         direction = 1;
-        AudioManager::Play(_T("Select"), false);
+        AudioManager::Play(_T(Sound::Key::SELECT_SE), false);
     }
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_W))
     {
         newIndex  = (m_selectedIndex - 1 + BUTTON_COUNT) % BUTTON_COUNT;
         direction = -1;
-        AudioManager::Play(_T("Select"), false);
+        AudioManager::Play(_T(Sound::Key::SELECT_SE), false);
     }
 
     if (newIndex != m_selectedIndex)
@@ -141,7 +144,7 @@ void CSelectionScene::Draw()
     static constexpr float imageWidthMaxSize = 1366;
     static constexpr float imageHeightMaxSize = 768;
     CSprite spr;
-    //背景のひょうじ //
+    //背景の描画//
     spr.Draw(m_pImageBackGround, 0, 0, 0, 0, imageWidthMaxSize, imageHeightMaxSize);
     ButtonsDraw();
     spr.Draw(m_images[m_selectedIndex], 0, 0, 0, 0, imageWidthMaxSize, imageHeightMaxSize);
@@ -151,7 +154,7 @@ void CSelectionScene::Draw()
         spr.Draw(m_buttons[1].image, 1083, 489, 0, 0, playSize.x, playSize.y);
     }
     //文字の表示
-    int arryEnd = m_buttons.size() - 1;
+    int arryEnd = static_cast<int>(m_buttons.size() - 1);
     VECTOR2 strSize = m_buttons[arryEnd].imageSize;
     spr.Draw(m_buttons[arryEnd].image, 0, 0, 0, 0, strSize.x, strSize.y);
 }
@@ -177,5 +180,7 @@ void CSelectionScene::ButtonsDraw()
     VECTOR2 playSize = m_buttons[5].imageSize;
     spr.Draw(m_buttons[5].image, 1083, 489, 0, 0, playSize.x, playSize.y);
 }
+
+
 
 

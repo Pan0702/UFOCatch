@@ -1,4 +1,4 @@
-#include "../../Base/StateBase.h"
+﻿#include "../../Base/StateBase.h"
 #include "../../../Common/Object3D.h"
 #include "../../../Player/Player.h"
 class CAnimalChicken;
@@ -69,3 +69,4 @@ public:
     CChickenDestroy(CAnimalChicken* chicken);
     void Enter(State type) override;
 };
+
