@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------------
 // DInput.h : DirectInputを簡単に利用するためのライブラリ(ヘッダー)
 //
 //                                               ver 3.3        2024.3.23
@@ -7,12 +7,10 @@
 //-----------------------------------------------------------------------------
 
 #ifndef _DINPUT_H_
-#define _DINPUT_H_
 
 #define DIRECTINPUT_VERSION 0x0800
 
 #include <dinput.h>
-#include <tchar.h>
 
 // 必要なライブラリファイルのロード
 #pragma comment(lib,"dxguid.lib")
@@ -86,7 +84,7 @@
 #define DIF_D          7
 #define DIF_RESERVED   8
 #define DIF_ARROW      9           // 十字ボタン
-#define DIF_THROW      -1          // 未定義
+#define DIF_THROW      (-1)          // 未定義
 
 #define DIF_LEFT       10
 #define DIF_RIGHT      11
@@ -99,14 +97,14 @@
 #define INIT_MOUSE      2
 #define INIT_JOYSTICK   4
 
-#define DIMOFS_BUTTON(n) (FIELD_OFFSET(DIMOUSESTATE, rgbButtons) + (n))
+#define DIMOFS_BUTTON(n) ((FIELD_OFFSET(DIMOUSESTATE, rgbButtons) + (n)))
 
-#define DEADZONE       2500         // スティックの遊び（25%）
-#define RANGE_MAX      1000         // 軸の最大値
-#define RANGE_MIN      -1000        // 軸の最小値
-#define FF_CHILD       5000         // 振動強度 50%
-#define FF_ADULT       7500         // 振動強度 75%
-#define FF_BODYBUILDER 10000        // 振動強度 100%
+#define DEADZONE       (2500)         // スティックの遊び（25%）
+#define RANGE_MAX      (1000)         // 軸の最大値
+#define RANGE_MIN      (-1000)        // 軸の最小値
+#define FF_CHILD       (5000)         // 振動強度 50%
+#define FF_ADULT       (7500)         // 振動強度 75%
+#define FF_BODYBUILDER ()10000)        // 振動強度 100%
 //-----------------------------------------------------------------------------
 // 内部エフェクト識別子
 //-----------------------------------------------------------------------------
@@ -118,54 +116,50 @@
 class CDirectInput
 {
 private:
+    
     //-----------------------------------------------------------------------------
     // 共通
     //-----------------------------------------------------------------------------
-    HWND           m_hWnd;
-    HRESULT        m_hr;
-    float          m_ViewWidth;          // 画面サイズ：幅
-    float          m_ViewHeight;         // 画面サイズ：高さ
-    LPDIRECTINPUT8 m_pDI8;               // DirectInput オブジェクト
-    BYTE           m_diKeyState[256];    // キーボードの状態
-    DIMOUSESTATE   m_dims;               // マウスの状態
-    DIJOYSTATE2    m_js[JOYSTICK_COUNT]; // ジョイスティックの状態
-    bool           m_bInputActive;
-    
-    //-----------------------------------------------------------------------------
-    // キーボード用メンバ
-    //-----------------------------------------------------------------------------
+private:
+    // --- 1. 8バイト（ポインタ・ハンドル） ---
+    HWND                 m_hWnd;
+    LPDIRECTINPUT8       m_pDI8;
     LPDIRECTINPUTDEVICE8 m_pKey;
-    DWORD m_BufferRestKey;
-    DWORD m_BufferRestBackupKey;
     DIDEVICEOBJECTDATA* m_pBufferKey;
     DIDEVICEOBJECTDATA* m_pBufferPositionKey;
     LPDIDEVICEOBJECTDATA m_didodKey;
-    
-    //-----------------------------------------------------------------------------
-    // マウス用メンバ
-    //-----------------------------------------------------------------------------
     LPDIRECTINPUTDEVICE8 m_pMouse;
-    DWORD m_BufferRestMouse;
-    DWORD m_BufferRestBackupMouse;
     DIDEVICEOBJECTDATA* m_pBufferMouse;
     DIDEVICEOBJECTDATA* m_pBufferPositionMouse;
     LPDIDEVICEOBJECTDATA m_didodMouse;
-    
-    //-----------------------------------------------------------------------------
-    // ジョイスティック用メンバ
-    //-----------------------------------------------------------------------------
     LPDIRECTINPUTDEVICE8 m_pJoy[JOYSTICK_COUNT];
-    bool m_bJoyFF[JOYSTICK_COUNT];
-    DWORD m_BufferRestJoy;
-    DWORD m_BufferRestBackupJoy[JOYSTICK_COUNT];
     DIDEVICEOBJECTDATA* m_pBufferJoy[JOYSTICK_COUNT];
     DIDEVICEOBJECTDATA* m_pBufferPositionJoy;
     LPDIDEVICEOBJECTDATA m_didodJoy[JOYSTICK_COUNT];
-    LPDIRECTINPUTEFFECT m_pJoyEffect[JOYSTICK_COUNT][JOY_EF_COUNT];
-    int m_nJoySum;
-    int m_nJoyFFNum;
-    int m_nJoyEFSum;
-    int m_nJoyEFI;
+    LPDIRECTINPUTEFFECT  m_pJoyEffect[JOYSTICK_COUNT][JOY_EF_COUNT];
+
+    // --- 2. 4バイト（int, float, DWORD, HRESULT） ---
+    HRESULT              m_hr;
+    float                m_ViewWidth;
+    float                m_ViewHeight;
+    DWORD                m_BufferRestKey;
+    DWORD                m_BufferRestBackupKey;
+    DWORD                m_BufferRestMouse;
+    DWORD                m_BufferRestBackupMouse;
+    DWORD                m_BufferRestJoy;
+    DWORD                m_BufferRestBackupJoy[JOYSTICK_COUNT];
+    int                  m_nJoySum;
+    int                  m_nJoyFFNum;
+    int                  m_nJoyEFSum;
+    int                  m_nJoyEFI;
+
+    // --- 3. 1バイト（BYTE配列, bool） ---
+    // 大きな配列を先に置く
+    BYTE                 m_diKeyState[256];    // 256は8の倍数なので安全
+    DIMOUSESTATE         m_dims;               // 内部はlong(4)とBYTE(1)の混合だがここに配置
+    DIJOYSTATE2          m_js[JOYSTICK_COUNT]; // 非常に巨大な構造体
+    bool                 m_bInputActive;
+    bool                 m_bJoyFF[JOYSTICK_COUNT];
 
 public:
     //-----------------------------------------------------------------------------
@@ -193,6 +187,9 @@ public:
     bool GetMouse(void);
     bool CheckMouse(const int& nButton, const DWORD& nMode);
     DIMOUSESTATE GetMouseState(void);
+    float GetMouseWheel() const;
+    bool IsMouseMove() const;
+    bool IsMoveInput();
     POINT GetMousePos(); // マウスの現在の座標を取得
     void ShowMouseCursor(bool bFlag);
     bool InitMouse(HWND);

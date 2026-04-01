@@ -1,16 +1,13 @@
-#pragma once
-#include "../../Player/Player.h"
-#include "../System/EnemyManager.h"
-#include "../Base/EnemyBase.h"
+﻿#pragma once
 
+class CPlayer;
+class CEnemyBase;
 class CComponentBase
 {
 public:
     CComponentBase() = default;
     virtual ~CComponentBase()
     {
-        // m_pPlayer と m_pOwner は参照用ポインタなので削除しない
-        // 実際のオブジェクトは別の場所で管理されている
     }
     
     virtual void Enter(){}
@@ -28,3 +25,4 @@ protected:
     bool m_isFinish;
 
 };
+

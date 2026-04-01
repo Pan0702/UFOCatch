@@ -1,4 +1,4 @@
-#include "FunShape.h"
+﻿#include "FunShape.h"
 
 CFunShape::CFunShape()
 {
@@ -15,6 +15,7 @@ CFunShape::~CFunShape()
 
 void CFunShape::PosSet(const VECTOR3& pos, const float angle)
 {
-    transform.position = VECTOR3(pos.x,-0.1f,pos.z);
+    transform.position = VECTOR3(pos.x,0,pos.z);
     transform.rotation.y = angle;
 }
+

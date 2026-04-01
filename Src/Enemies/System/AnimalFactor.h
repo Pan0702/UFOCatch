@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../../Common/Object3D.h"
 
 class CAnimalFactor : public Object3D
@@ -10,3 +10,4 @@ public:
 private:
     static void Normal(float sizeX, float sizeZ);
 };
+

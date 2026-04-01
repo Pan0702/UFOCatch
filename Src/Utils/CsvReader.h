@@ -54,3 +54,4 @@ private:
 	};
 	std::vector<LINEREC> all;
 };
+

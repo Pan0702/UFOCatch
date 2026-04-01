@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "ComponentBase.h"
 #include "../AnimalSheep/Sheep.h"
 class CHerded : public CComponentBase
@@ -12,7 +12,7 @@ private:
     CSheep* m_pOwner;
     VECTOR3 CalculateBoids() const;
     VECTOR3 CalculateEscapeFromDog() const;
-    VECTOR3 CalculateBoundaryForce() const;  // 中心点への引き寄せと半径制約
+    VECTOR3 CalculateBoundaryForce() const;  // 中心点への引き寄せと半径制限
     VECTOR3 CalculateWandering();  // ランダムな徘徊行動
 
     // Wandering用のパラメータ

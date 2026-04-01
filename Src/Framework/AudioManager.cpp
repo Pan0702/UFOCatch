@@ -1,19 +1,19 @@
-#include "AudioManager.h"
+﻿#include "AudioManager.h"
 #include <unordered_map>
 
 namespace {
-    // 登録名をキーに音声ソースを管理するマップ
+    // 逋ｻ骭ｲ蜷阪ｒ繧ｭ繝ｼ縺ｫ髻ｳ螢ｰ繧ｽ繝ｼ繧ｹ繧堤ｮ｡逅・☆繧九・繝・・
     std::unordered_map<tstring, CXAudioSource*> audioFiles;
 }
 
 
-// マップをクリア（リソースの解放は行わない）
+// 繝槭ャ繝励ｒ繧ｯ繝ｪ繧｢・医Μ繧ｽ繝ｼ繧ｹ縺ｮ隗｣謾ｾ縺ｯ陦後ｏ縺ｪ縺・ｼ・
 void AudioManager::Init()
 {
     audioFiles.clear();
 }
 
-// 全音声リソースを解放してマップをクリア
+// 蜈ｨ髻ｳ螢ｰ繝ｪ繧ｽ繝ｼ繧ｹ繧定ｧ｣謾ｾ縺励※繝槭ャ繝励ｒ繧ｯ繝ｪ繧｢
 void AudioManager::Reset()
 {
     for (auto& pair : audioFiles) {
@@ -22,8 +22,8 @@ void AudioManager::Reset()
     audioFiles.clear();
 }
 
-// 音声ファイルをロードして名前で登録する
-// 同じ名前が既に登録済みの場合はロードせずそのまま返す
+// 髻ｳ螢ｰ繝輔ぃ繧､繝ｫ繧偵Ο繝ｼ繝峨＠縺ｦ蜷榊燕縺ｧ逋ｻ骭ｲ縺吶ｋ
+// 蜷後§蜷榊燕縺梧里縺ｫ逋ｻ骭ｲ貂医∩縺ｮ蝣ｴ蜷医・繝ｭ繝ｼ繝峨○縺壹◎縺ｮ縺ｾ縺ｾ霑斐☆
 CXAudioSource* AudioManager::Load(const tstring& name, const tstring& filepath, DWORD sourceNum)
 {
     if (audioFiles.find(name) == audioFiles.end()) {
@@ -34,8 +34,8 @@ CXAudioSource* AudioManager::Load(const tstring& name, const tstring& filepath, 
     return audioFiles[name];
 }
 
-// 指定した名前の音声を再生する
-// loop=true でループ再生
+// 謖・ｮ壹＠縺溷錐蜑阪・髻ｳ螢ｰ繧貞・逕溘☆繧・
+// loop=true 縺ｧ繝ｫ繝ｼ繝怜・逕・
 void AudioManager::Play(const tstring& name, bool loop)
 {
     auto it = audioFiles.find(name);
@@ -44,7 +44,7 @@ void AudioManager::Play(const tstring& name, bool loop)
     }
 }
 
-// 指定した名前の音声を停止する
+// 謖・ｮ壹＠縺溷錐蜑阪・髻ｳ螢ｰ繧貞●豁｢縺吶ｋ
 void AudioManager::Stop(const tstring& filename)
 {
     auto it = audioFiles.find(filename);
@@ -53,7 +53,7 @@ void AudioManager::Stop(const tstring& filename)
     }
 }
 
-// 登録されている全音声を停止する
+// 逋ｻ骭ｲ縺輔ｌ縺ｦ縺・ｋ蜈ｨ髻ｳ螢ｰ繧貞●豁｢縺吶ｋ
 void AudioManager::StopAll()
 {
     for (auto& pair : audioFiles) {
@@ -61,7 +61,7 @@ void AudioManager::StopAll()
     }
 }
 
-// 指定した名前の音声のボリュームを設定する（1.0f が標準）
+// 謖・ｮ壹＠縺溷錐蜑阪・髻ｳ螢ｰ縺ｮ繝懊Μ繝･繝ｼ繝繧定ｨｭ螳壹☆繧具ｼ・.0f 縺梧ｨ呎ｺ厄ｼ・
 void AudioManager::SetVolume(const tstring& filename, float volume)
 {
     auto it = audioFiles.find(filename);
@@ -70,7 +70,7 @@ void AudioManager::SetVolume(const tstring& filename, float volume)
     }
 }
 
-// ゲームで使用するBGM・SEをまとめてロードする
+// 繧ｲ繝ｼ繝縺ｧ菴ｿ逕ｨ縺吶ｋBGM繝ｻSE繧偵∪縺ｨ繧√※繝ｭ繝ｼ繝峨☆繧・
 void AudioStorage::InitMusic()
 {
     AudioManager::Load("Play",   _T("data/Sound/yukai.wav"));
@@ -79,3 +79,4 @@ void AudioStorage::InitMusic()
     AudioManager::Load("Decide", _T("data/Sound/decide.wav"));
     AudioManager::Load("Select", _T("data/Sound/select_002.wav"));
 }
+

@@ -1,5 +1,6 @@
-#include "SheperdDogComp.h"
-#include "../AnimalDog//ShepherdDog.h"  // パスは調整してください
+﻿#include "SheperdDogComp.h"
+#include "../System/EnemyManager.h"
+#include "../AnimalDog//ShepherdDog.h"  // パスは適宜修正してください
 #include "../System/Flog.h"
 
 CCollecting::CCollecting(CAShepherdDog* dog, float speed)
@@ -12,10 +13,10 @@ void CCollecting::Enter()
 {
     m_isFinish = false;
 
-    // 群れ情報を取得
+    // 群れの状況を把握
     FlogInfo info = ObjectManager::FindGameObject<CFlog>()->CalcFlogInfo(m_pOwner->GetSheeps());
 
-    // はぐれ羊がいない場合は終了
+    // はぐれ羊がいない場合、終了
     if (info.furthestSheep == nullptr)
     {
         m_isFinish = true;
@@ -36,9 +37,9 @@ void CCollecting::Enter()
     }
 
     normalize(toCentroid);
-    // 羊の背後に立つ距離（ストロンボム: 5m）
+    // 羊の背後に回り込む距離（ストロングボム: 5m）
     constexpr float behindDistance = 5.0f;
-    // 背後に回り込む位置を計算
+    // 背後に回り込む位置を決定
     m_targetPos = sheepPos - toCentroid * behindDistance;
 }
 
@@ -50,7 +51,7 @@ void CCollecting::Update()
     direction.y = 0;
     const float distanceSq = direction.LengthSquare();
     constexpr float arrivalThresholdSq = 0.25f;
-    // 目標に到達したら終了
+    // 目標に到着したら終了
     if (distanceSq < arrivalThresholdSq)
     {
         m_isFinish = true;
@@ -76,7 +77,7 @@ void CDriving::Enter()
 {
     m_isFinish = false;
 
-    // デバッグ：羊の数を確認
+    // デバッグ・バランスの数を把握
     size_t sheepCount = m_pOwner->GetSheeps().size();
 
     FlogInfo info = ObjectManager::FindGameObject<CFlog>()->CalcFlogInfo(m_pOwner->GetSheeps());
@@ -90,7 +91,7 @@ void CDriving::Enter()
     VECTOR3 escapeDir = centroid - ufoPos;
     escapeDir.y = 0;
 
-    // ゼロベクトル対策：UFOと群れが同じ位置ならデフォルト方向
+    // ゼロベクトル対策（UFOと群れが同じ位置ならデフォルト方向）
     float lengthSq = escapeDir.LengthSquare();
     if (lengthSq < 0.0001f)
     {
@@ -101,7 +102,7 @@ void CDriving::Enter()
         escapeDir = escapeDir / sqrtf(lengthSq);  // 正規化
     }
 
-    // 群れの後ろ（UFOから見て群れの向こう側）に立つ
+    // 群れの後ろ（UFOから見て群れの向こう側）に回り込む
     float pushDistance = 5.0f;
     m_targetPos = centroid + escapeDir * pushDistance;
 }
@@ -115,7 +116,7 @@ void CDriving::Update()
     const float distanceSq = direction.LengthSquare();
 
     constexpr float arrivalThresholdSq = 0.25f;
-    // 目標に到達したら終了
+    // 目標に到着したら終了
     if (distanceSq < arrivalThresholdSq)
     {
         m_isFinish = true;
@@ -143,7 +144,7 @@ void CRescue::Enter()
     m_pOwner->GetAnimator()->MergePlay(AnimationType::A_RUN);
     m_pOwner->GetAnimator()->SetPlaySpeed(1.5f);
 
-    // 救助キューから対象を取得
+    // 救出キューから対象を取得
     if (m_pOwner->GetRescueQueue().empty())
     {
         m_isFinish = true;
@@ -179,9 +180,9 @@ void CRescue::Update()
             // 羊への方向
             const VECTOR3 toSheep = sheepPos - myPos;
             const float distance = toSheep.LengthSquare();
-            constexpr float m_arrivalDistance = 1.0f; // 重心到達判定距離
+            constexpr float m_arrivalDistance = 1.0f; // 重心到着判定距離
 
-            // 羊の近くに到達したらフェーズ2へ
+            // 羊の近くに到着したらフェーズ2へ
             if (distance < Pow2(m_arrivalDistance))
             {
                 m_phase = Phase::GUIDE_TO_CENTER;
@@ -204,7 +205,7 @@ void CRescue::Update()
             toCentroid.y = 0;
             const float distance = toCentroid.LengthSquare();
 
-            // 重心に到達したら完了
+            // 重心に到着したら完了
             constexpr float m_approachDistance = 2.0f; // 羊に近づく距離`
             if (distance < Pow2(m_approachDistance))
             {
@@ -215,7 +216,7 @@ void CRescue::Update()
 
             // 羊の背後から重心方向へプレッシャーをかける位置
             normalize(toCentroid);
-            static constexpr float m_behindDistance = 2.0f; // 羊の背後に立つ距離
+            static constexpr float m_behindDistance = 2.0f; // 羊の背後に回り込む距離
             const VECTOR3 behindPos = sheepPos - toCentroid * m_behindDistance;
 
             // その位置へ移動
@@ -240,7 +241,7 @@ CDestroyShepherdDog::CDestroyShepherdDog(CAShepherdDog* dog, int score, float ex
 
 void CDestroyShepherdDog::Enter()
 {
-    // 担当羊をPANIC化
+    // 羊達をPANIC状態に
     for (auto sheep : m_pDog->GetSheeps())
     {
         if (sheep != nullptr)
@@ -249,6 +250,6 @@ void CDestroyShepherdDog::Enter()
         }
     }
 
-    // 元のDestroy処理
+    // 親のDestroy処理
     CDestroy::Enter();
 }

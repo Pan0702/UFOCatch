@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "ComponentBase.h"
 #include "Destroy.h"
 #include "../AnimalDog/ShepherdDog.h"
@@ -45,7 +45,7 @@ private:
     };
 
     CAShepherdDog* m_pOwner;
-    CSheep* m_targetSheep = nullptr; // 救助対象の羊
+    CSheep* m_targetSheep = nullptr; // 救出対象の羊
     VECTOR3 m_centroid = {0, 0, 0}; // 群れの重心
     Phase m_phase;
 };
@@ -59,3 +59,4 @@ public:
 private:
     CAShepherdDog* m_pDog;
 };
+

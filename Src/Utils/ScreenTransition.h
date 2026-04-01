@@ -43,3 +43,4 @@ private:
 
     std::function<void()> m_onComplete;
 };
+

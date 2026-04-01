@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../Framework/SceneBase.h"
 #include "../System/GameInstance.h"
 
@@ -24,8 +24,9 @@ private:
     int m_rankImageNum;
     int m_maxScore;
     float bar;
-    CSprite* m_pSprite;
-    CSpriteImage* m_pResultImage;
-    CSpriteImage* m_pRankImage;
+    std::unique_ptr<CSprite> m_pSprite;
+    std::unique_ptr<CSpriteImage> m_pResultImage;
+    std::unique_ptr<CSpriteImage> m_pRankImage;
     CGameInstance* m_pGI;
 };
+

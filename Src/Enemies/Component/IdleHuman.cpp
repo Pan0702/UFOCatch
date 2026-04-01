@@ -1,4 +1,6 @@
-#include "IdleHuman.h"
+﻿#include "IdleHuman.h"
+#include "../System/EnemyManager.h"
+#include "../../Utils/Lerp.h"
 
 #include "../Human/Human.h"
 
@@ -96,10 +98,10 @@ void CIdleHuman::IdleSearch()
 // 人間キャラクター用の「周りを見渡す」アニメーションを実行する
 // 首を左右に回転させながら、アニメーションフレームに応じた角度を計算する
 // アニメーション全体は100フレームで構成され、以下の順序で動作する：
-// 1. 待機（0-6フレーム）
-// 2. 左を見る（7-21フレーム：回転）→ 保持（22-33フレーム）→ 正面に戻る（34-47フレーム）
-// 3. 右を見る（48-62フレーム：回転）→ 保持（63-74フレーム）→ 正面に戻る（75-88フレーム）
-// 4. 終了（89-100フレーム）
+// 1. 待機：1-6フレーム
+// 2. 左を見る：7-21フレーム (回転) -> 保持：22-33フレーム -> 正面に戻る：34-47フレーム
+// 3. 右を見る：48-62フレーム (回転) -> 保持：63-74フレーム -> 正面に戻る：75-88フレーム
+// 4. 終了：89-100フレーム
 ////////////////////
 void CIdleHuman::LookAroundAnim()
 {
@@ -128,7 +130,7 @@ void CIdleHuman::LookAroundAnim()
     }
     else
     {
-        // 待機フレームを除いた実際の動作フレーム数を計算 //
+        // 待機フレームを引いた実際の動作フレーム数を計算 //
         float cycleFrame = currentFrame - WAIT_START_FRAME;
 
         // 左右を見回す1サイクルの合計フレーム数（左→正面→右→正面） //
@@ -142,7 +144,7 @@ void CIdleHuman::LookAroundAnim()
             int halfCycle = static_cast<int>((cycleFrame - 1.0f) / HALF_CYCLE_DURATION);
             // 各半サイクル内でのローカルフレーム番号（0-40） //
             float localFrame = fmodf(cycleFrame - 1.0f, HALF_CYCLE_DURATION);
-            // 首を左右に回転させる角度（度数法）
+            // 首を左右に回転させる角度（度数法） //
             constexpr float ANGLE = 50.0f;
             // 左を見る場合は+50度、右を見る場合は-50度 //
             float targetAngle = (halfCycle == 0) ? ANGLE : -ANGLE;
@@ -156,9 +158,9 @@ void CIdleHuman::LookAroundAnim()
             // 1：正面から左（または右）へ回転する（0-14フレーム） //
             if (localFrame < CHANGE_DURATION)
             {
-                // 首の回転補間計算用の除数（CHANGE_DURATION - 1）
+                // 首の回転補間計算用の除数 (CHANGE_DURATION - 1) //
                 constexpr float CHANGE_DIVISOR = 14.0f;
-                float t = localFrame / CHANGE_DIVISOR; // 補間係数（0.0 → 1.0）
+                float t = localFrame / CHANGE_DIVISOR; // 補間係数（0.0 → 1.0） //
                 currentAngle = Lerp(0.0f, targetAngle, t);
             }
             // 2：回転した状態を保持する（15-26フレーム） //
@@ -169,13 +171,13 @@ void CIdleHuman::LookAroundAnim()
             // 3：左（または右）から正面へ戻る（27-40フレーム） //
             else if (localFrame < RETURN_END_FRAME)
             {
-                // 首を元の位置に戻し始めるフレーム
+                // 首を元の位置に戻し始めるフレーム //
                 constexpr float RETURN_START_FRAME = 27.0f;
 
-                // 首の復帰補間計算用の除数（RETURN_END_FRAME - RETURN_START_FRAME - 1）
+                // 首の復帰補間計算用の除数 (RETURN_END_FRAME - RETURN_START_FRAME - 1) //
                 constexpr float RETURN_DIVISOR = 13.0f;
 
-                float t = (localFrame - RETURN_START_FRAME) / RETURN_DIVISOR; // 補間係数（0.0 → 1.0）
+                float t = (localFrame - RETURN_START_FRAME) / RETURN_DIVISOR; // 補間係数（0.0 → 1.0） //
                 currentAngle = Lerp(targetAngle, 0.0f, t);
             }
         }
@@ -192,7 +194,7 @@ void CIdleHuman::LookAroundAnim()
 ////////////////////
 float CIdleHuman::GetCurrentFrame() const
 {
-    // アニメーションのフレームレート（1秒あたりのフレーム数）
+    // アニメーションのフレームレート（1秒あたりのフレーム数） //
     constexpr float ANIMATION_FPS = 30.0f;
 
     // 経過時間（秒）× FPS = フレーム番号 //

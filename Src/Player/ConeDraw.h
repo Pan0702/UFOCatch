@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../Common/Object3D.h"
 #include "Player.h"
 #include "PlayerLevel.h"
@@ -9,6 +9,7 @@ class CConeDraw : public Object3D
 {
 public:
     CConeDraw(float coneTopPos);
+    CConeDraw(float coneTopPos, CPlayer* p);
     ~CConeDraw() override;
 
 private:
@@ -23,6 +24,7 @@ class CCircleDraw : public Object3D
 {
 public:
     CCircleDraw();
+    CCircleDraw(CPlayer* p);
     ~CCircleDraw() override;
 
 private:
@@ -30,7 +32,7 @@ private:
     void Draw()   override;
 
     CPlayer*      m_pPlayer;
-    CSpriteImage* m_pCircleImage;
+    std::unique_ptr<CSpriteImage> m_pCircleImage;
     CPlayerLevel* m_pLevel;
     
     float m_radius;

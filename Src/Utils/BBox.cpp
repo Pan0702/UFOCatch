@@ -814,3 +814,4 @@ void CBBox::Render(const MATRIX4X4& mWorld, const MATRIX4X4& mView, const MATRIX
 	m_pD3D->m_pDeviceContext->DrawIndexed(2 * 3 * 6, 0, 0);
 }
 
+

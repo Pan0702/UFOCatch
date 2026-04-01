@@ -1,4 +1,4 @@
-#include "EnemyManager.h"
+﻿#include "EnemyManager.h"
 #include "../../Utils/BBox.h"
 #include "../AnimalDog/Dog.h"
 #include "../HUman/Human.h"
@@ -14,28 +14,17 @@ namespace
 CEnemyManager::CEnemyManager()
     : m_pMesh(nullptr)
     , m_pMeshCol(nullptr)
-    , m_pModelRegistry(nullptr)
-    , m_pQuadTreeIndex(nullptr)
-    , m_pStaticQuadTreeIndex(nullptr)
+    , m_pQuadTreeIndex(InstanceQTree<CEnemyQuadTree>())
+    , m_pStaticQuadTreeIndex(InstanceQTree<CStageQuadTree>())
     , m_pPlayer(nullptr)
 {
     ObjectManager::DontDestroy(this);
     ObjectManager::SetVisible(this, false);
-
-    // 各クラスを初期化
-    m_pModelRegistry = new CModelRegistry();
-    m_pQuadTreeIndex = new CEnemyQuadTree();
-    m_pStaticQuadTreeIndex = new CStageQuadTree();
+    m_pModelRegistry = ObjectManager::FindGameObject<CModelRegistry>();
 }
 
 CEnemyManager::~CEnemyManager()
 {
-    SAFE_DELETE(m_pModelRegistry);
-    m_pModelRegistry = nullptr;
-    SAFE_DELETE(m_pQuadTreeIndex);
-    m_pQuadTreeIndex = nullptr;
-    SAFE_DELETE(m_pStaticQuadTreeIndex);
-    m_pStaticQuadTreeIndex = nullptr;
 }
 
 void CEnemyManager::RegisterEnemy(CEnemyBase* enemy)
@@ -45,7 +34,7 @@ void CEnemyManager::RegisterEnemy(CEnemyBase* enemy)
 
 void CEnemyManager::UnregisterEnemy(CEnemyBase* enemy)
 {
-    // swap-and-pop で O(1) 削除
+    // swap-and-pop 縺ｧ O(1) 蜑企勁
     for (size_t i = 0; i < m_enemies.size(); ++i)
     {
         if (m_enemies[i] == enemy)
@@ -59,7 +48,7 @@ void CEnemyManager::UnregisterEnemy(CEnemyBase* enemy)
 
 void CEnemyManager::Update()
 {
-    // QuadTreeIndexを更新（管理リストを渡す）
+    // QuadTreeIndex繧呈峩譁ｰ・育ｮ｡逅・Μ繧ｹ繝医ｒ貂｡縺呻ｼ・
     if (m_pQuadTreeIndex)
     {
         m_pQuadTreeIndex->Update(m_enemies);
@@ -120,7 +109,7 @@ void CEnemyManager::ResetCollisionStats() const
     }
 }
 
-void CEnemyManager::BuildStaticTree()
+void CEnemyManager::BuildStaticTree() const
 {
     if (m_pStaticQuadTreeIndex)
     {
@@ -137,3 +126,4 @@ std::vector<CStageObject*> CEnemyManager::GetNearbyStageObjects(
     }
     return {};
 }
+

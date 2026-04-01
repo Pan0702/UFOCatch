@@ -1,13 +1,16 @@
-#pragma once
+ï»¿#pragma once
 /// <summary>
-/// ‚·‚×‚Ä‚ÌƒIƒuƒWƒFƒNƒg‚ğŠÇ—‚µ‚Ü‚·
-/// ƒVƒ“ƒOƒ‹ƒgƒ“‚É‚µ‚Ä‚¢‚é
-/// ‚±‚±‚©‚ç‚·‚×‚Ä‚ÌGameObject‚ÌUpdate()/Draw()‚ğŒÄ‚Ño‚µ‚Ü‚·
+/// ã™ã¹ã¦ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç®¡ç†ã—ã¾ã™
+/// ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã«ã—ã¦ã„ã‚‹
+/// ã“ã“ã‹ã‚‰ã™ã¹ã¦ã®GameObjectã®Update()/Draw()ã‚’å‘¼ã³å‡ºã—ã¾ã™
 /// </summary>
 /// <author>N.Hanai</author>
 
 #include <list>
+#include <memory>
 #include <string>
+
+class CQuadtreeSystem;
 class GameObject;
 
 namespace ObjectManager {
@@ -18,27 +21,30 @@ namespace ObjectManager {
 	void ChangeScene();
 
 	/// <summary>
-	/// Object‚ğ’Ç‰Á‚·‚é
-	/// ‚±‚ÌŠÖ”‚ÍAGameObject‚ÌƒRƒ“ƒXƒgƒ‰ƒNƒ^‚©‚çŒÄ‚Î‚ê‚é
+	/// Objectã‚’è¿½åŠ ã™ã‚‹
+	/// ã“ã®é–¢æ•°ã¯ã€GameObjectã®ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã‹ã‚‰å‘¼ã°ã‚Œã‚‹
 	/// </summary>
 	/// <param name="obj"></param>
-	void Push(GameObject* obj);
+	void Push(std::unique_ptr<GameObject> obj);
 
 	/// <summary>
-	/// Object‚ğíœ‚·‚é
-	/// ‚±‚ÌŠÖ”‚Å‚ÍAíœ‚Ì—v‹‚ğ‚·‚é‚¾‚¯‚ÅA
-	/// ÀÛ‚Éíœ‚³‚ê‚é‚Ì‚ÍAUpdate()‚ªŒÄ‚Î‚ê‚é’¼‘O
+	/// Objectã‚’å‰Šé™¤ã™ã‚‹
+	/// ã“ã®é–¢æ•°ã§ã¯ã€å‰Šé™¤ã®è¦æ±‚ã‚’ã™ã‚‹ã ã‘ã§ã€
+	/// å®Ÿéš›ã«å‰Šé™¤ã•ã‚Œã‚‹ã®ã¯ã€Update()ãŒå‘¼ã°ã‚Œã‚‹ç›´å‰
 	/// </summary>
 	/// <param name="obj"></param>
 	void Destroy(GameObject* obj);
 
 	std::list<GameObject*> GetAllObjects();
+	
+	std::list<CQuadtreeSystem*> GetAllQuadTree();
+	void PushTree(std::unique_ptr<CQuadtreeSystem>  tree);
 
 	/// <summary>
-	/// ƒNƒ‰ƒX–¼‚ÅƒIƒuƒWƒFƒNƒg‚ğ’T‚·
+	/// ã‚¯ãƒ©ã‚¹åã§ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ¢ã™
 	/// </summary>
-	/// <typeparam name="C">ƒNƒ‰ƒX</typeparam>
-	/// <returns>ƒIƒuƒWƒFƒNƒg‚ÌÀ‘Ôi‘¶İ‚µ‚È‚¯‚ê‚Înullptrj</returns>
+	/// <typeparam name="C">ã‚¯ãƒ©ã‚¹</typeparam>
+	/// <returns>ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å®Ÿæ…‹ï¼ˆå­˜åœ¨ã—ãªã‘ã‚Œã°nullptrï¼‰</returns>
 	template<class C> C* FindGameObject()
 	{
 		const std::list<GameObject*> objs = GetAllObjects();
@@ -52,10 +58,10 @@ namespace ObjectManager {
 	}
 
 	/// <summary>
-	/// ƒNƒ‰ƒX‚ÌƒIƒuƒWƒFƒNƒg‚ğ‚·‚×‚Ä’T‚·
+	/// ã‚¯ãƒ©ã‚¹ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ã™ã¹ã¦æ¢ã™
 	/// </summary>
-	/// <typeparam name="C">ƒNƒ‰ƒX–¼</typeparam>
-	/// <returns>ƒIƒuƒWƒFƒNƒg‚ÌÀ‘Ôlist</returns>
+	/// <typeparam name="C">ã‚¯ãƒ©ã‚¹å</typeparam>
+	/// <returns>ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å®Ÿæ…‹list</returns>
 	template<class C> std::list<C*> FindGameObjects()
 	{
 		std::list<C*> out;
@@ -72,11 +78,11 @@ namespace ObjectManager {
 	}
 
 	/// <summary>
-	/// ƒNƒ‰ƒX–¼‚Æƒ^ƒO‚©‚çƒIƒuƒWƒFƒNƒg‚ğ’T‚·
+	/// ã‚¯ãƒ©ã‚¹åã¨ã‚¿ã‚°ã‹ã‚‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ¢ã™
 	/// </summary>
-	/// <typeparam name="C">ƒNƒ‰ƒX–¼</typeparam>
-	/// <param name="tag">ƒ^ƒO</param>
-	/// <returns>ƒIƒuƒWƒFƒNƒg‚ÌÀ‘Ôi‘¶İ‚µ‚È‚¯‚ê‚Înullptrj</returns>
+	/// <typeparam name="C">ã‚¯ãƒ©ã‚¹å</typeparam>
+	/// <param name="tag">ã‚¿ã‚°</param>
+	/// <returns>ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å®Ÿæ…‹ï¼ˆå­˜åœ¨ã—ãªã‘ã‚Œã°nullptrï¼‰</returns>
 	template<class C> C* FindGameObjectWithTag(std::string tag)
 	{
 		const std::list<GameObject*> objs = GetAllObjects();
@@ -92,11 +98,11 @@ namespace ObjectManager {
 	}
 
 	/// <summary>
-	/// ƒNƒ‰ƒX–¼‚Æƒ^ƒO‚©‚çƒIƒuƒWƒFƒNƒg‚ğ‚·‚×‚Ä’T‚·
+	/// ã‚¯ãƒ©ã‚¹åã¨ã‚¿ã‚°ã‹ã‚‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ã™ã¹ã¦æ¢ã™
 	/// </summary>
-	/// <typeparam name="C">ƒNƒ‰ƒX–¼</typeparam>
-	/// <param name="tag">ƒ^ƒO</param>
-	/// <returns>ƒIƒuƒWƒFƒNƒg‚ÌÀ‘Ôlist</returns>
+	/// <typeparam name="C">ã‚¯ãƒ©ã‚¹å</typeparam>
+	/// <param name="tag">ã‚¿ã‚°</param>
+	/// <returns>ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å®Ÿæ…‹list</returns>
 	template<class C> std::list<C*> FindGameObjectsWithTag(std::string tag)
 	{
 		std::list<C*> out;
@@ -113,57 +119,72 @@ namespace ObjectManager {
 		}
 		return out;
 	}
+	
+	template<class C> C* FindQuadTree()
+	{
+		const std::list<CQuadtreeSystem*> objs = GetAllQuadTree();
 
+		for (CQuadtreeSystem* node : objs) {
+			C* obj = dynamic_cast<C*>(node);
+			if (obj != nullptr)
+				return obj;
+		}
+		return nullptr;
+	}
 	/// <summary>
-	/// •`‰æ‚Ìƒvƒ‰ƒCƒIƒŠƒeƒB‚ğİ’è‚·‚é
-	/// ”’l‚ª­‚È‚¢‡‚É•`‰æ‚³‚ê‚é‚Ì‚ÅA‚Q‚c‚Å‚Í‰œ‚É•\¦‚³‚ê‚é
-	/// ‚Q‚c‚Åè‘O‚É•\¦‚µ‚½‚¢A‚R‚c‚ÅŒã‚É•`‰æ‚µ‚½‚¢‚ÍA’l‚ğ‚‚­‚·‚é
-	/// ƒvƒ‰ƒCƒIƒŠƒeƒB‚ª“¯‚¶‚à‚Ì‚Ì‡”Ô‚Í•ÛØ‚³‚ê‚È‚¢
-	/// ƒvƒ‰ƒCƒIƒŠƒeƒB‚ÌƒfƒtƒHƒ‹ƒg‚Í‚O‚Å‚·
+	/// æç”»ã®ãƒ—ãƒ©ã‚¤ã‚ªãƒªãƒ†ã‚£ã‚’è¨­å®šã™ã‚‹
+	/// æ•°å€¤ãŒå°‘ãªã„é †ã«æç”»ã•ã‚Œã‚‹ã®ã§ã€ï¼’ï¼¤ã§ã¯å¥¥ã«è¡¨ç¤ºã•ã‚Œã‚‹
+	/// ï¼’ï¼¤ã§æ‰‹å‰ã«è¡¨ç¤ºã—ãŸã„æ™‚ã€ï¼“ï¼¤ã§å¾Œã«æç”»ã—ãŸã„æ™‚ã¯ã€å€¤ã‚’é«˜ãã™ã‚‹
+	/// ãƒ—ãƒ©ã‚¤ã‚ªãƒªãƒ†ã‚£ãŒåŒã˜ã‚‚ã®ã®é †ç•ªã¯ä¿è¨¼ã•ã‚Œãªã„
+	/// ãƒ—ãƒ©ã‚¤ã‚ªãƒªãƒ†ã‚£ã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯ï¼ã§ã™
 	/// </summary>
-	/// <param name="obj">ƒvƒ‰ƒCƒIƒŠƒeƒB‚ğİ’è‚·‚éƒIƒuƒWƒFƒNƒg</param>
-	/// <param name="order">•`‰æƒvƒ‰ƒCƒIƒŠƒeƒB</param>
-	void SetDrawOrder(GameObject* _obj, int _order);
+	/// <param name="obj">ãƒ—ãƒ©ã‚¤ã‚ªãƒªãƒ†ã‚£ã‚’è¨­å®šã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ</param>
+	/// <param name="order">æç”»ãƒ—ãƒ©ã‚¤ã‚ªãƒªãƒ†ã‚£</param>
+	void SetDrawOrder(const GameObject* obj, int _order);
 
 	/// <summary>
-	/// Update‚Ì—Dæ‡ˆÊ‚ğ•t‚¯‚é
+	/// Updateã®å„ªå…ˆé †ä½ã‚’ä»˜ã‘ã‚‹
 	/// </summary>
 	/// <param name="_obj"></param>
 	/// <param name="_priority"></param>
-	void SetPriority(GameObject* _obj, int _priority);
+	void SetPriority(const GameObject* obj, int _priority);
 
 	/// <summary>
-	/// GameObject‚ğíœ‚·‚é
+	/// GameObjectã‚’å‰Šé™¤ã™ã‚‹
 	/// </summary>
-	/// <param name="obj">GameObject‚ÌƒCƒ“ƒXƒ^ƒ“ƒX</param>
+	/// <param name="obj">GameObjectã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹</param>
 	void DeleteGameObject(GameObject* obj);
 
 	/// <summary>
-	/// ‘S‚Ä‚ÌGameObject‚ğíœ‚·‚é
+	/// å…¨ã¦ã®GameObjectã‚’å‰Šé™¤ã™ã‚‹
 	/// </summary>
 	void DeleteAllGameObject();
-
-	void DontDestroy(GameObject* obj, bool dont = true);
-
-	/// <summary>
-	/// Update‚ğÀs‚·‚é‚©İ’è‚·‚é
-	/// </summary>
-	/// <param name="obj">GameObject‚ÌƒCƒ“ƒXƒ^ƒ“ƒX</param>
-	/// <param name="active">Às‚·‚éê‡‚Ítrue</param>
-	void SetActive(GameObject* obj, bool active = true);
+	
+	void DontDestroy(const GameObject* obj, bool dont = true);
 
 	/// <summary>
-	/// Draw‚ğÀs‚·‚é‚©İ’è‚·‚é
+	/// Updateã‚’å®Ÿè¡Œã™ã‚‹ã‹è¨­å®šã™ã‚‹
 	/// </summary>
-	/// <param name="obj">GameObject‚ÌƒCƒ“ƒXƒ^ƒ“ƒX</param>
-	/// <param name="visible">Draw‚·‚éê‡‚Ítrue</param>
-	void SetVisible(GameObject* obj, bool visible = true);
+	/// <param name="obj">GameObjectã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹</param>
+	/// <param name="active">å®Ÿè¡Œã™ã‚‹å ´åˆã¯true</param>
+	void SetActive(const GameObject* obj, bool active = true);
 
 	/// <summary>
-	/// w’è‚ÌƒIƒuƒWƒFƒNƒg‚ª‘¶İ‚·‚é‚©‚ğ’²‚×‚é
-	/// Active‚Å‚àA”ñActive‚Å‚àA‘¶İ‚µ‚Ä‚¢‚ê‚Îtrue‚Æ‚È‚é
+	/// Drawã‚’å®Ÿè¡Œã™ã‚‹ã‹è¨­å®šã™ã‚‹
 	/// </summary>
-	/// <param name="obj">GameObject‚ÌƒCƒ“ƒXƒ^ƒ“ƒX</param>
-	/// <returns>‘¶İ‚·‚êtrue</returns>
+	/// <param name="obj">GameObjectã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹</param>
+	/// <param name="visible">Drawã™ã‚‹å ´åˆã¯true</param>
+	void SetVisible(const GameObject* obj, bool visible = true);
+
+	/// <summary>
+	/// æŒ‡å®šã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒå­˜åœ¨ã™ã‚‹ã‹ã‚’èª¿ã¹ã‚‹
+	/// Activeã§ã‚‚ã€éActiveã§ã‚‚ã€å­˜åœ¨ã—ã¦ã„ã‚Œã°trueã¨ãªã‚‹
+	/// </summary>
+	/// <param name="obj">GameObjectã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹</param>
+	/// <returns>å­˜åœ¨ã™ã‚Œtrue</returns>
 	bool IsExist(GameObject* obj);
+
+
+	void DeleteAllQuadTree();
 };
+

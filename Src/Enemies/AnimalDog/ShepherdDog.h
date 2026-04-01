@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Dog.h"
 
 class CSheep;
@@ -19,9 +19,8 @@ public:
     bool IsHerding() const { return m_isHerding; }
 private:
     std::vector<CSheep*> m_sheeps;
-    std::vector<CSheep*> m_rescueQueue;  // 救助待ちの羊リスト
+    std::vector<CSheep*> m_rescueQueue;  // 救出待ちの羊リスト
     LerpValue m_lerpValue;
     bool m_isHerding = false;
-    bool m_isRescuing = false;  // 現在救助中か
+    bool m_isRescuing = false;  // 現在救出中か
 };
-    

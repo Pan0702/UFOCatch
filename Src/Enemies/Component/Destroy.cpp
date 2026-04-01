@@ -1,5 +1,7 @@
-#include "Destroy.h"
+﻿#include "Destroy.h"
+#include "../Base/EnemyBase.h"
 #include "../../System/GameInstance.h"
+#include "../../Player/PlayerLevel.h"
 CDestroy::CDestroy(CEnemyBase* e,int score,float exp)
     :m_score(score),m_exp(exp)
 {
@@ -9,8 +11,8 @@ CDestroy::CDestroy(CEnemyBase* e,int score,float exp)
 
 void CDestroy::Enter()
 {
-    ObjectManager::FindGameObject<CGameInstance>()->AddScore(m_score);
-    ObjectManager::FindGameObject<CGameInstance>()->AddCapture(1);
+    CGameInstance::Get()->AddScore(m_score);
+    CGameInstance::Get()->AddCapture(1);
     ObjectManager::FindGameObject<CPlayerLevel>()->AddExp(m_exp);
     m_pOwner->DestroyMe();
 }

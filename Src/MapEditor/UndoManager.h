@@ -1,0 +1,35 @@
+﻿#pragma once
+#include <stack>
+#include "StageData.h"
+
+//Object3Dを継承しないクラスとして定義
+class UndoManager
+{
+private:
+    struct UndoState
+    {
+        int index = -1;
+        Transform trans = {};
+        std::string modelName = {};
+        Transform* target = nullptr;
+    };
+
+    std::stack<UndoState> m_undoStack;
+    std::stack<UndoState> m_redoStack;
+    StageData* m_pData;
+
+public:
+    UndoManager();
+    ~UndoManager() = default;
+    
+    /// <summary>現在選択中のオブジェクトのTransformをUndoスタックに積む</summary>
+    void Push();
+    void Push(Transform* target);
+    void DeleteObjectPush();
+
+    /// <summary>取り消した操作をやり直し前の状態をRedoスタックに入れる</summary>
+    void Undo();
+
+    /// <summary>取り消した操作をやり直す</summary>
+    void Redo();
+};

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "ComponentBase.h"
 
 class CDestroy : public CComponentBase
@@ -12,3 +12,4 @@ protected:
     int m_score;
     float m_exp;
 };
+

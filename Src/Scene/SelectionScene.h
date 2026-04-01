@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../Framework/SceneBase.h"
 #include "../Utils/WipeAnimator.h"
 
@@ -34,3 +34,4 @@ private:
     int m_play = 0;
     WipeAnimator m_wipeAnim{ 3 };
 };
+

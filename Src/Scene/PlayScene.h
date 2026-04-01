@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../Framework/SceneBase.h"
 
 // メインのプレイシーン //
@@ -12,8 +12,7 @@ public:
 	// リザルトシーンへ遷移する //
 	void ChangeResultScene();
 private:
-	CXAudioSource* m_pBGM;
-	//4ぶんき計算Debug
-	//void QTreeDebug();
+	//4分木デバッグ
+	void QTreeDebug();
 	
 };
