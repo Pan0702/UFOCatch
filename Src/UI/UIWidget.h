@@ -1,5 +1,7 @@
 #pragma once
 #include <cstdint>
+
+#include "UIAnimationPlayer.h"
 #include "../Utils/Sprite3D.h"
 
 enum class AnchorType : uint8_t
@@ -24,7 +26,7 @@ public:
     T* AddChild(std::unique_ptr<T> child)
     {
         T* ptr = child.get();
-        ptr->m_parent = this;
+        ptr->m_pParent = this;
         m_children.push_back(std::move(child));
         return ptr;
     }
@@ -33,6 +35,7 @@ public:
     
     virtual void Update();
     virtual void Draw(CSprite& sprite);
+
     
     void SetAnchor(AnchorType anchor);
     void SetPosition(const VECTOR2& pos);
@@ -47,8 +50,10 @@ public:
     int GetLayer() const;
     float GetAlpha() const;
     bool IsVisible() const;
+    CUIAnimationPlayer& GetAnimationPlayer();
 protected:
     VECTOR2 CalcAnchorOffset() const;
+    virtual void ApplayAnimValues();
 protected:
     VECTOR2 m_position = {};        //親からの相対位置
     VECTOR2 m_size = {};            //サイズ
@@ -59,4 +64,7 @@ protected:
     
     CUIWidget* m_pParent = nullptr;  //親ウィジェット(所有しない)
     std::vector<std::unique_ptr<CUIWidget>> m_children;//子Widget
+    CUIAnimationPlayer m_pAnimPlayer;
+    VECTOR2 m_scale = VECTOR2(1, 1);
+    
 };

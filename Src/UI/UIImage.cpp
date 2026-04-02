@@ -19,9 +19,11 @@ void CUIImage::Draw(CSprite& sprite)
 {
     if (!m_visible || m_pImage == nullptr) return;
     VECTOR2 worldPos = GetWorldPosition();
+    VECTOR2 scaledSize = m_size * m_scale;
+    sprite.Draw(m_pImage, worldPos.x, worldPos.y,
+        static_cast<DWORD>(m_srcRect.x),static_cast<DWORD>(m_srcRect.y),
+        static_cast<DWORD>(scaledSize.x),  static_cast<DWORD>(scaledSize.y),  m_alpha);
     
-    sprite.Draw(m_pImage, worldPos.x, worldPos.y, static_cast<DWORD>(m_srcRect.x), static_cast<DWORD>(m_srcRect.y), 
-        static_cast<DWORD>(m_srcRect.z), static_cast<DWORD>(m_srcRect.w),m_alpha);
     CUIWidget::Draw(sprite);
 }
 

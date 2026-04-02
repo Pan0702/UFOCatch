@@ -1,5 +1,7 @@
 #include "UIWidget.h"
 
+#include "../Framework/sceneManager.h"
+
 CUIWidget::CUIWidget()
 {
     m_anchor = AnchorType::TopLeft;
@@ -25,6 +27,8 @@ void CUIWidget::ClearChild()
 
 void CUIWidget::Update()
 {
+    m_pAnimPlayer.Update(SceneManager::DeltaTime());
+    ApplayAnimValues();
     if (!m_visible) return;
     for (auto& child : m_children)
     {
@@ -48,6 +52,26 @@ void CUIWidget::Draw(CSprite& sprite)
     {
         child->Draw(sprite);
     }
+}
+
+void CUIWidget::ApplayAnimValues()
+{
+    const auto& values = m_pAnimPlayer.GetCurrentValues();
+    if (values.contains(AnimatedProperty::ScaleX))
+        m_scale.x = values.at(AnimatedProperty::ScaleX);
+    
+    if (values.contains(AnimatedProperty::ScaleY))
+        m_scale.y = values.at(AnimatedProperty::ScaleY);
+    
+    if (values.contains(AnimatedProperty::Alpha))
+        m_alpha = values.at(AnimatedProperty::Alpha);
+    
+    if (values.contains(AnimatedProperty::PositionX))
+        m_position.x = values.at(AnimatedProperty::PositionX);
+    
+    if (values.contains(AnimatedProperty::PositionY))
+        m_position.y = values.at(AnimatedProperty::PositionY);
+    
 }
 
 void CUIWidget::SetAnchor(AnchorType anchor)
@@ -158,4 +182,9 @@ float CUIWidget::GetAlpha() const
 bool CUIWidget::IsVisible() const
 {
     return m_visible;
+}
+
+CUIAnimationPlayer& CUIWidget::GetAnimationPlayer()
+{
+    return m_pAnimPlayer;
 }
