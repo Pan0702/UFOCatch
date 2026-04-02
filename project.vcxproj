@@ -628,8 +628,11 @@
     <ClInclude Include="Src\Scene\TitleScene.h" />
     <ClInclude Include="Src\Scene\TutorialScene.h" />
     <ClInclude Include="Src\UI\ImageRegistry.h" />
+    <ClInclude Include="Src\UI\UIButton.h" />
     <ClInclude Include="Src\UI\UICanvas.h" />
     <ClInclude Include="Src\UI\UIDraw.h" />
+    <ClInclude Include="Src\UI\UIImage.h" />
+    <ClInclude Include="Src\UI\UIProgressBar.h" />
     <ClInclude Include="Src\UI\UIWidget.h" />
     <ClInclude Include="Src\Utils\Animator.h" />
     <ClInclude Include="Src\Utils\BBox.h" />
@@ -3000,8 +3003,11 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="Src\UI\ImageRegistry.cpp" />
+    <ClCompile Include="Src\UI\UIButton.cpp" />
     <ClCompile Include="Src\UI\UICanvas.cpp" />
     <ClCompile Include="Src\UI\UIDraw.cpp" />
+    <ClCompile Include="Src\UI\UIImage.cpp" />
+    <ClCompile Include="Src\UI\UIProgressBar.cpp" />
     <ClCompile Include="Src\UI\UIWidget.cpp" />
     <ClCompile Include="Src\Utils\Animator.cpp">
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
