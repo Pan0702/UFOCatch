@@ -9,14 +9,11 @@ namespace
 
 CSpriteImage* ImageRegistry::LoadTexture(const char* textureName, const char* path)
 {
-    for (auto& t : m_textures)
-    {
-        if (t.first == textureName) return t.second.pTexture.get();
-    }
-    ImageInfo info(path);
-    m_textures.insert(std::make_pair(textureName, std::move(info)));
-    return m_textures[textureName].pTexture.get();
-    
+    auto it = m_textures.find(textureName);
+    if (it != m_textures.end()) return it->second.pTexture.get();
+
+    auto [newIt, _] = m_textures.emplace(textureName, ImageInfo(path));
+    return newIt->second.pTexture.get();
 }
 
 CSpriteImage* ImageRegistry::LoadTexture(const std::string& path)
@@ -27,10 +24,8 @@ CSpriteImage* ImageRegistry::LoadTexture(const std::string& path)
 
 CSpriteImage* ImageRegistry::GetTexture(const char* textureName)
 {
-    for (auto& t : m_textures)
-    {
-        if (t.first == textureName) return t.second.pTexture.get();
-    }
-    return nullptr;
+    auto it = m_textures.find(textureName);
+    if (it == m_textures.end()) return nullptr;
+    return it->second.pTexture.get();
 }
 
