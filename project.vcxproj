@@ -113,7 +113,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)Libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Libs\include;$(ProjectDir)Libs\x64-windows\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -530,54 +530,9 @@
     <ClInclude Include="Libs\Imgui\imstb_rectpack.h" />
     <ClInclude Include="Libs\Imgui\imstb_textedit.h" />
     <ClInclude Include="Libs\Imgui\imstb_truetype.h" />
-    <ClInclude Include="Libs\include\nlohmann\adl_serializer.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\byte_container_with_subtype.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\abi_macros.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\conversions\from_json.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\conversions\to_chars.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\conversions\to_json.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\exceptions.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\hash.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\input\binary_reader.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\input\input_adapters.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\input\json_sax.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\input\lexer.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\input\parser.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\input\position_t.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\iterators\internal_iterator.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\iterators\iteration_proxy.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\iterators\iterator_traits.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\iterators\iter_impl.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\iterators\json_reverse_iterator.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\iterators\primitive_iterator.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\json_custom_base_class.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\json_pointer.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\json_ref.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\macro_scope.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\macro_unscope.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\meta\call_std\begin.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\meta\call_std\end.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\meta\cpp_future.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\meta\detected.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\meta\identity_tag.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\meta\is_sax.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\meta\std_fs.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\meta\type_traits.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\meta\void_t.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\output\binary_writer.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\output\output_adapters.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\output\serializer.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\string_concat.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\string_escape.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\string_utils.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\detail\value_t.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\json.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\json_fwd.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\ordered_map.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\thirdparty\hedley\hedley.hpp" />
-    <ClInclude Include="Libs\include\nlohmann\thirdparty\hedley\hedley_undef.hpp" />
-    <ClInclude Include="Libs\x64-windows\include\zconf.h" />
-    <ClInclude Include="Libs\x64-windows\include\zlib.h" />
+    <ClInclude Include="Src\Common\Constants.h" />
+    <ClInclude Include="Src\Core\Spatial\Liner4Tree.h" />
+    <ClInclude Include="Src\Core\Spatial\QuadTreeCell.h" />
     <ClInclude Include="Src\Enemies\AnimalChicken\Chicken.h" />
     <ClInclude Include="Src\Enemies\AnimalChicken\State\ChickenState.h" />
     <ClInclude Include="Src\Enemies\AnimalDebug\AnimalDubug.h" />
@@ -604,6 +559,7 @@
     <ClInclude Include="Src\Enemies\System\EnemyQuadTree.h" />
     <ClInclude Include="Src\Enemies\System\Flog.h" />
     <ClInclude Include="Src\Enemies\System\ModelRegistry.h" />
+    <ClInclude Include="Src\Enemies\System\StageQuadTree.h" />
     <ClInclude Include="Src\Framework\QuadtreeSystem.h" />
     <ClInclude Include="Src\MapEditor\BackGraund.h" />
     <ClInclude Include="Src\MapEditor\Buttom.h" />
@@ -1231,6 +1187,7 @@
     <ClCompile Include="Src\Enemies\System\EnemyQuadTree.cpp" />
     <ClCompile Include="Src\Enemies\System\Flog.cpp" />
     <ClCompile Include="Src\Enemies\System\ModelRegistry.cpp" />
+    <ClCompile Include="Src\Enemies\System\StageQuadTree.cpp" />
     <ClCompile Include="Src\Framework\QuadtreeSystem.cpp" />
     <ClCompile Include="Src\MapEditor\BackGraund.cpp" />
     <ClCompile Include="Src\MapEditor\Buttom.cpp" />
@@ -2349,7 +2306,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/FS </AdditionalOptions>
       <LinkCompiled>true</LinkCompiled>
-      <AdditionalIncludeDirectories>$(ProjectDir)Libs\include;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="Src\Framework\Shader.cpp">
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -3915,21 +3872,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
-    <Content Include="Libs\x64-windows\bin\zlib1.dll" />
-    <Content Include="Libs\x64-windows\lib\pkgconfig\zlib.pc" />
-    <Content Include="Libs\x64-windows\lib\zlib.lib" />
-    <Content Include="Libs\x64-windows\share\vcpkg-cmake\copyright" />
-    <Content Include="Libs\x64-windows\share\vcpkg-cmake\vcpkg-port-config.cmake" />
-    <Content Include="Libs\x64-windows\share\vcpkg-cmake\vcpkg.spdx.json" />
-    <Content Include="Libs\x64-windows\share\vcpkg-cmake\vcpkg_abi_info.txt" />
-    <Content Include="Libs\x64-windows\share\vcpkg-cmake\vcpkg_cmake_build.cmake" />
-    <Content Include="Libs\x64-windows\share\vcpkg-cmake\vcpkg_cmake_configure.cmake" />
-    <Content Include="Libs\x64-windows\share\vcpkg-cmake\vcpkg_cmake_install.cmake" />
-    <Content Include="Libs\x64-windows\share\zlib\copyright" />
-    <Content Include="Libs\x64-windows\share\zlib\usage" />
-    <Content Include="Libs\x64-windows\share\zlib\vcpkg-cmake-wrapper.cmake" />
-    <Content Include="Libs\x64-windows\share\zlib\vcpkg.spdx.json" />
-    <Content Include="Libs\x64-windows\share\zlib\vcpkg_abi_info.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
