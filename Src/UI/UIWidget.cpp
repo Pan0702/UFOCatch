@@ -1,38 +1,29 @@
 #include "UIWidget.h"
 
-UIWidget::UIWidget()
+CUIWidget::CUIWidget()
 {
     m_anchor = AnchorType::TopLeft;
 }
 
-template <typename T>
-T* UIWidget::AddChild(std::unique_ptr<T> child)
+void CUIWidget::RemoveChild(CUIWidget* child)
 {
-    T* ptr = child.get();
-    ptr->m_parent = this;
-    m_children.push_back(std::move(child));
-    return ptr;
-}
-
-void UIWidget::RemoveChild(UIWidget* child)
-{
-    auto it = std::find(m_children.begin(), m_children.end(),
-                        [child](std::unique_ptr<UIWidget>& ptr)
-                        {
-                            return ptr.get() == child;
-                        });
+    auto it = std::ranges::find_if(m_children,
+                                   [child](const std::unique_ptr<CUIWidget>& ptr)
+                                   {
+                                       return ptr.get() == child;
+                                   });
     if (it != m_children.end())
     {
         m_children.erase(it);
     }
 }
 
-void UIWidget::ClearChild()
+void CUIWidget::ClearChild()
 {
     m_children.clear();
 }
 
-void UIWidget::Update()
+void CUIWidget::Update()
 {
     if (!m_visible) return;
     for (auto& child : m_children)
@@ -41,15 +32,15 @@ void UIWidget::Update()
     }
 }
 
-void UIWidget::Draw(CSprite& sprite)
+void CUIWidget::Draw(CSprite& sprite)
 {
     if (!m_visible) return;
-    std::vector<UIWidget*> sortChild;
+    std::vector<CUIWidget*> sortChild;
     for (auto& child : m_children)
     {
         sortChild.push_back(child.get());
     }
-    std::ranges::sort(sortChild, [](UIWidget* a, UIWidget* b)
+    std::ranges::sort(sortChild, [](CUIWidget* a, CUIWidget* b)
     {
         return a->GetLayer() < b->GetLayer();
     });
@@ -59,37 +50,37 @@ void UIWidget::Draw(CSprite& sprite)
     }
 }
 
-void UIWidget::SetAnchor(AnchorType anchor)
+void CUIWidget::SetAnchor(AnchorType anchor)
 {
     m_anchor = anchor;
 }
 
-void UIWidget::SetPosition(const VECTOR2& pos)
+void CUIWidget::SetPosition(const VECTOR2& pos)
 {
     m_position = pos;
 }
 
-void UIWidget::SetSize(const VECTOR2& size)
+void CUIWidget::SetSize(const VECTOR2& size)
 {
     m_size = size;
 }
 
-void UIWidget::SetLayer(int layer)
+void CUIWidget::SetLayer(int layer)
 {
     m_layer = layer;
 }
 
-void UIWidget::SetAlpha(float alpha)
+void CUIWidget::SetAlpha(float alpha)
 {
     m_alpha = alpha;
 }
 
-void UIWidget::SetVisible(bool visible)
+void CUIWidget::SetVisible(bool visible)
 {
     m_visible = visible;
 }
 
-VECTOR2 UIWidget::GEtWorldPosition()
+VECTOR2 CUIWidget::GetWorldPosition()
 {
     VECTOR2 worldPos = m_position;
     VECTOR2 anchorOffset = CalcAnchorOffset();
@@ -97,14 +88,14 @@ VECTOR2 UIWidget::GEtWorldPosition()
 
     if (m_pParent != nullptr)
     {
-        VECTOR2 parentPos = m_pParent->GEtWorldPosition();
+        VECTOR2 parentPos = m_pParent->GetWorldPosition();
         worldPos += parentPos;
     }
 
     return worldPos;
 }
 
-VECTOR2 UIWidget::CalcAnchorOffset()
+VECTOR2 CUIWidget::CalcAnchorOffset() const
 {
     if (m_pParent == nullptr) return {0, 0};
 
@@ -144,27 +135,27 @@ VECTOR2 UIWidget::CalcAnchorOffset()
     return offset;
 }
 
-const VECTOR2& UIWidget::GetPosition()
+const VECTOR2& CUIWidget::GetPosition()
 {
     return m_position;
 }
 
-const VECTOR2& UIWidget::GetSize()
+const VECTOR2& CUIWidget::GetSize()
 {
     return m_size;
 }
 
-int UIWidget::GetLayer() const
+int CUIWidget::GetLayer() const
 {
     return m_layer;
 }
 
-float UIWidget::GetAlpha() const
+float CUIWidget::GetAlpha() const
 {
     return m_alpha;
 }
 
-bool UIWidget::IsVisible() const
+bool CUIWidget::IsVisible() const
 {
     return m_visible;
 }

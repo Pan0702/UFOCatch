@@ -16,13 +16,19 @@ enum class AnchorType : uint8_t
 };
 
 ///全てのUI要素の基底クラス。階層構造、位置管理、描画の基本機能を提供。///
-class UIWidget
+class CUIWidget
 {
 public:
-    UIWidget();
+    CUIWidget();
     template<typename T>
-    T* AddChild(std::unique_ptr<T> child);
-    void RemoveChild(UIWidget* child);
+    T* AddChild(std::unique_ptr<T> child)
+    {
+        T* ptr = child.get();
+        ptr->m_parent = this;
+        m_children.push_back(std::move(child));
+        return ptr;
+    }
+    void RemoveChild(CUIWidget* child);
     void ClearChild();
     
     virtual void Update();
@@ -35,14 +41,14 @@ public:
     void SetAlpha(float alpha);
     void SetVisible(bool visible);
     
-    VECTOR2 GEtWorldPosition();
+    VECTOR2 GetWorldPosition();
     const VECTOR2& GetPosition();
     const VECTOR2& GetSize();
     int GetLayer() const;
     float GetAlpha() const;
     bool IsVisible() const;
 protected:
-    VECTOR2 CalcAnchorOffset();
+    VECTOR2 CalcAnchorOffset() const;
 protected:
     VECTOR2 m_position = {};        //親からの相対位置
     VECTOR2 m_size = {};            //サイズ
@@ -51,6 +57,6 @@ protected:
     AnchorType m_anchor;            //透明度
     bool m_visible = false;         //表示フラグ
     
-    UIWidget* m_pParent = nullptr;  //親ウィジェット(所有しない)
-    std::vector<std::unique_ptr<UIWidget>> m_children;//子Widget
+    CUIWidget* m_pParent = nullptr;  //親ウィジェット(所有しない)
+    std::vector<std::unique_ptr<CUIWidget>> m_children;//子Widget
 };

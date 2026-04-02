@@ -1,24 +1,16 @@
 #include "UICanvas.h"
 
-UICanvas::UICanvas(const VECTOR2& size)
+CUICanvas::CUICanvas(const VECTOR2& size)
     : m_canvasSize(size)
 {
 }
 
-UICanvas::~UICanvas() = default;
+CUICanvas::~CUICanvas() = default;
 
-template <typename T>
-T* UICanvas::AddWidget(std::unique_ptr<T> widget)
-{
-    T* ptr = widget.get();
-    m_widgets.push_back(std::move(widget));
-    return ptr;
-}
-
-void UICanvas::RemoveWidget(UIWidget* widget)
+void CUICanvas::RemoveWidget(CUIWidget* widget)
 {
     auto it = std::ranges::find_if(m_widgets,
-                                   [widget](const std::unique_ptr<UIWidget>& ptr)
+                                   [widget](const std::unique_ptr<CUIWidget>& ptr)
                                    {
                                        return ptr.get() == widget;
                                    });
@@ -28,7 +20,7 @@ void UICanvas::RemoveWidget(UIWidget* widget)
     }   
 }
 
-void UICanvas::Update()
+void CUICanvas::Update()
 {
     for (auto& widget : m_widgets)
     {
@@ -36,14 +28,14 @@ void UICanvas::Update()
     }  
 }
 
-void UICanvas::Draw()
+void CUICanvas::Draw()
 {
-    std::vector<UIWidget*> sortWidgets;
+    std::vector<CUIWidget*> sortWidgets;
     for (auto& widget : m_widgets)
     {
         sortWidgets.push_back(widget.get());
     }
-    std::ranges::sort(sortWidgets, [](UIWidget* a, UIWidget* b)
+    std::ranges::sort(sortWidgets, [](CUIWidget* a, CUIWidget* b)
     {
         return a->GetLayer() < b->GetLayer();
     });
@@ -54,12 +46,12 @@ void UICanvas::Draw()
     }
 }
 
-void UICanvas::Clear()
+void CUICanvas::Clear()
 {
     m_widgets.clear(); 
 }
 
-VECTOR2 UICanvas::GetCanvasSize() const
+VECTOR2 CUICanvas::GetCanvasSize() const
 {
     return m_canvasSize;
 }

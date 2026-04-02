@@ -14,8 +14,8 @@ CSpriteImage* ImageRegistry::LoadTexture(const char* textureName, const char* pa
         if (t.first == textureName) return t.second.pTexture.get();
     }
     ImageInfo info(path);
-    m_textures.insert(std::make_pair(textureName, info));
-    return info.pTexture.get();
+    m_textures.insert(std::make_pair(textureName, std::move(info)));
+    return m_textures[textureName].pTexture.get();
     
 }
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "../Common/Object3D.h"
+#include "../Utils/Sprite3D.h"
 
 struct UIImageInfo
 {
@@ -19,7 +19,7 @@ struct UIImageInfo
 };
 
 ///<summary>UI描画クラス</summary>
-class UIDraw : Object3D
+class CUIDraw
 {
 public:
     int AddElement(const char* name,const VECTOR2& pos,const VECTOR4& size,float alpha = 1.0f,int layer = 0);
