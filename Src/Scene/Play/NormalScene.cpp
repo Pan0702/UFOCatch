@@ -1,16 +1,16 @@
 ﻿#include "NormalScene.h"
 
-#include "../System/GameInstance.h"
-#include "../Enemies/System/EnemyManager.h"
-#include "../Player/PCamera.h"
-#include "../Player/Player.h"
-#include "../Enemies/AnimalDog/Dog.h"
-#include "../Enemies/System/AnimalFactor.h"
-#include "../Enemies/System/Flog.h"
-#include "../System/DisplayInfo.h"
-#include "../System/VisionSystem.h"
-#include "../Stage/StageFactor.h"
-#include "../System/Timer.h"
+#include "../../System/GameInstance.h"
+#include "../../Enemies/System/EnemyManager.h"
+#include "../../Player/PCamera.h"
+#include "../../Player/Player.h"
+#include "../../Enemies/AnimalDog/Dog.h"
+#include "../../Enemies/System/AnimalFactor.h"
+#include "../../Enemies/System/Flog.h"
+#include "../../System/DisplayInfo.h"
+#include "../../System/VisionSystem.h"
+#include "../../Stage/StageFactor.h"
+#include "../../System/Timer.h"
 using namespace Constants;
 CNormalScene::CNormalScene()
 {

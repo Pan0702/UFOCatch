@@ -1,11 +1,16 @@
 #pragma once
+#include <functional>
+
 #include "UIImage.h"
 class CUIButton : public CUIImage
 {
 public:
-    CUIButton(CSpriteImage* pNormalImage, CSpriteImage* pFocusImage, const VECTOR2& pos, const VECTOR4& size);
+    CUIButton(const VECTOR2& pos, const VECTOR4& size, CSpriteImage* pNormalImage = nullptr, CSpriteImage* pFocusImage = nullptr);
     void SetFocus(bool focused);
     bool IsFocus() const;
+    void SetOnFocusChanged(std::function<void(bool)> callback);
+private:
+    std::function<void(bool)> m_onFocusChanged = nullptr;
     
 private:
     float m_normalAlpha = 1.0f;

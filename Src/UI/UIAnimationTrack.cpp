@@ -9,7 +9,6 @@ CUIAnimationTrack::CUIAnimationTrack(AnimatedProperty property)
 
 void CUIAnimationTrack::AddKeyFrame(float time, float value)
 {
-    m_keyFrames.emplace_back(time,value);
     auto it = std::ranges::lower_bound(m_keyFrames, time, {}, &KeyFrame::time);
     m_keyFrames.insert(it, KeyFrame(time, value));
 }

@@ -1,8 +1,8 @@
 ﻿#include "SelectionScene.h"
 
-#include "../Common/Constants.h"
-#include "../Framework/AudioManager.h"
-#include "../Framework/GameObject.h"
+#include "../../Common/Constants.h"
+#include "../../Framework/AudioManager.h"
+#include "../../Framework/GameObject.h"
 
 namespace
 {

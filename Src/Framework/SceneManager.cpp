@@ -208,4 +208,5 @@ void SceneManager::DebugSceneInit()
     sceneTable.emplace(DIK_6, SceneName::TUTORIAL);
     sceneTable.emplace(DIK_7, SceneName::OI);
     sceneTable.emplace(DIK_8, SceneName::EDITOR);
+    sceneTable.emplace(DIK_9, SceneName::DEBUG);
 }

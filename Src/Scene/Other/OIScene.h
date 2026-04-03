@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "../Framework/SceneBase.h"
-#include "../Utils/Sprite3D.h"
+#include "../../Framework/SceneBase.h"
+#include "../../Utils/Sprite3D.h"
 
 class OIScene : public SceneBase
 {

@@ -1,5 +1,5 @@
 #pragma once
-#include "../Framework/SceneBase.h"
+#include "../../Framework/SceneBase.h"
 class CEditorScene : public SceneBase
 {
 public:

@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "../Framework/SceneBase.h"
+#include "../../Framework/SceneBase.h"
 
 // メインのプレイシーン //
 class PlayScene : public SceneBase

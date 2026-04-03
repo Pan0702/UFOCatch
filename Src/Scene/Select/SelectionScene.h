@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "../Framework/SceneBase.h"
-#include "../Utils/WipeAnimator.h"
+#include "../../Framework/SceneBase.h"
+#include "../../Utils/WipeAnimator.h"
 
 class CSelectionScene : public SceneBase
 {

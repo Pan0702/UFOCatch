@@ -1,9 +1,9 @@
 ﻿#include "TitleScene.h"
-#include "../Core/Game/GameMain.h"
-#include "../Framework/AudioManager.h"
-#include "../Enemies/System/EnemyManager.h"
-#include "../Framework/ResourceManager.h"
-#include "../MapEditor/Import.h"
+#include "../../Core/Game/GameMain.h"
+#include "../../Framework/AudioManager.h"
+#include "../../Enemies/System/EnemyManager.h"
+#include "../../Framework/ResourceManager.h"
+#include "../../MapEditor/Import.h"
 using namespace Constants;
 TitleScene::TitleScene()
 {

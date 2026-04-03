@@ -1,7 +1,7 @@
 ﻿#include "PlayerHP.h"
 #include "Player.h"
 #include "../System/GameInstance.h"
-#include "../Scene/PlayScene.h"
+#include "../Scene/Play/PlayScene.h"
 
 ////////////////////
 // HPの初期値を指定してインスタンスを生成する

@@ -35,7 +35,7 @@ void CUICanvas::Draw()
     {
         sortWidgets.push_back(widget.get());
     }
-    std::ranges::sort(sortWidgets, [](CUIWidget* a, CUIWidget* b)
+    std::ranges::sort(sortWidgets, [](const CUIWidget* a, const CUIWidget* b)
     {
         return a->GetLayer() < b->GetLayer();
     });
