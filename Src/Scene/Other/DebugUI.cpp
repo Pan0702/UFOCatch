@@ -27,7 +27,7 @@ DebugUI::DebugUI()
         m_pButton->GetAnimationPlayer().Play(isFocus ? "OnFocus" : "OnUnfocus",false);
     });
     m_pButton->GetAnimationPlayer().AddAnimation("OnFocus",UIPreset::PopIn(1.0f));
-    m_pButton->GetAnimationPlayer().AddAnimation("OnUnfocus",UIPreset::ScaleIn(1.0f, 1.1f, 0.1f));
+    m_pButton->GetAnimationPlayer().AddAnimation("OnUnfocus",UIPreset::FadeOut(1.0f));
 }
 
 void DebugUI::Update()
