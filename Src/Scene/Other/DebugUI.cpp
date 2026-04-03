@@ -24,21 +24,22 @@ DebugUI::DebugUI()
     m_pButton = m_canvas.AddWidget(std::move(btn));
     m_pButton->SetOnFocusChanged([this](bool isFocus)
     {
-        m_pButton->GetAnimationPlayer().Play(isFocus ? "Focus" : "Normal",false);
+        m_pButton->GetAnimationPlayer().Play(isFocus ? "OnFocus" : "OnUnfocus",false);
     });
-    m_pButton->GetAnimationPlayer().AddAnimation("OnFocus",UIPreset::PopIn(0.15f));
-    m_pButton->GetAnimationPlayer().AddAnimation("OnUnfocus",UIPreset::ScaleIn(0.1f, 1.1f, 1.0f));
+    m_pButton->GetAnimationPlayer().AddAnimation("OnFocus",UIPreset::PopIn(1.0f));
+    m_pButton->GetAnimationPlayer().AddAnimation("OnUnfocus",UIPreset::ScaleIn(1.0f, 1.1f, 0.1f));
 }
 
 void DebugUI::Update()
 {
     static bool isPressed = false;
-    m_canvas.Update();
+
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_P))
     {
         isPressed = !isPressed;
         m_pButton->SetFocus(isPressed);
     }
+    m_canvas.Update();
 }
 
 void DebugUI::Draw()

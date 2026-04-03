@@ -3,16 +3,16 @@
 #include <assert.h>
 
 #include "../System/GameInstance.h"
-#include "../Scene/TitleScene.h"
-#include "../Scene/PlayScene.h"
-#include "../Scene/ResultScene.h"
-#include "../Scene/SelectionScene.h"
-#include "../Scene/TutorialScene.h"
+#include "../Scene/Title/TitleScene.h"
+#include "../Scene/Play/PlayScene.h"
+#include "../Scene/Result/ResultScene.h"
+#include "../Scene/Select/SelectionScene.h"
+#include "../Scene/Play/TutorialScene.h"
 #include "../Enemies/AnimalChicken/Chicken.h"
-#include "../Scene/DebugScene.h"
-#include "../Scene/OIScene.h"
-#include "../Scene/NormalScene.h"
-#include "../Scene/EditorScene.h"
+#include "../Scene/Other/DebugScene.h"
+#include "../Scene/Other/OIScene.h"
+#include "../Scene/Play/NormalScene.h"
+#include "../Scene/Editor/EditorScene.h"
 #include "../Enemies/System/ModelRegistry.h"
 
 using namespace Constants::SceneName;

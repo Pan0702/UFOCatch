@@ -1,5 +1,7 @@
 #include "UIAnimationPlayer.h"
 
+#include <iostream>
+
 CUIAnimationPlayer::CUIAnimationPlayer()
     : m_pCurrentAnim(nullptr), m_currentTime(0.0f)
 {
