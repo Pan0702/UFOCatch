@@ -1,9 +1,19 @@
 #pragma once
+#include <functional>
 #include <memory>
 #include "UIAnimation.h"
+#include "../Utils/Lerp.h"
 
 namespace UIPreset
 {
+    struct TransitionAnim
+    {
+        float duration;
+        std::function<float(float)> easing;
+    };
+
+    TransitionAnim Transition(float duration, std::function<float(float)> easing = EaseOutQuint);
+
     // フェード//
     std::unique_ptr<CUIAnimation> FadeIn (float duration, float from = 0.0f, float to = 1.0f);
     std::unique_ptr<CUIAnimation> FadeOut(float duration, float from = 1.0f, float to = 0.0f);

@@ -3,6 +3,11 @@
 namespace UIPreset
 {
 
+TransitionAnim Transition(float duration, std::function<float(float)> easing)
+{
+    return { duration, std::move(easing) };
+}
+
 std::unique_ptr<CUIAnimation> FadeIn(float duration, float from, float to)
 {
     auto anim = std::make_unique<CUIAnimation>("FadeIn");

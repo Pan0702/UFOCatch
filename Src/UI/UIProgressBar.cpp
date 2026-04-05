@@ -1,5 +1,4 @@
 #include "UIProgressBar.h"
-#include "../Utils/Lerp.h"
 #include "../Framework/sceneManager.h"
 
 CUIProgressBar::CUIProgressBar(CSpriteImage* pBg, CSpriteImage* pFill, const VECTOR2& pos, const VECTOR4& size)
@@ -19,6 +18,12 @@ CUIProgressBar::CUIProgressBar(CSpriteImage* pBg, CSpriteImage* pFill, const VEC
     m_pFill = AddChild(std::move(fill));
 }
 
+void CUIProgressBar::SetAnim(const UIPreset::TransitionAnim& anim)
+{
+    m_duration = anim.duration;
+    m_easing   = anim.easing;
+}
+
 void CUIProgressBar::SetRatio(float ratio)
 {
     m_startRatio = m_currentRatio;  
@@ -33,7 +38,7 @@ void CUIProgressBar::Update()
     if (m_t < 1.0f)
     {
         m_t = std::clamp(m_t + delta / m_duration, 0.0f, 1.0f);
-        float easedT = EaseOutQuint(m_t);
+        float easedT = m_easing(m_t);
         m_currentRatio = Lerp(m_startRatio, m_targetRatio,easedT);
 
         float newWidth = m_maxWidth * m_currentRatio;

@@ -58,9 +58,9 @@ protected:
     VECTOR2 m_position = {};        //親からの相対位置
     VECTOR2 m_size = {};            //サイズ
     int m_layer = 0;                //アンカー
-    float m_alpha = 0.0f;           //描画レイヤー
+    float m_alpha = 1.0f;           //描画レイヤー
     AnchorType m_anchor;            //透明度
-    bool m_visible = false;         //表示フラグ
+    bool m_visible = true;         //表示フラグ
     
     CUIWidget* m_pParent = nullptr;  //親ウィジェット(所有しない)
     std::vector<std::unique_ptr<CUIWidget>> m_children;//子Widget

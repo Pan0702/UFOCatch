@@ -1,48 +1,55 @@
 #include "UIButtons.h"
 
-UIButtons::UIButtons()
+#include "ImageRegistry.h"
+#include "UIBase.h"
+#include "../Framework/SceneBase.h"
+
+CUIButtons::CUIButtons()
     : m_focusIndex(0)
 {
+    m_imageSize = VECTOR4(0, 0, 100, 100);
 }
 
-void UIButtons::Add(CUIButton* b, std::function<void()> onConfirm)
+void CUIButtons::AddButton(CUIBase* ui,const std::string& name ,const VECTOR2& pos)
 {
-    bool isFirst = m_buttons.empty();
-    m_buttons.push_back({ b, std::move(onConfirm) });
-    if (isFirst)
-        b->SetFocus(true);
+    CSpriteImage* imageButton = ImageRegistry::GetTexture(name.c_str());
+    auto btn = std::make_unique<CUIButton>(pos, m_imageSize, nullptr, imageButton);
+    CUIButton* widget = ui->GetCanvas().AddWidget(std::move(btn));
+    widget->SetOnFocusChanged([widget](bool isFocus)
+    {
+        widget->GetAnimationPlayer().Play(isFocus ? "Focus" : "UnFocus", false);
+    });
+    m_buttons.push_back(widget);
 }
 
-void UIButtons::SetAnim(std::unique_ptr<CUIAnimation> Foucus, std::unique_ptr<CUIAnimation> unFocus) const
+void CUIButtons::SetAnim(const std::shared_ptr<CUIAnimation>& Foucus, const std::shared_ptr<CUIAnimation>& unFocus) const
 {
     for (auto& b : m_buttons)
     {
-        b.pButton->GetAnimationPlayer().AddAnimation("Focus", std::move(Foucus));
-        b.pButton->GetAnimationPlayer().AddAnimation("UnFocus", std::move(unFocus));
+        b->GetAnimationPlayer().AddAnimation("Focus", Foucus);
+        b->GetAnimationPlayer().AddAnimation("UnFocus", unFocus);
     }
 }
 
-void UIButtons::MoveFocus(int delta)
+
+void CUIButtons::SetImageSize(const VECTOR4& size)
+{
+    m_imageSize = size;
+}
+
+void CUIButtons::SetFocus(int index)
+{
+    m_focusIndex = index;
+    m_buttons[m_focusIndex]->SetFocus(true);
+}
+
+void CUIButtons::MoveFocus(int n)
 {
     if (m_buttons.empty()) return;
-
-    m_buttons[m_focusIndex].pButton->SetFocus(false);
-
-    int count = static_cast<int>(m_buttons.size());
-    m_focusIndex = (m_focusIndex + delta % count + count) % count;
-
-    m_buttons[m_focusIndex].pButton->SetFocus(true);
+    int newIndex = std::clamp(m_focusIndex + n, 0, static_cast<int>(m_buttons.size()) - 1);
+    if (newIndex == m_focusIndex) return;
+    m_buttons[m_focusIndex]->SetFocus(false);
+    m_focusIndex = newIndex;
+    m_buttons[m_focusIndex]->SetFocus(true);
 }
 
-void UIButtons::Confirm() const
-{
-    if (m_buttons.empty()) return;
-    if (m_buttons[m_focusIndex].onConfirm)
-        m_buttons[m_focusIndex].onConfirm();
-}
-
-CUIButton* UIButtons::GetFocus() const
-{
-    if (m_buttons.empty()) return nullptr;
-    return m_buttons[m_focusIndex].pButton;
-}

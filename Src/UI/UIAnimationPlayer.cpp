@@ -7,7 +7,7 @@ CUIAnimationPlayer::CUIAnimationPlayer()
 {
 }
 
-void CUIAnimationPlayer::AddAnimation(const std::string& name, std::unique_ptr<CUIAnimation> anim)
+void CUIAnimationPlayer::AddAnimation(const std::string& name, std::shared_ptr<CUIAnimation> anim)
 {
     anim->SetName(name);
     m_animations[name] = std::move(anim);  
@@ -33,6 +33,12 @@ void CUIAnimationPlayer::Stop()
     m_isPaused = false;
     m_pCurrentAnim = nullptr;
     m_currentTime = 0.0f;
+    m_onComplete = nullptr;
+}
+
+void CUIAnimationPlayer::SetOnComplete(std::function<void()> callback)
+{
+    m_onComplete = std::move(callback);
 }
 
 void CUIAnimationPlayer::Pause()
@@ -60,6 +66,12 @@ void CUIAnimationPlayer::Update(float deltaTime)
         {
             m_currentTime = m_pCurrentAnim->GetDuration();
             m_isPlaying = false;
+            if (m_onComplete)
+            {
+                auto cb = std::move(m_onComplete);
+                m_onComplete = nullptr;
+                cb();
+            }
         }
     }
     m_currentValues.clear();

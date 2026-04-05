@@ -1,15 +1,22 @@
 #pragma once
-#include "../../UI/UICanvas.h"
+#include "../../UI/UIBase.h"
 #include "../../UI/UIButton.h"
+#include "../../UI/UIButtons.h"
+#include "../../UI/UIProgressBar.h"
 
-class DebugUI
+class DebugUI : public CUIBase
 {
 public:
+    void AddBar();
     DebugUI();
     void Update();
     void Draw();
-
 private:
-    CUICanvas m_canvas;
+    void AddImage();
+    void AddButton();
+    void AddButtons();
+private:
     CUIButton* m_pButton;
+    CUIButtons m_buttons;
+    CUIProgressBar* m_pBar;
 };

@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #include <memory>
 #include <string>
 
@@ -8,12 +9,14 @@ class CUIAnimationPlayer
 {
 public:
     CUIAnimationPlayer();
-    void AddAnimation(const std::string& name,std::unique_ptr<CUIAnimation> anim);
+    void AddAnimation(const std::string& name,std::shared_ptr<CUIAnimation> anim);
     
     void Play(const std::string& name,bool loop);
     
     void Stop();
-    
+
+    void SetOnComplete(std::function<void()> callback);
+
     void Pause();
     void Resume();
     
@@ -25,10 +28,11 @@ public:
     
 private:
     std::unordered_map<AnimatedProperty, float> m_currentValues;
-    std::unordered_map<std::string, std::unique_ptr<CUIAnimation>> m_animations;
+    std::unordered_map<std::string, std::shared_ptr<CUIAnimation>> m_animations;
     CUIAnimation* m_pCurrentAnim = nullptr;
-    float m_currentTime;  
+    float m_currentTime;
     bool m_isPlaying = false;
     bool m_isLoop = false;
     bool m_isPaused = false;
+    std::function<void()> m_onComplete = nullptr;
 };
