@@ -91,3 +91,69 @@ void UndoManager::Redo()
     m_redoStack.pop();
 }
 
+CTransformCommand::CTransformCommand()
+{
+    m_pData = ObjectManager::FindGameObject<StageData>();
+}
+
+void CTransformCommand::Undo()
+{
+    m_pData->SetSelectedTransform(m_index, m_befor);
+}
+
+void CTransformCommand::Redo()
+{
+    m_pData->SetSelectedTransform(m_index, m_after);
+}
+
+CAddCommand::CAddCommand()
+{
+    m_pData = ObjectManager::FindGameObject<StageData>();
+}
+
+void CAddCommand::Undo()
+{
+    m_pData->DeleteModel(m_index);
+}
+
+void CAddCommand::Redo()
+{
+}
+
+CDeleteCommand::CDeleteCommand()
+{
+    m_pData = ObjectManager::FindGameObject<StageData>();
+}
+
+void CDeleteCommand::Undo()
+{
+}
+
+void CDeleteCommand::Redo()
+{
+}
+
+void CUndoManager::Push(std::unique_ptr<ICommande> cmd)
+{
+    m_redoStack = {};
+    m_undoStack.push(std::move(cmd));
+}
+
+void CUndoManager::Undo()
+{
+    if (m_undoStack.empty()) return;
+    auto u = std::move(m_undoStack.top());
+    m_undoStack.pop(); 
+    u->Undo();
+    m_redoStack.push(std::move(u)); 
+}
+
+void CUndoManager::Redo()
+{
+    if (m_redoStack.empty()) return;
+    auto r = std::move(m_redoStack.top());
+    m_redoStack.pop();
+    r->Redo();
+    m_undoStack.push(std::move(r));
+}
+

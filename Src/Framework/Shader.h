@@ -32,49 +32,49 @@
 // ・医Ρ繝ｼ繝ｫ繝芽｡悟・縺九ｉ謚募ｽｱ陦悟・縲√Λ繧､繝医√き繝ｩ繝ｼ諠・ｱ繧剃ｿ晄戟・・ // -- 2020.1.24
 struct CONSTANT_BUFFER_WVLED
 {
-    MATRIX4X4  mW;             // 繝ｯ繝ｼ繝ｫ繝芽｡悟・
-    MATRIX4X4  mWVP;           // 繝ｯ繝ｼ繝ｫ繝峨・繝薙Η繝ｼ繝ｻ謚募ｽｱ螟画鋤陦悟・
-    VECTOR4    vLightDir;      // 繝ｩ繧､繝域婿蜷・
-    VECTOR4    vEyePos;        // 隕也せ蠎ｧ讓・
-    VECTOR4    vDiffuse;       // 繝・ぅ繝輔Η繝ｼ繧ｺ濶ｲ   
-    VECTOR4    vDrawInfo;      // 謠冗判髢｢騾｣諠・ｱ(迴ｾ蝨ｨ縺ｯ譛ｪ菴ｿ逕ｨ)   // -- 2020.12.15
+    MATRIX4X4 mW; // 繝ｯ繝ｼ繝ｫ繝芽｡悟・
+    MATRIX4X4 mWVP; // 繝ｯ繝ｼ繝ｫ繝峨・繝薙Η繝ｼ繝ｻ謚募ｽｱ螟画鋤陦悟・
+    VECTOR4 vLightDir; // 繝ｩ繧､繝域婿蜷・
+    VECTOR4 vEyePos; // 隕也せ蠎ｧ讓・
+    VECTOR4 vDiffuse; // 繝・ぅ繝輔Η繝ｼ繧ｺ濶ｲ   
+    VECTOR4 vDrawInfo; // 謠冗判髢｢騾｣諠・ｱ(迴ｾ蝨ｨ縺ｯ譛ｪ菴ｿ逕ｨ)   // -- 2020.12.15
     CONSTANT_BUFFER_WVLED()
     {
-       ZeroMemory(this, sizeof(CONSTANT_BUFFER_WVLED));
+        ZeroMemory(this, sizeof(CONSTANT_BUFFER_WVLED));
     }
 };
 
 // 繝・ぅ繧ｹ繝励Ξ繧､繧ｹ繝｡繝ｳ繝医・繝・ヴ繝ｳ繧ｰ逕ｨ縺ｮ蜷・ｨｮ繝・・繧ｿ繧呈ｸ｡縺吶◆繧√・讒矩菴・ // -- 2020.1.24
 struct CONSTANT_BUFFER_DISPLACE
 {
-    VECTOR3    vEyePosInv;    // 繝｢繝・Ν蠎ｧ讓咏ｳｻ縺九ｉ隕九◆隕也せ菴咲ｽｮ
-    float      fMinDistance;  // 繝・ャ繧ｻ繝ｬ繝ｼ繧ｷ繝ｧ繝ｳ縺ｮ譛蟆剰ｷ晞屬
-    float      fMaxDistance;  // 繝・ャ繧ｻ繝ｬ繝ｼ繧ｷ繝ｧ繝ｳ縺ｮ譛螟ｧ霍晞屬
-    int        iMaxDevide;    // 譛螟ｧ蛻・牡謨ｰ
-    VECTOR2    vHeight;       // 繝・ぅ繧ｹ繝励Ξ繧､繧ｹ繝｡繝ｳ繝医・繝・ヴ繝ｳ繧ｰ縺ｮ鬮倥＆菫よ焚
-    VECTOR4    vWaveMove;     // 豕｢縺ｮ遘ｻ蜍暮㍼・域ｳ｢繧ｷ繧ｧ繝ｼ繝繝ｼ逕ｨ・・
-    VECTOR4    vSpecular;     // 繧ｹ繝壹く繝･繝ｩ繝ｼ諠・ｱ・域ｳ｢繧ｷ繧ｧ繝ｼ繝繝ｼ逕ｨ・・
+    VECTOR3 vEyePosInv; // 繝｢繝・Ν蠎ｧ讓咏ｳｻ縺九ｉ隕九◆隕也せ菴咲ｽｮ
+    float fMinDistance; // 繝・ャ繧ｻ繝ｬ繝ｼ繧ｷ繝ｧ繝ｳ縺ｮ譛蟆剰ｷ晞屬
+    float fMaxDistance; // 繝・ャ繧ｻ繝ｬ繝ｼ繧ｷ繝ｧ繝ｳ縺ｮ譛螟ｧ霍晞屬
+    int iMaxDevide; // 譛螟ｧ蛻・牡謨ｰ
+    VECTOR2 vHeight; // 繝・ぅ繧ｹ繝励Ξ繧､繧ｹ繝｡繝ｳ繝医・繝・ヴ繝ｳ繧ｰ縺ｮ鬮倥＆菫よ焚
+    VECTOR4 vWaveMove; // 豕｢縺ｮ遘ｻ蜍暮㍼・域ｳ｢繧ｷ繧ｧ繝ｼ繝繝ｼ逕ｨ・・
+    VECTOR4 vSpecular; // 繧ｹ繝壹く繝･繝ｩ繝ｼ諠・ｱ・域ｳ｢繧ｷ繧ｧ繝ｼ繝繝ｼ逕ｨ・・
     CONSTANT_BUFFER_DISPLACE()
     {
-       ZeroMemory(this, sizeof(CONSTANT_BUFFER_DISPLACE));
+        ZeroMemory(this, sizeof(CONSTANT_BUFFER_DISPLACE));
     }
 };
 
 // 繧ｨ繝輔ぉ繧ｯ繝育畑縺ｮ螳壽焚繝舌ャ繝輔ぃ讒矩菴・  //  2017.8.25
 struct CONSTANT_BUFFER_EFFECT
 {
-    MATRIX4X4  mWVP;       // 繝ｯ繝ｼ繝ｫ繝峨・繝薙Η繝ｼ繝ｻ謚募ｽｱ螟画鋤陦悟・
-    MATRIX4X4  mW;         // 繝ｯ繝ｼ繝ｫ繝芽｡悟・
-    MATRIX4X4  mV;         // 繝薙Η繝ｼ陦悟・
-    MATRIX4X4  mP;         // 謚募ｽｱ陦悟・
-    VECTOR2    vUVOffset;  // 繝・け繧ｹ繝√Ε蠎ｧ讓吶・繧ｪ繝輔そ繝・ヨ
-    VECTOR2    vUVScale;   // 繝・け繧ｹ繝√Ε蠎ｧ讓吶・繧ｹ繧ｱ繝ｼ繝ｫ  // -- 2019.7.17
-    float      fAlpha;     // 騾乗・蠎ｦ
-    float      fSize;      // 繝代・繝・ぅ繧ｯ繝ｫ縺ｮ螟ｧ縺阪＆  // -- 2018.8.23
-    VECTOR2    Dummy;      // 繝代ョ繧｣繝ｳ繧ｰ逕ｨ繝繝溘・繝吶け繝医Ν       // -- 2019.7.17
+    MATRIX4X4 mWVP; // 繝ｯ繝ｼ繝ｫ繝峨・繝薙Η繝ｼ繝ｻ謚募ｽｱ螟画鋤陦悟・
+    MATRIX4X4 mW; // 繝ｯ繝ｼ繝ｫ繝芽｡悟・
+    MATRIX4X4 mV; // 繝薙Η繝ｼ陦悟・
+    MATRIX4X4 mP; // 謚募ｽｱ陦悟・
+    VECTOR2 vUVOffset; // 繝・け繧ｹ繝√Ε蠎ｧ讓吶・繧ｪ繝輔そ繝・ヨ
+    VECTOR2 vUVScale; // 繝・け繧ｹ繝√Ε蠎ｧ讓吶・繧ｹ繧ｱ繝ｼ繝ｫ  // -- 2019.7.17
+    float fAlpha; // 騾乗・蠎ｦ
+    float fSize; // 繝代・繝・ぅ繧ｯ繝ｫ縺ｮ螟ｧ縺阪＆  // -- 2018.8.23
+    VECTOR2 Dummy; // 繝代ョ繧｣繝ｳ繧ｰ逕ｨ繝繝溘・繝吶け繝医Ν       // -- 2019.7.17
     CONSTANT_BUFFER_EFFECT()
     {
-       ZeroMemory(this, sizeof(CONSTANT_BUFFER_EFFECT));
+        ZeroMemory(this, sizeof(CONSTANT_BUFFER_EFFECT));
     }
 };
 
@@ -82,24 +82,39 @@ struct CONSTANT_BUFFER_EFFECT
 // 3D繧ｹ繝励Λ繧､繝医す繧ｧ繝ｼ繝繝ｼ逕ｨ縺ｮ螳壽焚繝舌ャ繝輔ぃ讒矩菴・
 struct CONSTANT_BUFFER_SPRITE
 {
-    MATRIX4X4  mWVP;
-    MATRIX4X4  mW;
-    float      ViewPortWidth;
-    float      ViewPortHeight;
-    VECTOR2    vUVOffset;
-    VECTOR4    vColor;         // 繧ｫ繝ｩ繝ｼ・磯乗・蠎ｦ繧貞性繧・・
-    VECTOR4    vMatInfo;       // 繝槭ユ繝ｪ繧｢繝ｫ髢｢騾｣諠・ｱ・・:繝・け繧ｹ繝√Ε譛臥┌縺ｪ縺ｩ・峨・rawRect()縲．rawLine()縺ｧ菴ｿ逕ｨ縲・
+    MATRIX4X4 mWVP;
+    MATRIX4X4 mW;
+    float ViewPortWidth;
+    float ViewPortHeight;
+    VECTOR2 vUVOffset;
+    VECTOR4 vColor; // 繧ｫ繝ｩ繝ｼ・磯乗・蠎ｦ繧貞性繧・・
+    VECTOR4 vMatInfo; // 繝槭ユ繝ｪ繧｢繝ｫ髢｢騾｣諠・ｱ・・:繝・け繧ｹ繝√Ε譛臥┌縺ｪ縺ｩ・峨・rawRect()縲．rawLine()縺ｧ菴ｿ逕ｨ縲・
     CONSTANT_BUFFER_SPRITE()
     {
-       ZeroMemory(this, sizeof(CONSTANT_BUFFER_SPRITE));
+        ZeroMemory(this, sizeof(CONSTANT_BUFFER_SPRITE));
     }
 };
+
+struct CONSTANT_BUFFER_ARC
+{
+    float startAngle; // 開始角度（ラジアン、0=12時）
+    float arcSpan; // 弧の長さ（正=CW、負=CCW）
+    float innerRadius; // 内半径（0〜0.5）
+    float padding;
+
+    CONSTANT_BUFFER_ARC()
+    {
+        ZeroMemory(this,
+                   sizeof(CONSTANT_BUFFER_ARC));
+    }
+};
+
 
 // 繝槭ユ繝ｪ繧｢繝ｫ諠・ｱ讒矩菴・                     // -- 2020.12.15
 struct CONSTANT_BUFFER_MATERIAL
 {
-    VECTOR4    vMatDuffuse;
-    VECTOR4    vMatSpecular;
+    VECTOR4 vMatDuffuse;
+    VECTOR4 vMatSpecular;
 };
 
 //
@@ -149,7 +164,7 @@ public:
     ID3D11PixelShader* m_pEffect3D_PS;
     ID3D11InputLayout* m_pEffect3D_VertexLayout_BILL;
     ID3D11VertexShader* m_pEffect3D_VS_BILL;
-    ID3D11VertexShader* m_pEffect3D_VS_BILLMESH;  // -- 2019.7.17
+    ID3D11VertexShader* m_pEffect3D_VS_BILLMESH; // -- 2019.7.17
 
     // Fbx繝｢繝・Ν・壹せ繧ｿ繝・ぅ繝・け繝｡繝・す繝･逕ｨ縺ｮ繧ｷ繧ｧ繝ｼ繝繝ｼ
     // (Normal繝槭ャ繝斐Φ繧ｰ蟇ｾ蠢・
@@ -162,6 +177,7 @@ public:
     ID3D11InputLayout* m_pFbxSkinMesh_VertexLayout;
     ID3D11VertexShader* m_pFbxSkinMesh_VS;
     ID3D11PixelShader* m_pFbxSkinMesh_PS;
+    ID3D11Buffer* m_pConstantBufferArc; 
 
 
     // 螳壽焚繝舌ャ繝輔ぃ  ------------------------------------------
@@ -176,13 +192,13 @@ public:
     ID3D11Buffer* m_pConstantBufferSprite3D;
 
     // 繝｡繝・す繝･縺ｮ螟画鋤陦悟・繝ｻ繧ｫ繝ｩ繝ｼ諠・ｱ逕ｨ螳壽焚繝舌ャ繝輔ぃ
-    ID3D11Buffer* m_pConstantBufferWVLED;    // -- 2020.1.24
+    ID3D11Buffer* m_pConstantBufferWVLED; // -- 2020.1.24
 
     // 繝懊・繝ｳ陦悟・霆｢騾∫畑縺ｮ螳壽焚繝舌ャ繝輔ぃ
     ID3D11Buffer* m_pConstantBufferBone2;
 
     // 繝槭ユ繝ｪ繧｢繝ｫ諠・ｱ逕ｨ螳壽焚繝舌ャ繝輔ぃ
-    ID3D11Buffer* m_pConstantBufferMaterial;    // -- 2020.12.15
+    ID3D11Buffer* m_pConstantBufferMaterial; // -- 2020.12.15
 
 
 public:
@@ -195,10 +211,11 @@ public:
     HRESULT InitShaderEffect();
     HRESULT InitShaderConstant();
 
-    HRESULT MakeShader(const TCHAR ProfileName[], const TCHAR FileName[], void** ppShader, D3D11_INPUT_ELEMENT_DESC Fluid_layout[] = nullptr, UINT numElements = 0, ID3D11InputLayout** ppInputLayout = nullptr);
+    HRESULT MakeShader(const TCHAR ProfileName[], const TCHAR FileName[], void** ppShader,
+                       D3D11_INPUT_ELEMENT_DESC Fluid_layout[] = nullptr, UINT numElements = 0,
+                       ID3D11InputLayout** ppInputLayout = nullptr);
     HRESULT MakeConstantBuffer(UINT size, ID3D11Buffer** ppConstantBuffer);
 
     CShader(CDirect3D* pD3D);
     ~CShader();
-
 };

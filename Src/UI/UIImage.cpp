@@ -37,6 +37,11 @@ void CUIImage::SetSrcRect(const VECTOR4& srcRect)
     m_srcRect = srcRect;
 }
 
+CSpriteImage* CUIImage::GetImage()
+{
+    return m_pImage;
+}
+
 VECTOR4 CUIImage::GetSrcRect() const
 {
     return m_srcRect;

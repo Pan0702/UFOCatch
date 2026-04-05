@@ -10,7 +10,7 @@ public:
     
     void SetImage(CSpriteImage* pImage);
     void SetSrcRect(const VECTOR4& srcRect);
-
+    CSpriteImage* GetImage();
     VECTOR4 GetSrcRect() const;
 
 private:

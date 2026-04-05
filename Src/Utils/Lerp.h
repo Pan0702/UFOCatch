@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <cmath>
-
+#include "MyMath.h"
 inline float EaseOutQuint(const float& t)
 {
     return 1 - Pow2(Pow2(1 -t)) * (1 - t);

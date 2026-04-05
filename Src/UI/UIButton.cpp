@@ -8,8 +8,19 @@ CUIButton::CUIButton(const VECTOR2& pos, const VECTOR4& size, CSpriteImage* pNor
 void CUIButton::SetFocus(bool focused)
 {
     m_isFocus = focused;
-    SetImage(focused ? m_pFocusImage : m_pNormalImage);
-    if (m_onFocusChanged) m_onFocusChanged(focused);
+    if (focused)
+    {
+        SetImage(m_pFocusImage);
+        if (m_onFocusChanged) m_onFocusChanged(true);
+    }
+    else
+    {
+        if (m_onFocusChanged) m_onFocusChanged(false);
+        GetAnimationPlayer().SetOnComplete([this]
+        {
+            SetImage(m_pNormalImage);
+        });
+    }
 }
 
 bool CUIButton::IsFocus() const

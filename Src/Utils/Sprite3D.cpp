@@ -286,17 +286,25 @@ HRESULT CSprite::SetSrc(const DWORD& srcX, const DWORD& srcY, const DWORD& srcwi
     // インデックス構成：z値は1.0で固定（プロジェクション変換後にz=1になるよう調整）。描画順に注意。
     SpriteVertex vertices[] =
     {
-        { VECTOR3(0, (float)m_dwDestHeight, 0),
-          VECTOR2((float)m_dwSrcX / m_pImage->m_dwImageWidth,
-                  (float)(m_dwSrcY + m_dwSrcHeight) / m_pImage->m_dwImageHeight) }, // 頂点1：左下
-        { VECTOR3(0, 0, 0),
-          VECTOR2((float)m_dwSrcX / m_pImage->m_dwImageWidth, (float)m_dwSrcY / m_pImage->m_dwImageHeight) }, // 頂点2：左上
-        { VECTOR3((float)m_dwDestWidth, (float)m_dwDestHeight, 0),
-          VECTOR2((float)(m_dwSrcX + m_dwSrcWidth) / m_pImage->m_dwImageWidth,
-                  (float)(m_dwSrcY + m_dwSrcHeight) / m_pImage->m_dwImageHeight) }, // 頂点3：右下
-        { VECTOR3((float)m_dwDestWidth, 0, 0),
-          VECTOR2((float)(m_dwSrcX + m_dwSrcWidth) / m_pImage->m_dwImageWidth,
-                  (float)m_dwSrcY / m_pImage->m_dwImageHeight) }, // 頂点4：右上
+        {
+            VECTOR3(0, (float)m_dwDestHeight, 0),
+            VECTOR2((float)m_dwSrcX / m_pImage->m_dwImageWidth,
+                    (float)(m_dwSrcY + m_dwSrcHeight) / m_pImage->m_dwImageHeight)
+        }, // 頂点1：左下
+        {
+            VECTOR3(0, 0, 0),
+            VECTOR2((float)m_dwSrcX / m_pImage->m_dwImageWidth, (float)m_dwSrcY / m_pImage->m_dwImageHeight)
+        }, // 頂点2：左上
+        {
+            VECTOR3((float)m_dwDestWidth, (float)m_dwDestHeight, 0),
+            VECTOR2((float)(m_dwSrcX + m_dwSrcWidth) / m_pImage->m_dwImageWidth,
+                    (float)(m_dwSrcY + m_dwSrcHeight) / m_pImage->m_dwImageHeight)
+        }, // 頂点3：右下
+        {
+            VECTOR3((float)m_dwDestWidth, 0, 0),
+            VECTOR2((float)(m_dwSrcX + m_dwSrcWidth) / m_pImage->m_dwImageWidth,
+                    (float)m_dwSrcY / m_pImage->m_dwImageHeight)
+        }, // 頂点4：右上
     };
 
     // 頂点バッファが未作成か、あるいは更新が必要かをチェック
@@ -530,7 +538,7 @@ void CSprite::DrawLine(const float& StartX, const float& StartY, const float& En
     SpriteVertex vertices[] =
     {
         {VECTOR3(StartX, StartY, 0), VECTOR2(0, 0)}, // 頂点1
-        {VECTOR3(EndX, EndY, 0), VECTOR2(0, 0)}      // 頂点2
+        {VECTOR3(EndX, EndY, 0), VECTOR2(0, 0)} // 頂点2
     };
 
     // 頂点バッファが未作成かチェックし、動的に更新
@@ -574,7 +582,7 @@ void CSprite::DrawLine(const float& StartX, const float& StartY, const float& En
 
     // プリミティブトポロジーをラインリストに変更
     m_pD3D->m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-    
+
     // ライン描画時はテクスチャを使用しない
     ID3D11ShaderResourceView* Nothing[1] = {0};
     m_pD3D->m_pDeviceContext->PSSetShaderResources(0, 1, Nothing);
@@ -590,8 +598,9 @@ void CSprite::DrawLine(const float& StartX, const float& StartY, const float& En
     XMVECTOR vNrmVec = XMLoadFloat2(&vNrm);
     XMVECTOR vLenVec = XMVector2Length(vNrmVec);
     XMStoreFloat2(&vLen, vLenVec);
-    
-    if (vLen.x > 0.0f) {
+
+    if (vLen.x > 0.0f)
+    {
         vNrm.x /= vLen.x;
         vNrm.y /= vLen.x;
     }
@@ -618,7 +627,8 @@ void CSprite::DrawLine(const float& StartX, const float& StartY, const float& En
 
         D3D11_MAPPED_SUBRESOURCE pData;
         CONSTANT_BUFFER_SPRITE cb;
-        if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferSprite3D, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
+        if (SUCCEEDED(
+            m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferSprite3D, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
         {
             cb.mW = XMMatrixTranspose(mWorld);
             cb.ViewPortWidth = (float)m_pD3D->m_dwWindowWidth;
@@ -657,9 +667,9 @@ void CSprite::DrawRect(const float& posX, const float& posY, const DWORD& width,
     SpriteVertex vertices[] =
     {
         {VECTOR3(0, (float)height, 0), VECTOR2(0, 0)}, // 左下
-        {VECTOR3(0, 0, 0), VECTOR2(0, 0)},             // 左上
+        {VECTOR3(0, 0, 0), VECTOR2(0, 0)}, // 左上
         {VECTOR3((float)width, (float)height, 0), VECTOR2(0, 0)}, // 右下
-        {VECTOR3((float)width, 0, 0), VECTOR2(0, 0)},  // 右上
+        {VECTOR3((float)width, 0, 0), VECTOR2(0, 0)}, // 右上
     };
 
     if (m_pVertexBufferRect == nullptr)
@@ -704,14 +714,15 @@ void CSprite::DrawRect(const float& posX, const float& posY, const DWORD& width,
 
     D3D11_MAPPED_SUBRESOURCE pData;
     CONSTANT_BUFFER_SPRITE cb;
-    if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferSprite3D, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
+    if (SUCCEEDED(
+        m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferSprite3D, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
     {
         cb.mW = XMMatrixTranspose(XMMatrixTranslation(posX, posY, 0.0f));
         cb.ViewPortWidth = (float)m_pD3D->m_dwWindowWidth;
         cb.ViewPortHeight = (float)m_pD3D->m_dwWindowHeight;
         cb.vUVOffset = VECTOR2(0, 0);
         cb.vColor = color;
-        cb.vMatInfo = VECTOR4(0, 0, 0, 0); 
+        cb.vMatInfo = VECTOR4(0, 0, 0, 0);
         memcpy_s(pData.pData, pData.RowPitch, (void*)(&cb), sizeof(cb));
         m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferSprite3D, 0);
     }
@@ -734,15 +745,16 @@ void CSprite::DrawCircle(CSpriteImage* pImage, float posX, float posY, DWORD src
     SpriteVertex vertices[] =
     {
         {VECTOR3(0, (float)srcHei, 0), VECTOR2(0.0f, 1.0f)}, // 左下
-        {VECTOR3(0, 0, 0), VECTOR2(0.0f, 0.0f)},             // 左上
+        {VECTOR3(0, 0, 0), VECTOR2(0.0f, 0.0f)}, // 左上
         {VECTOR3((float)srcWid, (float)srcHei, 0), VECTOR2(1.0f, 1.0f)}, // 右下
-        {VECTOR3((float)srcWid, 0, 0), VECTOR2(1.0f, 0.0f)},  // 右上
+        {VECTOR3((float)srcWid, 0, 0), VECTOR2(1.0f, 0.0f)}, // 右上
     };
 
     if (m_pVertexBufferSprite)
     {
         D3D11_MAPPED_SUBRESOURCE mapResource;
-        if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pVertexBufferSprite, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapResource)))
+        if (SUCCEEDED(
+            m_pD3D->m_pDeviceContext->Map(m_pVertexBufferSprite, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapResource)))
         {
             memcpy_s(mapResource.pData, sizeof(vertices), vertices, sizeof(vertices));
             m_pD3D->m_pDeviceContext->Unmap(m_pVertexBufferSprite, 0);
@@ -758,29 +770,106 @@ void CSprite::DrawCircle(CSpriteImage* pImage, float posX, float posY, DWORD src
 
     D3D11_MAPPED_SUBRESOURCE pData;
     CONSTANT_BUFFER_SPRITE cb;
-    if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferSprite3D, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
+    if (SUCCEEDED(
+        m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferSprite3D, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
     {
         cb.mW = XMMatrixTranspose(mWorld);
         cb.ViewPortWidth = (float)m_pD3D->m_dwWindowWidth;
         cb.ViewPortHeight = (float)m_pD3D->m_dwWindowHeight;
         cb.vUVOffset = VECTOR2(0, 0);
         cb.vColor = VECTOR4(1, 1, 1, fAlpha);
-        
+
         // --- 円形描画のための特殊情報 ---
-        cb.vMatInfo.x = 1.0f;     // 円形マスク有効フラグ
+        cb.vMatInfo.x = 1.0f; // 円形マスク有効フラグ
         cb.vMatInfo.y = startRad; // 扇形の開始角度
-        cb.vMatInfo.z = endRad;   // 扇形の終了角度
-        cb.vMatInfo.w = 1.0f;     // 円形モードON
-        
+        cb.vMatInfo.z = endRad; // 扇形の終了角度
+        cb.vMatInfo.w = 1.0f; // 円形モードON
+
         memcpy_s(pData.pData, pData.RowPitch, (void*)(&cb), sizeof(cb));
         m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferSprite3D, 0);
     }
-    
+
     m_pD3D->m_pDeviceContext->PSSetShaderResources(0, 1, &m_pImage->m_pTexture);
     m_pD3D->m_pDeviceContext->Draw(4, 0);
 
     ResetShader();
 }
+
+void CSprite::DrawArc(CSpriteImage* pImage, float posX, float posY, DWORD srcWid, DWORD srcHei,
+                      ArcDrawParams& arcParams, float fAlpha)
+{
+    m_pImage = pImage;
+    SpriteVertex vertices[] = {
+        {VECTOR3(0, static_cast<float>(srcHei), 0), VECTOR2(0, 1)},
+        {VECTOR3(0, 0, 0), VECTOR2(0, 0)},
+        {VECTOR3(static_cast<float>(srcWid), static_cast<float>(srcHei), 0), VECTOR2(1, 1)},
+        {VECTOR3(static_cast<float>(srcWid), 0, 0), VECTOR2(1, 0)},
+    };
+
+    if (m_pVertexBufferSprite)
+    {
+        D3D11_MAPPED_SUBRESOURCE mapResource;
+        if (SUCCEEDED(
+            m_pD3D->m_pDeviceContext->Map(m_pVertexBufferSprite, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapResource)))
+        {
+            memcpy_s(mapResource.pData, sizeof(vertices), vertices, sizeof(vertices));
+            m_pD3D->m_pDeviceContext->Unmap(m_pVertexBufferSprite, 0);
+        }
+    }
+
+    SetShader();
+
+    UINT stride = sizeof(SpriteVertex);
+    UINT offset = 0;
+    
+    m_pD3D->m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBufferSprite, &stride, &offset);
+    
+    D3D11_MAPPED_SUBRESOURCE pData;
+    CONSTANT_BUFFER_SPRITE cb;
+    //CPUからGPUのメモリを直接読み書きできるようにするための窓口を開く関数
+    if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferSprite3D, 0,D3D11_MAP_WRITE_DISCARD, 0, &pData)))
+    {
+        //shader座標に変換
+        cb.mW = XMMatrixTranspose(XMMatrixTranslation(posX, posY,0.0f));
+        //ウィンドウのサイズをシェーダーに渡す。
+        cb.ViewPortWidth = static_cast<float>(m_pD3D->m_dwWindowWidth);
+        cb.ViewPortHeight = static_cast<float>(m_pD3D->m_dwWindowHeight);
+        //スクロール表示などに使うが今回は不要
+        cb.vUVOffset = VECTOR2(0, 0);
+        //色の乗算値(R)1,(G)1,(B)1は元の色のまま
+        cb.vColor = VECTOR4(1, 1, 1, fAlpha);
+        //x:テクスチャの有無, w:円形モードON/OFF
+        cb.vMatInfo = VECTOR4(1, 0, 0, 1); //x = テクスチャあり, w = 円形モードON
+        //構造体の内容をGPUに書き出し
+        memcpy_s(pData.pData, pData.RowPitch, &cb,sizeof(cb));
+        //CPUからGPUのメモリを直接読み書きできるようにするための窓口を閉じる関数
+        m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferSprite3D, 0);
+    }
+    
+    //Shaderのb1に書き込む内容の構造体
+    CONSTANT_BUFFER_ARC arcCb;
+    arcCb.startAngle = arcParams.startAngle * XM_PI / 180.0f;
+    //孤の長さをラジアンで計算
+    //arcParams.clockwiseがTrueのとき、時計回り
+    arcCb.arcSpan = arcParams.ratio * XM_PI * 2.0f * (arcParams.clockwise ? 1.0f : -1.0f);
+    //内半径(0~0.5)
+    arcCb.innerRadius = arcParams.innerRadius;
+    //以前の内容を破棄して新しく書き込み
+    if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferArc, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
+    {
+        memcpy_s(pData.pData, pData.RowPitch, &arcCb, sizeof(arcCb));
+        m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferArc, 0);
+    }
+    //Shaderにb1として使えと指示
+    m_pD3D->m_pDeviceContext->PSSetConstantBuffers(1,1, &m_pShader->m_pConstantBufferArc);
+    //Shaderに画像を使うよう指示
+    m_pD3D->m_pDeviceContext->PSSetShaderResources(0, 1, &m_pImage->m_pTexture);
+    //GPUが描画の実行、4：描画する頂点数、0：描画開始する頂点の先頭インデックス
+    m_pD3D->m_pDeviceContext->Draw(4, 0);
+    
+    ResetShader();
+}
+
 //------------------------------------------------------------------------
 //
 //  描画前にシェーダーをセット
@@ -799,7 +888,7 @@ void CSprite::SetShader()
     // 各種シェーダーで使う定数バッファを登録
     m_pD3D->m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferSprite3D);
     m_pD3D->m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferSprite3D);
-    
+
     // 頂点インプットレイアウトをセット
     m_pD3D->m_pDeviceContext->IASetInputLayout(m_pShader->m_pSprite3D_VertexLayout);
 
@@ -892,14 +981,22 @@ HRESULT CSprite::SetSrc3D(const float& fDestWidth, const float& fDestHeight, con
     // 頂点配列の作成（ローカル座標系の原点を中心にする）
     SpriteVertex vertices[] =
     {
-        { VECTOR3(-m_fDestWidth / 2, m_fDestHeight / 2, 0),
-          VECTOR2((float)(m_dwSrcX + m_dwSrcWidth) / dwImageWidth, (float)m_dwSrcY / dwImageHeight) }, // 左上
-        { VECTOR3(-m_fDestWidth / 2, -m_fDestHeight / 2, 0),
-          VECTOR2((float)(m_dwSrcX + m_dwSrcWidth) / dwImageWidth, (float)(m_dwSrcY + m_dwSrcHeight) / dwImageHeight) }, // 左下
-        { VECTOR3(m_fDestWidth / 2, m_fDestHeight / 2, 0),
-          VECTOR2((float)m_dwSrcX / dwImageWidth, (float)m_dwSrcY / dwImageHeight) }, // 右上
-        { VECTOR3(m_fDestWidth / 2, -m_fDestHeight / 2, 0),
-          VECTOR2((float)m_dwSrcX / dwImageWidth, (float)(m_dwSrcY + m_dwSrcHeight) / dwImageHeight) }, // 右下
+        {
+            VECTOR3(-m_fDestWidth / 2, m_fDestHeight / 2, 0),
+            VECTOR2((float)(m_dwSrcX + m_dwSrcWidth) / dwImageWidth, (float)m_dwSrcY / dwImageHeight)
+        }, // 左上
+        {
+            VECTOR3(-m_fDestWidth / 2, -m_fDestHeight / 2, 0),
+            VECTOR2((float)(m_dwSrcX + m_dwSrcWidth) / dwImageWidth, (float)(m_dwSrcY + m_dwSrcHeight) / dwImageHeight)
+        }, // 左下
+        {
+            VECTOR3(m_fDestWidth / 2, m_fDestHeight / 2, 0),
+            VECTOR2((float)m_dwSrcX / dwImageWidth, (float)m_dwSrcY / dwImageHeight)
+        }, // 右上
+        {
+            VECTOR3(m_fDestWidth / 2, -m_fDestHeight / 2, 0),
+            VECTOR2((float)m_dwSrcX / dwImageWidth, (float)(m_dwSrcY + m_dwSrcHeight) / dwImageHeight)
+        }, // 右下
     };
 
     // 頂点バッファの新規作成または動的更新
@@ -1031,7 +1128,7 @@ bool CSprite::Draw3DWithWorldMatrix(CSpriteImage* pImage, const MATRIX4X4& mWorl
     m_pD3D->m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
     m_pD3D->m_pDeviceContext->PSSetSamplers(0, 1, &m_pD3D->m_pSampleLinear);
     m_pD3D->m_pDeviceContext->PSSetShaderResources(0, 1, &m_pImage->m_pTexture);
-    
+
     // プリミティブ描画
     m_pD3D->m_pDeviceContext->Draw(4, 0);
 
@@ -1041,27 +1138,28 @@ bool CSprite::Draw3DWithWorldMatrix(CSpriteImage* pImage, const MATRIX4X4& mWorl
 
     return true;
 }
+
 //------------------------------------------------------------------------
 // 3D空間の地面などにスプライトを配置して描画する
 // (キャラクターの足元の影や、魔法陣などの表示に使用)
 //------------------------------------------------------------------------
 bool CSprite::DrawWorld(CSpriteImage* pImage, const VECTOR3& vPos, float radius, float alpha)
 {
-    static constexpr float GROUND_OFFSET         = 0.1f;    // 地面との重なりによるチラつき（Zファイティング）防止
-    static constexpr float CIRCLE_DIAMETER_SCALE = 2.0f;    // 半径を直径に変換
-    static constexpr float CIRCLE_DEPTH          = 1.0f;
-    static constexpr float GROUND_ROTATION       = -XM_PI / 2.0f; // X軸で-90度回転させて地面と平行にする
-    static constexpr float SPRITE_SIZE           = 1.0f;
+    static constexpr float GROUND_OFFSET = 0.1f; // 地面との重なりによるチラつき（Zファイティング）防止
+    static constexpr float CIRCLE_DIAMETER_SCALE = 2.0f; // 半径を直径に変換
+    static constexpr float CIRCLE_DEPTH = 1.0f;
+    static constexpr float GROUND_ROTATION = -XM_PI / 2.0f; // X軸で-90度回転させて地面と平行にする
+    static constexpr float SPRITE_SIZE = 1.0f;
 
     // スケール・回転・平行移動行列を作成
-    const MATRIX4X4 mScale       = XMMatrixScaling(radius * CIRCLE_DIAMETER_SCALE,
-                                                    radius * CIRCLE_DIAMETER_SCALE,
-                                                    CIRCLE_DEPTH);
-    const MATRIX4X4 mRotation    = XMMatrixRotationX(GROUND_ROTATION);
+    const MATRIX4X4 mScale = XMMatrixScaling(radius * CIRCLE_DIAMETER_SCALE,
+                                             radius * CIRCLE_DIAMETER_SCALE,
+                                             CIRCLE_DEPTH);
+    const MATRIX4X4 mRotation = XMMatrixRotationX(GROUND_ROTATION);
     const MATRIX4X4 mTranslation = XMMatrixTranslation(vPos.x, vPos.y + GROUND_OFFSET, vPos.z);
-    
+
     // 行列を合成してワールド行列を作成
-    const MATRIX4X4 mWorld       = mScale * mRotation * mTranslation;
+    const MATRIX4X4 mWorld = mScale * mRotation * mTranslation;
 
     return Draw3DWithWorldMatrix(
         pImage,
@@ -1120,7 +1218,7 @@ bool CSprite::Draw3D(const VECTOR3& vPos, const MATRIX4X4& mView, const MATRIX4X
     m_ofX = 0;
     m_ofY = 0;
     m_vDiffuse.w = fAlpha; // -- 2020.1.24
-    
+
     return Draw3D(vPos, mView, mProj, vEye);
 }
 
@@ -1205,7 +1303,7 @@ bool CSprite::Draw3D(const VECTOR3& vPos, const MATRIX4X4& mView, const MATRIX4X
     m_pD3D->m_pDeviceContext->OMSetBlendState(m_pD3D->m_pBlendStateTrapen, nullptr, mask);
 
     return true;
-}//------------------------------------------------------------------------ // -- 2018.8.10
+} //------------------------------------------------------------------------ // -- 2018.8.10
 //
 //  3D空間へのラインレンダリング
 //
@@ -1236,7 +1334,7 @@ bool CSprite::DrawLine3D(const VECTOR3& vStart, const VECTOR3& vEnd, const MATRI
     SpriteVertex vertices[] =
     {
         {VECTOR3(vStart.x, vStart.y, vStart.z), VECTOR2(0, 0)}, // 頂点1
-        {VECTOR3(vEnd.x, vEnd.y, vEnd.z), VECTOR2(0, 0)}       // 頂点2
+        {VECTOR3(vEnd.x, vEnd.y, vEnd.z), VECTOR2(0, 0)} // 頂点2
     };
 
     // 頂点バッファが未作成なら新規作成、作成済みならMap/Unmapで更新
@@ -1393,6 +1491,7 @@ void CFontTexture::Refresh()
 {
     m_Idx = 0;
 }
+
 //------------------------------------------------------------------------
 //
 //  テキスト表示用の頂点バッファを作成（更新）
@@ -1410,10 +1509,10 @@ void CFontTexture::CreateVB(const DWORD& dwWidth, const DWORD& dwHeight)
     // トライアングルストリップ形式（左下、左上、右下、右上）
     SpriteVertex vertices[] =
     {
-        { VECTOR3(0, (float)dwHeight, 0),         VECTOR2(0, 1) }, // 頂点1：左下
-        { VECTOR3(0, 0, 0),                       VECTOR2(0, 0) }, // 頂点2：左上
-        { VECTOR3((float)dwWidth, (float)dwHeight, 0), VECTOR2(1, 1) }, // 頂点3：右下
-        { VECTOR3((float)dwWidth, 0, 0),          VECTOR2(1, 0) }  // 頂点4：右上
+        {VECTOR3(0, (float)dwHeight, 0), VECTOR2(0, 1)}, // 頂点1：左下
+        {VECTOR3(0, 0, 0), VECTOR2(0, 0)}, // 頂点2：左上
+        {VECTOR3((float)dwWidth, (float)dwHeight, 0), VECTOR2(1, 1)}, // 頂点3：右下
+        {VECTOR3((float)dwWidth, 0, 0), VECTOR2(1, 0)} // 頂点4：右上
     };
 
     // 頂点バッファが未作成の場合は新規作成、作成済みの場合はMapで更新
@@ -1541,7 +1640,8 @@ void CFontTexture::Draw(MATRIX4X4 mWorld, const TCHAR* szText, int fontsize, DWO
     m_Idx++;
     if (m_Idx >= TEXT_DATA_MAX)
     {
-        MessageBox(0, _T("描画可能なテキスト数の上限(TEXT_DATA_MAX)を超えました。\nRefresh()の呼び出し位置、または最大数設定を確認してください。"), _T("Error"), MB_OK);
+        MessageBox(0, _T("描画可能なテキスト数の上限(TEXT_DATA_MAX)を超えました。\nRefresh()の呼び出し位置、または最大数設定を確認してください。"), _T("Error"),
+                   MB_OK);
         m_Idx--;
     }
 }
@@ -1567,7 +1667,7 @@ void CFontTexture::SetShader()
     m_pD3D->m_pDeviceContext->OMSetBlendState(m_pD3D->m_pBlendStateTrapen, nullptr, mask);
 
     // テキストは最前面に描画するためZバッファ無効化
-    m_pD3D->SetZBuffer(false); 
+    m_pD3D->SetZBuffer(false);
 }
 
 //------------------------------------------------------------------------
@@ -1577,11 +1677,12 @@ void CFontTexture::SetShader()
 //------------------------------------------------------------------------
 void CFontTexture::ResetShader()
 {
-    m_pD3D->SetZBuffer(true); 
+    m_pD3D->SetZBuffer(true);
 
     UINT mask = 0xffffffff;
     m_pD3D->m_pDeviceContext->OMSetBlendState(m_pD3D->m_pBlendStateTrapen, nullptr, mask);
 }
+
 //------------------------------------------------------------------------
 //
 //  フォントテクスチャの作成
@@ -1613,7 +1714,7 @@ void CFontTexture::CreateTex(const DWORD& dwKbn, const float& fDestWidth, const 
         FIXED_PITCH | FF_MODERN,
         TEXT("ＭＳ ゴシック") // デフォルトフォント名
     };
-    
+
     if (fontname != nullptr)
         _tcscpy_s(lf.lfFaceName, sizeof(lf.lfFaceName) / sizeof(TCHAR), fontname);
 
@@ -1628,7 +1729,7 @@ void CFontTexture::CreateTex(const DWORD& dwKbn, const float& fDestWidth, const 
     DWORD dwTextHeight = 0;
     DWORD dwTextWidth = 0;
     DWORD dwAllWidth = 0;
-    DWORD dwAllWidth2 = 0; 
+    DWORD dwAllWidth2 = 0;
     FontData* pFontData = new FontData[dwTextlen];
 
     // デバイスコンテキストを取得し、フォントを適用
@@ -1657,8 +1758,8 @@ void CFontTexture::CreateTex(const DWORD& dwKbn, const float& fDestWidth, const 
         GetTextMetrics(hdc, &(pFontData + i)->TM);
         CONST MAT2 Mat = {{0, 1}, {0, 0}, {0, 0}, {0, 1}};
         DWORD size = GetGlyphOutline(hdc, code, GGO_GRAY4_BITMAP, &(pFontData + i)->GM, 0, nullptr, &Mat);
-        
-        if (size == 0) 
+
+        if (size == 0)
         {
             (pFontData + i)->ptr = nullptr;
         }
@@ -1667,11 +1768,11 @@ void CFontTexture::CreateTex(const DWORD& dwKbn, const float& fDestWidth, const 
             (pFontData + i)->ptr = new BYTE[size];
             GetGlyphOutline(hdc, code, GGO_GRAY4_BITMAP, &(pFontData + i)->GM, size, (pFontData + i)->ptr, &Mat);
         }
-        
+
         if ((int)dwTextWidth < (pFontData + i)->GM.gmCellIncX) dwTextWidth = (pFontData + i)->GM.gmCellIncX;
         if (dwTextHeight < (DWORD)(pFontData + i)->TM.tmHeight) dwTextHeight = (pFontData + i)->TM.tmHeight;
         if (dwTextHeight < (DWORD)(pFontData + i)->GM.gmBlackBoxY) dwTextHeight = (pFontData + i)->GM.gmBlackBoxY;
-        
+
         dwAllWidth += (pFontData + i)->GM.gmCellIncX;
         dwAllWidth2 += (pFontData + i)->GM.gmBlackBoxX + (4 - ((pFontData + i)->GM.gmBlackBoxX % 4)) % 4;
     }
@@ -1778,10 +1879,10 @@ HRESULT CFontTexture::CreateVB3D(const float& fDestWidth, const float& fDestHeig
     // 頂点配列（トライアングルストリップ形式）
     SpriteVertex vertices[] =
     {
-        { VECTOR3(-m_fDestWidth / 2,  m_fDestHeight / 2, 0), VECTOR2(0, 0) }, // 左上
-        { VECTOR3(-m_fDestWidth / 2, -m_fDestHeight / 2, 0), VECTOR2(0, 1) }, // 左下
-        { VECTOR3( m_fDestWidth / 2,  m_fDestHeight / 2, 0), VECTOR2(1, 0) }, // 右上
-        { VECTOR3( m_fDestWidth / 2, -m_fDestHeight / 2, 0), VECTOR2(1, 1) }, // 右下
+        {VECTOR3(-m_fDestWidth / 2, m_fDestHeight / 2, 0), VECTOR2(0, 0)}, // 左上
+        {VECTOR3(-m_fDestWidth / 2, -m_fDestHeight / 2, 0), VECTOR2(0, 1)}, // 左下
+        {VECTOR3(m_fDestWidth / 2, m_fDestHeight / 2, 0), VECTOR2(1, 0)}, // 右上
+        {VECTOR3(m_fDestWidth / 2, -m_fDestHeight / 2, 0), VECTOR2(1, 1)}, // 右下
     };
 
     if (m_TextData[m_Idx].m_pVertexBufferFont == nullptr)
@@ -1804,7 +1905,8 @@ HRESULT CFontTexture::CreateVB3D(const float& fDestWidth, const float& fDestHeig
     else
     {
         D3D11_MAPPED_SUBRESOURCE msr;
-        if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_TextData[m_Idx].m_pVertexBufferFont, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr)))
+        if (SUCCEEDED(
+            m_pD3D->m_pDeviceContext->Map(m_TextData[m_Idx].m_pVertexBufferFont, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr)))
         {
             memcpy(msr.pData, vertices, sizeof(SpriteVertex) * 4);
             m_pD3D->m_pDeviceContext->Unmap(m_TextData[m_Idx].m_pVertexBufferFont, 0);
@@ -1813,6 +1915,7 @@ HRESULT CFontTexture::CreateVB3D(const float& fDestWidth, const float& fDestHeig
 
     return S_OK;
 }
+
 //------------------------------------------------------------------------ // -- 2024.3.23
 //
 //  3Dビルボードフォントオブジェクトのレンダリング
@@ -1911,7 +2014,7 @@ bool CFontTexture::Draw3D(const VECTOR3& vPos, const MATRIX4X4& mView, const MAT
         memcpy_s(pData.pData, pData.RowPitch, (void*)(&cb), sizeof(cb));
         m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferSprite3D, 0);
     }
-    
+
     // シェーダーリソースのセットと描画
     m_pD3D->m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferSprite3D);
     m_pD3D->m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_pShader->m_pConstantBufferSprite3D);
@@ -1919,7 +2022,7 @@ bool CFontTexture::Draw3D(const VECTOR3& vPos, const MATRIX4X4& mView, const MAT
     m_pD3D->m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
     m_pD3D->m_pDeviceContext->PSSetSamplers(0, 1, &m_pD3D->m_pSampleLinear);
     m_pD3D->m_pDeviceContext->PSSetShaderResources(0, 1, &m_TextData[m_Idx].m_pResourceView);
-    
+
     m_pD3D->m_pDeviceContext->Draw(4, 0);
 
     // ブレンドステートをリセット
@@ -1938,4 +2041,3 @@ bool CFontTexture::Draw3D(const VECTOR3& vPos, const MATRIX4X4& mView, const MAT
 
     return true;
 }
-

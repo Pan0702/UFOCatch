@@ -22,6 +22,13 @@ cbuffer global_0:register(b0)
     float4 g_MatInfo; // マテリアル関連情報　x:テクスチャ有り無し  // 2017.10.8
 };
 
+cbuffer ArcBuffer : register(b1)
+{
+    float g_ArcStartAngle; //開始角度
+    float g_ArcSpan;       //孤の長さ
+    float g_InnerRadius;   //内半径
+    float g_ArcPadding;   
+}
 // 構造体
 struct PS_INPUT
 {
@@ -82,26 +89,49 @@ float4 PS(PS_INPUT In) : SV_Target
         //円の角度制限が有りの場合
         if (g_MatInfo.w == 1)
         {
-            float PI = 3.14159265f;
-
-            // UV座標から中心を引いて相対位置を計算
-            // UVオフセットを引いて正規化（0～1の範囲に）
-            float2 normalizedUV = In.UV - g_UVOffset;
-            float2 pos = normalizedUV - float2(0.5, 0.5);
-
-            // 12時方向を0度、時計回りに角度を計算
-            // UV座標系: Y軸は下が0、上が1
+            const float PI = 3.14159265f;
+            //中心を0,0にずらす。
+            float2 pos = (In.UV - g_UVOffset) - float2(0.5, 0.5);
+            
+            if (length(pos) > g_InnerRadius) discard;
+            
             float angle = atan2(pos.x, -pos.y);
-
-            // 0～2πの範囲に正規化
-            if (angle < 0.0f) {
-                angle += 2.0f * PI;
+            if (angle < 0) angle += 2.0f * PI;
+            
+            float rel = angle - g_ArcStartAngle;
+            
+            if (g_ArcSpan >= 0)
+            {
+                // 時計回り：rel が arcSpan を超えたら破棄
+                if (rel < 0) rel += 2.0f * PI;
+                if (rel > g_ArcSpan) discard;
             }
-
-            // 開始角度から終了角度の範囲外を破棄
-            if (angle < g_MatInfo.y || angle > g_MatInfo.z) {
-                discard;
+            else
+            {
+                // 反時計回り：rel が arcSpan より小さくなったら破棄
+                if (rel > 0) rel -= 2.0f * PI;
+                if (rel < g_ArcSpan) discard;
             }
+            // float PI = 3.14159265f;
+            //
+            // // UV座標から中心を引いて相対位置を計算
+            // // UVオフセットを引いて正規化（0～1の範囲に）
+            // float2 normalizedUV = In.UV - g_UVOffset;
+            // float2 pos = normalizedUV - float2(0.5, 0.5);
+            //
+            // // 12時方向を0度、時計回りに角度を計算
+            // // UV座標系: Y軸は下が0、上が1
+            // float angle = atan2(pos.x, -pos.y);
+            //
+            // // 0～2πの範囲に正規化
+            // if (angle < 0.0f) {
+            //     angle += 2.0f * PI;
+            // }
+            //
+            // // 開始角度から終了角度の範囲外を破棄
+            // if (angle < g_MatInfo.y || angle > g_MatInfo.z) {
+            //     discard;
+            // }
         }
     }
     else

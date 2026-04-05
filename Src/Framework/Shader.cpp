@@ -516,6 +516,7 @@ HRESULT CShader::InitShaderConstant()
 
     // 螳壽焚繝舌ャ繝輔ぃ菴懈・・壹・繝・Μ繧｢繝ｫ諠・ｱ逕ｨ                                    // -- 2020.12.15
     MakeConstantBuffer(sizeof(CONSTANT_BUFFER_MATERIAL), &m_pConstantBufferMaterial);
+   MakeConstantBuffer(sizeof(CONSTANT_BUFFER_ARC),&m_pConstantBufferArc);
 
     return S_OK;
 }

@@ -39,6 +39,13 @@ struct CircleDrawParams
     VECTOR3 center;
 };
 
+struct ArcDrawParams                                   
+{
+    float startAngle  = 0.0f;       // 開始角度（度、0=12時）Degrees
+    float ratio       = 1.0f;       // 塗り割合（0〜1）
+    float innerRadius = 0.0f;       // 内半径（0〜0.5）
+    bool  clockwise   = true;
+};
 //
 // CSpriteImageクラス
 // (テクスチャリソースを管理するクラス)
@@ -127,10 +134,11 @@ public:
     void    Draw(CSpriteImage* pImage, const MATRIX4X4& mWorld, const DWORD& srcX, const DWORD& srcY, const DWORD& srcwidth, const DWORD& srcheight, const DWORD& destwidth, const DWORD& destheight, const float& fAlpha = 1.0f);
     void    DrawLine(const float& StartX, const float& StartY, const float& EndX, const float& EndY, const DWORD& WidthIn, const DWORD& colorABGR, const float& fAlpha = 1.0f);
     void    DrawRect(const float& posX, const float& posY, const DWORD& width, const DWORD& height, const DWORD& colorABGR, const float& fAlpha = 1.0f);
-    
+    void    DrawRect(const MATRIX4X4& mWorld, const DWORD& width, const DWORD& height, const DWORD& colorABGR, const float& fAlpha = 1.0f);
     // 自作関数: 円形描画
     void   DrawCircle(CSpriteImage* pImage, float posX, float posY, DWORD srcX, DWORD srcY, DWORD srcWid, DWORD srcHei, float startRad = 0, float endRad = 6.28318f, float fAlpha = 1.0f);
-    
+    void DrawArc(CSpriteImage* pImage, float posX, float posY, DWORD srcWid, DWORD srcHei, ArcDrawParams& arcParams,
+                 float fAlpha);
     // 3D描画・ビルボード
     HRESULT SetSrc3D(const float& fDestWidth, const float& fDestHeight, const DWORD& dwSrcX, const DWORD& dwSrcY, const DWORD& dwSrcWidth, const DWORD& dwSrcHeight);
     HRESULT SetSrc3D(CSpriteImage* pImage, const float& fDestWidth, const float& fDestHeight, const DWORD& dwSrcX, const DWORD& dwSrcY, const DWORD& dwSrcWidth, const DWORD& dwSrcHeight);
