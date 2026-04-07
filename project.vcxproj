@@ -632,6 +632,7 @@
     <ClInclude Include="Src\UI\UIAnimation.h" />
     <ClInclude Include="Src\UI\UIAnimationPlayer.h" />
     <ClInclude Include="Src\UI\UIAnimationTrack.h" />
+    <ClInclude Include="Src\UI\UIAnimationTween.h" />
     <ClInclude Include="Src\UI\UIBase.h" />
     <ClInclude Include="Src\UI\UIButton.h" />
     <ClInclude Include="Src\UI\UIButtons.h" />
@@ -640,6 +641,7 @@
     <ClInclude Include="Src\UI\UIImage.h" />
     <ClInclude Include="Src\UI\UIPreset.h" />
     <ClInclude Include="Src\UI\UIProgressBar.h" />
+    <ClInclude Include="Src\UI\UIRingGauge.h" />
     <ClInclude Include="Src\UI\UIWidget.h" />
     <ClInclude Include="Src\Utils\Animator.h" />
     <ClInclude Include="Src\Utils\BBox.h" />
@@ -3251,6 +3253,7 @@
     <ClCompile Include="Src\UI\UIAnimation.cpp" />
     <ClCompile Include="Src\UI\UIAnimationPlayer.cpp" />
     <ClCompile Include="Src\UI\UIAnimationTrack.cpp" />
+    <ClCompile Include="Src\UI\UIAnimationTween.cpp" />
     <ClCompile Include="Src\UI\UIBase.cpp" />
     <ClCompile Include="Src\UI\UIButton.cpp" />
     <ClCompile Include="Src\UI\UIButtons.cpp" />
@@ -3259,6 +3262,7 @@
     <ClCompile Include="Src\UI\UIImage.cpp" />
     <ClCompile Include="Src\UI\UIPreset.cpp" />
     <ClCompile Include="Src\UI\UIProgressBar.cpp" />
+    <ClCompile Include="Src\UI\UIRingGauge.cpp" />
     <ClCompile Include="Src\UI\UIWidget.cpp" />
     <ClCompile Include="Src\Utils\Animator.cpp">
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
