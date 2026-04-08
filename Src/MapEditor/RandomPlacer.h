@@ -17,7 +17,7 @@ private:
     std::vector<std::string> model_names_;
 
     StageData* stage_data_ = nullptr;
-    UndoManager* undo_manager_ = nullptr;
+    CUndoManager* undo_manager_ = nullptr;
     TRS* trs_ = nullptr;
 
 private:

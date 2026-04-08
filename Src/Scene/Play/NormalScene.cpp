@@ -23,7 +23,7 @@ CNormalScene::CNormalScene()
      Instantiate<CFlog>();           
     Instantiate<CVisionSystem>();
     Instantiate<CDisplayInfo>();
-     CGameInstance::Get()->Init(6000 );
+    CGameInstance::Get()->Init(6000 );
     AudioManager::Load(Sound::Path::PLAY_BGM,_T(Sound::Key::PLAY_BGM));
     AudioManager::Play(_T(Sound::Key::PLAY_BGM));
 }

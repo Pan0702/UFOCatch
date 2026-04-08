@@ -11,7 +11,7 @@ private:
     TRS*                            m_pTrs;
     CDirectInput*                   m_pInput;
     StageData*                      m_pStageData;
-    std::unique_ptr<UndoManager>    m_pUndoManager;
+    std::unique_ptr<CUndoManager>    m_pUndoManager;
     std::unique_ptr<RandomPlacer>   m_pRandomPlacer;
     bool                            m_isCatch = false;
     bool                            m_isRandomPlacer = false;

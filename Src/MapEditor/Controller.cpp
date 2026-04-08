@@ -21,7 +21,7 @@ Controller::Controller()
     m_pTrs = ObjectManager::FindGameObject<TRS>();
     m_pStageData = ObjectManager::FindGameObject<StageData>();
     m_pInput = GameDevice()->m_pDI;
-    m_pUndoManager = std::make_unique<UndoManager>();
+    m_pUndoManager = std::make_unique<CUndoManager>();
     m_pRandomPlacer = std::make_unique<RandomPlacer>();
 }
 
@@ -88,7 +88,7 @@ void Controller::Update()
             if (is_delete)
             {
                 m_pTrs->SetState(TRS::State::kNone);
-                m_pUndoManager->DeleteObjectPush();
+                m_pUndoManager->Push(std::make_unique<CDeleteCommand>());
                 m_pStageData->DeleteModel();
                 m_isCatch = false;
             }
@@ -119,11 +119,11 @@ void Controller::HandleLeftClick()
     {
         if (m_isRandomPlacer)
         {
-            m_pUndoManager->Push(m_pRandomPlacer->GetTransform());
+            m_pUndoManager->Push(std::make_unique<CRawTransformCommand>(m_pRandomPlacer->GetTransform()));  
         }else
         {
             // ドラッグ開始前に現状を保存
-            m_pUndoManager->Push();  
+            m_pUndoManager->Push(std::make_unique<CTransformCommand>());
         }
   
         m_pTrs->SetDraggingAxis(a);
@@ -234,20 +234,20 @@ void Controller::DrawTransformPanel()
     ImGui::Text("Position: %.2f, %.2f, %.2f", t->position.x,
                 t->position.y, t->position.z);
     if (ImGui::DragFloat3("Position", &t->position.x, kDragSpeed)) {}
-    if (ImGui::IsItemActivated()) m_pUndoManager->Push();
+    if (ImGui::IsItemActivated()) m_pUndoManager->Push(std::make_unique<CTransformCommand>());
 
     ImGui::Separator();
     VECTOR3& tmp_r = t->rotation;
     ImGui::Text("Rotation: %.2f, %.2f, %.2f", tmp_r.x,
                 tmp_r.y, tmp_r.z);
     if (ImGui::DragFloat3("Rotation", &tmp_r.x, kDragSpeed)) {}
-    if (ImGui::IsItemActivated()) m_pUndoManager->Push();
+    if (ImGui::IsItemActivated()) m_pUndoManager->Push(std::make_unique<CTransformCommand>());
 
     ImGui::Separator();
     ImGui::Text("Scale:    %.2f, %.2f, %.2f", t->scale.x,
                 t->scale.y, t->scale.z);
     if (ImGui::DragFloat3("Scale", &t->scale.x, kDragSpeed)) {}
-    if (ImGui::IsItemActivated()) m_pUndoManager->Push();
+    if (ImGui::IsItemActivated()) m_pUndoManager->Push(std::make_unique<CTransformCommand>());
 
     ImGui::Separator();
 }

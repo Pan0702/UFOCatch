@@ -590,6 +590,7 @@
     <ClInclude Include="Src\Scene\Other\OIScene.h" />
     <ClInclude Include="Src\Scene\Play\NormalScene.h" />
     <ClInclude Include="Src\Scene\Play\PlayScene.h" />
+    <ClInclude Include="Src\Scene\Play\PlayUI.h" />
     <ClInclude Include="Src\Scene\Play\TutorialScene.h" />
     <ClInclude Include="Src\Scene\Result\ResultScene.h" />
     <ClInclude Include="Src\Scene\Select\SelectionScene.h" />
@@ -1614,6 +1615,7 @@
       <AdditionalIncludeDirectories>C:\Users\yu\RiderProjects\UFOAbduction\Libs\include;C:\Users\yu\RiderProjects\UFOAbduction\Libs\x64-windows\include;C:\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
+    <ClCompile Include="Src\Scene\Play\PlayUI.cpp" />
     <ClCompile Include="Src\Scene\Play\TutorialScene.cpp">
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
