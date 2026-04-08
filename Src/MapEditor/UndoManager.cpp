@@ -113,11 +113,15 @@ CAddCommand::CAddCommand()
 
 void CAddCommand::Undo()
 {
-    m_pData->DeleteModel(m_index);
+    m_pData->AddModel(name,trans);
+    m_index = m_pData->GetIndex();
 }
 
 void CAddCommand::Redo()
 {
+    m_pData->DeleteModel(m_index);
+    //初期化
+    m_index = -1;
 }
 
 CDeleteCommand::CDeleteCommand()
@@ -127,10 +131,14 @@ CDeleteCommand::CDeleteCommand()
 
 void CDeleteCommand::Undo()
 {
+    m_index = m_pData->GetIndex();
+    m_pData->DeleteModel(m_index);
 }
 
 void CDeleteCommand::Redo()
 {
+    m_pData->AddModel(name,trans);
+    m_index = m_pData->GetIndex();
 }
 
 void CUndoManager::Push(std::unique_ptr<ICommande> cmd)
