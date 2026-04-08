@@ -3,18 +3,37 @@
 #include "UIAnimationTween.h"
 #include "../Framework/sceneManager.h"
 
-CUIProgressBar::CUIProgressBar(CSpriteImage* pBg, CSpriteImage* pFill, const VECTOR2& pos, const VECTOR4& size)
-    : m_maxWidth(size.z), m_t(0.0f)
+CUIProgressBar::CUIProgressBar(CSpriteImage* pBg, CSpriteImage* pFill, const VECTOR2& pos, const VECTOR4& imageSize)
+    : m_maxWidth(imageSize.z), m_t(0.0f)
 
 {
     m_position = pos;
-    m_size = VECTOR2(size.z, size.w);
+    m_size = VECTOR2(imageSize.z, imageSize.w);
     m_visible = true;
-    auto bg = std::make_unique<CUIImage>(pBg, VECTOR2(0, 0), size);
+    auto bg = std::make_unique<CUIImage>(pBg, VECTOR2(0, 0), imageSize);
     bg->SetLayer(0);
     bg->SetVisible(true);
     m_pBg = AddChild(std::move(bg));
-    auto fill = std::make_unique<CUIImage>(pFill, VECTOR2(0, 0), size);
+    auto fill = std::make_unique<CUIImage>(pFill, VECTOR2(0, 0), imageSize);
+    fill->SetLayer(1);
+    fill->SetVisible(true);
+    m_pFill = AddChild(std::move(fill));
+}
+
+CUIProgressBar::CUIProgressBar(CSpriteImage* pBg, CSpriteImage* pFill, const VECTOR2& pos, const VECTOR2& bgImage,
+    const VECTOR2& fillImage, const VECTOR2& imageSize)
+: m_maxWidth(imageSize.x), m_t(0.0f), m_srcFillImage(fillImage)
+{
+    m_position = pos;
+    m_size = imageSize;
+    m_visible = true;
+    auto bg = std::make_unique<CUIImage>(pBg, VECTOR2(0, 0), 
+        VECTOR4(bgImage.x,bgImage.y,imageSize.x,imageSize.y));
+    bg->SetLayer(0);
+    bg->SetVisible(true);
+    m_pBg = AddChild(std::move(bg));
+    auto fill = std::make_unique<CUIImage>(pFill, VECTOR2(0, 0),
+    VECTOR4(fillImage.x,fillImage.y,imageSize.x,imageSize.y));
     fill->SetLayer(1);
     fill->SetVisible(true);
     m_pFill = AddChild(std::move(fill));
@@ -78,7 +97,7 @@ void CUIProgressBar::Progress()
 
     //長さ
     const float newWidth = m_maxWidth * m_currentRatio;
-    m_pFill->SetSrcRect(VECTOR4(0, 0, newWidth, m_size.y));
+    m_pFill->SetSrcRect(VECTOR4(m_srcFillImage.x, m_srcFillImage.y, newWidth, m_size.y));
     m_pFill->SetSize(VECTOR2(newWidth, m_size.y));
 }
 
@@ -91,6 +110,6 @@ void CUIProgressBar::Gauge()
     m_currentRatio = Lerp(m_startRatio, m_targetRatio, easedT);
 
     const float newWidth = m_maxWidth * m_currentRatio;
-    m_pFill->SetSrcRect(VECTOR4(0, 0, newWidth, m_size.y));
+    m_pFill->SetSrcRect(VECTOR4(m_srcFillImage.x, m_srcFillImage.y, newWidth, m_size.y));
     m_pFill->SetSize(VECTOR2(newWidth, m_size.y));
 }

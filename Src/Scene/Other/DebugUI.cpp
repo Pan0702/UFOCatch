@@ -15,14 +15,15 @@ DebugUI::DebugUI()
     AddImage();
     AddButton();
     AddButtons();
-    AddBar();
     AddCircle();
+    AddBar();
+
 }
 
 void DebugUI::AddImage()
 {
     //Canvasに画像追加
-    CSpriteImage* image = ImageRegistry::LoadTexture("test", "data/debug.png");
+    CSpriteImage* image = ImageRegistry::LoadTexture("test", "data/white.png");
     if (image == nullptr)
         assert(false);
     auto widget = std::make_unique<CUIImage>(image, VECTOR2(0, 0),

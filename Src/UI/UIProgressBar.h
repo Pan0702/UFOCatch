@@ -7,7 +7,9 @@ class CUIProgressBar : public CUIWidget
 {
 public:
     CUIProgressBar(CSpriteImage* pBg, CSpriteImage* pFill,
-               const VECTOR2& pos, const VECTOR4& size);
+               const VECTOR2& pos, const VECTOR4& imageSize);
+    CUIProgressBar(CSpriteImage* pBg, CSpriteImage* pFill,
+           const VECTOR2& pos, const VECTOR2& bgImage,const VECTOR2& fillImage, const VECTOR2& imageSize);
 
     void SetRatio(float ratio);
     void SetAnim(const UIAnimationTween& anim);
@@ -28,4 +30,5 @@ private:
     float     m_t            = 1.0f;                       // アニメーション進行度（0=開始, 1=完了）
     float     m_duration     = 0.5f;                       // アニメーション時間（秒）
     bool      m_isEXPBar     = false;                      // trueならEXPバーモード（オーバーフロー時に折り返し）
+    VECTOR2 m_srcFillImage;
 };

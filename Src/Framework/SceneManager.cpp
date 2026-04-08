@@ -184,6 +184,11 @@ void SceneManager::Exit()
     PostQuitMessage(0);
 }
 
+CUIBase* SceneManager::GetUIPtr()
+{
+    return currentScene->GetUIPtr();
+}
+
 void SceneManager::DebugInput()
 {
     auto input = GameDevice()->m_pDI;

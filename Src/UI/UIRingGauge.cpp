@@ -3,7 +3,7 @@
 #include "../Framework/sceneManager.h"
 
 CUIRingGauge::CUIRingGauge(CSpriteImage* pBg, CSpriteImage* pFill, const VECTOR2& pos, const VECTOR4& size)
-    : m_maxWidth(size.z), m_t(0.0f)
+    : m_maxWidth(size.z), m_t(0.0f),m_srcSize(size)
 {
     m_position = pos;
     m_size = VECTOR2(size.z, size.w);
@@ -59,5 +59,6 @@ void CUIRingGauge::Draw(CSprite& sprite)
     const VECTOR2 worldPos = GetWorldPosition();
     m_arcParams.ratio = m_currentRatio;
     sprite.DrawArc(m_pFill->GetImage(), worldPos.x, worldPos.y,
-                   (DWORD)m_size.x, (DWORD)m_size.y,m_arcParams, m_alpha);
+                   (DWORD)m_srcSize.x, (DWORD)m_srcSize.y, (DWORD)m_srcSize.z, (DWORD)m_srcSize.w,
+                   m_arcParams, m_alpha);
 }
