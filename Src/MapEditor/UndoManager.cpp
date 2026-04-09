@@ -106,62 +106,62 @@ void CTransformCommand::Redo()
     m_pData->SetSelectedTransform(m_index, m_after);
 }
 
-CAddCommand::CAddCommand()
-{
-    m_pData = ObjectManager::FindGameObject<StageData>();
-}
-
-void CAddCommand::Undo()
-{
-    m_pData->AddModel(name,trans);
-    m_index = m_pData->GetIndex();
-}
-
-void CAddCommand::Redo()
-{
-    m_name =　m_pData->GetName();
-    m_trans = m_pData->GetTrans();
-    m_pData->DeleteModel(m_name);
-}
-
-CDeleteCommand::CDeleteCommand()
-{
-    m_pData = ObjectManager::FindGameObject<StageData>();
-}
-
-void CDeleteCommand::Undo()
-{
-    m_name =　m_pData->GetName();
-    m_trans = m_pData->GetTrans();
-    m_pData->DeleteModel(m_name);
-}
-
-void CDeleteCommand::Redo()
-{
-    m_pData->AddModel(m_name,m_trans);
-}
-
-void CUndoManager::Push(std::unique_ptr<ICommande> cmd)
-{
-    m_redoStack = {};
-    m_undoStack.push(std::move(cmd));
-}
-
-void CUndoManager::Undo()
-{
-    if (m_undoStack.empty()) return;
-    auto u = std::move(m_undoStack.top());
-    m_undoStack.pop(); 
-    u->Undo();
-    m_redoStack.push(std::move(u)); 
-}
-
-void CUndoManager::Redo()
-{
-    if (m_redoStack.empty()) return;
-    auto r = std::move(m_redoStack.top());
-    m_redoStack.pop();
-    r->Redo();
-    m_undoStack.push(std::move(r));
-}
-
+// CAddCommand::CAddCommand()
+// {
+//     m_pData = ObjectManager::FindGameObject<StageData>();
+// }
+// //
+// void CAddCommand::Undo()
+// {
+//     m_pData->AddModel(name,trans);
+//     m_index = m_pData->GetIndex();
+// }
+//
+// void CAddCommand::Redo()
+// {
+//     m_name =　m_pData->GetName();
+//     m_trans = m_pData->GetTrans();
+//     m_pData->DeleteModel(m_name);
+// }
+//
+// CDeleteCommand::CDeleteCommand()
+// {
+//     m_pData = ObjectManager::FindGameObject<StageData>();
+// }
+//
+// void CDeleteCommand::Undo()
+// {
+//     m_name =　m_pData->GetName();
+//     m_trans = m_pData->GetTrans();
+//     m_pData->DeleteModel(m_name);
+// }
+//
+// void CDeleteCommand::Redo()
+// {
+//     m_pData->AddModel(m_name,m_trans);
+// }
+//
+// void CUndoManager::Push(std::unique_ptr<ICommande> cmd)
+// {
+//     m_redoStack = {};
+//     m_undoStack.push(std::move(cmd));
+// }
+//
+// void CUndoManager::Undo()
+// {
+//     if (m_undoStack.empty()) return;
+//     auto u = std::move(m_undoStack.top());
+//     m_undoStack.pop(); 
+//     u->Undo();
+//     m_redoStack.push(std::move(u)); 
+// }
+//
+// void CUndoManager::Redo()
+// {
+//     if (m_redoStack.empty()) return;
+//     auto r = std::move(m_redoStack.top());
+//     m_redoStack.pop();
+//     r->Redo();
+//     m_undoStack.push(std::move(r));
+// }
+//

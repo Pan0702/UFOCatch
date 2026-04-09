@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "../Utils/MyMath.h"
 #include <cmath>
 #include "MyMath.h"
 inline float EaseOutQuint(const float& t)

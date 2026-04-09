@@ -14,7 +14,7 @@ namespace Constants
         constexpr const char* SELECT   = "SelectScene";
         constexpr const char* EASY     = "Easy";
         constexpr const char* NORMAL   = "Normal";
-        constexpr const char* HARD     = "Hard";
+        constexpr const char* PLAY     = "Play";
         constexpr const char* RESULT   = "ResultScene";
         constexpr const char* TUTORIAL = "Tutorial";
         constexpr const char* OI       = "OI";

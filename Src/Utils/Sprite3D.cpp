@@ -75,7 +75,12 @@ HRESULT CSpriteImage::Load(const TCHAR* TName)
 {
     if (FAILED(m_pD3D->CreateShaderResourceViewFromFile(TName, &m_pTexture, m_dwImageWidth, m_dwImageHeight)))
     {
-        MessageBox(0, _T("SpriteLoad:false"), TName, MB_OK);
+        std::string name = TName;
+        std::string message =
+            std::string("SpriteLoad:false ") + name;
+        MessageBox(0, message.c_str(), TName, MB_OK
+        )
+        ;
         return E_FAIL;
     }
     return S_OK;
@@ -795,42 +800,45 @@ void CSprite::DrawCircle(CSpriteImage* pImage, float posX, float posY, DWORD src
     ResetShader();
 }
 
-void CSprite::DrawArc(CSpriteImage* pImage, float posX, float posY, DWORD srcWid, DWORD srcHei,
+void CSprite::DrawArc(CSpriteImage* pImage, float posX, float posY, DWORD srcX, DWORD srcY,DWORD srcWid, DWORD srcHei,
                       ArcDrawParams& arcParams, float fAlpha)
 {
+  
     m_pImage = pImage;
-    SpriteVertex vertices[] = {
-        {VECTOR3(0, static_cast<float>(srcHei), 0), VECTOR2(0, 1)},
-        {VECTOR3(0, 0, 0), VECTOR2(0, 0)},
-        {VECTOR3(static_cast<float>(srcWid), static_cast<float>(srcHei), 0), VECTOR2(1, 1)},
-        {VECTOR3(static_cast<float>(srcWid), 0, 0), VECTOR2(1, 0)},
-    };
-
-    if (m_pVertexBufferSprite)
-    {
-        D3D11_MAPPED_SUBRESOURCE mapResource;
-        if (SUCCEEDED(
-            m_pD3D->m_pDeviceContext->Map(m_pVertexBufferSprite, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapResource)))
-        {
-            memcpy_s(mapResource.pData, sizeof(vertices), vertices, sizeof(vertices));
-            m_pD3D->m_pDeviceContext->Unmap(m_pVertexBufferSprite, 0);
-        }
-    }
-
+    SetSrc(srcX,srcY,srcWid,srcHei);
+    // SpriteVertex vertices[] = {
+    //     {VECTOR3(0, static_cast<float>(srcHei), 0), VECTOR2(0, 1)},
+    //     {VECTOR3(0, 0, 0), VECTOR2(0, 0)},
+    //     {VECTOR3(static_cast<float>(srcWid), static_cast<float>(srcHei), 0), VECTOR2(1, 1)},
+    //     {VECTOR3(static_cast<float>(srcWid), 0, 0), VECTOR2(1, 0)},
+    // };
+    //
+    // if (m_pVertexBufferSprite)
+    // {
+    //     D3D11_MAPPED_SUBRESOURCE mapResource;
+    //     if (SUCCEEDED(
+    //         m_pD3D->m_pDeviceContext->Map(m_pVertexBufferSprite, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapResource)))
+    //     {
+    //         memcpy_s(mapResource.pData, sizeof(vertices), vertices, sizeof(vertices));
+    //         m_pD3D->m_pDeviceContext->Unmap(m_pVertexBufferSprite, 0);
+    //     }
+    // }
+    
     SetShader();
 
     UINT stride = sizeof(SpriteVertex);
     UINT offset = 0;
-    
+
     m_pD3D->m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBufferSprite, &stride, &offset);
-    
+
     D3D11_MAPPED_SUBRESOURCE pData;
     CONSTANT_BUFFER_SPRITE cb;
     //CPUからGPUのメモリを直接読み書きできるようにするための窓口を開く関数
-    if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferSprite3D, 0,D3D11_MAP_WRITE_DISCARD, 0, &pData)))
+    if (SUCCEEDED(
+        m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferSprite3D, 0,D3D11_MAP_WRITE_DISCARD, 0, &pData)))
     {
         //shader座標に変換
-        cb.mW = XMMatrixTranspose(XMMatrixTranslation(posX, posY,0.0f));
+        cb.mW = XMMatrixTranspose(XMMatrixTranslation(posX, posY, 0.0f));
         //ウィンドウのサイズをシェーダーに渡す。
         cb.ViewPortWidth = static_cast<float>(m_pD3D->m_dwWindowWidth);
         cb.ViewPortHeight = static_cast<float>(m_pD3D->m_dwWindowHeight);
@@ -841,11 +849,11 @@ void CSprite::DrawArc(CSpriteImage* pImage, float posX, float posY, DWORD srcWid
         //x:テクスチャの有無, w:円形モードON/OFF
         cb.vMatInfo = VECTOR4(1, 0, 0, 1); //x = テクスチャあり, w = 円形モードON
         //構造体の内容をGPUに書き出し
-        memcpy_s(pData.pData, pData.RowPitch, &cb,sizeof(cb));
+        memcpy_s(pData.pData, pData.RowPitch, &cb, sizeof(cb));
         //CPUからGPUのメモリを直接読み書きできるようにするための窓口を閉じる関数
         m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferSprite3D, 0);
     }
-    
+
     //Shaderのb1に書き込む内容の構造体
     CONSTANT_BUFFER_ARC arcCb;
     arcCb.startAngle = arcParams.startAngle * XM_PI / 180.0f;
@@ -854,19 +862,25 @@ void CSprite::DrawArc(CSpriteImage* pImage, float posX, float posY, DWORD srcWid
     arcCb.arcSpan = arcParams.ratio * XM_PI * 2.0f * (arcParams.clockwise ? 1.0f : -1.0f);
     //内半径(0~0.5)
     arcCb.innerRadius = arcParams.innerRadius;
+    //UV範囲を設定
+    arcCb.uvMin = VECTOR2((float)m_dwSrcX / m_pImage->m_dwImageWidth,
+                          (float)m_dwSrcY / m_pImage->m_dwImageHeight);
+    arcCb.uvMax = VECTOR2((float)(m_dwSrcX + m_dwSrcWidth) / m_pImage->m_dwImageWidth,
+                          (float)(m_dwSrcY + m_dwSrcHeight) / m_pImage->m_dwImageHeight);
     //以前の内容を破棄して新しく書き込み
-    if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferArc, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
+    if (SUCCEEDED(
+        m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferArc, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
     {
         memcpy_s(pData.pData, pData.RowPitch, &arcCb, sizeof(arcCb));
         m_pD3D->m_pDeviceContext->Unmap(m_pShader->m_pConstantBufferArc, 0);
     }
     //Shaderにb1として使えと指示
-    m_pD3D->m_pDeviceContext->PSSetConstantBuffers(1,1, &m_pShader->m_pConstantBufferArc);
+    m_pD3D->m_pDeviceContext->PSSetConstantBuffers(1, 1, &m_pShader->m_pConstantBufferArc);
     //Shaderに画像を使うよう指示
     m_pD3D->m_pDeviceContext->PSSetShaderResources(0, 1, &m_pImage->m_pTexture);
     //GPUが描画の実行、4：描画する頂点数、0：描画開始する頂点の先頭インデックス
     m_pD3D->m_pDeviceContext->Draw(4, 0);
-    
+
     ResetShader();
 }
 

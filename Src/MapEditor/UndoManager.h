@@ -54,40 +54,40 @@ private:
     Transform m_after;
     StageData* m_pData;
 };
-
-class CAddCommand : public ICommande
-{
-public:
-    CAddCommand();
-    void Undo() override;
-    void Redo() override;
-
-private:
-    Transform m_trans;
-    StageData* m_pData;
-    std::string m_modelName;
-};
-
-class CDeleteCommand : public ICommande
-{
-public:
-    CDeleteCommand();
-    void Undo() override;
-    void Redo() override;
-private:
-    Transform m_trans;
-    StageData* m_pData;
-    std::string m_modelName;
-};
-
-class CUndoManager
-{
-public:
-    void Push(std::unique_ptr<ICommande> cmd);
-    void Undo();
-    void Redo();
-    static CUndoManager& GetInstance();
-private:
-    std::stack<std::unique_ptr<ICommande>> m_undoStack;
-    std::stack<std::unique_ptr<ICommande>> m_redoStack;
-};
+//
+// class CAddCommand : public ICommande
+// {
+// public:
+//     CAddCommand();
+//     void Undo() override;
+//     void Redo() override;
+//
+// private:
+//     Transform m_trans;
+//     StageData* m_pData;
+//     std::string m_modelName;
+// };
+//
+// class CDeleteCommand : public ICommande
+// {
+// public:
+//     CDeleteCommand();
+//     void Undo() override;
+//     void Redo() override;
+// private:
+//     Transform m_trans;
+//     StageData* m_pData;
+//     std::string m_modelName;
+// };
+//
+// class CUndoManager
+// {
+// public:
+//     void Push(std::unique_ptr<ICommande> cmd);
+//     void Undo();
+//     void Redo();
+//     static CUndoManager& GetInstance();
+// private:
+//     std::stack<std::unique_ptr<ICommande>> m_undoStack;
+//     std::stack<std::unique_ptr<ICommande>> m_redoStack;
+// };
