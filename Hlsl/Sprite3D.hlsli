@@ -27,7 +27,9 @@ cbuffer ArcBuffer : register(b1)
     float g_ArcStartAngle; //開始角度
     float g_ArcSpan;       //孤の長さ
     float g_InnerRadius;   //内半径
-    float g_ArcPadding;   
+    float g_ArcPadding;
+    float2 g_UVMin;        //UV範囲の最小値
+    float2 g_UVMax;        //UV範囲の最大値
 }
 // 構造体
 struct PS_INPUT
@@ -90,8 +92,12 @@ float4 PS(PS_INPUT In) : SV_Target
         if (g_MatInfo.w == 1)
         {
             const float PI = 3.14159265f;
+
+            // UV座標を0～1の範囲に正規化
+            float2 normalizedUV = (In.UV - g_UVMin) / (g_UVMax - g_UVMin);
+
             //中心を0,0にずらす。
-            float2 pos = (In.UV - g_UVOffset) - float2(0.5, 0.5);
+            float2 pos = normalizedUV - float2(0.5, 0.5);
             
             if (length(pos) > g_InnerRadius) discard;
             

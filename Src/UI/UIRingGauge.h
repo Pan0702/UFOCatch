@@ -15,6 +15,7 @@ public:
     void Update() override;
     void Draw(CSprite& sprite) override;
 private:
+    VECTOR4 m_srcSize;
     CUIImage* m_pFill        = nullptr;                    // ゲージ塗り部分の画像
     CUIImage* m_pBg          = nullptr;                    // ゲージ背景の画像
     std::function<float(float)> m_easing = EaseOutQuint;   // イージング関数

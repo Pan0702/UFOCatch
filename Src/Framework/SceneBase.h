@@ -9,12 +9,18 @@
 #include "sceneManager.h"
 #include "../Core/Game/GameMain.h"
 
-class SceneBase {
+class SceneBase
+{
 public:
-	SceneBase();
-	virtual ~SceneBase();
+    SceneBase();
+    virtual ~SceneBase();
 
-	virtual void Update() {}
-	virtual void Draw() {}
+    virtual void Update(){}
+
+    virtual void Draw(){}
+    
+    CUIBase* GetUIPtr() const;
+
+protected:
+    CUIBase* m_pUI;
 };
-

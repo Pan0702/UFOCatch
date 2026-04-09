@@ -28,10 +28,12 @@ CDebugScene::CDebugScene()
    //  CGameInstance::Get()->Init(1000);
     
     m_pDebugUI = new DebugUI();
+    m_pUI = new CPlayUI();
 }
 
 CDebugScene::~CDebugScene()
 {
+    SAFE_DELETE(m_pDebugUI);
 }
 
 void CDebugScene::ChangeResultScene()
@@ -42,9 +44,12 @@ void CDebugScene::ChangeResultScene()
 void CDebugScene::Update()
 {
     m_pDebugUI->Update();
+    m_pUI->Update();
 }
 
 void CDebugScene::Draw()
 {
+    
     m_pDebugUI->Draw();
+    m_pUI->Draw();
 }

@@ -101,6 +101,8 @@ struct CONSTANT_BUFFER_ARC
     float arcSpan; // 弧の長さ（正=CW、負=CCW）
     float innerRadius; // 内半径（0〜0.5）
     float padding;
+    VECTOR2 uvMin; // UV範囲の最小値
+    VECTOR2 uvMax; // UV範囲の最大値
 
     CONSTANT_BUFFER_ARC()
     {

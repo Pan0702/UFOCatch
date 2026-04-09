@@ -8,6 +8,8 @@
 #include <list>
 #include <memory>
 
+#include "../UI/UIBase.h"
+
 class SceneFactory;
 class SceneBase;
 class CScreenTransition;
@@ -62,6 +64,8 @@ namespace SceneManager {
 	float DeltaTime();
     
 	void Exit();
+
+	CUIBase* GetUIPtr();
 
 	void DebugInput();
 	
