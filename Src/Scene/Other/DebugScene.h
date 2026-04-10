@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "DebugUI.h"
 #include "../../Framework/SceneBase.h"
-#include "../Play/UI.h"
+#include "../Play/PlayUI.h"
 class CDebugScene : public SceneBase
 {
 public:
@@ -14,7 +14,7 @@ private:
     void Update() override;
     void Draw() override;
     DebugUI* m_pDebugUI;
-    PlayUI* m_pPlayUI;
+    CPlayUI* m_pPlayUI;
 };
 
 

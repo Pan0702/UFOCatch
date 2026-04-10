@@ -21,11 +21,13 @@ void StageData::AddModel(const VECTOR3& pos, const std::string& modelName)
 }
 
 // 指定transformとモデル名でオブジェクトをステージに追加する
-void StageData::AddModel(const Transform& t, const std::string& modelName)
+
+int StageData::AddModel(const Transform& t, const std::string& modelName)
 {
     StageDataInfo info(modelName, t);
     m_stageData.push_back(info);
     m_selectedModel = static_cast<int>(m_stageData.size()) - 1;
+    return m_selectedModel;
 }
 
 // Transform全体を指定してオブジェクトをステージに追加する（インポート用）
@@ -88,6 +90,19 @@ void StageData::DeleteModel(int index)
     m_stageData.erase(m_stageData.begin() + index);
 }
 
+void StageData::DeleteModel(const std::string& modelName)
+{
+    for (auto it = m_stageData.end(); it != m_stageData.begin();--it)
+    {
+        if (it->modelName == modelName)
+        {
+            m_stageData.erase(it);
+            return;
+        }
+    }
+}
+
+
 void StageData::Draw()
 {
     for (auto& data : m_stageData) {
@@ -126,6 +141,16 @@ int StageData::GetSelectIndex() const
 const std::vector<StageDataInfo>& StageData::GetStageDataInfo() const
 {
     return m_stageData;
+}
+
+Transform StageData::GetTrans() const
+{
+    return m_stageData[m_selectedModel].transform;
+}
+
+std::string StageData::GetModelName() const
+{
+    return m_stageData[m_selectedModel].modelName;
 }
 
 // 現在選択中のオブジェクトのTransformポインタを返す。未選択時はnullptr

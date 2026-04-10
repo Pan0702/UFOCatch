@@ -5,6 +5,8 @@
 #include "../../MapEditor/EditorUI.h"
 #include "../../MapEditor/TRSObject/TRS.h"
 #include "../../MapEditor/StageData.h"
+#include "../../Stage/CubeBox.h"
+
 CEditorScene::CEditorScene()
 {
     Instantiate<StageData>();
@@ -12,7 +14,7 @@ CEditorScene::CEditorScene()
     Instantiate<TRS>();
     Instantiate<Controller>();
     Instantiate<EditorUI>(); // Button/TRS/Controller の後に生成する
-    Instantiate<BackGraund>();
+    Instantiate<CCubeBox>(Constants::Model::BACK_DROP);
 }
 
 CEditorScene::~CEditorScene()
