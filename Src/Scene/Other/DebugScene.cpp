@@ -28,7 +28,7 @@ CDebugScene::CDebugScene()
    //  CGameInstance::Get()->Init(1000);
     
     m_pDebugUI = new DebugUI();
-    m_pUI = new PlayUI();
+    m_pUI = new CPlayUI();
 }
 
 CDebugScene::~CDebugScene()

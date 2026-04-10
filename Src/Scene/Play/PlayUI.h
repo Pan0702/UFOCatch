@@ -4,10 +4,10 @@
 #include "../../UI/UIRingGauge.h"
 #include "../../Utils/MyMath.h"
 
-class PlayUI : public CUIBase
+class CPlayUI : public CUIBase
 {
 public:
-    PlayUI();
+    CPlayUI();
     void Update() override;
     CUIProgressBar* GetBar() const;
     CUIRingGauge* GetGauge() const;

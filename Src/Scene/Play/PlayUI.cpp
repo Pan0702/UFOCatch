@@ -1,10 +1,10 @@
-#include "UI.h"
+#include "PlayUI.h"
 
 #include "../../UI/ImageRegistry.h"
 #include "../../Common/Constants.h"
 #include "../../Core/Game/GameMain.h"
 
-PlayUI::PlayUI()
+CPlayUI::CPlayUI()
 {
     
     m_pUI = ImageRegistry::LoadTexture(Constants::SceneName::PLAY, "data/PlayUI.png");
@@ -15,7 +15,7 @@ PlayUI::PlayUI()
 
 }
 
-void PlayUI::Gauge()
+void CPlayUI::Gauge()
 {
     auto circle = std::make_unique<CUIRingGauge>(nullptr, m_pUI, VECTOR2(1123, 469), VECTOR4(965, 227, 226, 230));
     m_pGauge = m_canvas.AddWidget(std::move(circle));
@@ -23,7 +23,7 @@ void PlayUI::Gauge()
     m_pGauge->SetRatio(0.0f);
 }
 
-void PlayUI::Bar()
+void CPlayUI::Bar()
 {
     auto bar = std::make_unique<CUIProgressBar>(m_pUI, m_pUI,
                                               VECTOR2(144, 713), VECTOR2(0, 157), 
@@ -33,7 +33,7 @@ void PlayUI::Bar()
     m_pBar->SetRatio(0.0f);
 }
 
-void PlayUI::Image()
+void CPlayUI::Image()
 {
     CSpriteImage* white = ImageRegistry::LoadTexture("white","data/white.png");
     auto backImage = std::make_unique<CUIImage>(white,VECTOR2(0,0),VECTOR2(WINDOW_WIDTH,WINDOW_HEIGHT));
@@ -44,14 +44,14 @@ void PlayUI::Image()
     m_canvas.AddWidget(std::move(backUI));
 }
 
-void PlayUI::LookImage()
+void CPlayUI::LookImage()
 {
     auto look = std::make_unique<CUIImage>(m_pUI, VECTOR2(1192,588),VECTOR2(97,73));
     m_pLookImage = m_canvas.AddWidget(std::move(look));
     m_pLookImage->SetVisible(flag);
 }
 
-void PlayUI::Update()
+void CPlayUI::Update()
 {
 #if DEBUG 
     
@@ -67,17 +67,17 @@ void PlayUI::Update()
     
 }
 
-CUIProgressBar* PlayUI::GetBar() const
+CUIProgressBar* CPlayUI::GetBar() const
 {
     return m_pBar;
 }
 
-CUIRingGauge* PlayUI::GetGauge() const
+CUIRingGauge* CPlayUI::GetGauge() const
 {
     return m_pGauge;
 }
 
-CUIImage* PlayUI::GetLookImage() const
+CUIImage* CPlayUI::GetLookImage() const
 {
     return m_pLookImage;
 }

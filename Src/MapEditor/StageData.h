@@ -27,7 +27,6 @@ struct StageDataInfo
 class StageData : public Object3D
 {
 private:
-
     std::vector<StageDataInfo> m_stageData;
     int m_selectedModel = -1;
 private:
@@ -40,8 +39,8 @@ public:
     /// <param name="pos">配置するワールド座標</param>
     /// <param name="modelName">使用するモデルの名前</param>
     void AddModel(const VECTOR3& pos, const std::string& modelName);
-    
-    void AddModel(const Transform& t ,const std::string&modelName);
+
+    int AddModel(const Transform& t, const std::string& modelName);
     
     /// <summary>Transform  全体を指定してオブジェクトをステージに追加する（インポート用）</summary>               
     /// <param name="modelName">使用する モデルの名前</param>        
@@ -64,6 +63,8 @@ public:
     /// <summary>指定インデックスにあるオブジェクトをステージから削除する</summary>
     /// /// <param name="index">指定インデックス</param>
     void DeleteModel(int index);
+    
+    void DeleteModel(const std::string& modelName);
 
     /// <summary>現在選択中のオブジェクトのTransformポインタを返す。未選択時はnullptr</summary>
     Transform* GetSelectedTransform();
@@ -86,6 +87,10 @@ public:
 
     /// <summary>ステージに設置されているすべてのオブジェクトを返す</summary>
     const std::vector<StageDataInfo>& GetStageDataInfo() const;
+    
+    Transform GetTrans() const;
+    
+    std::string GetModelName() const;
 };
 
 
