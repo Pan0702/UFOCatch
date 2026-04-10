@@ -44,7 +44,7 @@ public:
     void SetAlpha(float alpha);
     void SetVisible(bool visible);
     
-    VECTOR2 GetWorldPosition();
+    VECTOR2 GetWorldPosition() const;
     const VECTOR2& GetPosition();
     const VECTOR2& GetSize();
     int GetLayer() const;

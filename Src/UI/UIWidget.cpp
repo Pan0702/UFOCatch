@@ -104,7 +104,7 @@ void CUIWidget::SetVisible(bool visible)
     m_visible = visible;
 }
 
-VECTOR2 CUIWidget::GetWorldPosition()
+VECTOR2 CUIWidget::GetWorldPosition() const
 {
     VECTOR2 worldPos = m_position;
     VECTOR2 anchorOffset = CalcAnchorOffset();

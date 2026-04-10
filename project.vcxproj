@@ -630,6 +630,7 @@
     <ClInclude Include="Src\Player\PCamera.h" />
     <ClInclude Include="Src\Player\Player.h" />
     <ClInclude Include="Src\UI\ImageRegistry.h" />
+    <ClInclude Include="Src\UI\TextRenderer.h" />
     <ClInclude Include="Src\UI\UIAnimation.h" />
     <ClInclude Include="Src\UI\UIAnimationPlayer.h" />
     <ClInclude Include="Src\UI\UIAnimationTrack.h" />
@@ -3252,6 +3253,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="Src\UI\ImageRegistry.cpp" />
+    <ClCompile Include="Src\UI\TextRenderer.cpp" />
     <ClCompile Include="Src\UI\UIAnimation.cpp" />
     <ClCompile Include="Src\UI\UIAnimationPlayer.cpp" />
     <ClCompile Include="Src\UI\UIAnimationTrack.cpp" />
