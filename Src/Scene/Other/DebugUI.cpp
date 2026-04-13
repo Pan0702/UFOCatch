@@ -1,8 +1,6 @@
 #include "DebugUI.h"
 
-#include "../../Common/Constants.h"
 #include "../../Core/Game/GameMain.h"
-#include "../../UI/ImageRegistry.h"
 #include "../../UI/UIImage.h"
 #include "../../UI/UIPreset.h"
 #include "../../UI/UIProgressBar.h"
@@ -28,8 +26,6 @@ void DebugUI::AddImage()
         assert(false);
     auto widget = std::make_unique<CUIImage>(image, VECTOR2(0, 0),
                                              VECTOR2(WINDOW_WIDTH,WINDOW_HEIGHT));
-    widget->SetVisible(true);
-    widget->SetAlpha(1.0f);
     m_canvas.AddWidget(std::move(widget));
 }
 

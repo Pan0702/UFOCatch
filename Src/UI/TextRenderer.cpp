@@ -1,17 +1,17 @@
 #include "TextRenderer.h"
 
-CTextRenderer::CTextRenderer(CSpriteImage* pFont, const VECTOR2& pos,const VECTOR2& srcPos,const VECTOR2& size)
+CUIText::CUIText(CSpriteImage* pFont, const VECTOR2& pos,const VECTOR2& srcPos,const VECTOR2& size)
     :m_pFont(pFont),m_srcPos(srcPos)
 {
     m_position = pos;
     m_size = size;
 }
-void CTextRenderer::SetSrcPos(const VECTOR2& srcPos)
+void CUIText::SetSrcPos(const VECTOR2& srcPos)
 {
     m_srcPos = srcPos;
 }
 
-void CTextRenderer::Draw(CSprite& sprite)
+void CUIText::Draw(CSprite& sprite)
 {
     VECTOR2 worldPos = GetWorldPosition();
     sprite.Draw(m_pFont,worldPos.x,worldPos.y,

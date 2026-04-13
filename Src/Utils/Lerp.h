@@ -7,6 +7,15 @@ inline float EaseOutQuint(const float& t)
     return 1 - Pow2(Pow2(1 -t)) * (1 - t);
 }
 
+inline float EaseInQuint(const float& t)
+{
+    return Pow2(Pow2(t)) * t;
+}
+
+inline float EaseLinear(float t)                       
+{                                                      
+    return t;   
+}
 /**
  * 前半減速、後半加速のイージング関数
  * 0.0～0.5: 減速（ゆっくり）

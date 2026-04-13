@@ -1,5 +1,7 @@
 #pragma once
 #include "UIButton.h"
+#include "../Common/Constants.h"
+#include "ImageRegistry.h"
 #include "UICanvas.h"
 
 /// @brief シーン単位のUIの基底クラス
@@ -14,3 +16,5 @@ public:
 protected:
     CUICanvas m_canvas;
 };
+
+

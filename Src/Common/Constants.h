@@ -6,8 +6,13 @@ namespace Constants
     namespace FileName
     {
         constexpr const char* MODEL_LIST = "data/modelList.json";
+        constexpr const char* UI_SPRITE   = "data/PlayUIParts.png";
     }
-
+    namespace SpriteName
+    {
+        constexpr const char* UI_SPRITE = "UiSprite";
+        constexpr const char* GROUND = "Ground";
+    }
     namespace SceneName
     {
         constexpr const char* TITLE    = "TitleScene";
@@ -49,3 +54,5 @@ namespace Constants
         constexpr const char* GROUND = "data/Ground/Prefabs/MapPlane001.mesh";
     }
 }
+
+using namespace Constants;
