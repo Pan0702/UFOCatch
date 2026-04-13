@@ -2,6 +2,9 @@
 #include "UIButton.h"
 #include "UICanvas.h"
 
+/// @brief シーン単位のUIの基底クラス
+/// @details CUICanvasを1つ持ち、Update/Drawをキャンバスに委譲する。
+///          各シーンのUIクラスはこれを継承して使う。
 class CUIBase
 {
 public:

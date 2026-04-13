@@ -54,12 +54,13 @@ void CUIAnimationPlayer::Resume()
 void CUIAnimationPlayer::Update(float deltaTime)
 {
     if (!m_isPlaying || m_isPaused || !m_pCurrentAnim) return;
-    
+
     m_currentTime += deltaTime;
     if (m_currentTime >= m_pCurrentAnim->GetDuration())
     {
         if (m_isLoop)
         {
+            // ループ時ははみ出た分を折り返す（fmodで剰余を取る）
             m_currentTime = fmod(m_currentTime, m_pCurrentAnim->GetDuration());
         }
         else
@@ -68,6 +69,7 @@ void CUIAnimationPlayer::Update(float deltaTime)
             m_isPlaying = false;
             if (m_onComplete)
             {
+                // コールバック内でStop()が呼ばれる場合に備え、先にムーブしてからnullptrにする
                 auto cb = std::move(m_onComplete);
                 m_onComplete = nullptr;
                 cb();
@@ -75,7 +77,7 @@ void CUIAnimationPlayer::Update(float deltaTime)
         }
     }
     m_currentValues.clear();
-    m_pCurrentAnim->Evaluate(m_currentTime,m_currentValues);
+    m_pCurrentAnim->Evaluate(m_currentTime, m_currentValues);
 }
 
 const std::unordered_map<AnimatedProperty, float>& CUIAnimationPlayer::GetCurrentValues() const

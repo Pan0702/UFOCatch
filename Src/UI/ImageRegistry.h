@@ -5,7 +5,9 @@
 #include "../Utils/MyMath.h"
 #include "../Utils/Sprite3D.h"
 
-///<summary>モデルの管理</summary>
+/// @brief テクスチャを名前付きで一元管理するレジストリ
+/// @details ロード済みテクスチャをキャッシュし、重複ロードを防ぐ。
+///          テクスチャの所有権はレジストリ内部が持ち、ポインタは借用として返す。
 namespace ImageRegistry
 {
     ///<summary>テクスチャのロード</summary>
@@ -24,7 +26,7 @@ namespace ImageRegistry
     CSpriteImage* GetTexture(const char* textureName);
 }
 
-///<summary>モデルの管理</summary>
+/// @brief レジストリ内部で使うテクスチャ情報（パスと実体を保持）
 struct ImageInfo
 {
     const char* path;

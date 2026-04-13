@@ -88,8 +88,6 @@ void CUIProgressBar::Progress()
     
     //移動速度
     const float delta = SceneManager::DeltaTime() * m_moveSpeed;
-    //
-
     m_t = std::clamp(m_t + delta, 0.0f, 1.0f);
     const float easedT = m_easing(m_t);
     //easeTを使って補間
@@ -105,8 +103,10 @@ void CUIProgressBar::Gauge()
 {
     if (m_t >= 1.0f)return;
     const float delta = SceneManager::DeltaTime() * m_moveSpeed;
-    const float easedT = m_easing(m_t);
     m_t = std::clamp(m_t + delta, 0.0f, 1.0f);
+    //時間の進みを曲線に変換する
+    const float easedT = m_easing(m_t);
+    //easeTを使って補間
     m_currentRatio = Lerp(m_startRatio, m_targetRatio, easedT);
 
     const float newWidth = m_maxWidth * m_currentRatio;

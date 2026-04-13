@@ -18,7 +18,7 @@ void CUIAnimation::Evaluate(float time, std::unordered_map<AnimatedProperty,floa
     for (const auto& track : m_tracks)
     {
         const float value = track->Evaluate(time);
-        outValues[track->GetPopety()] = value;
+        outValues[track->GetProperty()] = value;
     }
 }
 

@@ -28,7 +28,7 @@ void CUIWidget::ClearChild()
 void CUIWidget::Update()
 {
     m_pAnimPlayer.Update(SceneManager::DeltaTime());
-    ApplayAnimValues();
+    ApplyAnimValues();
     if (!m_visible) return;
     for (auto& child : m_children)
     {
@@ -39,6 +39,7 @@ void CUIWidget::Update()
 void CUIWidget::Draw(CSprite& sprite)
 {
     if (!m_visible) return;
+    // unique_ptrのままsortできないため生ポインタのvectorを作ってソートする
     std::vector<CUIWidget*> sortChild;
     for (auto& child : m_children)
     {
@@ -54,7 +55,7 @@ void CUIWidget::Draw(CSprite& sprite)
     }
 }
 
-void CUIWidget::ApplayAnimValues()
+void CUIWidget::ApplyAnimValues()
 {
     const auto& values = m_pAnimPlayer.GetCurrentValues();
     if (values.contains(AnimatedProperty::ScaleX))
