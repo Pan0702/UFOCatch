@@ -33,4 +33,5 @@ public:
 
 private:
     std::vector<UIImageInfo> m_elements;
+    
 };
