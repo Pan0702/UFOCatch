@@ -35,4 +35,5 @@ private:
     bool m_isLoop = false;
     bool m_isPaused = false;
     std::function<void()> m_onComplete = nullptr;
+    
 };
