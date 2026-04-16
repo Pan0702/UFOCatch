@@ -29,7 +29,7 @@ void CPlayUI::Bar()
                                               VECTOR2(144, 713), VECTOR2(0, 157), 
                                               VECTOR2(0, 100), VECTOR2(1254, 57));
     m_pBar = m_canvas.AddWidget(std::move(bar));
-    m_pBar->SetAnim(UIPreset::Transition(5.0f));
+    m_pBar->SetAnim(UIPreset::Transition(5.0f,EaseLinear));
     m_pBar->SetRatio(0.0f);
 }
 
