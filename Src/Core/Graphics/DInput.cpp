@@ -275,14 +275,23 @@ bool CDirectInput::CheckKey(const int& kmode, const DWORD& kcode)
        return false;
     }
 }
-bool CDirectInput::IsPushUpKey()
+
+int CDirectInput::IsPushUpKey()
 {
-    return CheckKey(KD_TRG,DIK_UP) || CheckKey( KD_TRG,DIK_W);
+    if ( CheckKey(KD_TRG,DIK_UP) || CheckKey( KD_TRG,DIK_W))
+    {
+       return -1;
+    }
+   return 0;
 }
 
-bool CDirectInput::IsPushDownKey()
+int CDirectInput::IsPushDownKey()
 {
-    return CheckKey( KD_TRG,DIK_DOWN) || CheckKey( KD_TRG,DIK_S);
+    if (CheckKey( KD_TRG,DIK_DOWN) || CheckKey( KD_TRG,DIK_S))
+    {
+       return 1;
+    }
+   return 0;
 }
 bool CDirectInput::IsPushEnter()
 {

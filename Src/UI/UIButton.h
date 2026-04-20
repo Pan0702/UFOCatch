@@ -18,6 +18,10 @@ public:
     CUIButton(const VECTOR2& pos, CSpriteImage* pImage,
               const VECTOR4& normalSrcRect, const VECTOR4& focusSrcRect);
 
+    /// @brief 背景なしコンストラクタ（フォーカス時のみ画像を表示）
+    /// @param focusSrcRect フォーカス時の切り抜き範囲 (srcX, srcY, srcW, srcH)
+    CUIButton(const VECTOR2& pos, CSpriteImage* pImage, const VECTOR4& focusSrcRect);
+
     /// @brief フォーカス状態を設定する
     /// @details フォーカスOFF時はアニメーション完了後に通常画像へ戻る
     void SetFocus(bool focused);

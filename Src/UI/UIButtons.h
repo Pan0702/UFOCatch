@@ -24,6 +24,14 @@ public:
     void AddButton(CUIBase* ui, CSpriteImage* pImage, const VECTOR2& pos,
                    const VECTOR4& normalSrcRect, const VECTOR4& focusSrcRect);
 
+    /// @brief ボタンを追加してキャンバスに登録する（背景なし・フォーカス時のみ表示）
+    /// @param ui 追加先のUIBase
+    /// @param pImage スプライトシートのテクスチャ
+    /// @param pos 配置位置
+    /// @param focusSrcRect フォーカス時の切り抜き範囲 (srcX, srcY, srcW, srcH)
+    void AddButton(CUIBase* ui, CSpriteImage* pImage, const VECTOR2& pos,
+                   const VECTOR4& focusSrcRect);
+
     /// @brief 全ボタンにフォーカス・アンフォーカスアニメーションを設定する
     /// @param Foucus フォーカス時のアニメーション
     /// @param unFocus アンフォーカス時のアニメーション
@@ -41,7 +49,11 @@ public:
     
     /// @brief ボタンのレイヤーを設定する
     void SetLayer(int layer);
+    
+    void SetAlpha(float alpha);
 
+    /// @brief 現在フォーカス中のボタンのインデックスを取得する
+    int GetFocusIndex() const;
 private:
     std::vector<CUIButton*> m_buttons; // 管理中のボタン一覧（所有しない）
     int m_focusIndex;                  // 現在フォーカス中のインデックス
