@@ -16,29 +16,20 @@ CSelectUI::CSelectUI()
 
 void CSelectUI::InitButtons()
 {
-    //1つ目のbuttonの描画位置
-    constexpr float FRIST_BUTTON_Y = 113.0f;
-    VECTOR2 size = VECTOR2(30.0f, FRIST_BUTTON_Y);
-    
-    //button画像サイズ
-    VECTOR4 imageSize = VECTOR4(0, 0, 612, 99);
-    
-    //画像の読み込み
-    const std::string fileName = "data/Select/string.png";
+    const std::string fileName = "data/Select/String.png";
     auto buttonTexture = ImageRegistry::LoadTexture(fileName);
-    //ボタンを生成
-    for (auto it = m_sceneNames.begin(); it != m_sceneNames.end(); ++it)
+    for (int i = 0; i < static_cast<int>(m_sceneNames.size()); ++i)
     {
-        const VECTOR4 NonImage = VECTOR4(0, 0, 0, 0);
-        m_buttons.AddButton(this, buttonTexture, size, imageSize, imageSize);
-        //itrをintに変換
-        int i = std::distance(m_sceneNames.begin(), it);
-        //描画位置を更新
-        constexpr float BUTTON_Y_SPACING = 58.0f;
-        size.y = FRIST_BUTTON_Y * i + BUTTON_Y_SPACING * (i - 1);
-        //画像の読み込む位置を更新
-        imageSize.y += 99;
+        constexpr float FIRST_BUTTON_Y  = 113.0f;
+        constexpr float OFF_IMAGE_HEIGHT = 91.0f;
+        constexpr float BUTTON_SPACING   = 80.0f;
+        constexpr float BUTTON_X         = 30.0f;
+        constexpr float SRC_HEIGHT       = 99.0f;
+        VECTOR2 pos     = VECTOR2(BUTTON_X, FIRST_BUTTON_Y + i * (OFF_IMAGE_HEIGHT + BUTTON_SPACING));
+        VECTOR4 srcRect = VECTOR4(0, i * SRC_HEIGHT, 612, SRC_HEIGHT);
+        m_buttons.AddButton(this, buttonTexture, pos, srcRect, srcRect);
     }
+    m_buttons.SetAlpha(0.0f);
     m_buttons.SetAnim(UIPreset::FadeIn(0.3f), UIPreset::FadeOut(0.3f));
     m_buttons.SetFocus(0);
     m_buttons.SetLayer(1);
@@ -48,6 +39,7 @@ void CSelectUI::BackImage()
 {
     CSpriteImage* white = ImageRegistry::LoadTexture("data/Select/_0006_Base.png");
     auto backImage = std::make_unique<CUIImage>(white,VECTOR2(0,0),VECTOR2(WINDOW_WIDTH,WINDOW_HEIGHT));
+    backImage->SetLayer(0);
     m_canvas.AddWidget(std::move(backImage));
 }
 
@@ -56,13 +48,13 @@ void CSelectUI::Update()
     auto input = GameDevice()->m_pDI;
     if (input->IsPushUpKey())
     {
-        m_selectIndex = (m_selectIndex + 1) > -1 ? m_selectIndex - 1 : m_selectIndex; 
-        m_buttons.MoveFocus(m_selectIndex); 
+        m_buttons.MoveFocus(-1);
+        m_selectIndex = (std::max)(m_selectIndex - 1, 0);
     }
     if (input->IsPushDownKey())
     {
-        m_selectIndex = (m_selectIndex - 1) < 3 ? m_selectIndex + 1 : m_selectIndex;
-        m_buttons.MoveFocus(m_selectIndex); 
+        m_buttons.MoveFocus(1);
+        m_selectIndex = (std::min)(m_selectIndex + 1, static_cast<int>(m_sceneNames.size()) - 1);
     }
     if (input->IsPushEnter())
     {

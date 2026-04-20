@@ -40,7 +40,8 @@ public:
     void SetFocus(int index);
     
     /// @brief ボタンのレイヤーを設定する
-    void SetLayer(int layer);
+    void SetLayer(int layer) const;
+    void SetAlpha(float alpha) const;
 
 private:
     std::vector<CUIButton*> m_buttons; // 管理中のボタン一覧（所有しない）
