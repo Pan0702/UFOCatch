@@ -12,7 +12,7 @@ CUIButtons::CUIButtons()
 
 void CUIButtons::AddButton(CUIBase* ui,const std::string& name ,const VECTOR2& pos)
 {
-    CSpriteImage* imageButton = ImageRegistry::GetTexture(name.c_str());
+    CSpriteImage* imageButton = ImageRegistry::LoadTexture(name);
     auto btn = std::make_unique<CUIButton>(pos, m_imageSize, nullptr, imageButton);
     CUIButton* widget = ui->GetCanvas().AddWidget(std::move(btn));
     widget->SetOnFocusChanged([widget](bool isFocus)
@@ -31,6 +31,18 @@ void CUIButtons::SetAnim(const std::shared_ptr<CUIAnimation>& Foucus, const std:
     }
 }
 
+
+void CUIButtons::AddButton(CUIBase* ui, CSpriteImage* pImage, const VECTOR2& pos,
+                           const VECTOR4& normalSrcRect, const VECTOR4& focusSrcRect)
+{
+    auto btn = std::make_unique<CUIButton>(pos, pImage, normalSrcRect, focusSrcRect);
+    CUIButton* widget = ui->GetCanvas().AddWidget(std::move(btn));
+    widget->SetOnFocusChanged([widget](bool isFocus)
+    {
+        widget->GetAnimationPlayer().Play(isFocus ? "Focus" : "UnFocus", false);
+    });
+    m_buttons.push_back(widget);
+}
 
 void CUIButtons::SetImageSize(const VECTOR4& size)
 {

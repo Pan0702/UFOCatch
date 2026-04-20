@@ -275,6 +275,19 @@ bool CDirectInput::CheckKey(const int& kmode, const DWORD& kcode)
        return false;
     }
 }
+bool CDirectInput::IsPushUpKey()
+{
+    return CheckKey(DIK_UP, KD_TRG) || CheckKey(DIK_W, KD_TRG);
+}
+
+bool CDirectInput::IsPushDownKey()
+{
+    return CheckKey(DIK_DOWN, KD_TRG) || CheckKey(DIK_S, KD_TRG);
+}
+bool CDirectInput::IsPushEnter()
+{
+   return CheckKey(DIK_RETURN, KD_TRG);
+}
 //*****************************************************************************
 //*** Mouse                                                                 ***
 //*****************************************************************************

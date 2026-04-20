@@ -44,12 +44,12 @@ void CDebugScene::ChangeResultScene()
 void CDebugScene::Update()
 {
     m_pDebugUI->Update();
-    m_pUI->Update();
+    //m_pUI->Update();
 }
 
 void CDebugScene::Draw()
 {
     
     m_pDebugUI->Draw();
-    m_pUI->Draw();
+    //m_pUI->Draw();
 }

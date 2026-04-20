@@ -1,5 +1,6 @@
 ﻿#include "SelectionScene.h"
 
+#include "SelectUI.h"
 #include "../../Common/Constants.h"
 #include "../../Framework/AudioManager.h"
 #include "../../Framework/GameObject.h"
@@ -16,6 +17,7 @@ CSelectionScene::CSelectionScene()
     InitButtons();
     InitScene();
     InitImage();
+    m_pUI = new CSelectUI();
     AudioManager::Load(Sound::Key::SELECT_BGM,_T(Sound::Path::SELECT_BGM));
     AudioManager::Play(Sound::Key::SELECT_BGM);
 }
@@ -88,6 +90,8 @@ CSelectionScene::~CSelectionScene()
 
 void CSelectionScene::Update()
 {
+    m_pUI->Update();
+    return;
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_RETURN))
     {
         SceneManager::ChangeSceneWithTransition(m_sceneName[m_selectedIndex].c_str());
@@ -115,6 +119,7 @@ void CSelectionScene::PlayButton()
 
 void CSelectionScene::LevelButton()
 {
+    return;
     int newIndex = m_selectedIndex;
 
     int direction = 0;
@@ -141,7 +146,11 @@ void CSelectionScene::LevelButton()
 
 void CSelectionScene::Draw()
 {
-    static constexpr float imageWidthMaxSize = 1366;
+    m_pUI->Update();
+    return;
+    static constexpr fl                                                                                                                                                                                                                                                                                              ]
+    \\\\\\\\\\\\\\\\\\\\\\\
+     at imageWidthMaxSize = 1366;
     static constexpr float imageHeightMaxSize = 768;
     CSprite spr;
     //背景の描画//

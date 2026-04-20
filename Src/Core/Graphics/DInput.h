@@ -178,6 +178,9 @@ public:
     //-----------------------------------------------------------------------------
     bool GetKey(void);
     bool CheckKey(const int& nKey, const DWORD& nMode);
+    bool IsPushUpKey();
+    bool IsPushDownKey();
+    bool IsPushEnter();
     bool InitKey(HWND);
     bool SetPropertyKey(void);
     

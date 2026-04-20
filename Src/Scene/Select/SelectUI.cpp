@@ -1,28 +1,73 @@
 #include "SelectUI.h"
+
+#include "../../Core/Game/GameMain.h"
+#include "../../Framework/sceneManager.h"
 #include "../../UI/UIPreset.h"
 
 CSelectUI::CSelectUI()
 {
+    
+    m_selectIndex = 0;
+    m_sceneNames = { SceneName::TUTORIAL, SceneName::EASY, SceneName::NORMAL };
+    BackImage();
     InitButtons();
+
 }
 
 void CSelectUI::InitButtons()
 {
-    m_buttons.SetImageSize(VECTOR4(0, 0, 128, 128));
-    std::vector<std::string> buttonNames =
-        {SceneName::TUTORIAL, SceneName::EASY, SceneName::NORMAL};
+    //1つ目のbuttonの描画位置
     constexpr float FRIST_BUTTON_Y = 113.0f;
     VECTOR2 size = VECTOR2(30.0f, FRIST_BUTTON_Y);
-
-    for (auto it = buttonNames.begin(); it != buttonNames.end(); ++it)
+    
+    //button画像サイズ
+    VECTOR4 imageSize = VECTOR4(0, 0, 612, 99);
+    
+    //画像の読み込み
+    const std::string fileName = "data/Select/string.png";
+    auto buttonTexture = ImageRegistry::LoadTexture(fileName);
+    //ボタンを生成
+    for (auto it = m_sceneNames.begin(); it != m_sceneNames.end(); ++it)
     {
-        m_buttons.AddButton(this, *it, size);
-        int i = std::distance(buttonNames.begin(), it);
+        const VECTOR4 NonImage = VECTOR4(0, 0, 0, 0);
+        m_buttons.AddButton(this, buttonTexture, size, NonImage, imageSize);
+        //itrをintに変換
+        int i = std::distance(m_sceneNames.begin(), it);
+        //描画位置を更新
         constexpr float BUTTON_Y_SPACING = 58.0f;
         size.y = FRIST_BUTTON_Y * i + BUTTON_Y_SPACING * (i - 1);
+        //画像の読み込む位置を更新
+        imageSize.y += 99;
     }
     m_buttons.SetAnim(UIPreset::FadeIn(0.3f), UIPreset::FadeOut(0.3f));
     m_buttons.SetFocus(0);
+}
+
+void CSelectUI::BackImage()
+{
+    CSpriteImage* white = ImageRegistry::LoadTexture("data/Select/_0006_Base.png");
+    auto backImage = std::make_unique<CUIImage>(white,VECTOR2(0,0),VECTOR2(WINDOW_WIDTH,WINDOW_HEIGHT));
+    m_canvas.AddWidget(std::move(backImage));
+}
+
+void CSelectUI::Update()
+{
+    auto input = GameDevice()->m_pDI;
+    if (input->IsPushUpKey())
+    {
+        m_selectIndex = (m_selectIndex + 1) < 3 ? m_selectIndex + 1 : m_selectIndex;
+        m_buttons.SetFocus(m_selectIndex); 
+    }
+    if (input->IsPushDownKey())
+    {
+        m_selectIndex = (m_selectIndex - 1) > 0 ? m_selectIndex - 1 : m_selectIndex;
+        m_buttons.SetFocus(m_selectIndex); 
+    }
+    if (input->IsPushEnter())
+    {
+        SceneManager::ChangeSceneWithTransition(m_sceneNames[m_selectIndex]);
+    }
+        CUIBase::Update();
 }
 
 // ● レベル選択ボタンの位置・大きさまとめ           
