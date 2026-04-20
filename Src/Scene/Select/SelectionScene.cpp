@@ -146,11 +146,9 @@ void CSelectionScene::LevelButton()
 
 void CSelectionScene::Draw()
 {
-    m_pUI->Update();
+    m_pUI->Draw();
     return;
-    static constexpr fl                                                                                                                                                                                                                                                                                              ]
-    \\\\\\\\\\\\\\\\\\\\\\\
-     at imageWidthMaxSize = 1366;
+    static constexpr float imageWidthMaxSize = 1366;
     static constexpr float imageHeightMaxSize = 768;
     CSprite spr;
     //背景の描画//

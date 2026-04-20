@@ -55,6 +55,12 @@ void CUIButtons::SetFocus(int index)
     m_buttons[m_focusIndex]->SetFocus(true);
 }
 
+void CUIButtons::SetLayer(int layer)
+{
+    for (auto& b : m_buttons)
+        b->SetLayer(layer);
+}
+
 void CUIButtons::MoveFocus(int n)
 {
     if (m_buttons.empty()) return;

@@ -30,7 +30,7 @@ void CSelectUI::InitButtons()
     for (auto it = m_sceneNames.begin(); it != m_sceneNames.end(); ++it)
     {
         const VECTOR4 NonImage = VECTOR4(0, 0, 0, 0);
-        m_buttons.AddButton(this, buttonTexture, size, NonImage, imageSize);
+        m_buttons.AddButton(this, buttonTexture, size, imageSize, imageSize);
         //itrをintに変換
         int i = std::distance(m_sceneNames.begin(), it);
         //描画位置を更新
@@ -41,6 +41,7 @@ void CSelectUI::InitButtons()
     }
     m_buttons.SetAnim(UIPreset::FadeIn(0.3f), UIPreset::FadeOut(0.3f));
     m_buttons.SetFocus(0);
+    m_buttons.SetLayer(1);
 }
 
 void CSelectUI::BackImage()
@@ -55,18 +56,21 @@ void CSelectUI::Update()
     auto input = GameDevice()->m_pDI;
     if (input->IsPushUpKey())
     {
-        m_selectIndex = (m_selectIndex + 1) < 3 ? m_selectIndex + 1 : m_selectIndex;
-        m_buttons.SetFocus(m_selectIndex); 
+        m_selectIndex = (m_selectIndex + 1) > -1 ? m_selectIndex - 1 : m_selectIndex; 
+        m_buttons.MoveFocus(m_selectIndex); 
     }
     if (input->IsPushDownKey())
     {
-        m_selectIndex = (m_selectIndex - 1) > 0 ? m_selectIndex - 1 : m_selectIndex;
-        m_buttons.SetFocus(m_selectIndex); 
+        m_selectIndex = (m_selectIndex - 1) < 3 ? m_selectIndex + 1 : m_selectIndex;
+        m_buttons.MoveFocus(m_selectIndex); 
     }
     if (input->IsPushEnter())
     {
         SceneManager::ChangeSceneWithTransition(m_sceneNames[m_selectIndex]);
     }
+    ImGui::Begin("Select");
+    ImGui::Text("%d", m_selectIndex);
+    ImGui::End();
         CUIBase::Update();
 }
 

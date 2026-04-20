@@ -136,6 +136,8 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)Libs\include;$(ProjectDir)Libs\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -1228,8 +1230,8 @@
     <ClCompile Include="Src\Player\PlayerHP.cpp" />
     <ClCompile Include="Src\Player\PlayerLevel.cpp" />
     <ClCompile Include="Src\Scene\Editor\EditorScene.cpp">
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
       <SupportJustMyCode>true</SupportJustMyCode>
       <AssemblerOutput>NoListing</AssemblerOutput>
@@ -1299,14 +1301,14 @@
       <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
       <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
       <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_MBCS;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/FS </AdditionalOptions>
       <AdditionalIncludeDirectories>C:\Users\yu\RiderProjects\UFOAbduction\Libs\include;C:\Users\yu\RiderProjects\UFOAbduction\Libs\x64-windows\include;C:\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
     <ClCompile Include="Src\Scene\Other\DebugScene.cpp">
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
       <SupportJustMyCode>true</SupportJustMyCode>
@@ -1377,7 +1379,7 @@
       <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
       <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
       <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_MBCS;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/FS </AdditionalOptions>
       <AdditionalIncludeDirectories>C:\Users\yu\RiderProjects\UFOAbduction\Libs\include;C:\Users\yu\RiderProjects\UFOAbduction\Libs\x64-windows\include;C:\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
@@ -1385,8 +1387,8 @@
     </ClCompile>
     <ClCompile Include="Src\Scene\Other\DebugUI.cpp" />
     <ClCompile Include="Src\Scene\Other\OIScene.cpp">
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
       <SupportJustMyCode>true</SupportJustMyCode>
       <AssemblerOutput>NoListing</AssemblerOutput>
@@ -1456,15 +1458,15 @@
       <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
       <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
       <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_MBCS;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/FS </AdditionalOptions>
       <AdditionalIncludeDirectories>C:\Users\yu\RiderProjects\UFOAbduction\Libs\include;C:\Users\yu\RiderProjects\UFOAbduction\Libs\x64-windows\include;C:\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
     <ClCompile Include="Src\Scene\Play\NormalScene.cpp">
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
       <SupportJustMyCode>true</SupportJustMyCode>
       <AssemblerOutput>NoListing</AssemblerOutput>
@@ -1534,14 +1536,14 @@
       <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
       <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
       <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_MBCS;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/FS </AdditionalOptions>
       <AdditionalIncludeDirectories>C:\Users\yu\RiderProjects\UFOAbduction\Libs\include;C:\Users\yu\RiderProjects\UFOAbduction\Libs\x64-windows\include;C:\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
     <ClCompile Include="Src\Scene\Play\PlayScene.cpp">
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
       <SupportJustMyCode>true</SupportJustMyCode>
@@ -1612,14 +1614,14 @@
       <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
       <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
       <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_MBCS;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/FS </AdditionalOptions>
       <AdditionalIncludeDirectories>C:\Users\yu\RiderProjects\UFOAbduction\Libs\include;C:\Users\yu\RiderProjects\UFOAbduction\Libs\x64-windows\include;C:\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
     <ClCompile Include="Src\Scene\Play\TutorialScene.cpp">
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
       <SupportJustMyCode>true</SupportJustMyCode>
@@ -1690,7 +1692,7 @@
       <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
       <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
       <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_MBCS;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/FS </AdditionalOptions>
       <AdditionalIncludeDirectories>C:\Users\yu\RiderProjects\UFOAbduction\Libs\include;C:\Users\yu\RiderProjects\UFOAbduction\Libs\x64-windows\include;C:\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
@@ -1698,7 +1700,7 @@
     </ClCompile>
     <ClCompile Include="Src\Scene\Play\PlayUI.cpp" />
     <ClCompile Include="Src\Scene\Result\ResultScene.cpp">
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
       <SupportJustMyCode>true</SupportJustMyCode>
@@ -1769,7 +1771,7 @@
       <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
       <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
       <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_MBCS;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/FS </AdditionalOptions>
       <AdditionalIncludeDirectories>C:\Users\yu\RiderProjects\UFOAbduction\Libs\include;C:\Users\yu\RiderProjects\UFOAbduction\Libs\x64-windows\include;C:\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
@@ -1777,7 +1779,7 @@
     </ClCompile>
     <ClCompile Include="Src\Scene\Result\ResultUI.cpp" />
     <ClCompile Include="Src\Scene\Select\SelectionScene.cpp">
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
       <SupportJustMyCode>true</SupportJustMyCode>
@@ -1848,7 +1850,7 @@
       <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
       <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
       <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_MBCS;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/FS </AdditionalOptions>
       <AdditionalIncludeDirectories>C:\Users\yu\RiderProjects\UFOAbduction\Libs\include;C:\Users\yu\RiderProjects\UFOAbduction\Libs\x64-windows\include;C:\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
@@ -1856,7 +1858,7 @@
     </ClCompile>
     <ClCompile Include="Src\Scene\Select\SelectUI.cpp" />
     <ClCompile Include="Src\Scene\Title\TitleScene.cpp">
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
       <SupportJustMyCode>true</SupportJustMyCode>
@@ -1927,7 +1929,7 @@
       <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
       <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
       <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_MBCS;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/FS </AdditionalOptions>
       <AdditionalIncludeDirectories>C:\Users\yu\RiderProjects\UFOAbduction\Libs\include;C:\Users\yu\RiderProjects\UFOAbduction\Libs\x64-windows\include;C:\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>

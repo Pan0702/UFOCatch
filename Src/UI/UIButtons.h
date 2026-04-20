@@ -38,6 +38,9 @@ public:
 
     /// @brief 指定インデックスのボタンにフォーカスを設定する
     void SetFocus(int index);
+    
+    /// @brief ボタンのレイヤーを設定する
+    void SetLayer(int layer);
 
 private:
     std::vector<CUIButton*> m_buttons; // 管理中のボタン一覧（所有しない）

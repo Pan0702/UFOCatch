@@ -60,11 +60,12 @@ std::vector<VECTOR2> CAStarPathFinder::SearchRoute(VECTOR2 start, VECTOR2 goal)
     };
 
     int mainLoopCount = 0;
-    constexpr int MAX_MAIN_LOOP = 10000;
+    
 
     // メインループ：Openリストが空になるか、ゴールに到達するまで繰り返す//
     while (!open.empty())
     {
+        constexpr int MAX_MAIN_LOOP = 10000;
         // 無限ループ防止
         if (++mainLoopCount > MAX_MAIN_LOOP)
         {

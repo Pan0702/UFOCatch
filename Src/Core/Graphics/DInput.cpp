@@ -277,16 +277,16 @@ bool CDirectInput::CheckKey(const int& kmode, const DWORD& kcode)
 }
 bool CDirectInput::IsPushUpKey()
 {
-    return CheckKey(DIK_UP, KD_TRG) || CheckKey(DIK_W, KD_TRG);
+    return CheckKey(KD_TRG,DIK_UP) || CheckKey( KD_TRG,DIK_W);
 }
 
 bool CDirectInput::IsPushDownKey()
 {
-    return CheckKey(DIK_DOWN, KD_TRG) || CheckKey(DIK_S, KD_TRG);
+    return CheckKey( KD_TRG,DIK_DOWN) || CheckKey( KD_TRG,DIK_S);
 }
 bool CDirectInput::IsPushEnter()
 {
-   return CheckKey(DIK_RETURN, KD_TRG);
+   return CheckKey( KD_TRG,DIK_RETURN);
 }
 //*****************************************************************************
 //*** Mouse                                                                 ***
