@@ -85,6 +85,10 @@ void CHuman::Update()
 
 void CHuman::Draw()
 {
+    if (!m_pMesh)
+    {
+        assert(false);
+    }
     m_pMesh->Render(m_pAnimator.get(), transform.matrix());
     //Debug髢｢謨ｰ
     //DrawDirectionLine();
