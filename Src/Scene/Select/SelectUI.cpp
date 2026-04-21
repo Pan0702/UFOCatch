@@ -2,11 +2,10 @@
 
 #include "../../Core/Game/GameMain.h"
 #include "../../Framework/sceneManager.h"
-#include "../../UI/UIPreset.h"
+
 
 CSelectUI::CSelectUI()
 {
-    m_selectIndex = 0;
     m_sceneNames = {SceneName::TITLE, SceneName::TUTORIAL, SceneName::EASY, SceneName::NORMAL};
     BackImage();
     InitButtons();
@@ -20,6 +19,7 @@ void CSelectUI::InitButtons()
     VECTOR4 buttonSize = VECTOR4(0, 297.0f, 156.0f, 59.0f);
     VECTOR2 buttonPos = VECTOR2(15.0f, 20.0f);
     m_buttons.AddButton(this, buttonTexture, buttonPos, buttonSize);
+    
     //Scene選択のボタン
     {
         //1つ目のbuttonの描画位置
@@ -30,11 +30,10 @@ void CSelectUI::InitButtons()
         VECTOR4 imageSize = VECTOR4(0, 0, 612, 99);
 
         //ボタンを生成
-
-        for (auto it = m_sceneNames.begin(); it != m_sceneNames.end() - 1; ++it)
+        constexpr int BUTTON_COUNT = 3;
+        for (auto i = 0; i != BUTTON_COUNT; ++i)
         {
             constexpr float BUTTON_Y_SPACING = 171.0f;
-            int i = std::distance(m_sceneNames.begin(), it);
             //描画位置を更新
             pos.y = FRIST_BUTTON_Y + BUTTON_Y_SPACING * i;
             //On画像サイズ(612x99)、背景なし

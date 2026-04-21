@@ -1,4 +1,6 @@
 ﻿#include "TitleScene.h"
+
+#include "TitleUI.h"
 #include "../../Core/Game/GameMain.h"
 #include "../../Framework/AudioManager.h"
 #include "../../Enemies/System/EnemyManager.h"
@@ -32,20 +34,24 @@ TitleScene::TitleScene()
     AudioManager::Play(_T(Sound::Key::TITLE_BGM), true);
     AudioManager::Load(Sound::Key::DECIDE_SE,_T(Sound::Path::DECIDE_SE));
     AudioManager::Load(Sound::Key::SELECT_SE,_T(Sound::Path::SELECT_SE));
+    m_pUI = new CTitleUI();
 }
 
 TitleScene::~TitleScene()
 {
+    AudioManager::Stop(_T(Sound::Key::DECIDE_SE));
     for (auto& info : m_imageInfos)
     {
         SAFE_DELETE(info.pImage);
         info.pImage = nullptr;
     }
-    AudioManager::Stop(_T(Sound::Key::DECIDE_SE));
+
 }
 
 void TitleScene::Update()
 {
+    m_pUI->Update();
+    return;
     int newIndex  = m_selectedIndex;
     int direction = 0;
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_W))
@@ -58,7 +64,7 @@ void TitleScene::Update()
     {
         newIndex  = (m_selectedIndex + 1) % 2;
         direction = -1;
-        AudioManager::Play(_T(Sound::Key::SELECT_SE), false);
+
     }
     if (newIndex != m_selectedIndex)
     {
@@ -70,13 +76,15 @@ void TitleScene::Update()
 
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_RETURN))
     {
-        AudioManager::Play(_T(Sound::Key::DECIDE_SE), false);
+        
         SceneManager::ChangeSceneWithTransition(m_text[m_selectedIndex].c_str());
     }
 }
 
 void TitleScene::Draw()
 {
+    m_pUI->Draw();
+    return;
     CSprite spr;
 
     // 背景画像を描画 //

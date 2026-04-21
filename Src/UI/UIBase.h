@@ -3,6 +3,7 @@
 #include "../Common/Constants.h"
 #include "ImageRegistry.h"
 #include "UICanvas.h"
+#include "UIPreset.h"
 
 const VECTOR4 NonImage = VECTOR4(0, 0,0,0);
 /// @brief シーン単位のUIの基底クラス

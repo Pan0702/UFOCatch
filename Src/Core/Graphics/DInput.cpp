@@ -10,6 +10,9 @@
 
 #include <tchar.h>
 
+#include "../../Common/Constants.h"
+#include "../../Framework/AudioManager.h"
+
 
 // ・ｽO・ｽ・ｽ・ｽ[・ｽo・ｽ・ｽ・ｽﾏ撰ｿｽ(・ｽR・ｽ[・ｽ・ｽ・ｽo・ｽb・ｽN・ｽﾖ撰ｿｽ・ｽ・ｽ・ｽg・ｽp・ｽ・ｽ・ｽ驍ｽ・ｽﾟ必・ｽv)
 static CDirectInput*    g_pDI = nullptr;
@@ -280,6 +283,7 @@ int CDirectInput::IsPushUpKey()
 {
     if ( CheckKey(KD_TRG,DIK_UP) || CheckKey( KD_TRG,DIK_W))
     {
+       AudioManager::Play(_T(Sound::Key::SELECT_SE), false);
        return -1;
     }
    return 0;
@@ -289,12 +293,14 @@ int CDirectInput::IsPushDownKey()
 {
     if (CheckKey( KD_TRG,DIK_DOWN) || CheckKey( KD_TRG,DIK_S))
     {
+       AudioManager::Play(_T(Sound::Key::SELECT_SE), false);
        return 1;
     }
    return 0;
 }
 bool CDirectInput::IsPushEnter()
 {
+   AudioManager::Play(_T(Sound::Key::DECIDE_SE), false);
    return CheckKey( KD_TRG,DIK_RETURN);
 }
 //*****************************************************************************
