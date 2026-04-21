@@ -10,8 +10,8 @@ using namespace Constants;
 
 TitleScene::TitleScene()
 {
-    std::vector<std::string> modelNames = Import::ModelPath(FileName::MODEL_LIST);
-    ResourceManager::LoadFbx(modelNames);
+    // std::vector<std::string> modelNames = Import::ModelPath(FileName::MODEL_LIST);
+    // ResourceManager::LoadFbx(modelNames);
 
     AudioManager::Load(Sound::Key::TITLE_BGM,_T(Sound::Path::TITLE_BGM));
     AudioManager::Play(_T(Sound::Key::TITLE_BGM), true);

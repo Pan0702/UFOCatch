@@ -6,6 +6,7 @@
 #include "../../MapEditor/TRSObject/TRS.h"
 #include "../../MapEditor/StageData.h"
 #include "../../Stage/CubeBox.h"
+#include "../../Stage/SkyBox.h"
 
 CEditorScene::CEditorScene()
 {
@@ -14,7 +15,7 @@ CEditorScene::CEditorScene()
     Instantiate<TRS>();
     Instantiate<Controller>();
     Instantiate<EditorUI>(); // Button/TRS/Controller の後に生成する
-    Instantiate<CCubeBox>(Constants::Model::BACK_DROP);
+    Instantiate<CCubeBox>("data/Ground/SkyBox.mesh");
 }
 
 CEditorScene::~CEditorScene()

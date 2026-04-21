@@ -5,7 +5,7 @@
 
 CTitleUI::CTitleUI()
 {
-    m_sceneNames = {SceneName::SELECT,SceneName::OI};
+    m_sceneNames = {SceneName::SELECT, SceneName::OI};
     InitBackground();
     InitButtons();
 }
@@ -15,12 +15,12 @@ void CTitleUI::InitButtons()
     //Load
     const std::string fileName = "data/Title/Buttons.png";
     auto buttonTexture = ImageRegistry::LoadTexture(fileName);
-    
+
     //ButtonのPos
-    std::vector<VECTOR2> pos = 
+    std::vector<VECTOR2> pos =
         {VECTOR2(42, 300), VECTOR2(100, 510)};
     //SpriteからのButtonの読み込む大きさ。
-    std::vector<VECTOR4> imageSize = 
+    std::vector<VECTOR4> imageSize =
         {VECTOR4(0, 0, 505, 260), VECTOR4(0, 260, 462, 227)};
     //ボタンを生成
     constexpr int BUTTON_COUNT = 2;
@@ -29,7 +29,7 @@ void CTitleUI::InitButtons()
         m_buttons.AddButton(this, buttonTexture, pos[i], imageSize[i]);
     }
     m_buttons.SetAlpha(0.0f);
-    m_buttons.SetAnim(UIPreset::FadeIn(0.2f), UIPreset::FadeOut(0.2f));
+    m_buttons.SetAnim(UIPreset::FadeIn(0.1f), UIPreset::FadeOut(0.1f));
     m_buttons.SetFocus(0);
     m_buttons.SetLayer(1);
 }

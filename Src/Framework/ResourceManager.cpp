@@ -4,7 +4,8 @@
 #include "../Utils/MeshCollider.h"
 #include "GameObject.h"
 
-namespace {
+namespace
+{
     std::vector<ModelInfo> modelInfos;
 };
 
@@ -14,7 +15,6 @@ void ResourceManager::Init()
 
 void ResourceManager::Reset()
 {
-    
     modelInfos.clear();
 }
 
@@ -54,9 +54,9 @@ CFbxMesh* ResourceManager::LoadFbx(const char* path)
         }
     }
     m.mesh->Load(path);
-    m.name = n.c_str();
+    m.name = n;
     modelInfos.push_back(m);
-    return m.mesh.get();
+    return modelInfos.back().mesh.get();
 }
 
 CFbxMesh* ResourceManager::GetModel(const char* name)
@@ -91,9 +91,9 @@ const char* ResourceManager::GetPath(const char* name)
 {
     for (auto& m : modelInfos)
     {
-        if (m.name == name) return m.path;
+        if (m.name == name) return m.path.c_str();
     }
-    assert("ModelのPathが見つかりません");
+    assert(!"ModelのPathが見つかりません");
     return nullptr;
 }
 
@@ -104,7 +104,5 @@ std::vector<std::string> ResourceManager::GetAllModelPath()
     {
         paths.push_back(m.path);
     }
-    return paths; 
+    return paths;
 }
-
-

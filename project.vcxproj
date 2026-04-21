@@ -600,6 +600,7 @@
     <ClInclude Include="Src\Scene\Select\SelectUI.h" />
     <ClInclude Include="Src\Scene\Title\TitleScene.h" />
     <ClInclude Include="Src\Scene\Title\TitleUI.h" />
+    <ClInclude Include="Src\Stage\SkyBox.h"/>
     <ClInclude Include="Src\Stage\StageFactor.h" />
     <ClInclude Include="Src\Stage\StageObject.h" />
     <ClInclude Include="Src\Stage\CubeBox.h" />
@@ -1937,6 +1938,7 @@
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
     <ClCompile Include="Src\Scene\Title\TitleUI.cpp" />
+    <ClCompile Include="Src\Stage\SkyBox.cpp"/>
     <ClCompile Include="Src\Stage\StageFactor.cpp" />
     <ClCompile Include="Src\Stage\StageObject.cpp" />
     <ClCompile Include="Src\Stage\CubeBox.cpp" />
