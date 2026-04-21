@@ -41,7 +41,18 @@ void CUIButtons::AddButton(CUIBase* ui, CSpriteImage* pImage, const VECTOR2& pos
     {
         widget->GetAnimationPlayer().Play(isFocus ? "Focus" : "UnFocus", false);
     });
-    widget->SetFocus(false);
+    m_buttons.push_back(widget);
+}
+
+void CUIButtons::AddButton(CUIBase* ui, CSpriteImage* pImage, const VECTOR2& pos,
+                           const VECTOR4& focusSrcRect)
+{
+    auto btn = std::make_unique<CUIButton>(pos, pImage, focusSrcRect);
+    CUIButton* widget = ui->GetCanvas().AddWidget(std::move(btn));
+    widget->SetOnFocusChanged([widget](bool isFocus)
+    {
+        widget->GetAnimationPlayer().Play(isFocus ? "Focus" : "UnFocus", false);
+    });
     m_buttons.push_back(widget);
 }
 
@@ -56,16 +67,21 @@ void CUIButtons::SetFocus(int index)
     m_buttons[m_focusIndex]->SetFocus(true);
 }
 
-void CUIButtons::SetLayer(int layer) const
+void CUIButtons::SetLayer(int layer)
 {
     for (auto& b : m_buttons)
         b->SetLayer(layer);
 }
 
-void CUIButtons::SetAlpha(float alpha) const
+void CUIButtons::SetAlpha(float alpha)
 {
     for (auto& b : m_buttons)
         b->SetAlpha(alpha);
+}
+
+int CUIButtons::GetFocusIndex() const
+{
+    return m_focusIndex;
 }
 
 void CUIButtons::MoveFocus(int n)

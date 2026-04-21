@@ -14,13 +14,25 @@ CUIButton::CUIButton(const VECTOR2& pos, CSpriteImage* pImage,
 {
 }
 
+CUIButton::CUIButton(const VECTOR2& pos, CSpriteImage* pImage, const VECTOR4& focusSrcRect)
+    : CUIImage(pImage, pos, focusSrcRect)
+    , m_useSpriteSheet(true)
+    , m_normalSrcRect(VECTOR4(0, 0, 0, 0))
+    , m_focusSrcRect(focusSrcRect)
+{
+    SetVisible(false);
+}
+
 void CUIButton::SetFocus(bool focused)
 {
     m_isFocus = focused;
     if (focused)
     {
         if (m_useSpriteSheet)
+        {
             SetSrcRect(m_focusSrcRect);
+            SetVisible(true);
+        }
         else
             SetImage(m_pFocusImage);
 
@@ -34,6 +46,8 @@ void CUIButton::SetFocus(bool focused)
             GetAnimationPlayer().SetOnComplete([this]
             {
                 SetSrcRect(m_normalSrcRect);
+                if (m_normalSrcRect.z == 0 && m_normalSrcRect.w == 0)
+                    SetVisible(false);
             });
         }
         else
