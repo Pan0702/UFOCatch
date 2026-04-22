@@ -1,6 +1,7 @@
 ﻿#include "PlayScene.h"
 #include <cassert>
 
+#include "PlayUI.h"
 #include "../../System/GameInstance.h"
 #include "../../Enemies/System/EnemyManager.h"
 #include "../../Player/PCamera.h"
@@ -19,14 +20,14 @@ PlayScene::PlayScene()
     SingleInstantiate<CEnemyManager>()->BuildStaticTree();
     Instantiate<CStageFactor>()->SpawnObjects(30, 30, 90);
     Instantiate<CPlayerCamera>();
-
     Instantiate<CTimer>(30);
     Instantiate<CPlayer>(25);
     Instantiate<CAnimalFactor>(20, 20, 0);
     // Instantiate<CFlog>();           
     Instantiate<CVisionSystem>();
-    Instantiate<CDisplayInfo>();
+    //Instantiate<CDisplayInfo>();
     CGameInstance::Get()->Init(3000);
+    m_pUI = new CPlayUI();
     AudioManager::Load(_T(Sound::Key::PLAY_BGM), _T(Sound::Path::PLAY_BGM));
     AudioManager::Play(_T(Sound::Key::PLAY_BGM));
 }
@@ -38,13 +39,15 @@ PlayScene::~PlayScene()
 
 void PlayScene::Update()
 {
+    m_pUI->Update();
 }
 
 void PlayScene::Draw()
 {
+    m_pUI->Draw();
 #ifdef _DEBUG
     //Debug
-    QTreeDebug();
+    //QTreeDebug();
 #endif _DEBUG
 }
 

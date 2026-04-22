@@ -25,12 +25,13 @@ cbuffer global_0:register(b0)
 cbuffer ArcBuffer : register(b1)
 {
     float g_ArcStartAngle; //開始角度
-    float g_ArcSpan;       //孤の長さ
-    float g_InnerRadius;   //内半径
+    float g_ArcSpan; //孤の長さ
+    float g_InnerRadius; //内半径
     float g_ArcPadding;
-    float2 g_UVMin;        //UV範囲の最小値
-    float2 g_UVMax;        //UV範囲の最大値
+    float2 g_UVMin; //UV範囲の最小値
+    float2 g_UVMax; //UV範囲の最大値
 }
+
 // 構造体
 struct PS_INPUT
 {
@@ -98,25 +99,33 @@ float4 PS(PS_INPUT In) : SV_Target
 
             //中心を0,0にずらす。
             float2 pos = normalizedUV - float2(0.5, 0.5);
-            
+
             if (length(pos) > g_InnerRadius) discard;
-            
+
             float angle = atan2(pos.x, -pos.y);
             if (angle < 0) angle += 2.0f * PI;
-            
+
             float rel = angle - g_ArcStartAngle;
-            
+
+            const float TWO_PI = 2.0f * PI;
+            const float eps = 0.001f;
             if (g_ArcSpan >= 0)
             {
-                // 時計回り：rel が arcSpan を超えたら破棄
-                if (rel < 0) rel += 2.0f * PI;
-                if (rel > g_ArcSpan) discard;
+                if (g_ArcSpan < eps) discard;
+                if (rel < 0) rel += TWO_PI;
+                if (g_ArcSpan < TWO_PI - eps)
+                {
+                    if (rel > g_ArcSpan) discard;
+                }
             }
             else
             {
-                // 反時計回り：rel が arcSpan より小さくなったら破棄
-                if (rel > 0) rel -= 2.0f * PI;
-                if (rel < g_ArcSpan) discard;
+                if (g_ArcSpan > -eps) discard;
+                if (rel > 0) rel -= TWO_PI;
+                if (g_ArcSpan > -(TWO_PI - eps))
+                {
+                    if (rel < g_ArcSpan) discard;
+                }
             }
             // float PI = 3.14159265f;
             //

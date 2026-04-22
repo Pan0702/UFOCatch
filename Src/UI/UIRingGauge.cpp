@@ -3,7 +3,7 @@
 #include "../Framework/sceneManager.h"
 
 CUIRingGauge::CUIRingGauge(CSpriteImage* pBg, CSpriteImage* pFill, const VECTOR2& pos, const VECTOR4& size)
-    : m_maxWidth(size.z), m_t(0.0f),m_srcSize(size)
+    : m_maxWidth(size.z), m_t(0.0f), m_srcSize(size)
 {
     m_position = pos;
     m_size = VECTOR2(size.z, size.w);
@@ -16,7 +16,7 @@ CUIRingGauge::CUIRingGauge(CSpriteImage* pBg, CSpriteImage* pFill, const VECTOR2
     m_pFill = AddChild(std::move(fill));
     m_arcParams.startAngle = 0.0f;
     m_arcParams.clockwise = true;
-    m_arcParams.innerRadius=0.5f;
+    m_arcParams.innerRadius = 0.5f;
 }
 
 void CUIRingGauge::SetRatio(float ratio)
@@ -41,10 +41,8 @@ void CUIRingGauge::SetArcDrawParams(ArcDrawParams params)
 void CUIRingGauge::Update()
 {
     if (m_t >= 1.0f)return;
-    const float delta = SceneManager::DeltaTime() * m_moveSpeed;
-    const float easedT = m_easing(m_t);
-    m_t = std::clamp(m_t + delta, 0.0f, 1.0f);
-    m_currentRatio = Lerp(m_startRatio, m_targetRatio, easedT);
+    m_t = std::clamp(m_t + SceneManager::DeltaTime() * m_moveSpeed, 0.0f, 1.0f);
+    m_currentRatio = Lerp(m_startRatio, m_targetRatio, m_easing(m_t));
 
     const float newWidth = m_maxWidth * m_currentRatio;
     m_pFill->SetSrcRect(VECTOR4(0, 0, newWidth, m_size.y));

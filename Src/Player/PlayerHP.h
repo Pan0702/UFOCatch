@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "../Common/Object3D.h"
+#include "../Scene/Play/PlayUI.h"
 
 // プレイヤーのHP及び発見状態を管理するクラス //
 class CPlayerHP : public Object3D
@@ -28,4 +29,5 @@ private:
     float m_invincible;
     float m_findCount;
     float m_findMaxCount;
+    CPlayUI* m_pUI;
 };
