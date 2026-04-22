@@ -4,7 +4,10 @@
 #include "../Enemies/AnimalDebug/AnimalDubug.h"
 #include "../Enemies/AnimalDebug/AnimalDubug.h"
 #include "../Enemies/AnimalDebug/AnimalDubug.h"
+#include <unordered_set>
 
+// コンストラクタ内でDontDestroyを呼ばれた場合の保留リスト（Push時に反映する）
+static std::unordered_set<const GameObject*> s_pendingDontDestroy;
 
 namespace
 {
@@ -33,9 +36,11 @@ namespace
         {
         }
     };
+
     struct QuadTreeObject
     {
         std::unique_ptr<CQuadtreeSystem> object;
+
         QuadTreeObject() : object(nullptr)
         {
         }
@@ -159,6 +164,14 @@ void ObjectManager::Push(std::unique_ptr<GameObject> obj)
     GameObject* raw = obj.get();
     UpdateObject uNode;
     uNode.object = std::move(obj);
+
+    // コンストラクタ内でDontDestroyが呼ばれていた場合、ここで反映する
+    if (s_pendingDontDestroy.count(raw))
+    {
+        uNode.dontDestroy = true;
+        s_pendingDontDestroy.erase(raw);
+    }
+
     updateObjects.push_back(std::move(uNode));
     needSortUpdate = true;
 
@@ -233,13 +246,24 @@ void ObjectManager::DeleteAllGameObject()
 
 void ObjectManager::DontDestroy(const GameObject* obj, bool dont)
 {
+    bool found = false;
     for (auto it = updateObjects.begin(); it != updateObjects.end(); it++)
     {
         UpdateObject& node = *it;
         if (node.object.get() == obj)
         {
             node.dontDestroy = dont;
+            found = true;
         }
+    }
+
+    // updateObjectsにまだ登録されていない（コンストラクタから呼ばれた）場合は保留リストに積む
+    if (!found)
+    {
+        if (dont)
+            s_pendingDontDestroy.insert(obj);
+        else
+            s_pendingDontDestroy.erase(obj);
     }
 }
 
@@ -278,7 +302,7 @@ bool ObjectManager::IsExist(GameObject* obj)
     return false;
 }
 
- std::list<CQuadtreeSystem*> ObjectManager::GetAllQuadTree()
+std::list<CQuadtreeSystem*> ObjectManager::GetAllQuadTree()
 {
     std::list<CQuadtreeSystem*> objs;
     for (const QuadTreeObject& obj : quadTreeObject)
@@ -300,7 +324,7 @@ void ObjectManager::DeleteAllQuadTree()
 {
     for (auto it = quadTreeObject.begin(); it != quadTreeObject.end();)
     {
-       it = quadTreeObject.erase(it);
+        it = quadTreeObject.erase(it);
     }
     quadTreeObject.clear();
 }

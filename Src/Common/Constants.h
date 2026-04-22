@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 ///<summary>定数をまとめたnamespace</summary>
 namespace Constants
@@ -67,9 +68,9 @@ namespace Constants
 
         namespace Name
         {
-            constexpr const char* DOG = "DOG";
-            constexpr const char* CHICKEN = "CHICKEN";
-            constexpr const char* HUMAN = "HUMAN";
+            const std::string DOG = "Dog";
+            const std::string CHICKEN = "Chicken";
+            const std::string HUMAN = "Human";
         }
     }
 }
