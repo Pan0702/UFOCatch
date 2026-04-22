@@ -12,8 +12,13 @@ CHuman::CHuman(const VECTOR3& pos, const VECTOR2& areaSize)
     : m_AreaSize(areaSize), m_pFunShape(nullptr)
 {
     transform.position = pos;
-    m_pMesh = ObjectManager::FindGameObject<CEnemyManager>()->MeshList("Human");
-    m_pAnimator =  std::make_unique<Animator>();
+    auto m = ObjectManager::FindGameObject<CEnemyManager>();
+    if (m == nullptr)
+        assert(false);
+    m_pMesh = m->MeshList(Animal::Name::HUMAN);
+    if (m_pMesh == nullptr)
+        assert(false);
+    m_pAnimator = std::make_unique<Animator>();
     m_pAnimator->SetModel(m_pMesh);
     m_pAnimator->Play(A_IDEL);
     m_pAnimator->SetPlaySpeed(1.0f);
@@ -31,7 +36,7 @@ CHuman::CHuman(const VECTOR3& pos, const VECTOR2& areaSize)
 void CHuman::InitStates()
 {
     m_components[CBaseState::State::IDLE] = std::make_unique<CIdleHuman>(this);
-    m_components[CBaseState::State::WALK] = std::make_unique<CWalk>(this,1.2f);
+    m_components[CBaseState::State::WALK] = std::make_unique<CWalk>(this, 1.2f);
     m_components[CBaseState::State::FIND_PLAYER] = std::make_unique<CFind>(this);
     m_pComponent = m_components[CBaseState::State::IDLE].get();
     m_pState = std::make_unique<CBaseState>(this);
@@ -48,6 +53,7 @@ CHuman::~CHuman()
         m_pFunShape = nullptr;
     }
 }
+
 void CHuman::Update()
 {
     CEnemyBase::Update();
@@ -59,7 +65,7 @@ void CHuman::Update()
     }
 
     m_pAnimator->Update();
-    CVisionSystem*vision = ObjectManager::FindGameObject<CVisionSystem>();
+    CVisionSystem* vision = ObjectManager::FindGameObject<CVisionSystem>();
     m_inSight = vision->SectorCircleCollision(ToVec2XZ(transform.position), transform.rotation.y)
         && ObjectManager::FindGameObject<CPlayer>()->GetIsSuckUp();
 
@@ -81,14 +87,8 @@ void CHuman::Update()
 }
 
 
-
-
 void CHuman::Draw()
 {
-    if (!m_pMesh)
-    {
-        assert(false);
-    }
     m_pMesh->Render(m_pAnimator.get(), transform.matrix());
     //Debug髢｢謨ｰ
     //DrawDirectionLine();
@@ -138,4 +138,3 @@ void CHuman::AtkArea() const
 //         spr.DrawLine3D(startPos, endPos, RGB(255, 0, 0));
 //     }
 // }
-

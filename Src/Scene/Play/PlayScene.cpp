@@ -13,19 +13,20 @@
 #include "../../Stage/StageFactor.h"
 #include "../../System/Timer.h"
 using namespace Constants;
-   
+
 PlayScene::PlayScene()
 {
-    Instantiate<CStageFactor>()->SpawnObjects(30, 30,90);
-    Instantiate<CPlayerCamera>();
     SingleInstantiate<CEnemyManager>()->BuildStaticTree();
+    Instantiate<CStageFactor>()->SpawnObjects(30, 30, 90);
+    Instantiate<CPlayerCamera>();
+
     Instantiate<CTimer>(30);
-    Instantiate<CPlayer>(25);             
-    Instantiate<CAnimalFactor>(20,20,0);
-   // Instantiate<CFlog>();           
+    Instantiate<CPlayer>(25);
+    Instantiate<CAnimalFactor>(20, 20, 0);
+    // Instantiate<CFlog>();           
     Instantiate<CVisionSystem>();
     Instantiate<CDisplayInfo>();
-    CGameInstance::Get()->Init(3000 );
+    CGameInstance::Get()->Init(3000);
     AudioManager::Load(_T(Sound::Key::PLAY_BGM), _T(Sound::Path::PLAY_BGM));
     AudioManager::Play(_T(Sound::Key::PLAY_BGM));
 }
@@ -41,7 +42,7 @@ void PlayScene::Update()
 
 void PlayScene::Draw()
 {
-#ifdef _DEBUG 
+#ifdef _DEBUG
     //Debug
     QTreeDebug();
 #endif _DEBUG
@@ -54,10 +55,10 @@ void PlayScene::ChangeResultScene()
 {
     SceneManager::ChangeSceneWithTransition(SceneName::RESULT);
 }
+
 //4分木の統計情報Debug
 void PlayScene::QTreeDebug()
 {
-    
     // 衝突判定の統計情報を表示//
     CEnemyManager* pAnimalManager = ObjectManager::FindGameObject<CEnemyManager>();
     if (pAnimalManager != nullptr)
@@ -83,7 +84,8 @@ void PlayScene::QTreeDebug()
 
             if (stats.potentialChecks > 0)
             {
-                float efficiency = 100.0f * static_cast<float>(stats.totalChecks) / static_cast<float>(stats.potentialChecks);
+                float efficiency = 100.0f * static_cast<float>(stats.totalChecks) / static_cast<float>(stats.
+                    potentialChecks);
                 ImGui::Text("効率: %.1f%%", efficiency);
                 ImGui::ProgressBar(efficiency / 100.0f, ImVec2(-1, 0), "");
             }

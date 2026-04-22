@@ -7,6 +7,7 @@
 
 CModelRegistry::CModelRegistry()
 {
+    ObjectManager::DontDestroy(this);
     LoadDefaultModels();
 }
 
@@ -25,9 +26,9 @@ void CModelRegistry::LoadDefaultModels()
     // Dog//
     {
         ModelEntry entry = {};
-        entry.name = "Dog";
+        entry.name = Animal::Name::DOG;
         entry.mesh = new CFbxMesh();
-        entry.mesh->Load("data/NewAnimal/Dog/Dog.mesh");
+        entry.mesh->Load(Animal::Path::DOG);
         entry.mesh->LoadAnimation(A_IDEL, "data/NewAnimal/Dog/Dog_Idle.anmx", false);
         entry.mesh->LoadAnimation(A_RUN, "data/NewAnimal/Dog/Dog_Walk.anmx", true);
         entry.mesh->LoadAnimation(A_WALK, "data/NewAnimal/Dog/Dog_Walk.anmx", true);
@@ -37,9 +38,10 @@ void CModelRegistry::LoadDefaultModels()
     // Human//
     {
         ModelEntry entry = {};
-        entry.name = "Human";
+        entry.name = Animal::Name::HUMAN;
         entry.mesh = new CFbxMesh();
-        entry.mesh->Load("data/NewAnimal/Human/Human.mesh");
+        if (entry.mesh->Load(Animal::Path::HUMAN) == false)
+            assert(false);
         entry.mesh->LoadAnimation(A_IDEL, "data/NewAnimal/Human/Human_Idle.anmx", false);
         entry.mesh->LoadAnimation(A_WALK, "data/NewAnimal/Human/Human_Walk.anmx", true);
         entry.mesh->LoadAnimation(A_SEACH, "data/NewAnimal/Human/Human_Find.anmx", false);
@@ -49,9 +51,9 @@ void CModelRegistry::LoadDefaultModels()
     // Chicken//
     {
         ModelEntry entry = {};
-        entry.name = "Chicken";
+        entry.name = Animal::Name::CHICKEN;
         entry.mesh = new CFbxMesh();
-        entry.mesh->Load("data/NewAnimal/Chicken/Chicken.mesh");
+        entry.mesh->Load(Animal::Path::CHICKEN);
         entry.mesh->LoadAnimation(A_IDEL, "data/NewAnimal/Chicken/Chicken_Idle.anmx", false);
         entry.mesh->LoadAnimation(A_WALK, "data/NewAnimal/Chicken/Chicken_Walk.anmx", true);
         entry.mesh->LoadAnimation(A_RUN, "data/NewAnimal/Chicken/Chicken_Run.anmx", false);
@@ -92,4 +94,3 @@ void CModelRegistry::Register(const std::string& name, CFbxMesh* mesh)
     entry.mesh = mesh;
     m_models.push_back(entry);
 }
-
