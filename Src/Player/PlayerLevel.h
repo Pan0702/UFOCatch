@@ -7,20 +7,28 @@ class CPlayerLevel : public Object3D
 {
 public:
     CPlayerLevel(float initialConeTopPos, float coneDegree);
-    CPlayerLevel(){}
+
+    CPlayerLevel()
+    {
+    }
+
     ~CPlayerLevel() = default;
 
     void AddExp(float exp) { m_exp += exp; }
-    float GetExp()         const { return m_exp; }
-    float GetAllExp()      const { return m_allExp; }
-    int   GetLv()          const { return m_lv; }
-    float GetRadius()      const { return m_coneRadius; }
-    float GetConeTopPos()  const { return m_coneTopPos; }
-    float GetConeDegree()  const { return m_coneDegree; }
+    float GetExp() const { return m_exp; }
+    float GetAllExp() const { return m_allExp; }
+    int GetLv() const { return m_lv; }
+    float GetRadius() const { return m_coneRadius; }
+    float GetConeTopPos() const { return m_coneTopPos; }
+    float GetConeDegree() const { return m_coneDegree; }
+    float GetRaito() const { return m_raito; }
 
 private:
     void Update() override;
-    void Draw()   override {}
+
+    void Draw() override
+    {
+    }
 
     void CheckLevel();
     void IncreaseSuctionConeHeight();
@@ -28,7 +36,8 @@ private:
 
     float m_exp;
     float m_allExp;
-    int   m_lv;
+    int m_lv;
+    float m_raito;
 
     float m_coneTopPos;
     float m_coneRadius;

@@ -27,9 +27,9 @@ CPlayerCamera::~CPlayerCamera()
 
 void CPlayerCamera::Update()
 {
-   // DebugImGui();
+    // DebugImGui();
     UpdateCameraBezier();
-    GameDevice()->m_vEyePt = m_camPos;  // カメラ位置を更新
+    GameDevice()->m_vEyePt = m_camPos; // カメラ位置を更新
     GameDevice()->m_vLookatPt = m_camLook;
     GameDevice()->m_mView = XMMatrixLookAtLH(
         m_camPos, m_camLook, INIT_UP_DIR);
@@ -84,7 +84,7 @@ void CPlayerCamera::PosSet(const VECTOR3& pos, const float& coneHeight)
 void CPlayerCamera::ZoomIn(const VECTOR3& pos)
 {
     if (state == zoomIn) return;
-    m_animStartPlayerPos = pos;  // アニメーション開始時のプレイヤー位置を記録
+    m_animStartPlayerPos = pos; // アニメーション開始時のプレイヤー位置を記録
     m_playerOffset = VECTOR3(0, 0, 0);
 
     VECTOR3 startPos = m_camPos;
@@ -98,9 +98,9 @@ void CPlayerCamera::ZoomIn(const VECTOR3& pos)
     // m_debugTargetLook = targetLook;
 
     // 制御点はプレイヤー位置を基準にオフセット //
-    VECTOR3 controlPoint1 = startLook  + offsetPoint1;
+    VECTOR3 controlPoint1 = startLook + offsetPoint1;
     VECTOR3 controlPoint2 = targetLook + offsetPoint2;
-    
+
 
     m_camPosBezier.Start(startPos, controlPoint1, controlPoint2, targetPos, 0.7f);
     m_camLookBezier.Start(startLook, targetLook, 0.7f);
@@ -111,14 +111,14 @@ void CPlayerCamera::ZoomIn(const VECTOR3& pos)
 // カメラをズームアウトさせる
 // @param pos プレイヤーの位置 //
 ////////////////////
-void CPlayerCamera::ZoomOut(const VECTOR3& pos)
+void CPlayerCamera::ZoomOut(const VECTOR3& pos, const float& coneHeight)
 {
     if (state == zoomOut) return;
-    m_animStartPlayerPos = pos;  // アニメーション開始時のプレイヤー位置を記録
+    m_animStartPlayerPos = pos; // アニメーション開始時のプレイヤー位置を記録
     m_playerOffset = VECTOR3(0, 0, 0);
 
-    // カメラオフセットをスケーリング
-    float scale = pos.y / REFERENCE_HEIGHT;
+    // カメラオフセットをスケーリング (PosSetと同じ計算式)
+    float scale = coneHeight / REFERENCE_HEIGHT;
     VECTOR3 scaledCamOffset = INIT_CAM_POS * scale;
 
     VECTOR3 startPos = m_camPos;
@@ -128,7 +128,7 @@ void CPlayerCamera::ZoomOut(const VECTOR3& pos)
     VECTOR3 targetLook = pos + INIT_CAM_LOOK;
 
     // 制御点はプレイヤー位置を基準にオフセット //
-    VECTOR3 controlPoint1 = pos + offsetPoint2 ;
+    VECTOR3 controlPoint1 = pos + offsetPoint2;
     VECTOR3 controlPoint2 = pos + offsetPoint1;
 
     m_camPosBezier.Start(startPos, controlPoint1, controlPoint2, targetPos, 0.5f);
@@ -141,7 +141,7 @@ void CPlayerCamera::ZoomOut(const VECTOR3& pos)
 // 制御点Debug用 //
 void CPlayerCamera::DebugImGui()
 {
-        ImGui::Begin("Camera Bezier Control");
+    ImGui::Begin("Camera Bezier Control");
 
     // === ZoomIn 制御点 ===
     if (ImGui::CollapsingHeader("ZoomIn Control Points", ImGuiTreeNodeFlags_DefaultOpen))

@@ -2,10 +2,10 @@
 
 CPlayerLevel::CPlayerLevel(float initialConeTopPos, float coneDegree)
     : m_coneDegree(coneDegree)
-    , m_coneTopPos(initialConeTopPos)
-    , m_allExp(1.0f)
-    , m_exp(0.001f)
-    , m_lv(1)
+      , m_coneTopPos(initialConeTopPos)
+      , m_allExp(1.0f)
+      , m_exp(0.001f)
+      , m_lv(1)
 {
     m_coneRadius = m_coneTopPos * tan(DegToRad * m_coneDegree);
 }
@@ -23,11 +23,17 @@ void CPlayerLevel::CheckLevel()
 {
     if (m_exp >= m_allExp)
     {
+        m_raito = 1.0f;
         float tmp = m_exp - m_allExp;
         m_allExp *= 1.3f;
         m_exp = tmp;
+        m_raito += m_exp / m_allExp;
         m_lv++;
         IncreaseSuctionConeHeight();
+    }
+    else
+    {
+        m_raito = m_exp / m_allExp;
     }
 }
 

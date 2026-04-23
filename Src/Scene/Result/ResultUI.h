@@ -6,11 +6,14 @@ class CResultUI : public CUIBase
 {
 public:
     CResultUI();
+
 private:
     void InitBack();
-    void ScoreDraw();
-    void RankDraw();
-    
-    CUIText* m_pScore;
-    CUIText* m_pRank;
+    void InitRank();
+    void InitResultNums();
+    void InitDigits(int value, float srcY);
+    int CalcRank();
+
+    CSpriteImage* m_pSprite = nullptr;
+    CUIText* m_pRank = nullptr;
 };

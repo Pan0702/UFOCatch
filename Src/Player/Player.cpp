@@ -19,14 +19,14 @@ CPlayer::CPlayer(float moveRange)
     transform.position = VECTOR3(0, 5, 0);
     m_pMesh = new CFbxMesh();
     m_pMesh->Load("data/Player/UFO.mesh");
-
+    SetDrawOrder(1);
     constexpr float INITIAL_CONE_HEIGHT = 4.0f;
     constexpr float CONE_DEGREE = 4.0f;
 
     m_pLevel = Instantiate<CPlayerLevel>(transform.position.y + INITIAL_CONE_HEIGHT, CONE_DEGREE);
 
     Instantiate<CPlayerHP>(3);
-    Instantiate<CConeDraw>(transform.position.y,this);
+    Instantiate<CConeDraw>(transform.position.y, this);
     Instantiate<CCircleDraw>(this);
 
     transform.scale = VECTOR3(0.5f, 0.5f, 0.5f);
@@ -35,7 +35,7 @@ CPlayer::CPlayer(float moveRange)
     m_zoomUp = false;
     m_draw = true;
 
-    AudioManager::Load("Suction",    _T("data/Sound/suction.wav"));
+    AudioManager::Load("Suction", _T("data/Sound/suction.wav"));
     AudioManager::Load("SuctionEnd", _T("data/Sound/suctionEnd.wav"));
 }
 
@@ -86,16 +86,6 @@ void CPlayer::Update()
     CVisionSystem* pVision = ObjectManager::FindGameObject<CVisionSystem>();
     pVision->SetCircleCenter(transform.position);
     pVision->SetCircleRadius(m_pLevel->GetRadius());
-
-    //Debug用
-    if (GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_L))
-    {
-        transform.scale = VECTOR3(0.3f, 1.0f, 0.f);
-    }
-    if (GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_K))
-    {
-        transform.scale = VECTOR3(0.5f, 0.5f, 0.5f);
-    }
 }
 
 ////////////////////
@@ -121,7 +111,7 @@ void CPlayer::UpdateCameraPos()
     {
         if (m_zoomUp)
         {
-            ObjectManager::FindGameObject<CPlayerCamera>()->ZoomOut(transform.position);
+            ObjectManager::FindGameObject<CPlayerCamera>()->ZoomOut(transform.position, m_pLevel->GetConeTopPos());
             m_zoomUp = false;
         }
         else
@@ -152,8 +142,8 @@ VECTOR3 CPlayer::CalcSuctionDisplacement(float moveTimeSecond, const VECTOR3& an
     const float heightDiff = topPos - animalPos.y;
     const float progress = 1.0f - (heightDiff / topPos);
     const float eased = (std::max)(0.0f, (std::min)(1.0f, progress));
-    constexpr float minSpeed = 0.4f;                                  
-    constexpr float maxSpeed = 1.8f;  
+    constexpr float minSpeed = 0.4f;
+    constexpr float maxSpeed = 1.8f;
     const float heightSpeedMultiplier = minSpeed + (maxSpeed - minSpeed) * eased;
 
     const float projectionFactorY0 = avoidZero((0 - animalPos.y) / (animalPos.y - topPos));
@@ -177,7 +167,7 @@ bool CPlayer::IsWithSuctionCone(const VECTOR3& targetPos) const
     const float distanceAnimalFromPlayer = coneTopPos - targetPos.y;
     const float coneRadiusAtTargetHeight = distanceAnimalFromPlayer * std::tan(DegToRad * m_pLevel->GetConeDegree());
     return (Pow2(targetPos.x - transform.position.x) + Pow2(targetPos.z - transform.position.z)
-            <= Pow2(coneRadiusAtTargetHeight));
+        <= Pow2(coneRadiusAtTargetHeight));
 }
 
 bool CPlayer::IsInsideSuctionCircle(const VECTOR3& targetPos) const
