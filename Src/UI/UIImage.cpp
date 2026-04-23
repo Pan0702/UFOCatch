@@ -1,4 +1,4 @@
-#include "UIImage.h"
+﻿#include "UIImage.h"
 
 CUIImage::CUIImage(CSpriteImage* pImage, const VECTOR2& pos, const VECTOR2& size)
     :m_pImage(pImage),m_srcRect(0,0,size.x,size.y)

@@ -1,4 +1,4 @@
-#include "UIAnimation.h"
+﻿#include "UIAnimation.h"
 
 CUIAnimation::CUIAnimation(std::string name)
     : m_name(std::move(name)), m_duration(0.0f)

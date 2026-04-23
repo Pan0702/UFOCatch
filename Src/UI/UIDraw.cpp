@@ -1,4 +1,4 @@
-#include "UIDraw.h"
+﻿#include "UIDraw.h"
 #include "ImageRegistry.h"
 
 int CUIDraw::AddElement(const char* name, const VECTOR2& pos, const VECTOR4& size, float alpha, int layer)

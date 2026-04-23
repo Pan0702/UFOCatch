@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "UIWidget.h"
 
 /// @brief 複数のウィジェットを管理し、更新・描画を統括するクラス

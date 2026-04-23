@@ -1,4 +1,4 @@
-#include "UIAnimationTrack.h"
+﻿#include "UIAnimationTrack.h"
 
 #include <algorithm>
 

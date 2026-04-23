@@ -1,4 +1,4 @@
-#include "ImageRegistry.h"
+﻿#include "ImageRegistry.h"
 
 #include "../Utils/MyLib.h"
 

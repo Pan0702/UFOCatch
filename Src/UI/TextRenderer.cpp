@@ -1,4 +1,4 @@
-#include "TextRenderer.h"
+﻿#include "TextRenderer.h"
 
 CUIText::CUIText(CSpriteImage* pFont, const VECTOR2& pos, const VECTOR2& srcPos, const VECTOR2& srcSize)
     : m_pFont(pFont), m_srcPos(srcPos), m_srcSize(srcSize)

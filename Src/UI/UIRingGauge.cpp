@@ -1,4 +1,4 @@
-#include "UIRingGauge.h"
+﻿#include "UIRingGauge.h"
 
 #include "../Framework/sceneManager.h"
 

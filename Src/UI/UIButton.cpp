@@ -1,4 +1,4 @@
-#include "UIButton.h"
+﻿#include "UIButton.h"
 
 CUIButton::CUIButton(const VECTOR2& pos, const VECTOR4& size, CSpriteImage* pNormalImage, CSpriteImage* pFocusImage)
     : CUIImage(pNormalImage, pos, size), m_pNormalImage(pNormalImage), m_pFocusImage(pFocusImage)

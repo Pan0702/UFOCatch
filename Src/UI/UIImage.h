@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "UIWidget.h"
 
 /// @brief テクスチャを描画するウィジェット

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../Utils/Sprite3D.h"
 
 /// @brief CUIDrawが管理する1つの描画要素

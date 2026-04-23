@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "UIButton.h"
 #include "../Common/Constants.h"
 #include "ImageRegistry.h"

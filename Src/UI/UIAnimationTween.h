@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <functional>
 
 /// @brief ゲージ等のTweenアニメーション設定をまとめた構造体

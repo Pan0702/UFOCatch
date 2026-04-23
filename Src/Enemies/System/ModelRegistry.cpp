@@ -1,5 +1,4 @@
 ﻿#include "ModelRegistry.h"
-#include "../../Utils/FbxMesh.h"
 #include <Windows.h>
 #include <tchar.h>
 
