@@ -3,12 +3,32 @@
 #include "../../Core/Game/GameMain.h"
 #include "../../Framework/sceneManager.h"
 
+namespace
+{
+    // 難易度画像のパス（ボタンインデックス 0=Tutorial, 1=Easy, 2=Normal に対応）
+    const std::vector<std::string> DIFFICULTY_IMAGE_PATHS =
+    {
+        "data/Select/T.png",
+        "data/Select/E.png",
+        "data/Select/N.png",
+    };
+
+    // 難易度画像の描画位置・サイズ
+    constexpr float DIFF_IMG_X = 0.0f;
+    constexpr float DIFF_IMG_Y = 0.0f;
+    constexpr float DIFF_IMG_W = 1366.0f;
+    constexpr float DIFF_IMG_H = 768.0f;
+}
 
 CSelectUI::CSelectUI()
+    : m_pDifficultyImage(nullptr)
+    , m_lastFocusIndex(-1)
 {
     m_sceneNames = {SceneName::TITLE, SceneName::TUTORIAL, SceneName::EASY, SceneName::NORMAL};
     BackImage();
+    InitDifficultyImage();
     InitButtons();
+    UpdateDifficultyImage();
 }
 
 void CSelectUI::InitButtons()
@@ -55,11 +75,40 @@ void CSelectUI::BackImage()
     m_canvas.AddWidget(std::move(backImage));
 }
 
+void CSelectUI::InitDifficultyImage()
+{
+    // テクスチャをあらかじめ全部ロードしておく
+    for (const auto& path : DIFFICULTY_IMAGE_PATHS)
+        m_difficultyTextures.push_back(ImageRegistry::LoadTexture(path));
+
+    // 最初はインデックス0の画像で初期化
+    auto img = std::make_unique<CUIImage>(
+        m_difficultyTextures[0],
+        VECTOR2(DIFF_IMG_X, DIFF_IMG_Y),
+        VECTOR2(DIFF_IMG_W, DIFF_IMG_H));
+    m_pDifficultyImage = m_canvas.AddWidget(std::move(img));
+    m_pDifficultyImage->SetLayer(5);
+}
+
+void CSelectUI::UpdateDifficultyImage()
+{
+    const int focusIndex = m_buttons.GetFocusIndex();
+    if (focusIndex == m_lastFocusIndex) return;
+    m_lastFocusIndex = focusIndex;
+
+    // インデックス0は戻るボタンなので難易度画像は対象外
+    const int diffIndex = focusIndex - 1;
+    if (m_pDifficultyImage && diffIndex >= 0 && diffIndex < static_cast<int>(m_difficultyTextures.size()))
+        m_pDifficultyImage->SetImage(m_difficultyTextures[diffIndex]);
+}
+
 void CSelectUI::Update()
 {
     auto input = GameDevice()->m_pDI;
     m_buttons.MoveFocus(input->IsPushDownKey());
     m_buttons.MoveFocus(input->IsPushUpKey());
+
+    UpdateDifficultyImage();
 
     if (input->IsPushEnter())
     {

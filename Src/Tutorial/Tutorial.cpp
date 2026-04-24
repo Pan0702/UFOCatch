@@ -58,7 +58,7 @@ void CTutorial::SpawnAnimal()
     {
         float randomX = Randomf(SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
         float randomZ = Randomf(SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
-        new CTutorialAnimal(VECTOR3(randomX, 0, randomZ));
+        Instantiate<CTutorialAnimal>(VECTOR3(randomX, 0, randomZ));
     }
 }
 
@@ -69,8 +69,8 @@ void CTutorial::SpawnHuman()
 {
     static constexpr float HUMAN_SPAWN_Z = 6.0f;
     static constexpr float ANIMAL_SPAWN_Z = 5.0f;
-    new CTutorialHuman(VECTOR3(0, 0, HUMAN_SPAWN_Z));
-    new CTutorialAnimal(VECTOR3(0, 0, ANIMAL_SPAWN_Z));
+    Instantiate<CTutorialHuman>(VECTOR3(0, 0, HUMAN_SPAWN_Z));
+    Instantiate<CTutorialAnimal>(VECTOR3(0, 0, ANIMAL_SPAWN_Z));
 }
 
 ////////////////////
@@ -78,23 +78,23 @@ void CTutorial::SpawnHuman()
 ////////////////////
 void CTutorial::Lesson()
 {
-    new CTimer(20);
+    Instantiate< CTimer>(20);
     static constexpr int LESSON_TIME_SECONDS = 30;
     static constexpr int LESSON_ANIMAL_COUNT = 5;
 
-    new CEnemyManager();
-    new CTimer(LESSON_TIME_SECONDS);
+    Instantiate< CEnemyManager>();
+    Instantiate< CTimer>(LESSON_TIME_SECONDS);
 
     // 人間を1体生成 //
     float randomX = Randomf(SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
     float randomZ = Randomf(SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
-    new CHuman(VECTOR3(randomX, 0, randomZ));
+    Instantiate< CHuman>(VECTOR3(randomX, 0, randomZ));
 
     // 動物を複数体生成 //
     for (int i = 0; i < LESSON_ANIMAL_COUNT; i++)
     {
         randomX = Randomf(SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
         randomZ = Randomf(SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
-        new CTutorialAnimal(VECTOR3(randomX, 0, randomZ));
+        Instantiate< CTutorialAnimal>(VECTOR3(randomX, 0, randomZ));
     }
 }
