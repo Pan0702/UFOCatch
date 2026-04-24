@@ -3,27 +3,25 @@
 
 class CGround;
 
-// 繝√Η繝ｼ繝医Μ繧｢繝ｫ逕ｨ縺ｮ蜍慕黄繧ｯ繝ｩ繧ｹ //
+// チュートリアル用の動物クラス //
 class CTutorialAnimal : public Object3D
 {
 public:
-    // 謖・ｮ壻ｽ咲ｽｮ縺ｫ繝√Η繝ｼ繝医Μ繧｢繝ｫ逕ｨ蜍慕黄繧堤函謌舌☆繧・
-    // @param pos 逕滓・菴咲ｽｮ //
+    // 指定位置にチュートリアル用動物を生成する
+    // @param pos 生成位置 //
     CTutorialAnimal(const VECTOR3& pos);
     ~CTutorialAnimal();
     
-    //縲Score繧定ｶｳ縺励※繧ｪ繝悶ず繧ｧ繧ｯ繝医ｒDestroy//
+    // Scoreを加算してオブジェクトをDestroy //
     void Destroy();
 
 private:
 
-
     void Update() override;
 
-    // 驥榊鴨繧帝←逕ｨ縺吶ｋ //
+    // 重力を適用する //
     void ApplyGravity();
 
-    float m_velocityY = 0.0f;      // Y霆ｸ譁ｹ蜷代・騾溷ｺｦ //
-    CGround* m_pGround = nullptr;  // 蝨ｰ髱｢繧ｪ繝悶ず繧ｧ繧ｯ繝医∈縺ｮ繝昴う繝ｳ繧ｿ //
+    float m_velocityY = 0.0f;      // Y軸方向の速度 //
+    CGround* m_pGround = nullptr;  // 地面オブジェクトへのポインタ //
 };
-

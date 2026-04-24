@@ -2,7 +2,7 @@
 
 namespace
 {
-    // 遘ｻ蜍墓桃菴弑I縺ｮ謠冗判菴咲ｽｮ繝ｻ繧ｵ繧､繧ｺ //
+    // 移動操作UIの描画位置・サイズ //
     constexpr int MOVE_UI_X = 486;
     constexpr int MOVE_UI_Y = 580;
     constexpr int MOVE_UI_SRC_X = 0;
@@ -10,7 +10,7 @@ namespace
     constexpr int MOVE_UI_WIDTH = 382;
     constexpr int MOVE_UI_HEIGHT = 124;
 
-    // 蜷ｸ縺・ｾｼ縺ｿ謫堺ｽ弑I縺ｮ謠冗判菴咲ｽｮ繝ｻ繧ｵ繧､繧ｺ //
+    // 吸い込み操作UIの描画位置・サイズ //
     constexpr int SUCTION_UI_X = 477;
     constexpr int SUCTION_UI_Y = 600;
     constexpr int SUCTION_UI_SRC_X = 0;
@@ -18,7 +18,7 @@ namespace
     constexpr int SUCTION_UI_WIDTH = 406;
     constexpr int SUCTION_UI_HEIGHT = 84;
 
-    // 逶ｮ讓呵｡ｨ遉ｺUI縺ｮ謠冗判菴咲ｽｮ繝ｻ繧ｵ繧､繧ｺ //
+    // 目標表示UIの描画位置・サイズ //
     constexpr int TARGET_UI_X = 330;
     constexpr int TARGET_UI_Y = 30;
     constexpr int TARGET_UI_SRC_X = 0;
@@ -45,7 +45,7 @@ void CTutorialDisplayInfo::Draw()
 }
 
 ////////////////////
-// 謫堺ｽ懆ｪｬ譏散I繧呈緒逕ｻ縺吶ｋ 
+// 操作説明UIを描画する 
 ////////////////////
 void CTutorialDisplayInfo::OperationDraw() const
 {
@@ -64,7 +64,7 @@ void CTutorialDisplayInfo::OperationDraw() const
 }
 
 ////////////////////
-// 逶ｮ讓呵｡ｨ遉ｺUI繧呈緒逕ｻ縺吶ｋ 
+// 目標表示UIを描画する 
 ////////////////////
 void CTutorialDisplayInfo::TargetDraw() const
 {
@@ -72,4 +72,3 @@ void CTutorialDisplayInfo::TargetDraw() const
     int srcY = TARGET_UI_BASE_SRC_Y + TARGET_UI_QUEST_HEIGHT * m_questNum;
     spr.Draw(m_pImage.get(), TARGET_UI_X, TARGET_UI_Y, TARGET_UI_SRC_X, srcY, TARGET_UI_WIDTH, TARGET_UI_QUEST_HEIGHT);
 }
-

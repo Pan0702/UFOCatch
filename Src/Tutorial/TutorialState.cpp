@@ -11,17 +11,17 @@
 
 namespace
 {
-    // 陦ｨ遉ｺ繧ｿ繧､繝怜ｮ壽焚 //
+    // 表示タイプ定数 //
     constexpr int DISPLAY_TYPE_SUCTION = 1;
     constexpr int DISPLAY_TYPE_EXPANDS = 2;
     constexpr int DISPLAY_TYPE_DISCOVERY = 3;
     constexpr int DISPLAY_TYPE_PLAY = 4;
 
-    // 繧ｯ繧ｨ繧ｹ繝育分蜿ｷ螳壽焚 //
+    // クエスト番号定数 //
     constexpr int QUEST_SUCTION = 1;
     constexpr int QUEST_EXPANDS = 2;
 
-    // 諡｡螟ｧ繧ｹ繝・・繝医°繧画ｬ｡縺ｸ騾ｲ繧縺ｮ縺ｫ蠢・ｦ√↑謐慕佐謨ｰ //
+    // 拡大（拡張）ステートから次へ進むのに必要な捕獲数 //
     constexpr int REQUIRED_CAPTURE_COUNT = 3;
 }
 
@@ -31,7 +31,7 @@ CTutorialState::CTutorialState(CTutorial* pT)
 }
 
 ////////////////////
-// 繝励Ξ繧､繝､繝ｼ縺ｫ謐慕佐縺輔ｌ縺溷虚迚ｩ繧貞炎髯､縺吶ｋ 
+// プレイヤーに捕獲された動物を削除する 
 ////////////////////
 void CTutorialState::RemoveCaughtAnimals()
 {
@@ -39,7 +39,7 @@ void CTutorialState::RemoveCaughtAnimals()
     for (CTutorialAnimal* animal : animals)
     {
         CPlayer* pPl = ObjectManager::FindGameObject<CPlayer>();
-        // 繝励Ξ繧､繝､繝ｼ縺ｮY蠎ｧ讓吶′蜍慕黄縺ｮ荳顔ｫｯ莉･荳九↑繧画黒迯ｲ縺ｨ縺ｿ縺ｪ縺・//
+        // プレイヤーのY座標が動物の上端以下なら捕獲とみなす //
         if (pPl->GetTransform().position.y <= animal->GetTransform().position.y + animal->GetMesh()->m_vMax.y)
         {
             animal->Destroy();
@@ -142,7 +142,7 @@ void CDiscoveryState::Exit()
 {
     CTutorialDisplayInfo* pTI = ObjectManager::FindGameObject<CTutorialDisplayInfo>();
     pTI->SetDisplayType(DISPLAY_TYPE_PLAY);
-    // 繝√Η繝ｼ繝医Μ繧｢繝ｫ逕ｨ莠ｺ髢薙ｒ蜑企勁 //
+    // チュートリアル用人間を削除 //
     ObjectManager::FindGameObject<CTutorialHuman>()->DestroyMe();
 }
 
@@ -161,4 +161,3 @@ void CPlayState::Update()
 {
     RemoveCaughtAnimals();
 }
-

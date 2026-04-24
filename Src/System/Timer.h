@@ -1,31 +1,31 @@
 ﻿#pragma once
 #include "../Common/Object3D.h"
 
-// 繧ｲ繝ｼ繝蜀・・繧ｿ繧､繝槭・繧堤ｮ｡逅・☆繧九け繝ｩ繧ｹ //
+// ゲーム内のタイマーを管理するクラス //
 class CTimer : public Object3D
 {
 public:
-    // 繧ｿ繧､繝槭・縺ｮ譛螟ｧ譎る俣繧呈欠螳壹＠縺ｦ繧､繝ｳ繧ｹ繧ｿ繝ｳ繧ｹ繧堤函謌舌☆繧・
-    // @param maxTimeSec 譛螟ｧ譎る俣・育ｧ抵ｼ・//
+    // タイマーの最大時間を指定してインスタンスを生成する
+    // @param maxTimeSec 最大時間（秒） //
     CTimer(float maxTimeSec);
     ~CTimer();
 
     float GetTime() {return m_currentTime;}
     void SetStareFlag(bool flag) {m_stareFlag = flag;}
 
-    // 繧ｫ繝・ヨ繧､繝ｳ諠・ｱ蜿門ｾ・
+    // カットイン情報取得
     int GetCutInNum() const { return m_cutInNum; }
     bool IsCutInVisible() const { return m_isCutInVisible; }
 
-    // 繧ｲ繝ｼ繝縺碁幕蟋九＠縺ｦ縺・ｋ縺具ｼ・o陦ｨ遉ｺ蠕鯉ｼ・
+    // ゲームが開始しているか（Go表示後） //
     bool IsGameStarted() const { return m_stareFlag; }
 
 private:
     void Update() override;
-    // 譎る俣繧呈緒逕ｻ縺吶ｋ
-    // @param posX X蠎ｧ讓・
-    // @param posY Y蠎ｧ讓・
-    // @param num 謨ｰ蛟､ //
+    // 時間を描画する
+    // @param posX X座標
+    // @param posY Y座標
+    // @param num 数値 //
     void DrawTime(const float& posX, const float& posY, const float& num) const;
     void TimeOut();
 
@@ -36,9 +36,8 @@ private:
     bool m_stareFlag;
     bool m_finishFlag;
 
-    // 繧ｫ繝・ヨ繧､繝ｳ逕ｨ
+    // カットイン用
     int m_cutInNum;           // 0=Ready, 1=Go, 2=Finish
     bool m_isCutInVisible;
     float m_cutInTimer;
 };
-

@@ -1,39 +1,39 @@
 ﻿#pragma once
 #include "../Common/Object3D.h"
 
-// 繝√Η繝ｼ繝医Μ繧｢繝ｫ縺ｮUI陦ｨ遉ｺ繧堤ｮ｡逅・☆繧九け繝ｩ繧ｹ //
+// チュートリアルのUI表示を管理するクラス //
 class CTutorialDisplayInfo : public Object3D
 {
 public:
     CTutorialDisplayInfo();
     ~CTutorialDisplayInfo();
-    // 陦ｨ遉ｺ繧ｿ繧､繝励ｒ險ｭ螳壹☆繧・
-    // @param type 陦ｨ遉ｺ繧ｿ繧､繝・//
+
+    // 表示タイプを設定する
+    // @param type 表示タイプ //
     void SetDisplayType(int type){ m_nDisplayType = type; }
 
-    // 繧ｯ繧ｨ繧ｹ繝育分蜿ｷ繧定ｨｭ螳壹☆繧・
-    // @param quest 繧ｯ繧ｨ繧ｹ繝育分蜿ｷ //
+    // クエスト番号を設定する
+    // @param quest クエスト番号 //
     void SetQuest(int quest){ m_questNum = quest; }
 
 private:
 
     void Draw() override;
 
-    // 謫堺ｽ懆ｪｬ譏散I繧呈緒逕ｻ縺吶ｋ //
+    // 操作説明UIを描画する //
     void OperationDraw() const;
 
-    // 逶ｮ讓呵｡ｨ遉ｺUI繧呈緒逕ｻ縺吶ｋ //
+    // 目標表示UIを描画する //
     void TargetDraw() const;
 
-    // 陦ｨ遉ｺ繧ｿ繧､繝怜ｮ壽焚 //
+    // 表示タイプ定数 //
     enum
     {
-        Move = 0,     // 遘ｻ蜍墓桃菴・//
-        Suction = 1,  // 蜷ｸ縺・ｾｼ縺ｿ謫堺ｽ・//
+        Move = 0,     // 移動操作 //
+        Suction = 1,  // 吸い込み操作 //
     };
 
-    int m_nDisplayType;       // 迴ｾ蝨ｨ縺ｮ陦ｨ遉ｺ繧ｿ繧､繝・//
-    int m_questNum;           // 迴ｾ蝨ｨ縺ｮ繧ｯ繧ｨ繧ｹ繝育分蜿ｷ //
-    std::unique_ptr<CSpriteImage> m_pImage;   // UI逕ｻ蜒・//
+    int m_nDisplayType;       // 現在の表示タイプ //
+    int m_questNum;           // 現在のクエスト番号 //
+    std::unique_ptr<CSpriteImage> m_pImage;   // UI画像 //
 };
-

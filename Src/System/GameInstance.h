@@ -8,7 +8,8 @@ public:
     CGameInstance();
     void Update() override;
     void Init(int max);
-    //Get髢｢謨ｰ
+
+    // Get関数
     int GetMaxScore() const { return m_maxScore; }
     int GetScore() const { return m_score; }
     int GetDiscovery() const { return m_discovery; }
@@ -16,7 +17,8 @@ public:
     int GetSaw() const{ return m_saw; }
     const VECTOR4& GetMapSize() const { return m_mapSize; }
     void SetMapSize(const VECTOR4& size) { m_mapSize = size; }
-    //Add髢｢謨ｰ
+
+    // Add関数
     void AddScore(int score) { m_score += score; }
     void AddDiscovery(int dis) { m_discovery += dis; }
     void AddCapture(int cap) { m_capture += cap; }
@@ -34,4 +36,3 @@ private:
     int m_capture;
     VECTOR4 m_mapSize;
 };
-

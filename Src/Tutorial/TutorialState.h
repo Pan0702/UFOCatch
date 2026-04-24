@@ -2,41 +2,41 @@
 
 class CTutorial;
 
-// 繝√Η繝ｼ繝医Μ繧｢繝ｫ縺ｮ繧ｹ繝・・繝亥渕蠎輔け繝ｩ繧ｹ //
+// チュートリアルのステート基底クラス //
 class CTutorialState
 {
 public:
-    // 繧ｳ繝ｳ繧ｹ繝医Λ繧ｯ繧ｿ
-    // @param pT 繝√Η繝ｼ繝医Μ繧｢繝ｫ繧ｪ繝悶ず繧ｧ繧ｯ繝医∈縺ｮ繝昴う繝ｳ繧ｿ //
+    // コンストラクタ
+    // @param pT チュートリアルオブジェクトへのポインタ //
     CTutorialState(CTutorial* pT);
 
     virtual void Enter(){}
     virtual void Update(){}
     virtual void Exit(){}
 
-    // 繝√Η繝ｼ繝医Μ繧｢繝ｫ縺ｮ繧ｹ繝・・繝育ｨｮ蛻･ //
+    // チュートリアルのステート種別 //
     enum class State
     {
-        None,       // 譛ｪ險ｭ螳・//
-        Move,       // 遘ｻ蜍墓桃菴・//
-        Suction,    // 蜷ｸ縺・ｾｼ縺ｿ謫堺ｽ・//
-        Expands,    // 諡｡螟ｧ謫堺ｽ・//
-        Discovery,  // 逋ｺ隕九＆繧後ｋ菴馴ｨ・//
-        Play,       // 螳溯ｷｵ繝励Ξ繧､ //
+        None,       // 未設定 //
+        Move,       // 移動操作 //
+        Suction,    // 吸い込み操作 //
+        Expands,    // 拡大操作（複数捕獲） //
+        Discovery,  // 発見される体験 //
+        Play,       // 実践プレイ //
     };
 
 protected:
-    CTutorial* m_pTutorial;  // 繝√Η繝ｼ繝医Μ繧｢繝ｫ繧ｪ繝悶ず繧ｧ繧ｯ繝医∈縺ｮ繝昴う繝ｳ繧ｿ //
+    CTutorial* m_pTutorial;  // チュートリアルオブジェクトへのポインタ //
 
-    // 繝励Ξ繧､繝､繝ｼ縺ｫ謐慕佐縺輔ｌ縺溷虚迚ｩ繧貞炎髯､縺吶ｋ //
+    // プレイヤーに捕獲された動物を削除する //
     void RemoveCaughtAnimals();
 };
 
-// 遘ｻ蜍墓桃菴懊ｒ謨吶∴繧九せ繝・・繝・//
+// 移動操作を教えるステート //
 class CMoveState : public CTutorialState
 {
 public:
-    // @param pT 繝√Η繝ｼ繝医Μ繧｢繝ｫ繧ｪ繝悶ず繧ｧ繧ｯ繝医∈縺ｮ繝昴う繝ｳ繧ｿ //
+    // @param pT チュートリアルオブジェクトへのポインタ //
     CMoveState(CTutorial* pT);
 
     void Enter() override{}
@@ -44,11 +44,11 @@ public:
     void Exit() override;
 };
 
-// 蜷ｸ縺・ｾｼ縺ｿ謫堺ｽ懊ｒ謨吶∴繧九せ繝・・繝・//
+// 吸い込み操作を教えるステート //
 class CSuctionState : public CTutorialState
 {
 public:
-    // @param pT 繝√Η繝ｼ繝医Μ繧｢繝ｫ繧ｪ繝悶ず繧ｧ繧ｯ繝医∈縺ｮ繝昴う繝ｳ繧ｿ //
+    // @param pT チュートリアルオブジェクトへのポインタ //
     CSuctionState(CTutorial* pT);
 
     void Enter() override{}
@@ -56,11 +56,11 @@ public:
     void Exit() override;
 };
 
-// 諡｡螟ｧ謫堺ｽ懊ｒ謨吶∴繧九せ繝・・繝・//
+// 拡大操作（応用）を教えるステート //
 class CExpands : public CTutorialState
 {
 public:
-    // @param pT 繝√Η繝ｼ繝医Μ繧｢繝ｫ繧ｪ繝悶ず繧ｧ繧ｯ繝医∈縺ｮ繝昴う繝ｳ繧ｿ //
+    // @param pT チュートリアルオブジェクトへのポインタ //
     CExpands(CTutorial* pT);
 
     void Enter() override;
@@ -68,11 +68,11 @@ public:
     void Exit() override;
 };
 
-// 逋ｺ隕九＆繧後ｋ縺薙→繧呈蕗縺医ｋ繧ｹ繝・・繝・//
+// 発見されることを教えるステート //
 class CDiscoveryState : public CTutorialState
 {
 public:
-    // @param pT 繝√Η繝ｼ繝医Μ繧｢繝ｫ繧ｪ繝悶ず繧ｧ繧ｯ繝医∈縺ｮ繝昴う繝ｳ繧ｿ //
+    // @param pT チュートリアルオブジェクトへのポインタ //
     CDiscoveryState(CTutorial* pT);
 
     void Enter() override;
@@ -80,11 +80,11 @@ public:
     void Exit() override;
 };
 
-// 螳溯ｷｵ繝励Ξ繧､繧ｹ繝・・繝・//
+// 実践プレイステート //
 class CPlayState : public CTutorialState
 {
 public:
-    // @param pT 繝√Η繝ｼ繝医Μ繧｢繝ｫ繧ｪ繝悶ず繧ｧ繧ｯ繝医∈縺ｮ繝昴う繝ｳ繧ｿ //
+    // @param pT チュートリアルオブジェクトへのポインタ //
     CPlayState(CTutorial* pT);
 
     void Enter() override;

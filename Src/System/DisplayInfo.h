@@ -3,7 +3,7 @@
 #include "../Utils/Sprite3D.h"
 #include "../Utils/LerpValue.h"
 
-// 繧ｲ繝ｼ繝荳ｭ縺ｮUI繧定｡ｨ遉ｺ縺吶ｋ繧ｯ繝ｩ繧ｹ //
+// ゲーム中のUIを表示するクラス //
 class CDisplayInfo : public Object3D
 {
 public:
@@ -26,12 +26,12 @@ private:
     CSpriteImage* m_giwakuImage;
     CSpriteImage* m_pLogo;
 
-    // 邨碁ｨ灘､繧ｲ繝ｼ繧ｸ逕ｨ
+    // 経験値ゲージ用
     LerpValue m_xpWeightLerp;
     float m_prevProportion;
     float m_currentWidth;
 
-    // 逍第ヱ繧ｲ繝ｼ繧ｸ逕ｨ・亥・蠖｢・・
+    // 疑惑ゲージ用（円形）
     LerpValue m_giwakuAngleLerp;
     float m_prevGiwakuProportion;
     float m_currentAngle;
