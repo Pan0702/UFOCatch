@@ -1,6 +1,7 @@
 ﻿#include "DebugScene.h"
 #include <cassert>
 
+#include "../../Debug/DebugCamera.h"
 #include "../../System/GameInstance.h"
 #include "../../Enemies/System/EnemyManager.h"
 #include "../../Player/PCamera.h"
@@ -15,20 +16,16 @@
 
 CDebugScene::CDebugScene()
 {
-    //  Instantiate<CStageFactor>();
-    //  Instantiate<CPlayerCamera>();
-    //  SingleInstantiate<CEnemyManager>();
-    //  Instantiate<CTimer>(300);
-    //  //new CAnimalFactor(20, 20);
-    // // new CAnimalChicken();
-    //  Instantiate<CPlayer>(50);
-    //  Instantiate<CVisionSystem>();
-    //  Instantiate<CDisplayInfo>();
-    //  Instantiate<CFlog>();
-    //  CGameInstance::Get()->Init(1000);
-
-    m_pDebugUI = new DebugUI();
-    m_pUI = new CPlayUI();
+    Instantiate<CStageFactor>();
+    SingleInstantiate<CEnemyManager>();
+    Instantiate<CDebugCamera>();
+    auto* flog = Instantiate<CFlog>();
+    auto* dog = Instantiate<CAShepherdDog>();
+    CGameInstance::Get()->Init(1000);
+    for (CSheep* s : flog->GetAllSheeps())
+    {
+        dog->AddSheep(s);
+    }
 }
 
 CDebugScene::~CDebugScene()
@@ -44,11 +41,11 @@ void CDebugScene::ChangeResultScene()
 void CDebugScene::Update()
 {
     // m_pDebugUI->Update();
-    m_pUI->Update();
+    // m_pUI->Update();
 }
 
 void CDebugScene::Draw()
 {
     //m_pDebugUI->Draw();
-    m_pUI->Draw();
+    //m_pUI->Draw();
 }

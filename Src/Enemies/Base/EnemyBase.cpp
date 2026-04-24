@@ -14,7 +14,6 @@ CEnemyBase::CEnemyBase()
     {
         m_pEnemyManager->RegisterEnemy(this);
     }
-
 }
 
 
@@ -27,7 +26,22 @@ std::unique_ptr<CBBox> CEnemyBase::CreateBBox()
     return move(m_pBBox);
 }
 
-
+std::unique_ptr<CBBox> CEnemyBase::CreateBBox(const float shrink)
+{
+    if (m_pBBox == nullptr && m_pMesh != nullptr)
+    {
+        const VECTOR3 vMin = m_pMesh->m_vMin;
+        const VECTOR3 vMax = m_pMesh->m_vMax;
+        const VECTOR3 center = (vMin + vMax) * 0.5f;
+        const VECTOR3 half = VECTOR3(
+            (vMax.x - vMin.x) * 0.5f * shrink,
+            (vMax.y - vMin.y) * 0.5f,
+            (vMax.z - vMin.z) * 0.5f * shrink
+        );
+        m_pBBox = std::make_unique<CBBox>(center - half, center + half);
+    }
+    return move(m_pBBox);
+}
 
 void CEnemyBase::ChangeState(CBaseState::State type)
 {
@@ -45,7 +59,6 @@ CEnemyBase::~CEnemyBase()
     {
         m_pEnemyManager->UnregisterEnemy(this);
     }
-
 }
 
 void CEnemyBase::Update()
@@ -112,11 +125,11 @@ bool CEnemyBase::GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const
         //Mesh縺後↑縺代ｌ縺ｰ邨ゅｏ繧・/
         return false;
     }
-    
+
     // XZ蟷ｳ髱｢縺ｧ縺ｮ4鬆らせ繧貞叙蠕・/
     const VECTOR3 min = m_pMesh->m_vMin;
     const VECTOR3 max = m_pMesh->m_vMax;
-    
+
     VECTOR3 corners[4] = {
         VECTOR3(min.x, 0, min.z),
         VECTOR3(max.x, 0, min.z),
@@ -189,7 +202,7 @@ void CEnemyBase::ResolveOBBCollisions()
     // 蜻ｨ霎ｺ繧ｨ繝阪Α繝ｼ縺ｨ蠖薙◆繧雁愛螳・/
     for (auto* enemy : nearbyEnemies)
     {
-        if (enemy == this) continue;  // 閾ｪ蛻・・霄ｫ縺ｯ繧ｹ繧ｭ繝・・//
+        if (enemy == this) continue; // 閾ｪ蛻・・霄ｫ縺ｯ繧ｹ繧ｭ繝・・//
         if (enemy->GetBBox() == nullptr) continue;
 
         VECTOR3 hitPos, hitNormal;
@@ -214,7 +227,7 @@ void CEnemyBase::CalcApplyPushback(CEnemyBase* other)
     // 繝ｯ繝ｼ繝ｫ繝臥ｩｺ髢薙↓螟画鋤//
     myCenterMat = myCenterMat * m_pBBox->m_mWorld;
     // 陦悟・縺九ｉ菴咲ｽｮ謌仙・繧呈歓蜃ｺ縺励※閾ｪ蛻・・荳ｭ蠢・ｺｧ讓吶ｒ蜿門ｾ・/
-    VECTOR3 myCenter =GetPositionVector(myCenterMat);
+    VECTOR3 myCenter = GetPositionVector(myCenterMat);
 
     // 逶ｸ謇九・OBB荳ｭ蠢・ｺｧ讓吶ｒ險育ｮ・/
     CBBox* otherBBox = other->GetBBox();
@@ -226,18 +239,18 @@ void CEnemyBase::CalcApplyPushback(CEnemyBase* other)
     // 繝ｯ繝ｼ繝ｫ繝臥ｩｺ髢薙↓螟画鋤//
     otherCenterMat = otherCenterMat * otherBBox->m_mWorld;
     // 陦悟・縺九ｉ菴咲ｽｮ謌仙・繧呈歓蜃ｺ縺励※逶ｸ謇九・荳ｭ蠢・ｺｧ讓吶ｒ蜿門ｾ・/
-    VECTOR3 otherCenter =  GetPositionVector(otherCenterMat);
+    VECTOR3 otherCenter = GetPositionVector(otherCenterMat);
 
     // 謚ｼ縺玲綾縺励・繧ｯ繝医Ν繧定ｨ育ｮ・/
     VECTOR3 pushDirection = myCenter - otherCenter;
-    pushDirection.y = 0.0f;  // Y謌仙・繧堤┌隕悶＠縺ｦXZ蟷ｳ髱｢縺ｮ縺ｿ縺ｧ謚ｼ縺玲綾縺・/
+    pushDirection.y = 0.0f; // Y謌仙・繧堤┌隕悶＠縺ｦXZ蟷ｳ髱｢縺ｮ縺ｿ縺ｧ謚ｼ縺玲綾縺・/
     float distance = magnitude(pushDirection);
 
-    if (distance > 0.001f)  // 0髯､邂励ｒnorm縺ｧ襍ｷ縺薙＆縺ｪ縺・◆繧√↓蛟､縺後＞蟆上＆縺・ｴ蜷医・繧ｹ繧ｭ繝・・//
+    if (distance > 0.001f) // 0髯､邂励ｒnorm縺ｧ襍ｷ縺薙＆縺ｪ縺・◆繧√↓蛟､縺後＞蟆上＆縺・ｴ蜷医・繧ｹ繧ｭ繝・・//
     {
         pushDirection = normalize(pushDirection);
 
-        static constexpr float PUSHBACK_SPEED = 6.0f;  // 1遘偵≠縺溘ｊ縺ｮ謚ｼ縺玲綾縺鈴溷ｺｦ
+        static constexpr float PUSHBACK_SPEED = 6.0f; // 1遘偵≠縺溘ｊ縺ｮ謚ｼ縺玲綾縺鈴溷ｺｦ
 
         // 謚ｼ縺玲綾縺苓ｷ晞屬//
         float pushDistance = PUSHBACK_SPEED * SceneManager::DeltaTime();
@@ -300,7 +313,7 @@ VECTOR3 CEnemyBase::CalcSlideMove(const VECTOR3& desiredMove) const
                 // awayDir 縺ｯ縲梧惠縺九ｉ髮｢繧後ｋ譁ｹ蜷代・ 螢∵ｳ慕ｷ壹・霑台ｼｼ
                 // moveVec 縺ｮ縲梧惠縺ｫ蜷代°縺・・蛻・阪□縺代ｒ髯､蜴ｻ縺吶ｋ
                 float d = Dot(moveVec, awayDir);
-                if (d < 0.0f)  // 譛ｨ譁ｹ蜷代↓蜷代°縺｣縺ｦ縺・ｋ縺ｨ縺阪□縺・
+                if (d < 0.0f) // 譛ｨ譁ｹ蜷代↓蜷代°縺｣縺ｦ縺・ｋ縺ｨ縺阪□縺・
                 {
                     moveVec -= awayDir * d;
                 }
@@ -347,7 +360,7 @@ VECTOR3 CEnemyBase::SuctionSpeed() const
     return {0, 0, 0};
 }
 
-void CEnemyBase::IsSuctionCheck() 
+void CEnemyBase::IsSuctionCheck()
 {
     if (m_pPlayer == nullptr)return;
     if (m_pPlayer->GetIsSuckUp() && m_pPlayer->IsInsideSuctionCircle(transform.position))
@@ -355,7 +368,3 @@ void CEnemyBase::IsSuctionCheck()
         ChangeState(CBaseState::State::SUCTION);
     }
 }
-
-
-
-

@@ -6,7 +6,7 @@
 CSheep::CSheep(const VECTOR3& iniPos)
 {
     m_pMesh = ObjectManager::FindGameObject<CEnemyManager>()->MeshList("Sheep");
-    m_pAnimator = std::make_unique<Animator>();     
+    m_pAnimator = std::make_unique<Animator>();
     m_pAnimator->SetModel(m_pMesh);
     m_pAnimator->Play(A_IDEL);
     m_pGround = ObjectManager::FindGameObject<CGround>();
@@ -15,13 +15,14 @@ CSheep::CSheep(const VECTOR3& iniPos)
     transform.position = iniPos;
     Instantiate<CShadowObject>(this, TEXT("data/CircleSuction.png"));
 }
+
 void CSheep::InitStates()
 {
     //アニメーションの最終フレーム : 120.0f //
-    m_components[CBaseState::State::IDLE] = std::make_unique< CIdle>(this, 120.0f);
+    m_components[CBaseState::State::IDLE] = std::make_unique<CIdle>(this, 120.0f);
     //移動スピード : 1.2f//
-    m_components[CBaseState::State::WALK] = std::make_unique< CWalk>(this, 1.3f);
-    m_components[CBaseState::State::SUCTION] = std::make_unique< CSuction>(this);
+    m_components[CBaseState::State::WALK] = std::make_unique<CWalk>(this, 1.3f);
+    m_components[CBaseState::State::SUCTION] = std::make_unique<CSuction>(this);
     //Score : 100 ,Exp : 1.0f //
     m_components[CBaseState::State::DESTROY] = std::make_unique<CDestroy>(this, 80, 0.8f);
 
@@ -29,7 +30,8 @@ void CSheep::InitStates()
     m_pComponent = m_components[CBaseState::State::IDLE].get();
     m_pState = std::make_unique<CBaseState>(this);
     m_pState->Enter(CBaseState::State::IDLE);
-    m_pBBox = CreateBBox();
+    constexpr float SHRINK = 0.6f;
+    m_pBBox = CreateBBox(SHRINK);
 }
 
 CSheep::~CSheep()
@@ -39,9 +41,8 @@ CSheep::~CSheep()
 VECTOR3 CSheep::SuctionSpeed() const
 {
     constexpr float suctionTime = 1.0f;
-    return m_pPlayer->CalcSuctionDisplacement(suctionTime,transform.position);
+    return m_pPlayer->CalcSuctionDisplacement(suctionTime, transform.position);
 }
-
 
 
 void CSheep::Update()
