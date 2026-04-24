@@ -1,4 +1,4 @@
-#include "DebugUI.h"
+﻿#include "DebugUI.h"
 
 #include "../../Core/Game/GameMain.h"
 #include "../../UI/UIImage.h"
@@ -66,7 +66,7 @@ void DebugUI::AddCircle()
     CSpriteImage* image = ImageRegistry::GetTexture("Button3");
     auto circle = std::make_unique<CUIRingGauge>(nullptr, image,VECTOR2(500, 50), VECTOR4(0, 0, 100, 100));
     m_pRingGauge = m_canvas.AddWidget(std::move(circle));
-    m_pRingGauge->SetAnim(UIPreset::Transition(0.3));
+    m_pRingGauge->SetAnim(UIPreset::Transition(0.3f));
 }
 
 void DebugUI::AddBar()
@@ -75,7 +75,7 @@ void DebugUI::AddBar()
     auto bar = std::make_unique<CUIProgressBar>(nullptr, image,VECTOR2(50, 20), VECTOR4(0, 0, 300, 30));
     m_pBar = m_canvas.AddWidget(std::move(bar));
     m_pBar->SetIsEXPBar(true);
-    m_pBar->SetAnim(UIPreset::Transition(0.3));
+    m_pBar->SetAnim(UIPreset::Transition(0.3f));
 }
 void DebugUI::Update()
 {

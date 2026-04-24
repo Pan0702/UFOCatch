@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Camera.h"
 #include "RandomPlacer.h"
 #include "UndoManager.h"

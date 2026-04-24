@@ -1,4 +1,4 @@
-#include "SkyBox.h"
+﻿#include "SkyBox.h"
 
 CSkyBox::CSkyBox(const char* meshPath)
 {

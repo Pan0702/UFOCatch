@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../Component/Idle.h"
 #include "../Component/Suction.h"
 #include "../Component/Walk.h"

@@ -1,4 +1,4 @@
-#include "EditorScene.h"
+﻿#include "EditorScene.h"
 #include "../../MapEditor/BackGraund.h"
 #include "../../MapEditor/Buttom.h"
 #include "../../MapEditor/Controller.h"

@@ -1,4 +1,4 @@
-#include "MyLib.h"
+﻿#include "MyLib.h"
 
 std::string MyLib::ChangePathToName(const std::string& path)
 {

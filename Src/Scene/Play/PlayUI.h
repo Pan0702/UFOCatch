@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../../UI/UIBase.h"
 #include "../../UI/UIProgressBar.h"
 #include "../../UI/UIRingGauge.h"

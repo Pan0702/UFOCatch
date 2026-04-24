@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../Common/Object3D.h"
 
 class CSkyBox : public Object3D

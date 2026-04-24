@@ -1,4 +1,4 @@
-#include "ResultUI.h"
+﻿#include "ResultUI.h"
 
 #include "../../System/GameInstance.h"
 #include "../../Utils/MyMath.h"
