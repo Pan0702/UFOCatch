@@ -11,6 +11,7 @@ CBaseState::CBaseState(CEnemyBase* e)
 
 void CBaseState::Enter(State type)
 {
+    m_kType = type;
     m_pComponent = m_pEnemy->GetComponent(type);
     if (m_pComponent == nullptr)
     {
@@ -44,7 +45,7 @@ CBaseState::State CBaseState::NextStatePop()
     {
         return State::DESTROY;
     }
-    if(suctionComponent != nullptr && suctionComponent->IsFinish())
+    if (suctionComponent != nullptr && suctionComponent->IsFinish())
     {
         return State::WALK;
     }
@@ -89,4 +90,3 @@ void CBaseState::SetNextState()
         }
     }
 }
-

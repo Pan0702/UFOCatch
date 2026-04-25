@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "../Base/EnemyBase.h"
 
+class CFlog;
+
 class CSheep : public CEnemyBase
 {
 public:
@@ -8,6 +10,8 @@ public:
     ~CSheep();
 
     VECTOR3 SuctionSpeed() const override;
+    void SetFlog(CFlog* flog);
+    CFlog* GetFlog() const;
 
 private:
     void InitStates();
@@ -17,4 +21,5 @@ private:
 private:
     CPlayer* m_pPlayer;
     bool m_isInConeArea = false;
+    CFlog* m_pFlog = nullptr;
 };

@@ -37,6 +37,8 @@ public:
 
     bool IsHuman() const { return m_isHuman; }
 
+    CBaseState::State GetCurrentState() const { return m_pState->GetCurrentState(); }
+
 protected:
     // 迚ｩ逅・ｼ皮ｮ・
     void ApplyGravity(); // 驥榊鴨繧帝←逕ｨ縺励∝慍髱｢縺ｨ縺ｮ陦晉ｪ∝愛螳壹ｒ陦後≧

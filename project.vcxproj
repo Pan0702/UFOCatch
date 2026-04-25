@@ -120,6 +120,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);$(_ZVcpkgCurrentInstalledDir)$(_ZVcpkgConfigSubdir)lib;$(_ZVcpkgCurrentInstalledDir)$(_ZVcpkgConfigSubdir)lib\manual-link;$(ProjectDir)Libs\include</AdditionalLibraryDirectories>
+        <IgnoreSpecificDefaultLibraries>LIBCMT.lib;MSVCRT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -538,7 +539,6 @@
     <ClInclude Include="Src\Common\Constants.h" />
     <ClInclude Include="Src\Core\Spatial\Liner4Tree.h" />
     <ClInclude Include="Src\Core\Spatial\QuadTreeCell.h" />
-      <ClInclude Include="Src\Debug\DebugCamera.h"/>
     <ClInclude Include="Src\Enemies\AnimalChicken\Chicken.h" />
     <ClInclude Include="Src\Enemies\AnimalChicken\State\ChickenState.h" />
     <ClInclude Include="Src\Enemies\AnimalDebug\AnimalDubug.h" />
@@ -591,6 +591,7 @@
     <ClInclude Include="Src\Player\PlayerHP.h" />
     <ClInclude Include="Src\Player\PlayerLevel.h" />
     <ClInclude Include="Src\Scene\Editor\EditorScene.h" />
+      <ClInclude Include="Src\Scene\Other\DebugCamera.h"/>
     <ClInclude Include="Src\Scene\Other\DebugScene.h" />
     <ClInclude Include="Src\Scene\Other\DebugUI.h" />
     <ClInclude Include="Src\Scene\Other\OIScene.h" />
@@ -684,7 +685,6 @@
     <ClCompile Include="Libs\Imgui\imgui_impl_dx11.cpp" />
     <ClCompile Include="Libs\Imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="Libs\Imgui\imgui_widgets.cpp" />
-      <ClCompile Include="Src\Debug\DebugCamera.cpp"/>
     <ClCompile Include="Src\Enemies\AnimalChicken\Chicken.cpp" />
     <ClCompile Include="Src\Enemies\AnimalChicken\State\ChickenState.cpp" />
     <ClCompile Include="Src\Enemies\AnimalDebug\AnimalDubug.cpp">
@@ -1312,6 +1312,84 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/FS </AdditionalOptions>
       <AdditionalIncludeDirectories>C:\Users\yu\RiderProjects\UFOAbduction\Libs\include;C:\Users\yu\RiderProjects\UFOAbduction\Libs\x64-windows\include;C:\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
+        <LinkCompiled>true</LinkCompiled>
+    </ClCompile>
+      <ClCompile Include="Src\Scene\Other\DebugCamera.cpp">
+          <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+          <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+          <Optimization>Disabled</Optimization>
+          <SupportJustMyCode>true</SupportJustMyCode>
+          <AssemblerOutput>NoListing</AssemblerOutput>
+          <AssemblerListingLocation>project\x64\Debug\</AssemblerListingLocation>
+          <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+          <BrowseInformation>false</BrowseInformation>
+          <BrowseInformationFile>project\x64\Debug\</BrowseInformationFile>
+          <CompileAs>Default</CompileAs>
+          <UseDynamicDebugging>false</UseDynamicDebugging>
+          <ConformanceMode>true</ConformanceMode>
+          <DiagnosticsFormat>Column</DiagnosticsFormat>
+          <DisableLanguageExtensions>false</DisableLanguageExtensions>
+          <ErrorReporting>Prompt</ErrorReporting>
+          <ExpandAttributedSource>false</ExpandAttributedSource>
+          <ExceptionHandling>Sync</ExceptionHandling>
+          <EnableASAN>false</EnableASAN>
+          <EnableFuzzer>false</EnableFuzzer>
+          <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+          <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+          <EnableVectorLength>NotSet</EnableVectorLength>
+          <FloatingPointModel>Precise</FloatingPointModel>
+          <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+          <GenerateModuleDependencies>false</GenerateModuleDependencies>
+          <GenerateSourceDependencies>false</GenerateSourceDependencies>
+          <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+          <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+          <IntrinsicFunctions>false</IntrinsicFunctions>
+          <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+          <LanguageStandard>stdcpp20</LanguageStandard>
+          <LanguageStandard_C>Default</LanguageStandard_C>
+          <MinimalRebuild>false</MinimalRebuild>
+          <ModuleDependenciesFile>project\x64\Debug\</ModuleDependenciesFile>
+          <ModuleOutputFile>project\x64\Debug\</ModuleOutputFile>
+          <OmitDefaultLibName>false</OmitDefaultLibName>
+          <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+          <WholeProgramOptimization>false</WholeProgramOptimization>
+          <ObjectFileName>project\x64\Debug\</ObjectFileName>
+          <CallingConvention>Cdecl</CallingConvention>
+          <ProgramDataBaseFileName>project\x64\Debug\project.pdb</ProgramDataBaseFileName>
+          <PrecompiledHeader>NotUsing</PrecompiledHeader>
+          <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+          <PrecompiledHeaderOutputFile>project\x64\Debug\project.pch</PrecompiledHeaderOutputFile>
+          <PreprocessToFile>false</PreprocessToFile>
+          <PreprocessKeepComments>false</PreprocessKeepComments>
+          <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+          <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+          <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+          <ShowIncludes>false</ShowIncludes>
+          <SourceDependenciesFile>project\x64\Debug\</SourceDependenciesFile>
+          <SuppressStartupBanner>true</SuppressStartupBanner>
+          <BufferSecurityCheck>true</BufferSecurityCheck>
+          <SmallerTypeCheck>false</SmallerTypeCheck>
+          <SpectreMitigation>false</SpectreMitigation>
+          <StructMemberAlignment>Default</StructMemberAlignment>
+          <TrackerLogDirectory>project\x64\Debug\project.tlog\</TrackerLogDirectory>
+          <TranslateIncludes>false</TranslateIncludes>
+          <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+          <TreatWarningAsError>false</TreatWarningAsError>
+          <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+          <UseFullPaths>true</UseFullPaths>
+          <WarningLevel>Level3</WarningLevel>
+          <XMLDocumentationFileName>project\x64\Debug\</XMLDocumentationFileName>
+          <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+          <IntelJCCErratum>false</IntelJCCErratum>
+          <BuildStlModules>false</BuildStlModules>
+          <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+          <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+          <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+          <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+          <PreprocessorDefinitions>_DEBUG;_CONSOLE;_MBCS;</PreprocessorDefinitions>
+          <SDLCheck>true</SDLCheck>
+          <AdditionalOptions>/FS</AdditionalOptions>
+          <AdditionalIncludeDirectories>C:\Users\A24048-PC\RiderProjects\UFOCatch\Libs\include;C:\Users\A24048-PC\RiderProjects\UFOCatch\Libs\x64-windows\include;C:\Users\A24048-PC\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
     <ClCompile Include="Src\Scene\Other\DebugScene.cpp">

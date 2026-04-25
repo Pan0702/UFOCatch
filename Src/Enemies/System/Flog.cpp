@@ -1,63 +1,50 @@
 ﻿#include "Flog.h"
 
-// void CFlog::RemoveFromArray(const CSheep* sheep)
-// {
-//     // Swap and Pop譁ｹ蠑上〒鬮倬溷炎髯､
-//     for (size_t i = 0; i < m_allSheep.size(); ++i)
-//     {
-//         if (m_allSheep[i] == sheep)
-//         {
-//             // 譛蠕後・隕∫ｴ縺ｨ蜈･繧梧崛縺・
-//             m_allSheep[i] = m_allSheep.back();
-//             // 譛蠕後ｒ蜑企勁
-//             m_allSheep.pop_back();
-//
-//             // 繝｡繝｢繝ｪ隗｣謾ｾ
-//             SAFE_DELETE(sheep);
-//             break;
-//         }
-//     }
-// }
-
-
-CFlog::CFlog()
+CFlog::CFlog(const VECTOR3& center, float radius, int sheepCount)
 {
-    Initialize();
-}
-
-CFlog::~CFlog() = default;
-
-void CFlog::Initialize()
-{
-    // 繝代Λ繝｡繝ｼ繧ｿ
-    constexpr int SHEEP_COUNT = 10; // 鄒翫・邱乗焚
-
-    VECTOR3 spawnCenter(0, 0, 0); // 逕滓・菴咲ｽｮ縺ｮ荳ｭ蠢・
-
-    // 鄒､繧後・荳ｭ蠢・せ縺ｨ蜊雁ｾ・ｒ險ｭ螳・
-    m_flockCenter = VECTOR3(0, 0, 0);
-    m_flockRadius = 4.0f;
-
-    // 鄒翫ｒ逕滓・
-    for (int i = 0; i < SHEEP_COUNT; ++i)
+    m_flockCenter = center;
+    m_flockRadius = radius;
+    for (int i = 0; i < sheepCount; ++i)
     {
-        // 繝ｩ繝ｳ繝繝縺ｪ蛻晄悄菴咲ｽｮ
+        //向きを生成//
         float angle = Randomf(0.0f, XM_2PI);
-        const float spawnRadius = m_flockRadius; // 逕滓・遽・峇縺ｮ蜊雁ｾ・
-        float radius = Randomf(0.0f, spawnRadius);
-        VECTOR3 iniPos = spawnCenter + VECTOR3(
-            cosf(angle) * radius,
+        //スポーン場所を計算
+        //中心点から半径以内で生成//
+        const float spawnDistance = Randomf(0.0f, m_flockRadius);
+        VECTOR3 iniPos = m_flockCenter + VECTOR3(
+            cosf(angle) * spawnDistance,
             0,
-            sinf(angle) * radius
+            sinf(angle) * spawnDistance
         );
 
-        // 鄒翫ｒ逕滓・・・hepherdDog荳崎ｦ・ｼ・
+        //集団に追加
         CSheep* sheep = Instantiate<CSheep>(iniPos);
-        m_allSheep.push_back(sheep);
+        sheep->SetFlog(this);
     }
 }
 
-FlogInfo CFlog::CalcFlogInfo(const std::vector<CSheep*>& manySheep) const
+void CFlog::AddSheep(CSheep* sheep)
+{
+    m_allSheep.push_back(sheep);
+}
+
+void CFlog::RemoveSheep(const CSheep* sheep)
+{
+    auto it = std::ranges::find(m_allSheep, sheep);
+    if (it != m_allSheep.end())
+    {
+        m_allSheep.erase(it);
+    }
+}
+
+bool CFlog::ContainPos(const VECTOR3& pos) const
+{
+    VECTOR3 diff = m_flockCenter - pos;
+    diff.y = 0;
+    return diff.LengthSquare() <= m_flockRadius * m_flockRadius;
+}
+
+FlogInfo CFlog::CalcFlogInfoStatic(const std::vector<CSheep*>& manySheep)
 {
     FlogInfo info;
     info.centroid = VECTOR3(0, 0, 0);
@@ -80,7 +67,6 @@ FlogInfo CFlog::CalcFlogInfo(const std::vector<CSheep*>& manySheep) const
             info.furthestSheep = sheep;
         }
     }
-    // maxDistance縺ｯ莠御ｹ怜､縺ｮ縺ｾ縺ｾ霑斐☆・域ｯ碑ｼ・・縺ｧPow2()繧剃ｽｿ縺・ｼ・
+    // maxDistanceは二乗値のまま返す//
     return info;
 }
-

@@ -31,6 +31,18 @@ CAShepherdDog::~CAShepherdDog() = default;
 
 void CAShepherdDog::Update()
 {
+    // DESTROY 中は状態判定を上書きしない
+    if (GetCurrentState() == CBaseState::State::DESTROY)
+    {
+        CEnemyBase::Update();
+        return;
+    }
+
+    // 死んだ羊をリストから除去
+    auto isDead = [](CSheep* s) { return !ObjectManager::IsExist(s); };
+    m_sheeps.erase(std::remove_if(m_sheeps.begin(), m_sheeps.end(), isDead), m_sheeps.end());
+    m_rescueQueue.erase(std::remove_if(m_rescueQueue.begin(), m_rescueQueue.end(), isDead), m_rescueQueue.end());
+
     // UFOが羊を吸い込み中かどうかをリアルタイムで判定
     bool isSucking = false;
     if (m_pPlayer != nullptr && m_pPlayer->GetIsSuckUp())
@@ -53,7 +65,7 @@ void CAShepherdDog::Update()
     }
 
     // 群れの状況を把握
-    FlogInfo info = ObjectManager::FindGameObject<CFlog>()->CalcFlogInfo(m_sheeps);
+    FlogInfo info = CFlog::CalcFlogInfoStatic(m_sheeps);
     // 群れがまとまり判定（ストロングボム: 15m）
     constexpr float flogRadiusSq = 15.0f * 15.0f;
     bool isFlockScattered = (info.maxDistance > flogRadiusSq);

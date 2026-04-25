@@ -29,16 +29,16 @@ void CWalk::Enter()
     {
         m_turnAmount = Randomf(-TURN_ANGLE_DEG, TURN_ANGLE_DEG) * DegToRad;
     }
-    
+
     CStageQuadTree* pTree = ObjectManager::FindQuadTree<CStageQuadTree>();
-    AdjustTargetToFreeCell(pTree,CGameInstance::Get()->GetMapSize(),m_pathFinder.GetCellSize());
-    
+    AdjustTargetToFreeCell(pTree, CGameInstance::Get()->GetMapSize(), m_pathFinder.GetCellSize());
+
     VECTOR2 pos, size;
     m_pOwner->GetBounds2D(pos, size);
     m_pathFinder.SetAgentSize(size);
     const VECTOR2 start = {ToVec2XZ(m_position)};
     const VECTOR2 end = {ToVec2XZ(m_targetPos)};
-    
+
     m_path = m_pathFinder.SearchRoute(start, end);
 
     m_pathIndex = 1;
@@ -68,7 +68,7 @@ bool CWalk::CalcRandomMove()
     CFlog* flog = nullptr;
     if (sheep != nullptr)
     {
-        flog = ObjectManager::FindGameObject<CFlog>();
+        flog = sheep->GetFlog();
     }
 
     // ランダムに「回転量」「移動距離」を作って、境界内に収まるまでリトライ
@@ -205,7 +205,7 @@ void CWalk::AdjustTargetToFreeCell(CStageQuadTree* pTree, const VECTOR4& mapBoun
             static_cast<unsigned int>(iz);
     };
     //障害物チェックAABB
-    
+
     const float half = cellSize * 0.5f;
     {
         const VECTOR2 c = {static_cast<float>(startIX) * cellSize, static_cast<float>(startIZ) * cellSize};
@@ -231,13 +231,13 @@ void CWalk::AdjustTargetToFreeCell(CStageQuadTree* pTree, const VECTOR4& mapBoun
         openQueue.pop();
         const int ring = (std::max)(std::abs(cur.x - startIX), std::abs(cur.y - startIZ));
         if (ring > MAX_RING) continue;
-        const VECTOR2 c = {static_cast<float>(cur.x) * cellSize,static_cast<float>(cur.y) * cellSize};
-        const bool inMap =(c.x > mapBounds.x + half && c.x <mapBounds.z - half &&
-                           c.y > mapBounds.y + half && c.y < mapBounds.w - half);
+        const VECTOR2 c = {static_cast<float>(cur.x) * cellSize, static_cast<float>(cur.y) * cellSize};
+        const bool inMap = (c.x > mapBounds.x + half && c.x < mapBounds.z - half &&
+            c.y > mapBounds.y + half && c.y < mapBounds.w - half);
         if (!inMap) continue;
-        const bool inArea = IsInsideAreaXZ(VECTOR3(c.x,0.0f,c.y),m_pOwner->GetAreaSize());
+        const bool inArea = IsInsideAreaXZ(VECTOR3(c.x, 0.0f, c.y), m_pOwner->GetAreaSize());
         VECTOR2 topLeft = c - half;
-        VECTOR2 size2d = {cellSize,cellSize};
+        VECTOR2 size2d = {cellSize, cellSize};
         const bool onObstacle = pTree->GetOverlappingObjects(topLeft, size2d).empty();
         if (onObstacle && inArea)
         {
@@ -248,7 +248,7 @@ void CWalk::AdjustTargetToFreeCell(CStageQuadTree* pTree, const VECTOR4& mapBoun
         {
             Vec2Int n = {cur.x + d[0], cur.y + d[1]};
             long long key = makeKey(n.x, n.y);
-            if (visited.contains(key)) continue;  
+            if (visited.contains(key)) continue;
             visited.insert(key);
             openQueue.push(n);
         }

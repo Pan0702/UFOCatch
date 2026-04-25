@@ -9,7 +9,6 @@ class CComponentBase;
 class CBaseState
 {
 public:
-    
     CBaseState(CEnemyBase* e);
     virtual ~CBaseState() = default;
 
@@ -34,6 +33,8 @@ public:
     virtual void Update();
     virtual void Exit();
 
+    State GetCurrentState() const { return m_kType; }
+
     ///
     ///谺｡縺ｮstate縺鯉ｼ斐▽驟榊・縺ｫ蜈･縺｣縺ｦ縺ｪ縺九▲縺溘ｉ谺｡縺ｮ驟榊・繧偵Λ繝ｳ繝繝縺ｧ繧ｻ繝・ヨ
     ///
@@ -54,4 +55,3 @@ private:
     static constexpr int NEXT_STATE_MAX_SIZE = 3;
     std::queue<CBaseState::State> actionQueue;
 };
-

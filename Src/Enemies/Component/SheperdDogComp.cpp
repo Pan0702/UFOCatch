@@ -14,7 +14,7 @@ void CCollecting::Enter()
     m_isFinish = false;
 
     // 群れの状況を把握
-    FlogInfo info = ObjectManager::FindGameObject<CFlog>()->CalcFlogInfo(m_pOwner->GetSheeps());
+    FlogInfo info = CFlog::CalcFlogInfoStatic(m_pOwner->GetSheeps());
 
     // はぐれ羊がいない場合、終了
     if (info.furthestSheep == nullptr)
@@ -41,6 +41,7 @@ void CCollecting::Enter()
     constexpr float behindDistance = 5.0f;
     // 背後に回り込む位置を決定
     m_targetPos = sheepPos - toCentroid * behindDistance;
+    info.furthestSheep->ChangeState(CBaseState::State::HERDED);
 }
 
 void CCollecting::Update()
@@ -80,7 +81,7 @@ void CDriving::Enter()
     // デバッグ・バランスの数を把握
     size_t sheepCount = m_pOwner->GetSheeps().size();
 
-    FlogInfo info = ObjectManager::FindGameObject<CFlog>()->CalcFlogInfo(m_pOwner->GetSheeps());
+    FlogInfo info = CFlog::CalcFlogInfoStatic(m_pOwner->GetSheeps());
     CPlayer* player = ObjectManager::FindGameObject<CPlayer>();
     if (player == nullptr) return;
 
@@ -95,11 +96,11 @@ void CDriving::Enter()
     float lengthSq = escapeDir.LengthSquare();
     if (lengthSq < 0.0001f)
     {
-        escapeDir = VECTOR3(0, 0, 1);  // デフォルト：Z+方向
+        escapeDir = VECTOR3(0, 0, 1); // デフォルト：Z+方向
     }
     else
     {
-        escapeDir = escapeDir / sqrtf(lengthSq);  // 正規化
+        escapeDir = escapeDir / sqrtf(lengthSq); // 正規化
     }
 
     // 群れの後ろ（UFOから見て群れの向こう側）に回り込む
@@ -154,7 +155,7 @@ void CRescue::Enter()
     m_targetSheep = m_pOwner->GetRescueQueue().front();
 
     // 群れの重心を計算
-    FlogInfo info = ObjectManager::FindGameObject<CFlog>()->CalcFlogInfo(m_pOwner->GetSheeps());
+    FlogInfo info = CFlog::CalcFlogInfoStatic(m_pOwner->GetSheeps());
     m_centroid = info.centroid;
 
     // フェーズ1: 羊に近づくところから開始

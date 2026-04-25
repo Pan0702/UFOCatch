@@ -1,6 +1,7 @@
 ﻿#include "SheepComp.h"
 #include "../System/Flog.h"
 #include "../System/EnemyManager.h"
+
 CHerded::CHerded(CSheep* sheep)
     : m_wanderTimer(0.0f), m_walkTimer(0.0f), m_walkDuration(0.0f), m_currentRotation(0.0f)
 {
@@ -89,7 +90,8 @@ void CHerded::Update()
 
 VECTOR3 CHerded::CalculateBoids() const
 {
-    CFlog* flog = ObjectManager::FindGameObject<CFlog>();
+    CFlog* flog = m_pOwner->GetFlog();
+    if (flog == nullptr) return {0, 0, 0};
     const std::vector<CSheep*>& allSheep = flog->GetAllSheeps();
 
     VECTOR3 cohesion(0, 0, 0);
@@ -107,8 +109,8 @@ VECTOR3 CHerded::CalculateBoids() const
         isSucking = m_pPlayer->GetIsSuckUp();
     }
 
-    constexpr float neighborRadius = 30.0f;   // 仲間と認識する距離（ストロングボム: 30m）
-    constexpr float separationRadius = 2.0f;  // 近すぎると判定する距離
+    constexpr float neighborRadius = 30.0f; // 仲間と認識する距離（ストロングボム: 30m）
+    constexpr float separationRadius = 2.0f; // 近すぎると判定する距離
 
     const float neighborRadiusSq = Pow2(neighborRadius);
     const float separationRadiusSq = Pow2(separationRadius);
@@ -155,7 +157,7 @@ VECTOR3 CHerded::CalculateBoids() const
     if (separationCount > 0 && separation.LengthSquare() > 0.0001f)
     {
         normalize(separation);
-        constexpr float separationWeight = 2.0f;  // 分離を強めて、近づきすぎを防ぐ
+        constexpr float separationWeight = 2.0f; // 分離を強めて、近づきすぎを防ぐ
         separation *= separationWeight;
     }
 
@@ -196,7 +198,7 @@ VECTOR3 CHerded::CalculateEscapeFromDog() const
 
 VECTOR3 CHerded::CalculateBoundaryForce() const
 {
-    CFlog* flog = ObjectManager::FindGameObject<CFlog>();
+    CFlog* flog = m_pOwner->GetFlog();
     if (flog == nullptr) return {0, 0, 0};
 
     const VECTOR3 flockCenter = flog->GetFlockCenter();
@@ -230,12 +232,12 @@ VECTOR3 CHerded::CalculateWandering()
     // 一定時間ごとにランダムな方向を変更
     m_wanderTimer += SceneManager::DeltaTime();
 
-    constexpr float changeDirectionInterval = 3.0f;  // 3秒ごとに方向変更
+    constexpr float changeDirectionInterval = 3.0f; // 3秒ごとに方向変更
     if (m_wanderTimer >= changeDirectionInterval)
     {
         // ランダムな角度を生成（現在の方向から±60度の範囲）
         float currentAngle = atan2f(m_wanderTarget.x, m_wanderTarget.z);
-        float randomOffset = Randomf(-XM_PI / 3.0f, XM_PI / 3.0f);  // ±60度
+        float randomOffset = Randomf(-XM_PI / 3.0f, XM_PI / 3.0f); // ±60度
         float newAngle = currentAngle + randomOffset;
 
         m_wanderTarget = VECTOR3(sinf(newAngle), 0, cosf(newAngle));
@@ -247,7 +249,7 @@ VECTOR3 CHerded::CalculateWandering()
     if (wanderForce.LengthSquare() > 0.0001f)
     {
         normalize(wanderForce);
-        constexpr float wanderWeight = 1.0f;  // Wanderの強さ
+        constexpr float wanderWeight = 1.0f; // Wanderの強さ
         return wanderForce * wanderWeight;
     }
 
@@ -264,62 +266,84 @@ CPanic::CPanic(CSheep* sheep)
 void CPanic::Enter()
 {
     m_isFinish = false;
-    
+
+    m_panicTimer = 0.0f;
+    m_panicDuration = Randomf(4.0f, 7.0f);
+    m_startPos = m_pOwner->GetTransform().position;
     // ランダムな方向を決定
-   const float randomAngle = Randomf(0.0f, XM_2PI);
+    const float randomAngle = Randomf(0.0f, XM_2PI);
     m_panicDirection = VECTOR3(sinf(randomAngle), 0, cosf(randomAngle));
-    
+
     m_changeDirectionTimer = 0.0f;
-    
+
     // アニメーションを走りに変更
     m_pOwner->GetAnimator()->MergePlay(AnimationType::A_RUN);
-    m_pOwner->GetAnimator()->SetPlaySpeed(1.5f);  // 速めに再生
+    m_pOwner->GetAnimator()->SetPlaySpeed(1.5f); // 速めに再生
 }
 
 void CPanic::Update()
 {
+    m_panicTimer += SceneManager::DeltaTime();
     m_changeDirectionTimer += SceneManager::DeltaTime();
-    
-    constexpr float changeDirectionInterval = 2.0f;  // 2秒ごとに方向転換
-    // 一定時間ごとに方向をランダムに変更（ジグザグに逃げる）
+
+    UpdateDirection();
+    UpdateMovement();
+    CheckBoundaryAndTransition();
+    m_pOwner->IsSuctionCheck();
+}
+
+void CPanic::UpdateDirection()
+{
+    constexpr float changeDirectionInterval = 2.0f;
     if (m_changeDirectionTimer >= changeDirectionInterval)
     {
         const float randomAngle = Randomf(0.0f, XM_2PI);
         m_panicDirection = VECTOR3(sinf(randomAngle), 0, cosf(randomAngle));
         m_changeDirectionTimer = 0.0f;
     }
-    
-    // 移動方向に回転
+}
+
+void CPanic::UpdateMovement()
+{
     float targetAngle = atan2f(m_panicDirection.x, m_panicDirection.z);
     m_pOwner->SetRotateY(targetAngle);
 
-    // パニック状態で移動
-    const float moveSpeed = 2.0f;  // HERDEDより速く（パニック状態）
+    const float moveSpeed = 2.0f;
     m_pOwner->AddPosition(m_panicDirection * moveSpeed * SceneManager::DeltaTime());
+}
 
-    // 群れの範囲外に出たら方向転換
-    CFlog* flog = ObjectManager::FindGameObject<CFlog>();
-    if (flog != nullptr)
+void CPanic::CheckBoundaryAndTransition()
+{
+    if (m_panicTimer < m_panicDuration) return;
+
+    const VECTOR3 currentPos = m_pOwner->GetTransform().position;
+    CFlog* nearest = nullptr;
+    float nearestDistSq = FLT_MAX;
+
+    for (CFlog* f : ObjectManager::FindGameObjects<CFlog>())
     {
-        const VECTOR3 flockCenter = flog->GetFlockCenter();
-        const float flockRadius = flog->GetFlockRadius();
-        const VECTOR3 currentPos = m_pOwner->GetTransform().position;
-
-        VECTOR3 toCenter = flockCenter - currentPos;
-        toCenter.y = 0;
-        const float distanceToCenter = sqrtf(toCenter.LengthSquare());
-
-        // 半径外に出た場合、中心方向に向き直す
-        if (distanceToCenter > flockRadius)
+        if (!f->ContainPos(currentPos)) continue;
+        VECTOR3 diff = f->GetFlockCenter() - currentPos;
+        diff.y = 0;
+        float distSq = diff.LengthSquare();
+        if (distSq < nearestDistSq)
         {
-            if (toCenter.LengthSquare() > 0.0001f)
-            {
-                normalize(toCenter);
-                m_panicDirection = toCenter;
-            }
+            nearestDistSq = distSq;
+            nearest = f;
         }
     }
-    
-    // 吸い込みチェック
-    m_pOwner->IsSuctionCheck();
+
+    if (nearest != nullptr)
+    {
+        m_pOwner->SetFlog(nearest);
+
+        m_pOwner->ChangeState(CBaseState::State::HERDED);
+    }
+    else
+    {
+        m_pOwner->SetFlog(nullptr);
+
+        m_pOwner->ChangeState(CBaseState::State::IDLE);
+    }
+    m_isFinish = true;
 }

@@ -2,6 +2,8 @@
 
 #include "../Component/ComponentFwd.h"
 #include "../../Common/ShadowObject.h"
+#include "../System/Flog.h"
+#include "../Component/SheepComp.h"
 
 CSheep::CSheep(const VECTOR3& iniPos)
 {
@@ -25,6 +27,8 @@ void CSheep::InitStates()
     m_components[CBaseState::State::SUCTION] = std::make_unique<CSuction>(this);
     //Score : 100 ,Exp : 1.0f //
     m_components[CBaseState::State::DESTROY] = std::make_unique<CDestroy>(this, 80, 0.8f);
+    m_components[CBaseState::State::HERDED] = std::make_unique<CHerded>(this);
+    m_components[CBaseState::State::PANIC] = std::make_unique<CPanic>(this);
 
     // 最初はIDLE状態から開始
     m_pComponent = m_components[CBaseState::State::IDLE].get();
@@ -36,12 +40,36 @@ void CSheep::InitStates()
 
 CSheep::~CSheep()
 {
+    if (m_pFlog != nullptr)
+    {
+        m_pFlog->RemoveSheep(this);
+        m_pFlog = nullptr;
+    }
 }
 
 VECTOR3 CSheep::SuctionSpeed() const
 {
     constexpr float suctionTime = 1.0f;
     return m_pPlayer->CalcSuctionDisplacement(suctionTime, transform.position);
+}
+
+void CSheep::SetFlog(CFlog* flog)
+{
+    if (flog == m_pFlog) return;
+    if (m_pFlog != nullptr)
+    {
+        m_pFlog->RemoveSheep(this);
+    }
+    m_pFlog = flog;
+    if (m_pFlog != nullptr)
+    {
+        m_pFlog->AddSheep(this);
+    }
+}
+
+CFlog* CSheep::GetFlog() const
+{
+    return m_pFlog;
 }
 
 

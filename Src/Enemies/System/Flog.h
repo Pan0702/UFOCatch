@@ -14,19 +14,19 @@ struct FlogInfo
 class CFlog : public Object3D
 {
 public:
-    CFlog();
-    ~CFlog();
-    void Initialize();  // 鄒翫→迥ｬ繧堤函謌舌＠縺ｦ邏蝉ｻ倥￠
-    FlogInfo CalcFlogInfo(const std::vector<CSheep*>& manySheep) const;
+    CFlog(const VECTOR3& center = VECTOR3(0, 0, 0), float radius = 4.0f, int sheepCount = 10);
     const std::vector<CSheep*>& GetAllSheeps() const { return m_allSheep; }
 
     // 鄒､繧後・荳ｭ蠢・せ縺ｨ蜊雁ｾ・・蜿門ｾ・
     const VECTOR3& GetFlockCenter() const { return m_flockCenter; }
     float GetFlockRadius() const { return m_flockRadius; }
 
-private:
-    void RemoveFromArray(CSheep* sheep);
+    void AddSheep(CSheep* sheep);
+    void RemoveSheep(const CSheep* sheep);
+    bool ContainPos(const VECTOR3& pos) const;
+    static FlogInfo CalcFlogInfoStatic(const std::vector<CSheep*>& manySheep);
 
+private:
     std::vector<CSheep*> m_allSheep;
     std::vector<CAShepherdDog*> m_shepherdDogs;
 
@@ -34,4 +34,3 @@ private:
     VECTOR3 m_flockCenter;
     float m_flockRadius;
 };
-
