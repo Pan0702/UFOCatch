@@ -538,6 +538,7 @@
     <ClInclude Include="Src\Common\Constants.h" />
     <ClInclude Include="Src\Core\Spatial\Liner4Tree.h" />
     <ClInclude Include="Src\Core\Spatial\QuadTreeCell.h" />
+      <ClInclude Include="Src\Debug\DebugCamera.h"/>
     <ClInclude Include="Src\Enemies\AnimalChicken\Chicken.h" />
     <ClInclude Include="Src\Enemies\AnimalChicken\State\ChickenState.h" />
     <ClInclude Include="Src\Enemies\AnimalDebug\AnimalDubug.h" />
@@ -603,7 +604,7 @@
     <ClInclude Include="Src\Scene\Select\SelectUI.h" />
     <ClInclude Include="Src\Scene\Title\TitleScene.h" />
     <ClInclude Include="Src\Scene\Title\TitleUI.h" />
-    <ClInclude Include="Src\Stage\SkyBox.h"/>
+      <ClInclude Include="Src\Stage\SkyBox.h"/>
     <ClInclude Include="Src\Stage\StageFactor.h" />
     <ClInclude Include="Src\Stage\StageObject.h" />
     <ClInclude Include="Src\Stage\CubeBox.h" />
@@ -683,6 +684,7 @@
     <ClCompile Include="Libs\Imgui\imgui_impl_dx11.cpp" />
     <ClCompile Include="Libs\Imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="Libs\Imgui\imgui_widgets.cpp" />
+      <ClCompile Include="Src\Debug\DebugCamera.cpp"/>
     <ClCompile Include="Src\Enemies\AnimalChicken\Chicken.cpp" />
     <ClCompile Include="Src\Enemies\AnimalChicken\State\ChickenState.cpp" />
     <ClCompile Include="Src\Enemies\AnimalDebug\AnimalDubug.cpp">
@@ -1941,7 +1943,7 @@
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
     <ClCompile Include="Src\Scene\Title\TitleUI.cpp" />
-    <ClCompile Include="Src\Stage\SkyBox.cpp"/>
+      <ClCompile Include="Src\Stage\SkyBox.cpp"/>
     <ClCompile Include="Src\Stage\StageFactor.cpp" />
     <ClCompile Include="Src\Stage\StageObject.cpp" />
     <ClCompile Include="Src\Stage\CubeBox.cpp" />
