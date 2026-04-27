@@ -51,13 +51,7 @@ CDebugScene::CDebugScene()
     Instantiate<CPlayer>(50);
     Instantiate<CDebugCamera>();
     auto* flog = Instantiate<CFlog>(VECTOR3(0.0f, 0, 0), 5.0f, 1);
-    m_pDog = Instantiate<CAShepherdDog>();
-    m_pDog->SetFlog(flog);
     CGameInstance::Get()->Init(1000);
-    for (CSheep* s : flog->GetAllSheeps())
-    {
-        m_pDog->AddSheep(s);
-    }
 }
 
 CDebugScene::~CDebugScene()

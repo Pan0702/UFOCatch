@@ -13,6 +13,30 @@ CAShepherdDog::CAShepherdDog()
     m_pGround = ObjectManager::FindGameObject<CGround>();
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     //移動スピード:2.0f
+    m_components[CBaseState::State::COLLECTING] = std::make_unique<CCollecting>(this, 4.0f);
+    //移動スピード:2.0f
+    m_components[CBaseState::State::DRIVING] = std::make_unique<CDriving>(this, 4.0f);
+    m_components[CBaseState::State::RESCUE] = std::make_unique<CRescue>(this);
+    m_components[CBaseState::State::IDLE] = std::make_unique<CIdle>(this, 570.0f);
+    m_components[CBaseState::State::WALK] = std::make_unique<CWalk>(this, 1.2f);
+    //スコア：200, 経験値：2.0f
+    m_components[CBaseState::State::DESTROY] = std::make_unique<CDestroyShepherdDog>(this, 200, 2.0f);
+    m_pState = std::make_unique<CBaseState>(this);
+    m_pComponent = m_components[CBaseState::State::IDLE].get();
+    m_pState->Enter(CBaseState::State::IDLE);
+    m_pBBox = CreateBBox();
+}
+
+CAShepherdDog::CAShepherdDog(const VECTOR3& iniPos)
+{
+    transform.position = iniPos;
+    m_pMesh = ObjectManager::FindGameObject<CEnemyManager>()->MeshList("Dog");
+    m_pAnimator = std::make_unique<Animator>();
+    m_pAnimator->SetModel(m_pMesh);
+    m_pAnimator->Play(A_WALK);
+    m_pGround = ObjectManager::FindGameObject<CGround>();
+    m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
+    //移動スピード:2.0f
     m_components[CBaseState::State::COLLECTING] = std::make_unique<CCollecting>(this, 2.0f);
     //移動スピード:2.0f
     m_components[CBaseState::State::DRIVING] = std::make_unique<CDriving>(this, 2.0f);
@@ -31,9 +55,6 @@ CAShepherdDog::~CAShepherdDog() = default;
 
 void CAShepherdDog::Update()
 {
-    ImGui::Begin("ShepherdDog");
-    ImGui::InputFloat3("%l", &transform.position.x);
-    ImGui::End();
     // DESTROY 中は状態判定を上書きしない
     if (GetCurrentState() == CBaseState::State::DESTROY)
     {

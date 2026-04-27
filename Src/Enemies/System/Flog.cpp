@@ -21,6 +21,17 @@ CFlog::CFlog(const VECTOR3& center, float radius, int sheepCount)
         CSheep* sheep = Instantiate<CSheep>(iniPos);
         sheep->SetFlog(this);
     }
+    // 犬スポーン（境界の外側、東に3m）
+    const VECTOR3 dogPos = center + VECTOR3(radius + 3.0f, 0, 0);
+    CAShepherdDog* dog = Instantiate<CAShepherdDog>(dogPos);
+    dog->SetFlog(this);
+    SetShepherdDog(dog); // 既存の API
+
+    // 犬の m_sheeps を埋める
+    for (CSheep* s : m_allSheep)
+    {
+        dog->AddSheep(s);
+    }
 }
 
 void CFlog::AddSheep(CSheep* sheep)

@@ -15,7 +15,10 @@ void CBaseState::Enter(State type)
     m_pComponent = m_pEnemy->GetComponent(type);
     if (m_pComponent == nullptr)
     {
-        MessageBox(nullptr, STR(m_kType), _T(STR(m_kType)"Component is Null"), MB_OK);
+        int num = static_cast<int>(m_kType);
+        std::string str = STR(m_kType) + std::to_string(num) +
+            " Component is Null";
+        MessageBox(nullptr, str.c_str(), _T(str.c_str()), MB_OK);
     }
     m_pComponent->Enter();
 }

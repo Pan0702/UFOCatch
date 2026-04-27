@@ -59,7 +59,7 @@ void CCollecting::Enter()
 
     toCentroid = normalize(toCentroid);
     // 羊の背後に回り込む距離（ストロングボム: 1m）
-    constexpr float BEHIND_DIS = 1.5f;
+    constexpr float BEHIND_DIS = 1.0f;
     // 背後に回り込む位置を決定
     m_targetPos = sheepPos - toCentroid * BEHIND_DIS; //flogCenter + (-toCentroid) * behindDistance;
     targetSheep->ChangeState(CBaseState::State::HERDED);
@@ -80,7 +80,7 @@ void CCollecting::Update()
         return;
     }
 
-    normalize(direction);
+    direction = normalize(direction);
 
     // 移動方向に回転
     float targetAngle = atan2f(direction.x, direction.z);
@@ -145,7 +145,7 @@ void CDriving::Update()
         return;
     }
 
-    normalize(direction);
+    direction = normalize(direction);
 
     // 移動方向に回転
     float targetAngle = atan2f(direction.x, direction.z);
@@ -193,30 +193,30 @@ void CRescue::Update()
 
     const VECTOR3 myPos = m_pOwner->GetTransform().position;
     const VECTOR3 sheepPos = m_targetSheep->GetTransform().position;
-    constexpr float m_moveSpeed = 2.0f;
+    constexpr float MOVE_SPEED = 4.0f;
 
     switch (m_phase)
     {
     case Phase::APPROACH_SHEEP:
         {
             // 羊への方向
-            const VECTOR3 toSheep = sheepPos - myPos;
+            VECTOR3 toSheep = sheepPos - myPos;
             const float distance = toSheep.LengthSquare();
-            constexpr float m_arrivalDistance = 1.0f; // 重心到着判定距離
+            constexpr float ARRIVAL_DIS = 1.0f; // 重心到着判定距離
 
             // 羊の近くに到着したらフェーズ2へ
-            if (distance < Pow2(m_arrivalDistance))
+            if (distance < Pow2(ARRIVAL_DIS))
             {
                 m_phase = Phase::GUIDE_TO_CENTER;
                 break;
             }
 
             // 羊に近づく
-            normalize(toSheep);
+            toSheep = normalize(toSheep);
             // 移動方向に回転
             float targetAngle = atan2f(toSheep.x, toSheep.z);
             m_pOwner->SetRotateY(targetAngle);
-            m_pOwner->AddPosition(toSheep * m_moveSpeed * SceneManager::DeltaTime());
+            m_pOwner->AddPosition(toSheep * MOVE_SPEED * SceneManager::DeltaTime());
         }
         break;
 
@@ -237,18 +237,18 @@ void CRescue::Update()
             }
 
             // 羊の背後から重心方向へプレッシャーをかける位置
-            normalize(toCentroid);
+            toCentroid = normalize(toCentroid);
             static constexpr float m_behindDistance = 2.0f; // 羊の背後に回り込む距離
             const VECTOR3 behindPos = sheepPos - toCentroid * m_behindDistance;
 
             // その位置へ移動
             VECTOR3 toBehind = behindPos - myPos;
             toBehind.y = 0;
-            normalize(toBehind);
+            toBehind = normalize(toBehind);
             // 移動方向に回転
             float targetAngle = atan2f(toBehind.x, toBehind.z);
             m_pOwner->SetRotateY(targetAngle);
-            m_pOwner->AddPosition(toBehind * m_moveSpeed * SceneManager::DeltaTime());
+            m_pOwner->AddPosition(toBehind * MOVE_SPEED * SceneManager::DeltaTime());
         }
         break;
     }

@@ -165,12 +165,6 @@ VECTOR3 CHerded::CalculateBoids() const
 
 VECTOR3 CHerded::CalculateEscapeFromDog() const
 {
-    // UFOが吸い込み中でなければ逃げない
-    if (m_pPlayer == nullptr || !m_pPlayer->GetIsSuckUp())
-    {
-        return {0, 0, 0};
-    }
-
     CFlog* flog = m_pOwner->GetFlog();
     if (flog == nullptr) return {0, 0, 0};
     CAShepherdDog* dog = flog->GetShepherdDog();
@@ -184,7 +178,7 @@ VECTOR3 CHerded::CalculateEscapeFromDog() const
     const float distanceSq = diff.LengthSquare();
 
     // 犬を感知する距離（ストロングボムモデル: 50m）
-    constexpr float detectionRadiusSq = 50.0f * 50.0f;
+    constexpr float detectionRadiusSq = 5.0f * 5.0f;
 
     // 犬が感知範囲内にいる場合のみ逃げる
     if (distanceSq < detectionRadiusSq && distanceSq > 0.0001f)

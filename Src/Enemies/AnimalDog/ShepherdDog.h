@@ -8,6 +8,7 @@ class CAShepherdDog : public CADog
 {
 public:
     CAShepherdDog();
+    CAShepherdDog(const VECTOR3& iniPos);
     ~CAShepherdDog();
 
     void Update() override;
