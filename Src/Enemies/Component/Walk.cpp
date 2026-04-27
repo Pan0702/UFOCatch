@@ -3,9 +3,7 @@
 #include "../../System/GameInstance.h"
 #include "../Base/EnemyBase.h"
 #include "../System/EnemyManager.h"
-#include "../Human/Human.h"
-#include "../AnimalSheep/Sheep.h"
-#include "../System/Flog.h"
+
 
 CWalk::CWalk(CEnemyBase* e, float speed)
 {
@@ -63,13 +61,6 @@ bool CWalk::CalcRandomMove()
     static constexpr float MIN_MOVE = 1.5f; // ランダム移動距離の範囲（最小）
     static constexpr float MAX_MOVE = 4.0f; // ランダム移動距離の範囲（最大）
 
-    // Sheep専用の範囲チェック
-    CSheep* sheep = dynamic_cast<CSheep*>(m_pOwner);
-    CFlog* flog = nullptr;
-    if (sheep != nullptr)
-    {
-        flog = sheep->GetFlog();
-    }
 
     // ランダムに「回転量」「移動距離」を作って、境界内に収まるまでリトライ
     for (int retry = 0; retry < MAX_RETRY; ++retry)
@@ -83,19 +74,7 @@ bool CWalk::CalcRandomMove()
         m_targetPos = m_position + VECTOR3(0, 0,
                                            moveAmount) * XMMatrixRotationY(m_turnAmount);
 
-        // Sheepの場合：Flogの範囲内かチェック
-        if (flog != nullptr)
-        {
-            VECTOR3 toCenter = flog->GetFlockCenter() - m_targetPos;
-            toCenter.y = 0;
-            float distanceToCenter = sqrtf(toCenter.LengthSquare());
-            if (distanceToCenter <= flog->GetFlockRadius())
-            {
-                return true;
-            }
-        }
-        // それ以外のエネミーの場合、自身のAreaSizeチェック
-        else if (IsInsideAreaXZ(m_targetPos, m_pOwner->GetAreaSize()))
+        if (IsInsideAreaXZ(m_targetPos, m_pOwner->GetAreaSize()))
         {
             return true;
         }

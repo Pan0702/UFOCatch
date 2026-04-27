@@ -46,15 +46,14 @@ void CHerded::Update()
 
     const VECTOR3 boidsForce = CalculateBoids();
     const VECTOR3 wanderForce = CalculateWandering();
-    const VECTOR3 boundaryForce = CalculateBoundaryForce();
 
     // 力を合成（Wandering優先で自由な動き）
-    VECTOR3 totalForce = wanderForce + boidsForce + boundaryForce;
+    VECTOR3 totalForce = wanderForce + boidsForce + CalculateEscapeFromDog();
     totalForce.y = 0;
 
     if (totalForce.LengthSquare() > 0.0001f)
     {
-        normalize(totalForce);
+        totalForce = normalize(totalForce);
 
         // 目標の回転角度を計算
         float targetAngle = atan2f(totalForce.x, totalForce.z);
@@ -147,7 +146,7 @@ VECTOR3 CHerded::CalculateBoids() const
         cohesion.y = 0;
         if (cohesion.LengthSquare() > 0.0001f)
         {
-            normalize(cohesion);
+            cohesion = normalize(cohesion);
             // 吸い込み中は凝集力が強くなる。通常時は弱く（自由な動きを優先）
             float cohesionWeight = isSucking ? 1.5f : 0.1f;
             cohesion *= cohesionWeight;
@@ -156,7 +155,7 @@ VECTOR3 CHerded::CalculateBoids() const
 
     if (separationCount > 0 && separation.LengthSquare() > 0.0001f)
     {
-        normalize(separation);
+        separation = normalize(separation);
         constexpr float separationWeight = 2.0f; // 分離を強めて、近づきすぎを防ぐ
         separation *= separationWeight;
     }
@@ -172,7 +171,9 @@ VECTOR3 CHerded::CalculateEscapeFromDog() const
         return {0, 0, 0};
     }
 
-    CAShepherdDog* dog = nullptr;
+    CFlog* flog = m_pOwner->GetFlog();
+    if (flog == nullptr) return {0, 0, 0};
+    CAShepherdDog* dog = flog->GetShepherdDog();
     if (dog == nullptr) return {0, 0, 0};
 
     const VECTOR3 dogPos = dog->GetTransform().position;
@@ -188,7 +189,7 @@ VECTOR3 CHerded::CalculateEscapeFromDog() const
     // 犬が感知範囲内にいる場合のみ逃げる
     if (distanceSq < detectionRadiusSq && distanceSq > 0.0001f)
     {
-        normalize(diff);
+        diff = normalize(diff);
         constexpr float dogEscapeWeight = 2.5f;
         return diff * dogEscapeWeight;
     }
@@ -196,36 +197,6 @@ VECTOR3 CHerded::CalculateEscapeFromDog() const
     return {0, 0, 0};
 }
 
-VECTOR3 CHerded::CalculateBoundaryForce() const
-{
-    CFlog* flog = m_pOwner->GetFlog();
-    if (flog == nullptr) return {0, 0, 0};
-
-    const VECTOR3 flockCenter = flog->GetFlockCenter();
-    const float flockRadius = flog->GetFlockRadius();
-    const VECTOR3 myPos = m_pOwner->GetTransform().position;
-
-    VECTOR3 toCenter = flockCenter - myPos;
-    toCenter.y = 0;
-
-    const float distanceToCenter = sqrtf(toCenter.LengthSquare());
-
-    // 半径外に出た場合のみ、強い力で中心に戻す
-    if (distanceToCenter > flockRadius)
-    {
-        if (toCenter.LengthSquare() > 0.0001f)
-        {
-            normalize(toCenter);
-            // 半径を超えるほど強い力で引き戻す
-            const float overDistance = distanceToCenter - flockRadius;
-            const float boundaryWeight = 5.0f + overDistance * 1.0f;
-            return toCenter * boundaryWeight;
-        }
-    }
-
-    // 半径内では完全に自由（境界力なし）
-    return {0, 0, 0};
-}
 
 VECTOR3 CHerded::CalculateWandering()
 {
@@ -248,7 +219,7 @@ VECTOR3 CHerded::CalculateWandering()
     VECTOR3 wanderForce = m_wanderTarget;
     if (wanderForce.LengthSquare() > 0.0001f)
     {
-        normalize(wanderForce);
+        wanderForce = normalize(wanderForce);
         constexpr float wanderWeight = 1.0f; // Wanderの強さ
         return wanderForce * wanderWeight;
     }
@@ -277,8 +248,8 @@ void CPanic::Enter()
     m_changeDirectionTimer = 0.0f;
 
     // アニメーションを走りに変更
-    m_pOwner->GetAnimator()->MergePlay(AnimationType::A_RUN);
-    m_pOwner->GetAnimator()->SetPlaySpeed(1.5f); // 速めに再生
+    m_pOwner->GetAnimator()->MergePlay(A_WALK);
+    m_pOwner->GetAnimator()->SetPlaySpeed(3.0f); // 速めに再生
 }
 
 void CPanic::Update()

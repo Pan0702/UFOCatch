@@ -13,20 +13,41 @@ void CCollecting::Enter()
 {
     m_isFinish = false;
 
-    // 群れの状況を把握
-    FlogInfo info = CFlog::CalcFlogInfoStatic(m_pOwner->GetSheeps());
+    CFlog* flog = m_pOwner->GetFlog();
+    if (flog == nullptr)
+    {
+        m_isFinish = true;
+        return;
+    }
+
+    CSheep* targetSheep = nullptr;
+    float maxDistSq = 0.0f;
+    const VECTOR3 flogCenter = flog->GetFlockCenter();
+    for (CSheep* s : m_pOwner->GetSheeps())
+    {
+        if (s == nullptr) continue;
+        if (flog->ContainPos(s->GetTransform().position)) continue; //円内はスキップ
+        VECTOR3 diff = flogCenter - s->GetTransform().position;
+        diff.y = 0;
+        float distSq = diff.LengthSquare();
+        if (distSq > maxDistSq)
+        {
+            maxDistSq = distSq;
+            targetSheep = s;
+        }
+    }
 
     // はぐれ羊がいない場合、終了
-    if (info.furthestSheep == nullptr)
+    if (targetSheep == nullptr)
     {
         m_isFinish = true;
         return;
     }
 
     // はぐれ羊の位置
-    const VECTOR3 sheepPos = info.furthestSheep->GetTransform().position;
+    const VECTOR3 sheepPos = targetSheep->GetTransform().position;
     // はぐれ羊から重心への方向
-    VECTOR3 toCentroid = info.centroid - sheepPos;
+    VECTOR3 toCentroid = flogCenter - sheepPos;
     toCentroid.y = 0;
 
     // ゼロベクトル対策
@@ -36,12 +57,12 @@ void CCollecting::Enter()
         return;
     }
 
-    normalize(toCentroid);
-    // 羊の背後に回り込む距離（ストロングボム: 5m）
-    constexpr float behindDistance = 5.0f;
+    toCentroid = normalize(toCentroid);
+    // 羊の背後に回り込む距離（ストロングボム: 1m）
+    constexpr float BEHIND_DIS = 1.5f;
     // 背後に回り込む位置を決定
-    m_targetPos = sheepPos - toCentroid * behindDistance;
-    info.furthestSheep->ChangeState(CBaseState::State::HERDED);
+    m_targetPos = sheepPos - toCentroid * BEHIND_DIS; //flogCenter + (-toCentroid) * behindDistance;
+    targetSheep->ChangeState(CBaseState::State::HERDED);
 }
 
 void CCollecting::Update()

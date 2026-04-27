@@ -1,4 +1,4 @@
-#include "DebugScene.h"
+﻿#include "DebugScene.h"
 
 #include "../../Scene/Other/DebugCamera.h"
 #include "../../System/GameInstance.h"
@@ -8,6 +8,8 @@
 #include "../../Stage/StageFactor.h"
 #include "../../Utils/Sprite3D.h"
 #include "../../../Libs/Imgui/imgui.h"
+#include "../../Player/PCamera.h"
+#include "../../System/VisionSystem.h"
 
 namespace
 {
@@ -44,9 +46,13 @@ CDebugScene::CDebugScene()
 {
     Instantiate<CStageFactor>();
     SingleInstantiate<CEnemyManager>();
+    Instantiate<CPlayerCamera>();
+    Instantiate<CVisionSystem>();
+    Instantiate<CPlayer>(50);
     Instantiate<CDebugCamera>();
-    auto* flog = Instantiate<CFlog>(VECTOR3(0.0f, 0, 0), 10.0f, 8);
+    auto* flog = Instantiate<CFlog>(VECTOR3(0.0f, 0, 0), 5.0f, 1);
     m_pDog = Instantiate<CAShepherdDog>();
+    m_pDog->SetFlog(flog);
     CGameInstance::Get()->Init(1000);
     for (CSheep* s : flog->GetAllSheeps())
     {

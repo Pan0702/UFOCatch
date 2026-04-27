@@ -24,11 +24,13 @@ public:
     void AddSheep(CSheep* sheep);
     void RemoveSheep(const CSheep* sheep);
     bool ContainPos(const VECTOR3& pos) const;
+    void SetShepherdDog(CAShepherdDog* dog) { m_pShepherdDog = dog; }
+    CAShepherdDog* GetShepherdDog() const { return m_pShepherdDog; }
     static FlogInfo CalcFlogInfoStatic(const std::vector<CSheep*>& manySheep);
 
 private:
     std::vector<CSheep*> m_allSheep;
-    std::vector<CAShepherdDog*> m_shepherdDogs;
+    CAShepherdDog* m_pShepherdDog = nullptr;
 
     // 鄒､繧後・荳ｭ蠢・せ縺ｨ蜊雁ｾ・
     VECTOR3 m_flockCenter;
