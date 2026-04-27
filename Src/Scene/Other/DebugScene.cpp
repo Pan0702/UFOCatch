@@ -50,7 +50,7 @@ CDebugScene::CDebugScene()
     Instantiate<CVisionSystem>();
     Instantiate<CPlayer>(50);
     Instantiate<CDebugCamera>();
-    auto* flog = Instantiate<CFlog>(VECTOR3(0.0f, 0, 0), 5.0f, 1);
+    auto* flog = Instantiate<CFlog>(VECTOR3(0.0f, 0, 0), 2.0f, 1);
     CGameInstance::Get()->Init(1000);
 }
 

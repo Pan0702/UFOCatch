@@ -36,7 +36,7 @@ void CTitleUI::InitButtons()
 
 void CTitleUI::InitBackground()
 {
-    CSpriteImage* white = ImageRegistry::LoadTexture("data/Title/Title.jpg");
+    CSpriteImage* white = ImageRegistry::LoadTexture(FileName::TITLE_BACK_IMAGE);
     auto backImage = std::make_unique<CUIImage>(white, VECTOR2(0, 0), VECTOR2(WINDOW_WIDTH,WINDOW_HEIGHT));
     m_canvas.AddWidget(std::move(backImage));
 }

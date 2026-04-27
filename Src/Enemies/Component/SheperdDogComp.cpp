@@ -3,6 +3,7 @@
 #include "../AnimalDog//ShepherdDog.h"  // パスは適宜修正してください
 #include "../System/Flog.h"
 
+
 CCollecting::CCollecting(CAShepherdDog* dog, float speed)
     : m_moveSpeed(speed)
 {
@@ -12,7 +13,15 @@ CCollecting::CCollecting(CAShepherdDog* dog, float speed)
 void CCollecting::Enter()
 {
     m_isFinish = false;
+    m_repathTimer = 0.0f;
+    m_pOwner->GetAnimator()->MergePlay(AnimationType::A_WALK);
+    m_pOwner->GetAnimator()->SetPlaySpeed(4.0f);
+    RecomputePath();
+}
 
+
+void CCollecting::RecomputePath()
+{
     CFlog* flog = m_pOwner->GetFlog();
     if (flog == nullptr)
     {
@@ -20,74 +29,119 @@ void CCollecting::Enter()
         return;
     }
 
+    //はぐれ羊を再選定
     CSheep* targetSheep = nullptr;
-    float maxDistSq = 0.0f;
+    float maxDisSq = 0.0f;
     const VECTOR3 flogCenter = flog->GetFlockCenter();
     for (CSheep* s : m_pOwner->GetSheeps())
     {
         if (s == nullptr) continue;
-        if (flog->ContainPos(s->GetTransform().position)) continue; //円内はスキップ
+        if (flog->ContainPos(s->GetTransform().position)) continue;
         VECTOR3 diff = flogCenter - s->GetTransform().position;
         diff.y = 0;
-        float distSq = diff.LengthSquare();
-        if (distSq > maxDistSq)
+        float disSq = diff.LengthSquare();
+        if (disSq > maxDisSq)
         {
-            maxDistSq = distSq;
+            maxDisSq = disSq;
             targetSheep = s;
         }
     }
-
-    // はぐれ羊がいない場合、終了
     if (targetSheep == nullptr)
     {
         m_isFinish = true;
         return;
     }
 
-    // はぐれ羊の位置
+    //群れの中心と逆方向に 1m 離れた地点を目標にする
     const VECTOR3 sheepPos = targetSheep->GetTransform().position;
-    // はぐれ羊から重心への方向
     VECTOR3 toCentroid = flogCenter - sheepPos;
     toCentroid.y = 0;
-
-    // ゼロベクトル対策
-    if (toCentroid.LengthSquare() < 0.0001f)
+    if (toCentroid.LengthSquare() < NEAR_ZERO_LENSQ)
     {
         m_isFinish = true;
         return;
     }
-
     toCentroid = normalize(toCentroid);
-    // 羊の背後に回り込む距離（ストロングボム: 1m）
     constexpr float BEHIND_DIS = 1.0f;
-    // 背後に回り込む位置を決定
-    m_targetPos = sheepPos - toCentroid * BEHIND_DIS; //flogCenter + (-toCentroid) * behindDistance;
+    const VECTOR3 behindPos = sheepPos - toCentroid * BEHIND_DIS;
+    m_targetPos = behindPos;
+
+    // A* で経路計算
+    VECTOR2 pos, size;
+    m_pOwner->GetBounds2D(pos, size);
+    m_pathFinder.SetAgentSize(size);
+    const VECTOR2 start = ToVec2XZ(m_pOwner->GetTransform().position);
+    const VECTOR2 end = ToVec2XZ(behindPos);
+    m_pathIndex = 1;
+    m_path = m_pathFinder.SearchRoute(start, end);
+
     targetSheep->ChangeState(CBaseState::State::HERDED);
 }
 
 void CCollecting::Update()
 {
-    // 目標位置へ移動
-    const VECTOR3 currentPos = m_pOwner->GetTransform().position;
-    VECTOR3 direction = m_targetPos - currentPos;
-    direction.y = 0;
-    const float distanceSq = direction.LengthSquare();
-    constexpr float arrivalThresholdSq = 0.25f;
-    // 目標に到着したら終了
-    if (distanceSq < arrivalThresholdSq)
+    if (m_isFinish) return;
+
+    m_repathTimer += SceneManager::DeltaTime();
+    if (m_repathTimer >= REPATH_INTERVAL)
+    {
+        m_repathTimer = 0.0f;
+        RecomputePath();
+        if (m_isFinish) return;
+    }
+    if (m_path.empty() || m_pathIndex >=
+        static_cast<int>(m_path.size()))
     {
         m_isFinish = true;
         return;
     }
+    const VECTOR2 nextPoint = m_path[m_pathIndex];
+    const VECTOR3 currentPos = m_pOwner->GetTransform().position;
+    const VECTOR3 nextPos = {nextPoint.x, currentPos.y, nextPoint.y};
+    // 目標位置へ移動
 
-    direction = normalize(direction);
+    VECTOR3 direction = nextPos - currentPos;
+    direction.y = 0;
+    const float targetAngle = atan2f(direction.x, direction.z);
 
-    // 移動方向に回転
-    float targetAngle = atan2f(direction.x, direction.z);
-    m_pOwner->SetRotateY(targetAngle);
+    const float current = m_pOwner->GetTransform().rotation.y;
+    const float t = 3.0f * SceneManager::DeltaTime();
+    float angleDiff = targetAngle - current;
+    angleDiff = std::remainder(angleDiff, XM_2PI);
+    const float newAngle = current + angleDiff * t;
+    m_pOwner->SetRotateY(newAngle);
 
-    m_pOwner->AddPosition(direction * m_moveSpeed * SceneManager::DeltaTime());
+    VECTOR3 moveVec = VECTOR3(0, 0, m_moveSpeed * SceneManager::DeltaTime())
+        * XMMatrixRotationY(newAngle);
+    moveVec = m_pOwner->CalcSlideMove(moveVec);
+    m_pOwner->AddPosition(moveVec);
+
+    VECTOR3 toTarget = nextPos - m_pOwner->GetTransform().position;
+    toTarget.y = 0;
+    const float disSq = toTarget.LengthSquare();
+    const float cellSize = m_pathFinder.GetCellSize();
+    const float reachDistSq = cellSize * 0.5f * cellSize * 0.5f;
+
+    if (disSq < reachDistSq)
+    {
+        m_pathIndex++;
+        if (m_pathIndex >= static_cast<int>(m_path.size()))
+        {
+            m_isFinish = true;
+            return;
+        }
+        while (m_pathIndex < static_cast<int>(m_path.size()) - 1)
+        {
+            VECTOR2 toNext = m_path[m_pathIndex] - ToVec2XZ(m_pOwner->GetTransform().position);
+            VECTOR2 toAfter = m_path[m_pathIndex + 1] - ToVec2XZ(m_pOwner->GetTransform().position);
+            const float angleCos = dot(normalize(toNext), normalize(toAfter));
+            const float threshold = cos(30.0f * DegToRad);
+            if (angleCos > threshold) m_pathIndex++;
+            else break;
+        }
+    }
 }
+
 
 CDriving::CDriving(CAShepherdDog* dog, float speed)
     : m_moveSpeed(speed)

@@ -22,7 +22,7 @@ namespace
 
 CSelectUI::CSelectUI()
     : m_pDifficultyImage(nullptr)
-    , m_lastFocusIndex(-1)
+      , m_lastFocusIndex(-1)
 {
     m_sceneNames = {SceneName::TITLE, SceneName::TUTORIAL, SceneName::EASY, SceneName::NORMAL};
     BackImage();
@@ -39,7 +39,7 @@ void CSelectUI::InitButtons()
     VECTOR4 buttonSize = VECTOR4(0, 297.0f, 156.0f, 59.0f);
     VECTOR2 buttonPos = VECTOR2(15.0f, 20.0f);
     m_buttons.AddButton(this, buttonTexture, buttonPos, buttonSize);
-    
+
     //Scene選択のボタン
     {
         //1つ目のbuttonの描画位置
@@ -70,7 +70,7 @@ void CSelectUI::InitButtons()
 
 void CSelectUI::BackImage()
 {
-    CSpriteImage* white = ImageRegistry::LoadTexture("data/Select/_0006_Base2.png");
+    CSpriteImage* white = ImageRegistry::LoadTexture(FileName::SELECT_BACK_IMAGE);
     auto backImage = std::make_unique<CUIImage>(white, VECTOR2(0, 0), VECTOR2(WINDOW_WIDTH,WINDOW_HEIGHT));
     m_canvas.AddWidget(std::move(backImage));
 }
@@ -82,10 +82,8 @@ void CSelectUI::InitDifficultyImage()
         m_difficultyTextures.push_back(ImageRegistry::LoadTexture(path));
 
     // 最初はインデックス0の画像で初期化
-    auto img = std::make_unique<CUIImage>(
-        m_difficultyTextures[0],
-        VECTOR2(DIFF_IMG_X, DIFF_IMG_Y),
-        VECTOR2(DIFF_IMG_W, DIFF_IMG_H));
+    auto img = std::make_unique<CUIImage>(m_difficultyTextures[0],
+                                          VECTOR2(DIFF_IMG_X, DIFF_IMG_Y), VECTOR2(DIFF_IMG_W, DIFF_IMG_H));
     m_pDifficultyImage = m_canvas.AddWidget(std::move(img));
     m_pDifficultyImage->SetLayer(5);
 }

@@ -15,7 +15,6 @@ DebugUI::DebugUI()
     AddButtons();
     AddCircle();
     AddBar();
-
 }
 
 void DebugUI::AddImage()
@@ -39,11 +38,11 @@ void DebugUI::AddButton()
     m_pButton = m_canvas.AddWidget(std::move(btn));
     m_pButton->SetOnFocusChanged([this](bool isFocus)
     {
-        m_pButton->GetAnimationPlayer().Play(isFocus ? "OnFocus" : "OnUnfocus",false);
+        m_pButton->GetAnimationPlayer().Play(isFocus ? "OnFocus" : "OnUnfocus", false);
     });
     //buttonのアニメーションを指定
-    m_pButton->GetAnimationPlayer().AddAnimation("OnFocus",UIPreset::PopIn(1.0f));
-    m_pButton->GetAnimationPlayer().AddAnimation("OnUnfocus",UIPreset::FadeOut(1.0f));
+    m_pButton->GetAnimationPlayer().AddAnimation("OnFocus", UIPreset::PopIn(1.0f));
+    m_pButton->GetAnimationPlayer().AddAnimation("OnUnfocus", UIPreset::FadeOut(1.0f));
 }
 
 void DebugUI::AddButtons()
@@ -51,20 +50,20 @@ void DebugUI::AddButtons()
     m_buttons.SetImageSize(VECTOR4(0, 0, 128, 128));
     std::vector<std::string> buttonNames = {"Button1", "Button2", "Button3"};
     VECTOR2 size = VECTOR2(128, 128);
-  
+
     for (const auto& name : buttonNames)
     {
-        m_buttons.AddButton(this,name,size);
+        m_buttons.AddButton(this, name, size);
         size.y = size.y + 128;
     }
-    m_buttons.SetAnim(UIPreset::FadeIn(0.3f),UIPreset::FadeOut(0.3f));
+    m_buttons.SetAnim(UIPreset::FadeIn(0.3f), UIPreset::FadeOut(0.3f));
     m_buttons.SetFocus(0);
 }
 
 void DebugUI::AddCircle()
 {
     CSpriteImage* image = ImageRegistry::GetTexture("Button3");
-    auto circle = std::make_unique<CUIRingGauge>(nullptr, image,VECTOR2(500, 50), VECTOR4(0, 0, 100, 100));
+    auto circle = std::make_unique<CUIRingGauge>(nullptr, image, VECTOR2(500, 50), VECTOR4(0, 0, 100, 100));
     m_pRingGauge = m_canvas.AddWidget(std::move(circle));
     m_pRingGauge->SetAnim(UIPreset::Transition(0.3f));
 }
@@ -72,11 +71,12 @@ void DebugUI::AddCircle()
 void DebugUI::AddBar()
 {
     CSpriteImage* image = ImageRegistry::GetTexture("Button3");
-    auto bar = std::make_unique<CUIProgressBar>(nullptr, image,VECTOR2(50, 20), VECTOR4(0, 0, 300, 30));
+    auto bar = std::make_unique<CUIProgressBar>(nullptr, image, VECTOR2(50, 20), VECTOR4(0, 0, 300, 30));
     m_pBar = m_canvas.AddWidget(std::move(bar));
     m_pBar->SetIsEXPBar(true);
     m_pBar->SetAnim(UIPreset::Transition(0.3f));
 }
+
 void DebugUI::Update()
 {
     static bool isPressed = false;
@@ -88,11 +88,11 @@ void DebugUI::Update()
     }
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_W))
     {
-        m_buttons.MoveFocus(-1);
+        m_buttons.MoveFocus(UP);
     }
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_S))
     {
-        m_buttons.MoveFocus(1);
+        m_buttons.MoveFocus(DOWN);
     }
     if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_R))
     {
@@ -123,5 +123,3 @@ void DebugUI::Draw()
 {
     m_canvas.Draw();
 }
-
-

@@ -2,6 +2,7 @@
 #include "ComponentBase.h"
 #include "Destroy.h"
 #include "../AnimalDog/ShepherdDog.h"
+#include "../System/AStarPathFinder.h"
 
 class CCollecting : public CComponentBase
 {
@@ -11,9 +12,17 @@ public:
     void Update() override;
 
 private:
+    void RecomputePath();
+
     CAShepherdDog* m_pOwner;
     VECTOR3 m_targetPos = {0, 0, 0};
     float m_moveSpeed;
+
+    std::vector<VECTOR2> m_path;
+    int m_pathIndex = 0;
+    CAStarPathFinder m_pathFinder;
+    float m_repathTimer = 0.0f;
+    const float REPATH_INTERVAL = 0.2f;
 };
 
 class CDriving : public CComponentBase
@@ -59,4 +68,3 @@ public:
 private:
     CAShepherdDog* m_pDog;
 };
-

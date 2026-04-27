@@ -180,6 +180,13 @@ VECTOR3 CHerded::CalculateEscapeFromDog() const
     // 犬を感知する距離（ストロングボムモデル: 50m）
     constexpr float detectionRadiusSq = 5.0f * 5.0f;
 
+    // Flogの半径＋制限距離を超えたら逃げない
+    constexpr float FREE_MARGIN = 3.0f;
+    const float maxFleeDist = flog->GetFlockRadius() + FREE_MARGIN;
+    VECTOR3 fromCenter = myPos - flog->GetFlockCenter();
+    fromCenter.y = 0;
+    if (fromCenter.LengthSquare() > maxFleeDist * maxFleeDist) return {0, 0, 0};
+
     // 犬が感知範囲内にいる場合のみ逃げる
     if (distanceSq < detectionRadiusSq && distanceSq > 0.0001f)
     {

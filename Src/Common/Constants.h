@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <string>
+constexpr float NEAR_ZERO_LENSQ = 0.0001f;
 
 ///<summary>定数をまとめたnamespace</summary>
 namespace Constants
@@ -8,6 +9,8 @@ namespace Constants
     {
         constexpr const char* MODEL_LIST = "data/modelList.json";
         constexpr const char* UI_SPRITE = "data/PlayUIParts.png";
+        constexpr const char* SELECT_BACK_IMAGE = "data/Select/_0006_Base2.png";
+        constexpr const char* TITLE_BACK_IMAGE = "data/Title/TitleBack.jpg";
     }
 
     namespace SpriteName

@@ -13,7 +13,7 @@ CAShepherdDog::CAShepherdDog()
     m_pGround = ObjectManager::FindGameObject<CGround>();
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     //移動スピード:2.0f
-    m_components[CBaseState::State::COLLECTING] = std::make_unique<CCollecting>(this, 4.0f);
+    m_components[CBaseState::State::COLLECTING] = std::make_unique<CCollecting>(this, 6.0f);
     //移動スピード:2.0f
     m_components[CBaseState::State::DRIVING] = std::make_unique<CDriving>(this, 4.0f);
     m_components[CBaseState::State::RESCUE] = std::make_unique<CRescue>(this);

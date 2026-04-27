@@ -10,6 +10,7 @@
 
 #define DIRECTINPUT_VERSION 0x0800
 
+#include <cstdint>
 #include <dinput.h>
 
 // 必要なライブラリファイルのロード
@@ -48,7 +49,7 @@
 //-----------------------------------------------------------------------------
 // フォースフィードバック ジョイスティック エフェクト最大数
 //-----------------------------------------------------------------------------
-#define JOY_EF_COUNT    32  
+#define JOY_EF_COUNT    32
 
 #define DIJ_VOLUME  850
 //-----------------------------------------------------------------------------
@@ -112,18 +113,24 @@
 #define EF_EXPLODE  1
 #define EF_FIRE     2
 
+enum ButtonAction : int8_t
+{
+    UP = -1,
+    DOWN = 1,
+    NONE = 0
+};
+
 // CDirectInput : 入力を一括管理するクラス
 class CDirectInput
 {
 private:
-    
     //-----------------------------------------------------------------------------
     // 共通
     //-----------------------------------------------------------------------------
 private:
     // --- 1. 8バイト（ポインタ・ハンドル） ---
-    HWND                 m_hWnd;
-    LPDIRECTINPUT8       m_pDI8;
+    HWND m_hWnd;
+    LPDIRECTINPUT8 m_pDI8;
     LPDIRECTINPUTDEVICE8 m_pKey;
     DIDEVICEOBJECTDATA* m_pBufferKey;
     DIDEVICEOBJECTDATA* m_pBufferPositionKey;
@@ -136,30 +143,30 @@ private:
     DIDEVICEOBJECTDATA* m_pBufferJoy[JOYSTICK_COUNT];
     DIDEVICEOBJECTDATA* m_pBufferPositionJoy;
     LPDIDEVICEOBJECTDATA m_didodJoy[JOYSTICK_COUNT];
-    LPDIRECTINPUTEFFECT  m_pJoyEffect[JOYSTICK_COUNT][JOY_EF_COUNT];
+    LPDIRECTINPUTEFFECT m_pJoyEffect[JOYSTICK_COUNT][JOY_EF_COUNT];
 
     // --- 2. 4バイト（int, float, DWORD, HRESULT） ---
-    HRESULT              m_hr;
-    float                m_ViewWidth;
-    float                m_ViewHeight;
-    DWORD                m_BufferRestKey;
-    DWORD                m_BufferRestBackupKey;
-    DWORD                m_BufferRestMouse;
-    DWORD                m_BufferRestBackupMouse;
-    DWORD                m_BufferRestJoy;
-    DWORD                m_BufferRestBackupJoy[JOYSTICK_COUNT];
-    int                  m_nJoySum;
-    int                  m_nJoyFFNum;
-    int                  m_nJoyEFSum;
-    int                  m_nJoyEFI;
+    HRESULT m_hr;
+    float m_ViewWidth;
+    float m_ViewHeight;
+    DWORD m_BufferRestKey;
+    DWORD m_BufferRestBackupKey;
+    DWORD m_BufferRestMouse;
+    DWORD m_BufferRestBackupMouse;
+    DWORD m_BufferRestJoy;
+    DWORD m_BufferRestBackupJoy[JOYSTICK_COUNT];
+    int m_nJoySum;
+    int m_nJoyFFNum;
+    int m_nJoyEFSum;
+    int m_nJoyEFI;
 
     // --- 3. 1バイト（BYTE配列, bool） ---
     // 大きな配列を先に置く
-    BYTE                 m_diKeyState[256];    // 256は8の倍数なので安全
-    DIMOUSESTATE         m_dims;               // 内部はlong(4)とBYTE(1)の混合だがここに配置
-    DIJOYSTATE2          m_js[JOYSTICK_COUNT]; // 非常に巨大な構造体
-    bool                 m_bInputActive;
-    bool                 m_bJoyFF[JOYSTICK_COUNT];
+    BYTE m_diKeyState[256]; // 256は8の倍数なので安全
+    DIMOUSESTATE m_dims; // 内部はlong(4)とBYTE(1)の混合だがここに配置
+    DIJOYSTATE2 m_js[JOYSTICK_COUNT]; // 非常に巨大な構造体
+    bool m_bInputActive;
+    bool m_bJoyFF[JOYSTICK_COUNT];
 
 public:
     //-----------------------------------------------------------------------------
@@ -171,8 +178,8 @@ public:
     bool StartDirectInput(HINSTANCE, HWND, int, DWORD, DWORD);
     bool EndDirectInput(void);
     void SetAcquire(void); // デバイスの権限を取得
-    bool GetInput(void);   // 全デバイスの入力を更新
-    
+    bool GetInput(void); // 全デバイスの入力を更新
+
     //-----------------------------------------------------------------------------
     // キーボード
     //-----------------------------------------------------------------------------
@@ -183,7 +190,7 @@ public:
     bool IsPushEnter();
     bool InitKey(HWND);
     bool SetPropertyKey(void);
-    
+
     //-----------------------------------------------------------------------------
     // マウス
     //-----------------------------------------------------------------------------
@@ -197,31 +204,30 @@ public:
     void ShowMouseCursor(bool bFlag);
     bool InitMouse(HWND);
     bool SetPropertyMouse(void);
-    
+
     //-----------------------------------------------------------------------------
     // ジョイスティック
     //-----------------------------------------------------------------------------
     bool GetJoy(void);
-    bool IfJoyFF(int nSum=JOY_PLAYER1); // 振動対応か確認
-    DIJOYSTATE2 GetJoyState(int nSum=JOY_PLAYER1);
-    int  GetJoyNum(void);
-    bool CheckJoy(const int& nButton, const DWORD& nMode, int nSum=JOY_PLAYER1);
-    bool CheckUpDownLeftRight(int nDir, DWORD nMode, int nSum=JOY_PLAYER1);
+    bool IfJoyFF(int nSum = JOY_PLAYER1); // 振動対応か確認
+    DIJOYSTATE2 GetJoyState(int nSum = JOY_PLAYER1);
+    int GetJoyNum(void);
+    bool CheckJoy(const int& nButton, const DWORD& nMode, int nSum = JOY_PLAYER1);
+    bool CheckUpDownLeftRight(int nDir, DWORD nMode, int nSum = JOY_PLAYER1);
     bool InitJoy(HWND);
     bool InitJoyNormal(HWND);
     bool InitJoyFF(HWND);
     bool SetPropertyJoy(void);
-    bool CheckJoyImm(DWORD nButton, int nSum=JOY_PLAYER1);
-    bool PlayJoyEffect(int nEffectNo, int nNum=1, int nSum=JOY_PLAYER1);
+    bool CheckJoyImm(DWORD nButton, int nSum = JOY_PLAYER1);
+    bool PlayJoyEffect(int nEffectNo, int nNum = 1, int nSum = JOY_PLAYER1);
     bool CreateJoyEffectStandard(void);
-    bool ReadJoyEffect(const TCHAR* szFName, int &nEffectNo, int &nNum);
+    bool ReadJoyEffect(const TCHAR* szFName, int& nEffectNo, int& nNum);
 
     //-----------------------------------------------------------------------------
     // コールバック関数
     //-----------------------------------------------------------------------------
     BOOL EnumJoysticksCb(LPCDIDEVICEINSTANCE pInst, LPVOID lpvContext);
     BOOL EnumEffectsInFileCb(LPCDIFILEEFFECT lpdife, LPVOID pvRef);
-
 };
 
 #endif
