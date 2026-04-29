@@ -8,7 +8,7 @@
 #include "../../Player/Player.h"
 #include "../../Enemies/AnimalDog/Dog.h"
 #include "../../Enemies/System/AnimalFactor.h"
-#include "../../Enemies/System/Flog.h"
+#include "../../Enemies/System/Flock.h"
 #include "../../System/DisplayInfo.h"
 #include "../../System/VisionSystem.h"
 #include "../../Stage/StageFactor.h"
@@ -23,7 +23,7 @@ PlayScene::PlayScene()
     Instantiate<CTimer>(30);
     Instantiate<CPlayer>(25);
     Instantiate<CAnimalFactor>(20, 20, 0);
-    // Instantiate<CFlog>();           
+    // Instantiate<CFlock>();           
     Instantiate<CVisionSystem>();
     //Instantiate<CDisplayInfo>();
     CGameInstance::Get()->Init(3000);

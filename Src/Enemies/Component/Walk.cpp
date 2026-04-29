@@ -1,8 +1,10 @@
 ﻿#include "Walk.h"
 
 #include "../../System/GameInstance.h"
+#include "../AnimalSheep/Sheep.h"
 #include "../Base/EnemyBase.h"
 #include "../System/EnemyManager.h"
+#include "../System/Flock.h"
 
 
 CWalk::CWalk(CEnemyBase* e, float speed)
@@ -119,7 +121,6 @@ void CWalk::Update()
 
     // ウェイポイントの方向を向く
     VECTOR3 dir = nextPos - m_pOwner->GetTransform().position;
-    dir.y = 0;
     const float targetAngle = atan2f(dir.x, dir.z);
 
     // 回転
@@ -131,9 +132,22 @@ void CWalk::Update()
     m_pOwner->SetRotateY(newAngle);
 
     // 移動
-    VECTOR3 moveVec = VECTOR3(0, 0, m_moveSpeed * SceneManager::DeltaTime())
-        * XMMatrixRotationY(newAngle);
+    VECTOR3 moveVec = VECTOR3(0, 0, m_moveSpeed * SceneManager::DeltaTime()) * XMMatrixRotationY(newAngle);
     moveVec = m_pOwner->CalcSlideMove(moveVec);
+    CSheep* s = dynamic_cast<CSheep*>(m_pOwner);
+    if (s != nullptr)
+    {
+        CFlock* f = s->GetFlock();
+        if (f != nullptr)
+        {
+            const VECTOR3 n = m_pOwner->GetTransform().position + moveVec;
+            if (!f->ContainMoveArea(n))
+            {
+                return;
+            }
+        }
+    }
+
     m_pOwner->AddPosition(moveVec);
 
     //目的地の計算

@@ -1,6 +1,6 @@
-﻿#include "Flog.h"
+﻿#include "Flock.h"
 
-CFlog::CFlog(const VECTOR3& center, float radius, int sheepCount)
+CFlock::CFlock(const VECTOR3& center, float radius, int sheepCount)
 {
     m_flockCenter = center;
     m_flockRadius = radius;
@@ -19,12 +19,12 @@ CFlog::CFlog(const VECTOR3& center, float radius, int sheepCount)
 
         //集団に追加
         CSheep* sheep = Instantiate<CSheep>(iniPos);
-        sheep->SetFlog(this);
+        sheep->SetFlock(this);
     }
     // 犬スポーン（境界の外側、東に3m）
     const VECTOR3 dogPos = center + VECTOR3(radius + 3.0f, 0, 0);
     CAShepherdDog* dog = Instantiate<CAShepherdDog>(dogPos);
-    dog->SetFlog(this);
+    dog->SetFlock(this);
     SetShepherdDog(dog); // 既存の API
 
     // 犬の m_sheeps を埋める
@@ -34,12 +34,12 @@ CFlog::CFlog(const VECTOR3& center, float radius, int sheepCount)
     }
 }
 
-void CFlog::AddSheep(CSheep* sheep)
+void CFlock::AddSheep(CSheep* sheep)
 {
     m_allSheep.push_back(sheep);
 }
 
-void CFlog::RemoveSheep(const CSheep* sheep)
+void CFlock::RemoveSheep(const CSheep* sheep)
 {
     auto it = std::ranges::find(m_allSheep, sheep);
     if (it != m_allSheep.end())
@@ -48,16 +48,17 @@ void CFlog::RemoveSheep(const CSheep* sheep)
     }
 }
 
-bool CFlog::ContainPos(const VECTOR3& pos) const
+bool CFlock::ContainPos(const VECTOR3& pos) const
 {
     VECTOR3 diff = m_flockCenter - pos;
     diff.y = 0;
     return diff.LengthSquare() <= m_flockRadius * m_flockRadius;
 }
 
-FlogInfo CFlog::CalcFlogInfoStatic(const std::vector<CSheep*>& manySheep)
+
+FlockInfo CFlock::CalCFlockInfoStatic(const std::vector<CSheep*>& manySheep)
 {
-    FlogInfo info;
+    FlockInfo info;
     info.centroid = VECTOR3(0, 0, 0);
     info.maxDistance = 0.0f;
     info.furthestSheep = nullptr;
@@ -80,4 +81,30 @@ FlogInfo CFlog::CalcFlogInfoStatic(const std::vector<CSheep*>& manySheep)
     }
     // maxDistanceは二乗値のまま返す//
     return info;
+}
+
+float CFlock::GetMoveRadius() const
+{
+    constexpr float FLOCK_MOVE_RADIUS_SCALE = 3.0f;
+    return m_flockRadius + FLOCK_MOVE_RADIUS_SCALE;
+}
+
+float CFlock::GetCollectRadius() const
+{
+    constexpr float COLLECT_RADIUS_RATE = 1.3f;
+    return m_flockRadius * COLLECT_RADIUS_RATE;
+}
+
+bool CFlock::ContainMoveArea(const VECTOR3& pos) const
+{
+    VECTOR3 diff = m_flockCenter - pos;
+    diff.y = 0;
+    return diff.LengthSquare() <= GetMoveRadius() * GetMoveRadius();
+}
+
+bool CFlock::ContainCollectArea(const VECTOR3& pos) const
+{
+    VECTOR3 diff = m_flockCenter - pos;
+    diff.y = 0;
+    return diff.LengthSquare() <= GetCollectRadius() * GetCollectRadius();
 }

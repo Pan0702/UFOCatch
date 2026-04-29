@@ -3,7 +3,7 @@
 #include "../../Scene/Other/DebugCamera.h"
 #include "../../System/GameInstance.h"
 #include "../../Enemies/System/EnemyManager.h"
-#include "../../Enemies/System/Flog.h"
+#include "../../Enemies/System/Flock.h"
 #include "../../Enemies/AnimalSheep/Sheep.h"
 #include "../../Stage/StageFactor.h"
 #include "../../Utils/Sprite3D.h"
@@ -50,7 +50,7 @@ CDebugScene::CDebugScene()
     Instantiate<CVisionSystem>();
     Instantiate<CPlayer>(50);
     Instantiate<CDebugCamera>();
-    auto* flog = Instantiate<CFlog>(VECTOR3(0.0f, 0, 0), 2.0f, 1);
+    auto* flock = Instantiate<CFlock>(VECTOR3(0.0f, 0, 0), 2.0f, 1);
     CGameInstance::Get()->Init(1000);
 }
 
@@ -71,19 +71,65 @@ void CDebugScene::Update()
 
 void CDebugScene::Draw()
 {
-    DrawFlogCircles();
+    DrawFlockCircles();
+    DrawMaxFlockCircles();
+    DrawHalfFlockCircles();
 }
 
-void CDebugScene::DrawFlogCircles() const
+void CDebugScene::DrawHalfFlockCircles() const
 {
     constexpr int SEGMENTS = 32;
     constexpr DWORD COLOR = RGB(0, 255, 255);
 
     CSprite spr;
-    for (CFlog* flog : ObjectManager::FindGameObjects<CFlog>())
+    for (CFlock* flock : ObjectManager::FindGameObjects<CFlock>())
     {
-        const VECTOR3 c = flog->GetFlockCenter();
-        const float r = flog->GetFlockRadius();
+        const VECTOR3 c = flock->GetFlockCenter();
+        const float r = flock->GetMoveRadius() * 0.7;
+
+        VECTOR3 prev(c.x + r, c.y, c.z);
+        for (int i = 1; i <= SEGMENTS; ++i)
+        {
+            const float t = static_cast<float>(i) / SEGMENTS * XM_2PI;
+            VECTOR3 next(c.x + cosf(t) * r, c.y, c.z + sinf(t) * r);
+            spr.DrawLine3D(prev, next, COLOR);
+            prev = next;
+        }
+    }
+}
+
+void CDebugScene::DrawFlockCircles() const
+{
+    constexpr int SEGMENTS = 32;
+    constexpr DWORD COLOR = RGB(0, 255, 255);
+
+    CSprite spr;
+    for (CFlock* flock : ObjectManager::FindGameObjects<CFlock>())
+    {
+        const VECTOR3 c = flock->GetFlockCenter();
+        const float r = flock->GetFlockRadius();
+
+        VECTOR3 prev(c.x + r, c.y, c.z);
+        for (int i = 1; i <= SEGMENTS; ++i)
+        {
+            const float t = static_cast<float>(i) / SEGMENTS * XM_2PI;
+            VECTOR3 next(c.x + cosf(t) * r, c.y, c.z + sinf(t) * r);
+            spr.DrawLine3D(prev, next, COLOR);
+            prev = next;
+        }
+    }
+}
+
+void CDebugScene::DrawMaxFlockCircles() const
+{
+    constexpr int SEGMENTS = 32;
+    constexpr DWORD COLOR = RGB(0, 255, 255);
+
+    CSprite spr;
+    for (CFlock* flock : ObjectManager::FindGameObjects<CFlock>())
+    {
+        const VECTOR3 c = flock->GetFlockCenter();
+        const float r = flock->GetMoveRadius();
 
         VECTOR3 prev(c.x + r, c.y, c.z);
         for (int i = 1; i <= SEGMENTS; ++i)
@@ -127,31 +173,31 @@ void CDebugScene::UpdateImguiPanel()
         }
     }
 
-    // ---- Flog 一覧 + 追加フォーム ----
-    if (ImGui::CollapsingHeader("Flogs", ImGuiTreeNodeFlags_DefaultOpen))
+    // ---- Flock 一覧 + 追加フォーム ----
+    if (ImGui::CollapsingHeader("Flocks", ImGuiTreeNodeFlags_DefaultOpen))
     {
-        auto flogs = ObjectManager::FindGameObjects<CFlog>();
-        int flogIdx = 0;
-        for (CFlog* flog : flogs)
+        auto flocks = ObjectManager::FindGameObjects<CFlock>();
+        int flockIdx = 0;
+        for (CFlock* flock : flocks)
         {
-            const VECTOR3 c = flog->GetFlockCenter();
-            ImGui::Text("Flog[%d]  center=(%.1f, %.1f)  r=%.1f  sheep=%zu",
-                        flogIdx, c.x, c.z, flog->GetFlockRadius(), flog->GetAllSheeps().size());
-            ++flogIdx;
+            const VECTOR3 c = flock->GetFlockCenter();
+            ImGui::Text("Flock[%d]  center=(%.1f, %.1f)  r=%.1f  sheep=%zu",
+                        flockIdx, c.x, c.z, flock->GetFlockRadius(), flock->GetAllSheeps().size());
+            ++flockIdx;
         }
 
         ImGui::Separator();
-        ImGui::Text("Add new Flog:");
-        ImGui::InputFloat("Center X", &m_newFlogCenterX);
-        ImGui::InputFloat("Center Z", &m_newFlogCenterZ);
-        ImGui::InputFloat("Radius", &m_newFlogRadius);
-        ImGui::InputInt("Sheep count", &m_newFlogSheepCount);
-        if (ImGui::Button("Spawn Flog"))
+        ImGui::Text("Add new Flock:");
+        ImGui::InputFloat("Center X", &m_newFlockCenterX);
+        ImGui::InputFloat("Center Z", &m_newFlockCenterZ);
+        ImGui::InputFloat("Radius", &m_newFlockRadius);
+        ImGui::InputInt("Sheep count", &m_newFlockSheepCount);
+        if (ImGui::Button("Spawn Flock"))
         {
-            Instantiate<CFlog>(
-                VECTOR3(m_newFlogCenterX, 0.0f, m_newFlogCenterZ),
-                m_newFlogRadius,
-                m_newFlogSheepCount);
+            Instantiate<CFlock>(
+                VECTOR3(m_newFlockCenterX, 0.0f, m_newFlockCenterZ),
+                m_newFlockRadius,
+                m_newFlockSheepCount);
         }
     }
 
@@ -165,14 +211,14 @@ void CDebugScene::UpdateImguiPanel()
         int sheepIdx = 0;
         for (CSheep* sheep : sheeps)
         {
-            CFlog* flog = sheep->GetFlog();
+            CFlock* flock = sheep->GetFlock();
             const VECTOR3 p = sheep->GetTransform().position;
 
             ImGui::PushID(sheepIdx);
-            ImGui::Text("[%d] %s flog=%p pos=(%.1f,%.1f)",
+            ImGui::Text("[%d] %s flock=%p pos=(%.1f,%.1f)",
                         sheepIdx,
                         SheepStateName(sheep->GetCurrentState()),
-                        static_cast<void*>(flog),
+                        static_cast<void*>(flock),
                         p.x, p.z);
             ImGui::SameLine();
             if (ImGui::Button("Kill"))

@@ -2,7 +2,7 @@
 
 #include "../Component/ComponentFwd.h"
 #include "../../Common/ShadowObject.h"
-#include "../System/Flog.h"
+#include "../System/Flock.h"
 #include "../Component/SheepComp.h"
 
 CSheep::CSheep(const VECTOR3& iniPos)
@@ -40,10 +40,10 @@ void CSheep::InitStates()
 
 CSheep::~CSheep()
 {
-    if (m_pFlog != nullptr)
+    if (m_pFlock != nullptr)
     {
-        m_pFlog->RemoveSheep(this);
-        m_pFlog = nullptr;
+        m_pFlock->RemoveSheep(this);
+        m_pFlock = nullptr;
     }
 }
 
@@ -53,23 +53,23 @@ VECTOR3 CSheep::SuctionSpeed() const
     return m_pPlayer->CalcSuctionDisplacement(suctionTime, transform.position);
 }
 
-void CSheep::SetFlog(CFlog* flog)
+void CSheep::SetFlock(CFlock* flock)
 {
-    if (flog == m_pFlog) return;
-    if (m_pFlog != nullptr)
+    if (flock == m_pFlock) return;
+    if (m_pFlock != nullptr)
     {
-        m_pFlog->RemoveSheep(this);
+        m_pFlock->RemoveSheep(this);
     }
-    m_pFlog = flog;
-    if (m_pFlog != nullptr)
+    m_pFlock = flock;
+    if (m_pFlock != nullptr)
     {
-        m_pFlog->AddSheep(this);
+        m_pFlock->AddSheep(this);
     }
 }
 
-CFlog* CSheep::GetFlog() const
+CFlock* CSheep::GetFlock() const
 {
-    return m_pFlog;
+    return m_pFlock;
 }
 
 void CSheep::Update()

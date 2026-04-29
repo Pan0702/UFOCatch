@@ -1,7 +1,7 @@
 ﻿#include "ShepherdDog.h"
 
 #include "../Component/ComponentFwd.h"
-#include "../System/Flog.h"
+#include "../System/Flock.h"
 #include "../Component/SheperdDogComp.h"
 
 CAShepherdDog::CAShepherdDog()
@@ -89,11 +89,11 @@ void CAShepherdDog::Update()
     }
 
     bool isFlockScattered = false;
-    if (m_pFlog != nullptr)
+    if (m_pFlock != nullptr)
     {
         for (CSheep* sheep : m_sheeps)
         {
-            if (!m_pFlog->ContainPos(sheep->GetTransform().position))
+            if (!m_pFlock->ContainCollectArea(sheep->GetTransform().position))
             {
                 isFlockScattered = true;
                 break;

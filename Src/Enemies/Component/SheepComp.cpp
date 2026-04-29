@@ -1,5 +1,5 @@
 ﻿#include "SheepComp.h"
-#include "../System/Flog.h"
+#include "../System/Flock.h"
 #include "../System/EnemyManager.h"
 
 CHerded::CHerded(CSheep* sheep)
@@ -36,46 +36,52 @@ void CHerded::Update()
     // 移動時間をカウント
     m_walkTimer += SceneManager::DeltaTime();
 
+    bool inDeepInside = false;
+    // まだ円外ならタイマーリセットして HERDED 継続
+    CFlock* flock = m_pOwner->GetFlock();
+    if (flock != nullptr)
+    {
+        VECTOR3 diff = flock->GetFlockCenter() - m_pOwner->GetTransform().position;
+        diff.y = 0;
+        const float innerRadius = flock->GetFlockRadius() * 0.75f;
+        inDeepInside = (diff.LengthSquare() < innerRadius * innerRadius);
+    }
+
+
+    if (inDeepInside)
+    {
+        m_isFinish = true;
+        m_pOwner->ChangeState(CBaseState::State::IDLE);
+        return;
+    }
+
     // 一定時間経過したらIDLEに戻る
     if (m_walkTimer >= m_walkDuration)
     {
-        // まだ円外ならタイマーリセットして HERDED 継続
-        CFlog* flog = m_pOwner->GetFlog();
-        if (flog != nullptr &&
-            !flog->ContainPos(m_pOwner->GetTransform().position))
-        {
-            m_walkTimer = 0.0f;
-            m_walkDuration = Randomf(3.0f, 7.0f);
-        }
-        else
-        {
-            m_isFinish = true;
-            m_pOwner->ChangeState(CBaseState::State::IDLE);
-            return;
-        }
+        m_walkTimer = 0.0f;
+        m_walkDuration = Randomf(3.0f, 7.0f);
     }
-
-    const VECTOR3 boidsForce = CalculateBoids();
-    const VECTOR3 wanderForce = CalculateWandering();
+    const VECTOR3 boidsForce = CalcBoids();
 
     // 力を合成（Wandering優先で自由な動き）
-    VECTOR3 totalForce = wanderForce + boidsForce + CalculateEscapeFromDog();
-    totalForce.y = 0;
+    // VECTOR3 totalForce = wanderForce + boidsForce + CalcEscapeFromDog();
+    // totalForce.y = 0;
+    const VECTOR3 returnForce = CalcRetrunToFlock();
+    VECTOR3 totalForce = returnForce + boidsForce;
 
-    if (totalForce.LengthSquare() > 0.0001f)
+    if (totalForce.LengthSquare() > NEAR_ZERO_LENSQ)
     {
         totalForce = normalize(totalForce);
 
         // 目標の回転角度を計算
         float targetAngle = atan2f(totalForce.x, totalForce.z);
 
-        // 現在の回転から目標の回転へ滑らかに補間（回転速度: 3.0 rad/s）
+        // 現在の回転から目標の回転へ滑らかに補間（回転速度: 3.0 deg/s）
         constexpr float rotationSpeed = 3.0f;
         float angleDiff = targetAngle - m_currentRotation;
 
         // 角度を-π～πの範囲に正規化
-        while (angleDiff > XM_PI) angleDiff -= XM_2PI;
-        while (angleDiff < -XM_PI) angleDiff += XM_2PI;
+        angleDiff = std::remainder(angleDiff, XM_2PI);
 
         // 回転を補間
         float rotationDelta = angleDiff * rotationSpeed * SceneManager::DeltaTime();
@@ -92,17 +98,17 @@ void CHerded::Update()
         m_pOwner->SetRotateY(m_currentRotation);
 
         // 移動
-        const float moveSpeed = 1.5f;
+        constexpr float moveSpeed = 1.5f;
         m_pOwner->AddPosition(totalForce * moveSpeed * SceneManager::DeltaTime());
     }
     m_pOwner->IsSuctionCheck();
 }
 
-VECTOR3 CHerded::CalculateBoids() const
+VECTOR3 CHerded::CalcBoids() const
 {
-    CFlog* flog = m_pOwner->GetFlog();
-    if (flog == nullptr) return {0, 0, 0};
-    const std::vector<CSheep*>& allSheep = flog->GetAllSheeps();
+    CFlock* flock = m_pOwner->GetFlock();
+    if (flock == nullptr) return {0, 0, 0};
+    const std::vector<CSheep*>& allSheep = flock->GetAllSheeps();
 
     VECTOR3 cohesion(0, 0, 0);
     VECTOR3 separation(0, 0, 0);
@@ -163,7 +169,7 @@ VECTOR3 CHerded::CalculateBoids() const
             {
                 cohesionWeight = 1.5f;
             }
-            else if (m_pOwner->GetFlog() && !m_pOwner->GetFlog()->ContainPos(myPos))
+            else if (m_pOwner->GetFlock() && !m_pOwner->GetFlock()->ContainPos(myPos))
             {
                 cohesionWeight = 1.5f;
             }
@@ -185,11 +191,11 @@ VECTOR3 CHerded::CalculateBoids() const
     return cohesion + separation;
 }
 
-VECTOR3 CHerded::CalculateEscapeFromDog() const
+VECTOR3 CHerded::CalcEscapeFromDog() const
 {
-    CFlog* flog = m_pOwner->GetFlog();
-    if (flog == nullptr) return {0, 0, 0};
-    CAShepherdDog* dog = flog->GetShepherdDog();
+    CFlock* flock = m_pOwner->GetFlock();
+    if (flock == nullptr) return {0, 0, 0};
+    CAShepherdDog* dog = flock->GetShepherdDog();
     if (dog == nullptr) return {0, 0, 0};
 
     const VECTOR3 dogPos = dog->GetTransform().position;
@@ -214,7 +220,7 @@ VECTOR3 CHerded::CalculateEscapeFromDog() const
 }
 
 
-VECTOR3 CHerded::CalculateWandering()
+VECTOR3 CHerded::CalcWandering()
 {
     // 一定時間ごとにランダムな方向を変更
     m_wanderTimer += SceneManager::DeltaTime();
@@ -233,13 +239,36 @@ VECTOR3 CHerded::CalculateWandering()
 
     // Wander方向に正規化された力を返す
     VECTOR3 wanderForce = m_wanderTarget;
-    if (wanderForce.LengthSquare() > 0.0001f)
+    if (wanderForce.LengthSquare() > NEAR_ZERO_LENSQ)
     {
         wanderForce = normalize(wanderForce);
         constexpr float wanderWeight = 1.0f; // Wanderの強さ
         return wanderForce * wanderWeight;
     }
 
+    return {0, 0, 0};
+}
+
+VECTOR3 CHerded::CalcRetrunToFlock()
+{
+    CFlock* flock = m_pOwner->GetFlock();
+    if (flock == nullptr) return {0, 0, 0};
+
+    const VECTOR3 sheepPos = m_pOwner->GetTransform().position;
+    VECTOR3 toCenter = flock->GetFlockCenter() - sheepPos;
+    toCenter.y = 0;
+
+    const float disSq = toCenter.LengthSquare();
+    if (disSq < NEAR_ZERO_LENSQ) return {0, 0, 0};
+
+    const float dis = sqrtf(disSq);
+    const float radius = flock->GetFlockRadius();
+
+    constexpr float OUTSIDE_FORCE = 3.0f;
+    constexpr float EDGE_RATE = 0.75f;
+    constexpr float EDGE_FORCE = 1.2f;
+    if (dis > radius) return normalize(toCenter) * OUTSIDE_FORCE;
+    if (dis > radius * EDGE_RATE)return normalize(toCenter) * EDGE_FORCE;
     return {0, 0, 0};
 }
 
@@ -304,10 +333,10 @@ void CPanic::CheckBoundaryAndTransition()
     if (m_panicTimer < m_panicDuration) return;
 
     const VECTOR3 currentPos = m_pOwner->GetTransform().position;
-    CFlog* nearest = nullptr;
+    CFlock* nearest = nullptr;
     float nearestDistSq = FLT_MAX;
 
-    for (CFlog* f : ObjectManager::FindGameObjects<CFlog>())
+    for (CFlock* f : ObjectManager::FindGameObjects<CFlock>())
     {
         if (!f->ContainPos(currentPos)) continue;
         VECTOR3 diff = f->GetFlockCenter() - currentPos;
@@ -322,13 +351,13 @@ void CPanic::CheckBoundaryAndTransition()
 
     if (nearest != nullptr)
     {
-        m_pOwner->SetFlog(nearest);
+        m_pOwner->SetFlock(nearest);
 
         m_pOwner->ChangeState(CBaseState::State::HERDED);
     }
     else
     {
-        m_pOwner->SetFlog(nullptr);
+        m_pOwner->SetFlock(nullptr);
 
         m_pOwner->ChangeState(CBaseState::State::IDLE);
     }

@@ -16,17 +16,19 @@ public:
 private:
     void Update() override;
     void Draw() override;
+    void DrawHalfFlockCircles() const;
 
-    void DrawFlogCircles() const;
+    void DrawFlockCircles() const;
+    void DrawMaxFlockCircles() const;
     void UpdateImguiPanel();
 
     DebugUI* m_pDebugUI;
     CPlayUI* m_pPlayUI;
     CAShepherdDog* m_pDog;
 
-    // ImGui の Flog 追加フォーム入力値
-    float m_newFlogCenterX = 20.0f;
-    float m_newFlogCenterZ = 0.0f;
-    float m_newFlogRadius = 5.0f;
-    int m_newFlogSheepCount = 5;
+    // ImGui の Flock 追加フォーム入力値
+    float m_newFlockCenterX = 20.0f;
+    float m_newFlockCenterZ = 0.0f;
+    float m_newFlockRadius = 5.0f;
+    int m_newFlockSheepCount = 5;
 };

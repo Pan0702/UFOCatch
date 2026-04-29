@@ -1,7 +1,7 @@
 ﻿#include "SheperdDogComp.h"
 #include "../System/EnemyManager.h"
 #include "../AnimalDog//ShepherdDog.h"  // パスは適宜修正してください
-#include "../System/Flog.h"
+#include "../System/Flock.h"
 
 
 CCollecting::CCollecting(CAShepherdDog* dog, float speed)
@@ -22,8 +22,8 @@ void CCollecting::Enter()
 
 void CCollecting::RecomputePath()
 {
-    CFlog* flog = m_pOwner->GetFlog();
-    if (flog == nullptr)
+    CFlock* flock = m_pOwner->GetFlock();
+    if (flock == nullptr)
     {
         m_isFinish = true;
         return;
@@ -32,12 +32,12 @@ void CCollecting::RecomputePath()
     //はぐれ羊を再選定
     CSheep* targetSheep = nullptr;
     float maxDisSq = 0.0f;
-    const VECTOR3 flogCenter = flog->GetFlockCenter();
+    const VECTOR3 flockCenter = flock->GetFlockCenter();
     for (CSheep* s : m_pOwner->GetSheeps())
     {
         if (s == nullptr) continue;
-        if (flog->ContainPos(s->GetTransform().position)) continue;
-        VECTOR3 diff = flogCenter - s->GetTransform().position;
+        if (flock->ContainCollectArea(s->GetTransform().position)) continue;
+        VECTOR3 diff = flockCenter - s->GetTransform().position;
         diff.y = 0;
         float disSq = diff.LengthSquare();
         if (disSq > maxDisSq)
@@ -54,24 +54,42 @@ void CCollecting::RecomputePath()
 
     //群れの中心と逆方向に 1m 離れた地点を目標にする
     const VECTOR3 sheepPos = targetSheep->GetTransform().position;
-    VECTOR3 toCentroid = flogCenter - sheepPos;
+    VECTOR3 toCentroid = flockCenter - sheepPos;
     toCentroid.y = 0;
-    if (toCentroid.LengthSquare() < NEAR_ZERO_LENSQ)
+    const float disFromCenterSq = toCentroid.LengthSquare();
+    if (disFromCenterSq < NEAR_ZERO_LENSQ)
     {
         m_isFinish = true;
         return;
     }
     toCentroid = normalize(toCentroid);
-    constexpr float BEHIND_DIS = 2.0f;
-    const VECTOR3 behindPos = sheepPos - toCentroid * BEHIND_DIS;
-    m_targetPos = behindPos;
+    const float radius = flock->GetFlockRadius();
+    constexpr float SMALL_OUTSIDE_MARGIN = 3.0f;
+
+
+    const float outsideThreshold = radius + SMALL_OUTSIDE_MARGIN;
+
+    if (disFromCenterSq <= outsideThreshold * outsideThreshold)
+    {
+        constexpr float APPROACH_DIS = 1.5f;
+
+        // 少し外れただけなら、犬は羊の近くへ行くだけ
+        m_targetPos = sheepPos - toCentroid * APPROACH_DIS;
+    }
+    else
+    {
+        constexpr float BEHIND_DIS = 2.0f;
+        // 大きく外れたなら、犬は背後へ回る
+        m_targetPos = sheepPos - toCentroid * BEHIND_DIS;
+    }
+
 
     // A* で経路計算
     VECTOR2 pos, size;
     m_pOwner->GetBounds2D(pos, size);
     m_pathFinder.SetAgentSize(size);
     const VECTOR2 start = ToVec2XZ(m_pOwner->GetTransform().position);
-    const VECTOR2 end = ToVec2XZ(behindPos);
+    const VECTOR2 end = ToVec2XZ(m_targetPos);
     m_pathIndex = 1;
     m_path = m_pathFinder.SearchRoute(start, end);
 
@@ -156,7 +174,7 @@ void CDriving::Enter()
     // デバッグ・バランスの数を把握
     size_t sheepCount = m_pOwner->GetSheeps().size();
 
-    FlogInfo info = CFlog::CalcFlogInfoStatic(m_pOwner->GetSheeps());
+    FlockInfo info = CFlock::CalCFlockInfoStatic(m_pOwner->GetSheeps());
     CPlayer* player = ObjectManager::FindGameObject<CPlayer>();
     if (player == nullptr) return;
 
@@ -230,7 +248,7 @@ void CRescue::Enter()
     m_targetSheep = m_pOwner->GetRescueQueue().front();
 
     // 群れの重心を計算
-    FlogInfo info = CFlog::CalcFlogInfoStatic(m_pOwner->GetSheeps());
+    FlockInfo info = CFlock::CalCFlockInfoStatic(m_pOwner->GetSheeps());
     m_centroid = info.centroid;
 
     // フェーズ1: 羊に近づくところから開始

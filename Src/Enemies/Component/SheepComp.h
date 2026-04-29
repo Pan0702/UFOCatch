@@ -10,10 +10,13 @@ public:
     void Update() override;
 
 private:
+    VECTOR3 CalcBoids() const;
+    VECTOR3 CalcEscapeFromDog() const;
+    VECTOR3 CalcWandering(); // ランダムな徘徊行動
+    VECTOR3 CalcRetrunToFlock();
+
+
     CSheep* m_pOwner;
-    VECTOR3 CalculateBoids() const;
-    VECTOR3 CalculateEscapeFromDog() const;
-    VECTOR3 CalculateWandering(); // ランダムな徘徊行動
 
     // Wandering用のパラメータ
     VECTOR3 m_wanderTarget;

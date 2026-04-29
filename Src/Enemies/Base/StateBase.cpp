@@ -1,6 +1,7 @@
 ﻿#include "StateBase.h"
 #include "EnemyBase.h"
 #include "../../Utils/MyMath.h"
+#include "../AnimalSheep/Sheep.h"
 #include "../Component/Suction.h"
 # define STR(var) #var
 
@@ -83,13 +84,28 @@ void CBaseState::SetNextState()
     while (actionQueue.size() <= NEXT_STATE_MAX_SIZE)
     {
         float randomNum = Randomf(0, 1);
-        if (randomNum > 0.3f)
+        CSheep* s = dynamic_cast<CSheep*>(m_pEnemy);
+        if (s)
         {
-            actionQueue.push(State::WALK);
+            if (randomNum > 0.7f)
+            {
+                actionQueue.push(State::WALK);
+            }
+            else
+            {
+                actionQueue.push(State::IDLE);
+            }
         }
         else
         {
-            actionQueue.push(State::IDLE);
+            if (randomNum > 0.3f)
+            {
+                actionQueue.push(State::WALK);
+            }
+            else
+            {
+                actionQueue.push(State::IDLE);
+            }
         }
     }
 }

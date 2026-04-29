@@ -4,17 +4,17 @@
 #include "../AnimalSheep/Sheep.h"
 
 //鄒､繧後↓髢｢縺吶ｋ諠・ｱ
-struct FlogInfo
+struct FlockInfo
 {
     VECTOR3 centroid; //鄒､繧後・驥榊ｿ・
     CSheep* furthestSheep; //荳逡ｪ驕縺上↓縺・ｋ鄒翫・ptr;
     float maxDistance; //荳ｭ蠢・°繧我ｸ逡ｪ驕縺上↓縺・ｋ蜍慕黄縺ｾ縺ｧ縺ｮ霍晞屬
 };
 
-class CFlog : public Object3D
+class CFlock : public Object3D
 {
 public:
-    CFlog(const VECTOR3& center = VECTOR3(0, 0, 0), float radius = 4.0f, int sheepCount = 10);
+    CFlock(const VECTOR3& center = VECTOR3(0, 0, 0), float radius = 4.0f, int sheepCount = 10);
     const std::vector<CSheep*>& GetAllSheeps() const { return m_allSheep; }
 
     // 鄒､繧後・荳ｭ蠢・せ縺ｨ蜊雁ｾ・・蜿門ｾ・
@@ -23,10 +23,15 @@ public:
 
     void AddSheep(CSheep* sheep);
     void RemoveSheep(const CSheep* sheep);
-    bool ContainPos(const VECTOR3& pos) const;
+
     void SetShepherdDog(CAShepherdDog* dog) { m_pShepherdDog = dog; }
     CAShepherdDog* GetShepherdDog() const { return m_pShepherdDog; }
-    static FlogInfo CalcFlogInfoStatic(const std::vector<CSheep*>& manySheep);
+    static FlockInfo CalCFlockInfoStatic(const std::vector<CSheep*>& manySheep);
+    float GetMoveRadius() const;
+    float GetCollectRadius() const;
+    bool ContainPos(const VECTOR3& pos) const;
+    bool ContainCollectArea(const VECTOR3& pos) const; // 回収開始円
+    bool ContainMoveArea(const VECTOR3& pos) const;
 
 private:
     std::vector<CSheep*> m_allSheep;

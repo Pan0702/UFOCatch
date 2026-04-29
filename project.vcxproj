@@ -563,7 +563,7 @@
     <ClInclude Include="Src\Enemies\System\AStarPathFinder.h" />
     <ClInclude Include="Src\Enemies\System\EnemyManager.h" />
     <ClInclude Include="Src\Enemies\System\EnemyQuadTree.h" />
-    <ClInclude Include="Src\Enemies\System\Flog.h" />
+      <ClInclude Include="Src\Enemies\System\Flock.h"/>
     <ClInclude Include="Src\Enemies\System\ModelRegistry.h" />
     <ClInclude Include="Src\Framework\QuadtreeSystem.h" />
     <ClInclude Include="Src\MapEditor\BackGraund.h" />
@@ -1209,7 +1209,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="Src\Enemies\System\EnemyQuadTree.cpp" />
-    <ClCompile Include="Src\Enemies\System\Flog.cpp" />
+      <ClCompile Include="Src\Enemies\System\Flock.cpp"/>
     <ClCompile Include="Src\Enemies\System\ModelRegistry.cpp" />
     <ClCompile Include="Src\Framework\QuadtreeSystem.cpp" />
     <ClCompile Include="Src\MapEditor\BackGraund.cpp" />
