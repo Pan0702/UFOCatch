@@ -22,4 +22,5 @@ private:
     CPlayer* m_pPlayer;
     bool m_isInConeArea = false;
     CFlog* m_pFlog = nullptr;
+    bool m_wasOutside = false;
 };

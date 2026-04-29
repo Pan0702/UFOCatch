@@ -39,9 +39,20 @@ void CHerded::Update()
     // 一定時間経過したらIDLEに戻る
     if (m_walkTimer >= m_walkDuration)
     {
-        m_isFinish = true;
-        m_pOwner->ChangeState(CBaseState::State::IDLE);
-        return;
+        // まだ円外ならタイマーリセットして HERDED 継続
+        CFlog* flog = m_pOwner->GetFlog();
+        if (flog != nullptr &&
+            !flog->ContainPos(m_pOwner->GetTransform().position))
+        {
+            m_walkTimer = 0.0f;
+            m_walkDuration = Randomf(3.0f, 7.0f);
+        }
+        else
+        {
+            m_isFinish = true;
+            m_pOwner->ChangeState(CBaseState::State::IDLE);
+            return;
+        }
     }
 
     const VECTOR3 boidsForce = CalculateBoids();
@@ -144,16 +155,27 @@ VECTOR3 CHerded::CalculateBoids() const
         cohesion = cohesion / static_cast<float>(neighborCount);
         cohesion -= myPos;
         cohesion.y = 0;
-        if (cohesion.LengthSquare() > 0.0001f)
+        if (cohesion.LengthSquare() > NEAR_ZERO_LENSQ)
         {
             cohesion = normalize(cohesion);
-            // 吸い込み中は凝集力が強くなる。通常時は弱く（自由な動きを優先）
-            float cohesionWeight = isSucking ? 1.5f : 0.1f;
+            float cohesionWeight;
+            if (isSucking)
+            {
+                cohesionWeight = 1.5f;
+            }
+            else if (m_pOwner->GetFlog() && !m_pOwner->GetFlog()->ContainPos(myPos))
+            {
+                cohesionWeight = 1.5f;
+            }
+            else
+            {
+                cohesionWeight = 0.1f;
+            }
             cohesion *= cohesionWeight;
         }
     }
 
-    if (separationCount > 0 && separation.LengthSquare() > 0.0001f)
+    if (separationCount > 0 && separation.LengthSquare() > NEAR_ZERO_LENSQ)
     {
         separation = normalize(separation);
         constexpr float separationWeight = 2.0f; // 分離を強めて、近づきすぎを防ぐ
@@ -180,15 +202,8 @@ VECTOR3 CHerded::CalculateEscapeFromDog() const
     // 犬を感知する距離（ストロングボムモデル: 50m）
     constexpr float detectionRadiusSq = 5.0f * 5.0f;
 
-    // Flogの半径＋制限距離を超えたら逃げない
-    constexpr float FREE_MARGIN = 3.0f;
-    const float maxFleeDist = flog->GetFlockRadius() + FREE_MARGIN;
-    VECTOR3 fromCenter = myPos - flog->GetFlockCenter();
-    fromCenter.y = 0;
-    if (fromCenter.LengthSquare() > maxFleeDist * maxFleeDist) return {0, 0, 0};
-
     // 犬が感知範囲内にいる場合のみ逃げる
-    if (distanceSq < detectionRadiusSq && distanceSq > 0.0001f)
+    if (distanceSq < detectionRadiusSq && distanceSq > NEAR_ZERO_LENSQ)
     {
         diff = normalize(diff);
         constexpr float dogEscapeWeight = 2.5f;

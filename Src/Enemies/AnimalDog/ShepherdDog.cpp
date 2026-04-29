@@ -13,12 +13,12 @@ CAShepherdDog::CAShepherdDog()
     m_pGround = ObjectManager::FindGameObject<CGround>();
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     //移動スピード:2.0f
-    m_components[CBaseState::State::COLLECTING] = std::make_unique<CCollecting>(this, 6.0f);
+    m_components[CBaseState::State::COLLECTING] = std::make_unique<CCollecting>(this, 8.0f);
     //移動スピード:2.0f
-    m_components[CBaseState::State::DRIVING] = std::make_unique<CDriving>(this, 4.0f);
+    m_components[CBaseState::State::DRIVING] = std::make_unique<CDriving>(this, 8.0f);
     m_components[CBaseState::State::RESCUE] = std::make_unique<CRescue>(this);
     m_components[CBaseState::State::IDLE] = std::make_unique<CIdle>(this, 570.0f);
-    m_components[CBaseState::State::WALK] = std::make_unique<CWalk>(this, 1.2f);
+    m_components[CBaseState::State::WALK] = std::make_unique<CWalk>(this, 8.0f);
     //スコア：200, 経験値：2.0f
     m_components[CBaseState::State::DESTROY] = std::make_unique<CDestroyShepherdDog>(this, 200, 2.0f);
     m_pState = std::make_unique<CBaseState>(this);
@@ -37,9 +37,9 @@ CAShepherdDog::CAShepherdDog(const VECTOR3& iniPos)
     m_pGround = ObjectManager::FindGameObject<CGround>();
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     //移動スピード:2.0f
-    m_components[CBaseState::State::COLLECTING] = std::make_unique<CCollecting>(this, 2.0f);
+    m_components[CBaseState::State::COLLECTING] = std::make_unique<CCollecting>(this, 4.0f);
     //移動スピード:2.0f
-    m_components[CBaseState::State::DRIVING] = std::make_unique<CDriving>(this, 2.0f);
+    m_components[CBaseState::State::DRIVING] = std::make_unique<CDriving>(this, 4.0f);
     m_components[CBaseState::State::RESCUE] = std::make_unique<CRescue>(this);
     m_components[CBaseState::State::IDLE] = std::make_unique<CIdle>(this, 570.0f);
     m_components[CBaseState::State::WALK] = std::make_unique<CWalk>(this, 1.2f);

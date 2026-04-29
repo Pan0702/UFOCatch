@@ -62,7 +62,7 @@ void CCollecting::RecomputePath()
         return;
     }
     toCentroid = normalize(toCentroid);
-    constexpr float BEHIND_DIS = 1.0f;
+    constexpr float BEHIND_DIS = 2.0f;
     const VECTOR3 behindPos = sheepPos - toCentroid * BEHIND_DIS;
     m_targetPos = behindPos;
 

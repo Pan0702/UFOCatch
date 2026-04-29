@@ -72,7 +72,6 @@ CFlog* CSheep::GetFlog() const
     return m_pFlog;
 }
 
-
 void CSheep::Update()
 {
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
@@ -80,6 +79,7 @@ void CSheep::Update()
     {
         m_isInConeArea = m_pPlayer->IsWithSuctionCone(transform.position);
     }
+
     CEnemyBase::Update();
 }
 
