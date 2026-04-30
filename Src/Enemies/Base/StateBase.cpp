@@ -17,9 +17,9 @@ void CBaseState::Enter(State type)
     if (m_pComponent == nullptr)
     {
         int num = static_cast<int>(m_kType);
-        std::string str = STR(m_kType) + std::to_string(num) +
-            " Component is Null";
-        MessageBox(nullptr, str.c_str(), _T(str.c_str()), MB_OK);
+        // デバッグ用に型名と数値を表示
+        std::string str = "State Component is Null: Type=" + std::to_string(num);
+        MessageBox(nullptr, str.c_str(), "Error", MB_OK);
     }
     m_pComponent->Enter();
 }
@@ -37,18 +37,22 @@ void CBaseState::Update()
 
 void CBaseState::Exit()
 {
-    m_pComponent->Exit();
+    if (m_pComponent)
+    {
+        m_pComponent->Exit();
+    }
     m_pComponent = nullptr;
 }
 
 CBaseState::State CBaseState::NextStatePop()
 {
-    // Suction繧ｳ繝ｳ繝昴・繝阪Φ繝医′螳御ｺ・＠縺ｦ縺・ｋ蝣ｴ蜷医・Destroy縺ｫ蛻・ｊ譖ｿ縺医ｋ
+    // Suctionコンポーネントが完了している場合はDestroyに切り替える
     CSuction* suctionComponent = dynamic_cast<CSuction*>(m_pEnemy->GetComponent(State::SUCTION));
     if (suctionComponent != nullptr && suctionComponent->IsFinishSuction())
     {
         return State::DESTROY;
     }
+    // 吸い込みが中断（IsFinish）した場合はWALKに戻る
     if (suctionComponent != nullptr && suctionComponent->IsFinish())
     {
         return State::WALK;
@@ -80,6 +84,7 @@ float CBaseState::ClampRotateY(const float& angle)
 
 void CBaseState::SetNextState()
 {
+    // キューが空きすぎないように補充する
     constexpr int NEXT_STATE_MAX_SIZE = 3;
     while (actionQueue.size() <= NEXT_STATE_MAX_SIZE)
     {
@@ -87,6 +92,7 @@ void CBaseState::SetNextState()
         CSheep* s = dynamic_cast<CSheep*>(m_pEnemy);
         if (s)
         {
+            // 羊（CSheep）の場合の確率
             if (randomNum > 0.7f)
             {
                 actionQueue.push(State::WALK);
@@ -98,6 +104,7 @@ void CBaseState::SetNextState()
         }
         else
         {
+            // それ以外（通常エネミー）の場合の確率
             if (randomNum > 0.3f)
             {
                 actionQueue.push(State::WALK);

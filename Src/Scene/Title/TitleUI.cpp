@@ -5,7 +5,7 @@
 
 CTitleUI::CTitleUI()
 {
-    m_sceneNames = {SceneName::SELECT, SceneName::OI};
+    m_sceneNames = {SceneName::SELECT, SceneName::EDITOR};
     InitBackground();
     InitButtons();
 }

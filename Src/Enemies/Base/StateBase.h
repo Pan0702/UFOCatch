@@ -1,10 +1,8 @@
 ﻿#pragma once
 #include <queue>
 
-
 class CEnemyBase;
 class CComponentBase;
-
 
 class CBaseState
 {
@@ -22,8 +20,8 @@ public:
         SEARCH,
         FIND_PLAYER,
         ESCAPE,
-        HERDED, // 2. 隱伜ｰ弱＆繧後※縺・ｋ・育ｾ､繧後ｋ繝ｻ迥ｬ繧ФFO縺九ｉ騾・￡繧具ｼ・
-        PANIC, // 3. 繝代ル繝・け・育堪縺後＞縺ｪ縺上↑縺｣縺ｦ證ｴ襍ｰ・・
+        HERDED, // 2. 誘導されている（群れる・犬やUFOから逃げる）
+        PANIC, // 3. パニック（群れがいなくなって暴走）
         COLLECTING,
         DRIVING,
         RESCUE,
@@ -36,13 +34,13 @@ public:
     State GetCurrentState() const { return m_kType; }
 
     ///
-    ///谺｡縺ｮstate縺鯉ｼ斐▽驟榊・縺ｫ蜈･縺｣縺ｦ縺ｪ縺九▲縺溘ｉ谺｡縺ｮ驟榊・繧偵Λ繝ｳ繝繝縺ｧ繧ｻ繝・ヨ
+    /// 次のstateがキューに入っていなかったら次の行動をランダムでセット
     ///
     void SetNextState();
 
 protected:
     ///
-    ///驟榊・縺九ｉ陦悟虚繧貞叙繧雁・縺励√◎繧後ｒ繧ｻ繝・ヨ
+    /// キューから行動を取り出し、それをセット
     ///
     CBaseState::State NextStatePop();
 
