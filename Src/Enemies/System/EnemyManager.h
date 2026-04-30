@@ -3,6 +3,7 @@
 #include "ModelRegistry.h"
 #include "EnemyQuadTree.h"
 #include "../../Stage/StageQuadTree.h"
+#include "../../Stage/GroundHitResult.h"
 #include <vector>
 
 class CPlayer;
@@ -43,6 +44,8 @@ public:
     std::vector<CStageObject*> GetNearbyStageObjects(
         const VECTOR2& pos, const VECTOR2& size) const;
 
+    bool FindGroundBelow(const VECTOR2& pos, const VECTOR2& size
+                         , const VECTOR3& basePos, float from, float to, GroundHitResult* groundType) const;
     // 各クラスへの直接アクセス（必要に応じて）
     CModelRegistry* GetModelRegistry() const { return m_pModelRegistry; }
     CEnemyQuadTree* GetQuadTreeIndex() const { return m_pQuadTreeIndex; }

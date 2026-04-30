@@ -4,10 +4,10 @@
 #include "StateBase.h"
 #include "../../Common/Object3D.h"
 #include "../../Utils//BBox.h"
-#include "../../Stage/Ground.h"
 #include "../Component/ComponentBase.h"
 
 class CEnemyManager;
+class CStageObject;
 
 class CEnemyBase : public Object3D
 {
@@ -60,7 +60,6 @@ protected:
     CComponentBase* m_pComponent = nullptr;
     std::unique_ptr<CBaseState> m_pState = nullptr;
     std::unique_ptr<CBBox> m_pBBox = nullptr;
-    CGround* m_pGround = nullptr;
     CPlayer* m_pPlayer = nullptr;
     CEnemyManager* m_pEnemyManager = nullptr;
 

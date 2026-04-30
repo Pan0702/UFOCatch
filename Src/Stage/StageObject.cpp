@@ -209,3 +209,29 @@ void CStageObject::ResolveEnemyCollision(CEnemyBase* pEnemy)
         }
     }
 }
+
+bool CStageObject::GetCanStandOn() const
+{
+    return m_canStandOn;
+}
+
+void CStageObject::SetCanStandOn(bool b)
+{
+    m_canStandOn = b;
+}
+
+bool CStageObject::HitGround(const VECTOR3& rayStart, const VECTOR3& rayEnd, MeshCollider::CollInfo* outInfo)
+{
+    if (!m_canStandOn) return false;
+    if (m_pMesh == nullptr) return false;
+    auto meshColl = ResourceManager::GetColl(m_pMesh);
+    if (meshColl == nullptr) return false;
+
+    if (meshColl->CheckCollisionLine(transform.matrix(), rayStart, rayEnd, outInfo))
+    {
+        return true;
+    }
+    return false;
+}
+
+}

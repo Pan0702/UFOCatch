@@ -16,9 +16,9 @@ public:
     /// <param name="pos">オブジェクトの位置</param>
     /// <param name="scale">オブジェクトのサイズ</param>
     /// <param name="useOBB">OBBを使用するか（デフォルト: true）</param>
-    CStageObject(const char* name, const VECTOR3& pos = VECTOR3(0,0,0), float scale = 1.0f, bool useOBB = true);
+    CStageObject(const char* name, const VECTOR3& pos = VECTOR3(0, 0, 0), float scale = 1.0f, bool useOBB = true);
     CStageObject(const char* name, const Transform& t, bool useOBB);
-    
+
     void MakeOBB();
     virtual ~CStageObject();
 
@@ -50,8 +50,15 @@ public:
     /// <param name="pEnemy">判定対象のエネミー</param>
     void ResolveEnemyCollision(class CEnemyBase* pEnemy);
 
-protected:
-    CBBox* m_pOBB;      // OBB衝突判定
-    bool   m_bUseOBB;   // OBBを使用するか
-};
+    bool HitGround(const VECTOR3& rayStart, const VECTOR3& rayEnd,
+                   MeshCollider::CollInfo* outInfo);
 
+    bool GetCanStandOn() const;
+
+    void SetCanStandOn(bool b);
+
+protected:
+    CBBox* m_pOBB; // OBB衝突判定
+    bool m_bUseOBB; // OBBを使用するか
+    bool m_canStandOn;
+};

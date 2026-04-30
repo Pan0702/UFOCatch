@@ -14,6 +14,7 @@ namespace ResourceManager
     CFbxMesh* GetModel(const char* name);
     std::vector<std::string> GetModelNames();
     MeshCollider* GetColl(const char* name);
+    MeshCollider* GetColl(const CFbxMesh* mesh);
     const char* GetPath(const char* name);
     std::vector<std::string> GetAllModelPath();
 }

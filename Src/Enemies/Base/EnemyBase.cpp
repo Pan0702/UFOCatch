@@ -83,35 +83,27 @@ void CEnemyBase::ApplyGravity()
         m_velocityY = 0.0f;
         return;
     }
-    static constexpr float GRAVITY = 9.8f;
 
-    static constexpr float GROUND_SKIN = 0.02f; // 地面との接触時のめり込み防止用スキン値
-    m_velocityY -= GRAVITY * SceneManager::DeltaTime();
+    static constexpr float GRAVITY = 9.8f;
+    static constexpr float GROUND_SKIN = 0.02f;
+    static constexpr float GROUND_CHECK_OFFSET = 0.1f;
+
     const float dt = SceneManager::DeltaTime();
+    m_velocityY -= GRAVITY * dt;
+
     const float nextY = transform.position.y + m_velocityY * dt;
 
-    if (m_pGround != nullptr)
+    VECTOR2 pos, size;
+    if (GetBounds2D(pos, size))
     {
-        static constexpr float GROUND_CHECK_OFFSET = 0.1f;
-        // 現在の位置と次の位置を使って、オフセットを考慮したレイキャストの範囲を決定
         const float fromY = transform.position.y + GROUND_CHECK_OFFSET;
         const float toY = nextY - GROUND_CHECK_OFFSET;
-        // 下向きの地面チェック
-        if (toY < fromY)
+        GroundHitResult hit;
+        if (m_pEnemyManager->FindGroundBelow(pos, size, transform.position, fromY, toY, &hit))
         {
-            const VECTOR3 rayStart = VECTOR3(transform.position.x, fromY, transform.position.z);
-            const VECTOR3 rayEnd = VECTOR3(transform.position.x, toY, transform.position.z);
-
-            MeshCollider::CollInfo collInfo;
-            bool hit = m_pGround->HitLineToMesh(rayStart, rayEnd, &collInfo);
-
-            if (hit)
-            {
-                // 衝突した場合、地面の位置にスキン値を加えて位置を調整
-                transform.position.y = collInfo.hitPosition.y + GROUND_SKIN;
-                m_velocityY = 0.0f;
-                return;
-            }
+            transform.position.y = hit.y - GROUND_SKIN;
+            m_velocityY = 0.0f;
+            return;
         }
     }
 

@@ -4,6 +4,7 @@
 #include "../HUman/Human.h"
 #include "../../Core/Graphics/XAudio.h"
 #include "../../Stage/StageObject.h"
+#include "../../Stage/GroundHitResult.h"
 
 namespace
 {
@@ -13,10 +14,10 @@ namespace
 
 CEnemyManager::CEnemyManager()
     : m_pMesh(nullptr)
-    , m_pMeshCol(nullptr)
-    , m_pQuadTreeIndex(InstanceQTree<CEnemyQuadTree>())
-    , m_pStaticQuadTreeIndex(InstanceQTree<CStageQuadTree>())
-    , m_pPlayer(nullptr)
+      , m_pMeshCol(nullptr)
+      , m_pQuadTreeIndex(InstanceQTree<CEnemyQuadTree>())
+      , m_pStaticQuadTreeIndex(InstanceQTree<CStageQuadTree>())
+      , m_pPlayer(nullptr)
 {
     ObjectManager::DontDestroy(this);
     ObjectManager::SetVisible(this, false);
@@ -81,7 +82,7 @@ void CEnemyManager::SetRotationY(const float& angle)
 }
 
 std::vector<CEnemyBase*> CEnemyManager::GetNearbyEnemies(
-    CEnemyBase* pObj,const VECTOR2& pos,const VECTOR2& size) const
+    CEnemyBase* pObj, const VECTOR2& pos, const VECTOR2& size) const
 {
     if (m_pQuadTreeIndex)
     {
@@ -127,3 +128,9 @@ std::vector<CStageObject*> CEnemyManager::GetNearbyStageObjects(
     return {};
 }
 
+bool CEnemyManager::FindGroundBelow(const VECTOR2& pos, const VECTOR2& size, const VECTOR3& basePos, float from,
+                                    float to, GroundHitResult* groundType) const
+{
+    if (m_pStaticQuadTreeIndex == nullptr)return false;
+    return m_pStaticQuadTreeIndex->FindGroundBelow(pos, size, basePos, from, to, groundType);
+}

@@ -54,6 +54,7 @@ CFbxMesh* ResourceManager::LoadFbx(const char* path)
         }
     }
     m.mesh->Load(path);
+    m.coll->MakeFromMesh(m.mesh.get());
     m.name = n;
     modelInfos.push_back(m);
     return modelInfos.back().mesh.get();
@@ -84,6 +85,21 @@ MeshCollider* ResourceManager::GetColl(const char* name)
     {
         if (m.name == name) return m.coll.get();
     }
+    MessageBoxA(nullptr, "モデルのコライダーが見つかりません", "Error", MB_OK);
+    return nullptr;
+}
+
+MeshCollider* ResourceManager::GetColl(const CFbxMesh* mesh)
+{
+    if (mesh == nullptr) return nullptr;
+    for (auto& m : modelInfos)
+    {
+        if (m.mesh.get() == mesh)
+        {
+            return m.coll.get();
+        }
+    }
+    MessageBoxA(nullptr, "モデルのコライダーが見つかりません", "Error", MB_OK);
     return nullptr;
 }
 

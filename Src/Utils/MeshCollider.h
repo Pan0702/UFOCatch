@@ -17,17 +17,19 @@ class CFbxMesh;
 class MeshCollider
 {
 public:
-    struct Vertex {
-       VECTOR3 pos;
-       UINT    bone[4];
-       VECTOR4 weits; // (weightsのタイポと思われますが元の定義を維持)
+    struct Vertex
+    {
+        VECTOR3 pos;
+        UINT bone[4];
+        VECTOR4 weits; // (weightsのタイポと思われますが元の定義を維持)
     };
 
-    struct CollInfo {
-       VECTOR3 hitPosition; // 衝突した位置
-       VECTOR3 normal;      // 法線
-       Vertex  triangle[3]; // 頂点
-       int     meshNo;      // メッシュ番号
+    struct CollInfo
+    {
+        VECTOR3 hitPosition; // 衝突した位置
+        VECTOR3 normal; // 法線
+        Vertex triangle[3]; // 頂点
+        int meshNo; // メッシュ番号
     };
 
     MeshCollider();
@@ -100,7 +102,8 @@ public:
     /// <param name="center">球の中心座標</param>
     /// <param name="radius">球の半径</param>
     /// <returns>衝突した全ポリゴンの情報リスト</returns>
-    std::list<MeshCollider::CollInfo> CheckCollisionSphereList(const MATRIX4X4& trans, const VECTOR3& center, float radius);
+    std::list<MeshCollider::CollInfo> CheckCollisionSphereList(const MATRIX4X4& trans, const VECTOR3& center,
+                                                               float radius);
 
     /// <summary>
     /// カプセルとの交差判定を行う
@@ -150,40 +153,59 @@ public:
     /// </summary>
     /// <param name="center">中心位置(Out)</param>
     /// <param name="radius">半径(Out)</param>
-    void GetBall(VECTOR3* center, float* radius){  *center = bBall.center; *radius = bBall.radius; }
+    void GetBall(VECTOR3* center, float* radius) const
+    {
+        *center = bBall.center;
+        *radius = bBall.radius;
+    }
 
 private:
     Object3D* parent;
 
-    struct BoundingBox {
-       VECTOR3 min;
-       VECTOR3 max;
-       BoundingBox() {
-          min = VECTOR3(0, 0, 0), max = VECTOR3(0, 0, 0);
-       }
+    struct BoundingBox
+    {
+        VECTOR3 min;
+        VECTOR3 max;
+
+        BoundingBox()
+        {
+            min = VECTOR3(0, 0, 0), max = VECTOR3(0, 0, 0);
+        }
     };
-    struct BoundingBall {
-       VECTOR3 center;
-       float radius;
-       BoundingBall() {
-          center = VECTOR3(0, 0, 0); radius = 0.0f;
-       }
+
+    struct BoundingBall
+    {
+        VECTOR3 center;
+        float radius;
+
+        BoundingBall()
+        {
+            center = VECTOR3(0, 0, 0);
+            radius = 0.0f;
+        }
     };
-    struct PolygonInfo {
-       int indices[3]; // 頂点番号
-       VECTOR3 normal; // 面の法線
+
+    struct PolygonInfo
+    {
+        int indices[3]; // 頂点番号
+        VECTOR3 normal; // 面の法線
     };
+
     CFbxMesh* mesh;
     Animator* animator;
-    int       id;
-    int       frame;
+    int id;
+    int frame;
 
     std::vector<std::vector<PolygonInfo>> polygons;
     std::vector<std::vector<Vertex>> vertices;
+
 public:
     BoundingBox bBox;
     BoundingBall bBall;
+
 private:
-    bool checkPolygonToLine(const int m, const PolygonInfo& info, const VECTOR3& from, const VECTOR3& to, CollInfo* hit = nullptr);
-    bool checkPolygonToSphere(const int m, const PolygonInfo& info, const VECTOR3& center, float radius, CollInfo* hit = nullptr);
+    bool checkPolygonToLine(const int m, const PolygonInfo& info, const VECTOR3& from, const VECTOR3& to,
+                            CollInfo* hit = nullptr);
+    bool checkPolygonToSphere(const int m, const PolygonInfo& info, const VECTOR3& center, float radius,
+                              CollInfo* hit = nullptr);
 };
