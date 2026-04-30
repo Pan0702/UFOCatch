@@ -16,7 +16,6 @@ public:
 private:
     void Update() override;
     void Draw() override;
-    void DrawHalfFlockCircles() const;
 
     void DrawFlockCircles() const;
     void DrawMaxFlockCircles() const;

@@ -2,7 +2,7 @@
 
 #include "../Component/ComponentFwd.h"
 #include "../System/Flock.h"
-#include "../Component/SheperdDogComp.h"
+#include "../Component/ShepherdDogComp.h"
 
 CAShepherdDog::CAShepherdDog()
 {
@@ -36,13 +36,14 @@ CAShepherdDog::CAShepherdDog(const VECTOR3& iniPos)
     m_pAnimator->Play(A_WALK);
     m_pGround = ObjectManager::FindGameObject<CGround>();
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
-    //移動スピード:2.0f
-    m_components[CBaseState::State::COLLECTING] = std::make_unique<CCollecting>(this, 4.0f);
-    //移動スピード:2.0f
-    m_components[CBaseState::State::DRIVING] = std::make_unique<CDriving>(this, 4.0f);
+
+    constexpr float ALGORITHM_MOVE_SPEED = 3.0f;
+    constexpr float MOVE_SPEED = 1.2f;
+    m_components[CBaseState::State::COLLECTING] = std::make_unique<CCollecting>(this, ALGORITHM_MOVE_SPEED);
+    m_components[CBaseState::State::DRIVING] = std::make_unique<CDriving>(this, ALGORITHM_MOVE_SPEED);
     m_components[CBaseState::State::RESCUE] = std::make_unique<CRescue>(this);
     m_components[CBaseState::State::IDLE] = std::make_unique<CIdle>(this, 570.0f);
-    m_components[CBaseState::State::WALK] = std::make_unique<CWalk>(this, 1.2f);
+    m_components[CBaseState::State::WALK] = std::make_unique<CShepherdDogWalk>(this, MOVE_SPEED);
     //スコア：200, 経験値：2.0f
     m_components[CBaseState::State::DESTROY] = std::make_unique<CDestroyShepherdDog>(this, 200, 2.0f);
     m_pState = std::make_unique<CBaseState>(this);
@@ -62,25 +63,9 @@ void CAShepherdDog::Update()
         return;
     }
 
-    // 死んだ羊をリストから除去
-    auto isDead = [](CSheep* s) { return !ObjectManager::IsExist(s); };
-    std::erase_if(m_sheeps, isDead);
-    std::erase_if(m_rescueQueue, isDead);
+    RemoveDeadSheep();
 
-    // UFOが羊を吸い込み中かどうかをリアルタイムで判定
-    bool isSucking = false;
-    if (m_pPlayer != nullptr && m_pPlayer->GetIsSuckUp())
-    {
-        for (const auto sheep : m_sheeps)
-        {
-            if (sheep != nullptr && m_pPlayer->IsInsideSuctionCircle(sheep->GetTransform().position))
-            {
-                isSucking = true;
-                break;
-            }
-        }
-    }
-
+    //救出待ちの羊がいる場合は、通常の群れ制御より救出を優先する//
     if (!m_rescueQueue.empty())
     {
         ChangeState(CBaseState::State::RESCUE);
@@ -88,53 +73,64 @@ void CAShepherdDog::Update()
         return;
     }
 
-    bool isFlockScattered = false;
-    if (m_pFlock != nullptr)
-    {
-        for (CSheep* sheep : m_sheeps)
-        {
-            if (!m_pFlock->ContainCollectArea(sheep->GetTransform().position))
-            {
-                isFlockScattered = true;
-                break;
-            }
-        }
-    }
+    const bool isSucking = IsAnySheepBeingSucked();
+    const bool isScattered = IsFlockScattered();
 
     if (isSucking)
     {
-        // 羊吸い込み中→レスキューモード
-        if (isFlockScattered)
-        {
-            // 群れがバラバラ →「COLLECTING」（一番遠い羊を戻す）
-            ChangeState(CBaseState::State::COLLECTING);
-        }
-        else
-        {
-            // 群れがまとまっている →「DRIVING」（UFOから遠ざける）
-            ChangeState(CBaseState::State::DRIVING);
-        }
+        // 吸い込み中：散ってれば回収、まとまってればUFOから遠ざける
+        ChangeState(isScattered ? CBaseState::State::COLLECTING : CBaseState::State::DRIVING);
     }
     else
     {
-        // 通常時→一番遠い羊がいれば戻しに行く
-        if (isFlockScattered)
-        {
-            ChangeState(CBaseState::State::COLLECTING);
-        }
-        else
-        {
-            // 群れがまとまっている → IDLE
-            ChangeState(CBaseState::State::IDLE);
-        }
+        // 通常時：散ってれば回収、まとまってれば徘徊
+        ChangeState(isScattered ? CBaseState::State::COLLECTING : CBaseState::State::WALK);
     }
 
-    CEnemyBase::Update(); // Component更新
+    CEnemyBase::Update();
+}
+
+void CAShepherdDog::RemoveDeadSheep()
+{
+    auto isDead = [](CSheep* s) { return !ObjectManager::IsExist(s); };
+    std::erase_if(m_sheeps, isDead);
+    std::erase_if(m_rescueQueue, isDead);
+}
+
+bool CAShepherdDog::IsAnySheepBeingSucked() const
+{
+    if (m_pPlayer == nullptr || !m_pPlayer->GetIsSuckUp()) return false;
+
+    //登録されている羊の中に吸い込み円内の個体がいるか確認する//
+    for (const auto sheep : m_sheeps)
+    {
+        if (sheep != nullptr && m_pPlayer->IsInsideSuctionCircle(sheep->GetTransform().position))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool CAShepherdDog::IsFlockScattered() const
+{
+    if (m_pFlock == nullptr) return false;
+
+    //1匹でも群れ円の外にいれば、回収が必要な散らばり状態とする//
+    for (CSheep* sheep : m_sheeps)
+    {
+        if (!m_pFlock->ContainPos(sheep->GetTransform().position))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 
 void CAShepherdDog::ChangeStateHerded(const CSheep* sheep) const
 {
+    //指定された羊以外をHERDED状態に変更して群れ行動へ戻す//
     for (const auto s : m_sheeps)
     {
         if (s == sheep)continue;

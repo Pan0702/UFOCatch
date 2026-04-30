@@ -33,75 +33,64 @@ void CHerded::Enter()
 
 void CHerded::Update()
 {
-    // 移動時間をカウント
     m_walkTimer += SceneManager::DeltaTime();
 
-    bool inDeepInside = false;
-    // まだ円外ならタイマーリセットして HERDED 継続
-    CFlock* flock = m_pOwner->GetFlock();
-    if (flock != nullptr)
-    {
-        VECTOR3 diff = flock->GetFlockCenter() - m_pOwner->GetTransform().position;
-        diff.y = 0;
-        const float innerRadius = flock->GetFlockRadius() * 0.75f;
-        inDeepInside = (diff.LengthSquare() < innerRadius * innerRadius);
-    }
-
-
-    if (inDeepInside)
+    //群れの十分内側まで戻れたら通常待機に戻す//
+    if (IsDeepInsideFlock())
     {
         m_isFinish = true;
         m_pOwner->ChangeState(CBaseState::State::IDLE);
         return;
     }
 
-    // 一定時間経過したらIDLEに戻る
+    // 一定時間経過したら徘徊時間をリフレッシュ
     if (m_walkTimer >= m_walkDuration)
     {
         m_walkTimer = 0.0f;
         m_walkDuration = Randomf(3.0f, 7.0f);
     }
-    const VECTOR3 boidsForce = CalcBoids();
 
-    // 力を合成（Wandering優先で自由な動き）
-    // VECTOR3 totalForce = wanderForce + boidsForce + CalcEscapeFromDog();
-    // totalForce.y = 0;
-    const VECTOR3 returnForce = CalcRetrunToFlock();
-    VECTOR3 totalForce = returnForce + boidsForce;
-
-    if (totalForce.LengthSquare() > NEAR_ZERO_LENSQ)
-    {
-        totalForce = normalize(totalForce);
-
-        // 目標の回転角度を計算
-        float targetAngle = atan2f(totalForce.x, totalForce.z);
-
-        // 現在の回転から目標の回転へ滑らかに補間（回転速度: 3.0 deg/s）
-        constexpr float rotationSpeed = 3.0f;
-        float angleDiff = targetAngle - m_currentRotation;
-
-        // 角度を-π～πの範囲に正規化
-        angleDiff = std::remainder(angleDiff, XM_2PI);
-
-        // 回転を補間
-        float rotationDelta = angleDiff * rotationSpeed * SceneManager::DeltaTime();
-        if (fabsf(angleDiff) < fabsf(rotationDelta))
-        {
-            m_currentRotation = targetAngle;
-        }
-        else
-        {
-            m_currentRotation += rotationDelta;
-        }
-
-        // 回転を適用
-        m_pOwner->SetRotateY(m_currentRotation);
-
-        // 移動
-        constexpr float moveSpeed = 1.5f;
-        m_pOwner->AddPosition(totalForce * moveSpeed * SceneManager::DeltaTime());
-    }
+    const VECTOR3 totalForce = CalcRetrunToFlock() + CalcBoids();
+    ApplyMovement(totalForce);
     m_pOwner->IsSuctionCheck();
+}
+
+bool CHerded::IsDeepInsideFlock() const
+{
+    CFlock* flock = m_pOwner->GetFlock();
+    if (flock == nullptr) return false;
+
+    VECTOR3 diff = flock->GetFlockCenter() - m_pOwner->GetTransform().position;
+    diff.y = 0;
+    constexpr float INNER_RADIUS_RATIO = 0.75f;
+    const float innerRadius = flock->GetFlockRadius() * INNER_RADIUS_RATIO;
+    return diff.LengthSquare() < innerRadius * innerRadius;
+}
+
+void CHerded::ApplyMovement(const VECTOR3& force)
+{
+    if (force.LengthSquare() <= NEAR_ZERO_LENSQ) return;
+
+    //回転計算：力の向きに向かって現在角度を滑らかに近づける//
+    const VECTOR3 dir = normalize(force);
+    const float targetAngle = atan2f(dir.x, dir.z);
+
+    constexpr float rotationSpeed = 3.0f;
+    const float angleDiff = std::remainder(targetAngle - m_currentRotation, XM_2PI);
+    const float rotationDelta = angleDiff * rotationSpeed * SceneManager::DeltaTime();
+    if (fabsf(angleDiff) < fabsf(rotationDelta))
+    {
+        m_currentRotation = targetAngle;
+    }
+    else
+    {
+        m_currentRotation += rotationDelta;
+    }
+    m_pOwner->SetRotateY(m_currentRotation);
+
+    //移動計算：合成力の方向へ一定速度で進める//
+    constexpr float moveSpeed = 1.5f;
+    m_pOwner->AddPosition(dir * moveSpeed * SceneManager::DeltaTime());
 }
 
 VECTOR3 CHerded::CalcBoids() const
@@ -131,6 +120,7 @@ VECTOR3 CHerded::CalcBoids() const
     const float neighborRadiusSq = Pow2(neighborRadius);
     const float separationRadiusSq = Pow2(separationRadius);
 
+    //全ての羊を走査し、近隣の平均位置と近すぎる羊から離れる方向を集計する//
     for (const auto& other : allSheep)
     {
         if (other == m_pOwner) continue;
@@ -155,7 +145,7 @@ VECTOR3 CHerded::CalcBoids() const
         }
     }
 
-    // 平均化
+    //凝集計算：近隣の平均位置へ向かう方向に重みをかける//
     if (neighborCount > 0)
     {
         cohesion = cohesion / static_cast<float>(neighborCount);
@@ -167,11 +157,11 @@ VECTOR3 CHerded::CalcBoids() const
             float cohesionWeight;
             if (isSucking)
             {
-                cohesionWeight = 1.5f;
+                cohesionWeight = 0.7f;
             }
             else if (m_pOwner->GetFlock() && !m_pOwner->GetFlock()->ContainPos(myPos))
             {
-                cohesionWeight = 1.5f;
+                cohesionWeight = 0.5f;
             }
             else
             {
@@ -181,6 +171,7 @@ VECTOR3 CHerded::CalcBoids() const
         }
     }
 
+    //分離計算：近すぎる羊がいれば離れる方向を強める//
     if (separationCount > 0 && separation.LengthSquare() > NEAR_ZERO_LENSQ)
     {
         separation = normalize(separation);
@@ -267,6 +258,7 @@ VECTOR3 CHerded::CalcRetrunToFlock()
     constexpr float OUTSIDE_FORCE = 3.0f;
     constexpr float EDGE_RATE = 0.75f;
     constexpr float EDGE_FORCE = 1.2f;
+    //群れの外なら強く、端付近なら弱く中心方向へ戻す//
     if (dis > radius) return normalize(toCenter) * OUTSIDE_FORCE;
     if (dis > radius * EDGE_RATE)return normalize(toCenter) * EDGE_FORCE;
     return {0, 0, 0};
@@ -302,6 +294,7 @@ void CPanic::Update()
     m_panicTimer += SceneManager::DeltaTime();
     m_changeDirectionTimer += SceneManager::DeltaTime();
 
+    //方向更新、移動、終了後の所属群れ判定を順に処理する//
     UpdateDirection();
     UpdateMovement();
     CheckBoundaryAndTransition();
@@ -319,13 +312,15 @@ void CPanic::UpdateDirection()
     }
 }
 
-void CPanic::UpdateMovement()
+void CPanic::UpdateMovement() const
 {
+    //回転計算：パニック方向へ即座に向きを合わせる//
     float targetAngle = atan2f(m_panicDirection.x, m_panicDirection.z);
     m_pOwner->SetRotateY(targetAngle);
 
-    const float moveSpeed = 2.0f;
-    m_pOwner->AddPosition(m_panicDirection * moveSpeed * SceneManager::DeltaTime());
+    //移動計算：決定済みの逃走方向へ一定速度で進む//
+    constexpr float MOVE_SPEED = 2.0f;
+    m_pOwner->AddPosition(m_panicDirection * MOVE_SPEED * SceneManager::DeltaTime());
 }
 
 void CPanic::CheckBoundaryAndTransition()
@@ -336,6 +331,7 @@ void CPanic::CheckBoundaryAndTransition()
     CFlock* nearest = nullptr;
     float nearestDistSq = FLT_MAX;
 
+    //現在位置を含む群れの中から、最も中心が近い群れを探す//
     for (CFlock* f : ObjectManager::FindGameObjects<CFlock>())
     {
         if (!f->ContainPos(currentPos)) continue;
@@ -349,6 +345,7 @@ void CPanic::CheckBoundaryAndTransition()
         }
     }
 
+    //群れ内に戻っていればHERDED、どの群れにもいなければIDLEに戻す//
     if (nearest != nullptr)
     {
         m_pOwner->SetFlock(nearest);

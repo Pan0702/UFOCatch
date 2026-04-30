@@ -73,29 +73,6 @@ void CDebugScene::Draw()
 {
     DrawFlockCircles();
     DrawMaxFlockCircles();
-    DrawHalfFlockCircles();
-}
-
-void CDebugScene::DrawHalfFlockCircles() const
-{
-    constexpr int SEGMENTS = 32;
-    constexpr DWORD COLOR = RGB(0, 255, 255);
-
-    CSprite spr;
-    for (CFlock* flock : ObjectManager::FindGameObjects<CFlock>())
-    {
-        const VECTOR3 c = flock->GetFlockCenter();
-        const float r = flock->GetMoveRadius() * 0.7;
-
-        VECTOR3 prev(c.x + r, c.y, c.z);
-        for (int i = 1; i <= SEGMENTS; ++i)
-        {
-            const float t = static_cast<float>(i) / SEGMENTS * XM_2PI;
-            VECTOR3 next(c.x + cosf(t) * r, c.y, c.z + sinf(t) * r);
-            spr.DrawLine3D(prev, next, COLOR);
-            prev = next;
-        }
-    }
 }
 
 void CDebugScene::DrawFlockCircles() const

@@ -56,11 +56,13 @@ VECTOR3 CSheep::SuctionSpeed() const
 void CSheep::SetFlock(CFlock* flock)
 {
     if (flock == m_pFlock) return;
+    //所属群れを変更する前に、現在の群れリストから自分を外す//
     if (m_pFlock != nullptr)
     {
         m_pFlock->RemoveSheep(this);
     }
     m_pFlock = flock;
+    //新しい群れがあれば、その管理リストへ登録する//
     if (m_pFlock != nullptr)
     {
         m_pFlock->AddSheep(this);
@@ -74,7 +76,7 @@ CFlock* CSheep::GetFlock() const
 
 void CSheep::Update()
 {
-    m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
+    //プレイヤーの吸い込みコーン内にいるか毎フレーム更新する//
     if (m_pPlayer != nullptr)
     {
         m_isInConeArea = m_pPlayer->IsWithSuctionCone(transform.position);
