@@ -30,18 +30,17 @@ public:
     /// 
     /// @param pos 敵のXZ中心
     /// @param size 敵のXZサイズ
-    /// @param basePos 敵のY座標
     /// @param fromY 探索開始Y座標
     /// @param toY 探索終了Y座標
     /// @param outHit 探索結果
     /// @return 探索結果が見つかったかどうか
     bool FindGroundBelow(const VECTOR2& pos,
-                         const VECTOR2& size, const VECTOR3& basePos,
+                         const VECTOR2& size,
                          float fromY, float toY, GroundHitResult* outHit);
 
 private:
-    void FindHighestGroundHit(const VECTOR2& half, const VECTOR3& basePos,
-                              float fromY, float toY, GroundHitResult& best, CStageObject* obj);
+    void FindHighestGroundHit(const VECTOR2& half,
+                              const VECTOR2& pos, float fromY, float toY, GroundHitResult& best, CStageObject* obj);
 
 private:
     treePtr m_pTree;

@@ -1,6 +1,7 @@
 ﻿#include "AnimalDubug.h"
 
 #include "../Component/ComponentFwd.h"
+
 CADebug::CADebug(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     : m_basePos(iniPos)
 {
@@ -12,12 +13,11 @@ CADebug::CADebug(const VECTOR3& iniPos, const VECTOR2& moveAreaSize)
     m_areaSize = moveAreaSize;
     transform.position = iniPos;
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
-    m_pGround = ObjectManager::FindGameObject<CGround>();
-    
-    m_components[CBaseState::State::IDLE] = std::make_unique<CIdle>(this,570.0f);
+
+    m_components[CBaseState::State::IDLE] = std::make_unique<CIdle>(this, 570.0f);
     m_components[CBaseState::State::WALK] = std::make_unique<CWalk>(this, 2.0f);
     m_components[CBaseState::State::SUCTION] = std::make_unique<CSuction>(this);
-    m_components[CBaseState::State::DESTROY] = std::make_unique<CDestroy>(this,100,1);
+    m_components[CBaseState::State::DESTROY] = std::make_unique<CDestroy>(this, 100, 1);
     m_pState->Enter(CBaseState::State::WALK);
     m_pBBox = CreateBBox();
 }
@@ -58,11 +58,10 @@ void CADebug::Draw()
 VECTOR3 CADebug::SuctionSpeed() const
 {
     constexpr float suctionTime = 1.0f;
-    return m_pPlayer->CalcSuctionDisplacement(suctionTime,transform.position);
+    return m_pPlayer->CalcSuctionDisplacement(suctionTime, transform.position);
 }
 
 bool CADebug::ShouldApplyGravity() const
 {
     return m_pComponent != m_components.at(CBaseState::State::SUCTION).get();
 }
-

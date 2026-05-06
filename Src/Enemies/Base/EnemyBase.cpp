@@ -101,7 +101,7 @@ void CEnemyBase::ApplyGravity()
         GroundHitResult hit;
         if (m_pEnemyManager->FindGroundBelow(pos, size, transform.position, fromY, toY, &hit))
         {
-            transform.position.y = hit.y - GROUND_SKIN;
+            transform.position.y = hit.y + GROUND_SKIN;
             m_velocityY = 0.0f;
             return;
         }

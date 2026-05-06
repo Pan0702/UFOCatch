@@ -27,7 +27,7 @@ CHuman::CHuman(const VECTOR3& pos, const VECTOR2& areaSize)
     InitStates();
 
     m_pFunShape = Instantiate<CFunShape>();
-    m_pGround = ObjectManager::FindGameObject<CGround>();
+
     m_pBBox = CreateBBox();
     m_pFunShape->SetParent(this);
     m_isHuman = true;

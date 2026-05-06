@@ -65,11 +65,13 @@ std::vector<CStageObject*> CStageQuadTree::GetOverlappingObjects(
     return result;
 }
 
-bool CStageQuadTree::FindGroundBelow(const VECTOR2& pos, const VECTOR2& size, const VECTOR3& basePos, float fromY,
+bool CStageQuadTree::FindGroundBelow(const VECTOR2& pos, const VECTOR2& size, float fromY,
                                      float toY, GroundHitResult* outHit)
 {
-    if (outHit == nullptr) return false;
-    if (toY < fromY) return false;
+    if (outHit == nullptr)
+        return false;
+    if (toY >= fromY)
+        return false;
 
     // 足元rayを当たり判定の端から少し内側に寄せる割合
     static constexpr float FOOT_RAY_INSET_RATE = 0.8f;
@@ -81,10 +83,13 @@ bool CStageQuadTree::FindGroundBelow(const VECTOR2& pos, const VECTOR2& size, co
 
     for (CStageObject* obj : GetNearbyObjects(pos, size))
     {
-        if (obj == nullptr) continue;
-        if (!obj->GetCanStandOn())continue;
-
-        FindHighestGroundHit(half, basePos, fromY, toY, best, obj);
+        if (obj == nullptr)
+            continue;
+        if (!obj->GetIsHitFlag())
+            continue;
+        if (!obj->MayHitGround(fromY, toY))
+            continue;
+        FindHighestGroundHit(half, pos, fromY, toY, best, obj);
     }
     if (!best.hit) return false;
 
@@ -92,22 +97,22 @@ bool CStageQuadTree::FindGroundBelow(const VECTOR2& pos, const VECTOR2& size, co
     return true;
 }
 
-void CStageQuadTree::FindHighestGroundHit(const VECTOR2& half, const VECTOR3& basePos,
+void CStageQuadTree::FindHighestGroundHit(const VECTOR2& half, const VECTOR2& pos,
                                           float fromY, float toY, GroundHitResult& best,
                                           CStageObject* obj)
 {
     const VECTOR3 offsets[] =
     {
         VECTOR3(0, 0, 0),
+        VECTOR3(-half.x, 0, -half.y),
         VECTOR3(half.x, 0, -half.y),
-        VECTOR3(half.x, 0, -half.y),
-        VECTOR3(half.x, 0, -half.y),
-        VECTOR3(half.x, 0, half.y),
+        VECTOR3(-half.x, 0, half.y),
+        VECTOR3(half.x, 0, half.y)
     };
     for (const VECTOR3& offset : offsets)
     {
-        const VECTOR3 rayStart(basePos.x + offset.x, fromY, basePos.z + offset.z);
-        const VECTOR3 rayEnd(basePos.x + offset.x, toY, basePos.z + offset.z);
+        const VECTOR3 rayStart(pos.x + offset.x, fromY, pos.y + offset.z);
+        const VECTOR3 rayEnd(pos.x + offset.x, toY, pos.y + offset.z);
 
         MeshCollider::CollInfo info;
         if (!obj->HitGround(rayStart, rayEnd, &info))

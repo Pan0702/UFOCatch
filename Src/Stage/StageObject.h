@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "../Common/Object3D.h"
 #include "../Utils/BBox.h"
+#include "StageCollision.h"
 
 /// <summary>
 /// ステージオブジェクト（静的な障害物、壁など）
@@ -15,12 +16,12 @@ public:
     /// <param name="name">メッシュファイルのパス</param>
     /// <param name="pos">オブジェクトの位置</param>
     /// <param name="scale">オブジェクトのサイズ</param>
-    /// <param name="useOBB">OBBを使用するか（デフォルト: true）</param>
-    CStageObject(const char* name, const VECTOR3& pos = VECTOR3(0, 0, 0), float scale = 1.0f, bool useOBB = true);
-    CStageObject(const char* name, const Transform& t, bool useOBB);
+    /// <param name="soc">OBBを使用するか,地面との当たり判定を使うか（デフォルト: true）</param>
+    CStageObject(const char* name, const VECTOR3& pos = VECTOR3(0, 0, 0), float scale = 1.0f,
+                 StageColl soc = StageColl());
+    CStageObject(const char* name, const Transform& t, StageColl soc = StageColl());
 
     void MakeOBB();
-    virtual ~CStageObject();
 
     void Update() override;
     void Draw() override;
@@ -39,7 +40,7 @@ public:
     /// OBBを取得
     /// </summary>
     /// <returns>OBBのポインタ</returns>
-    CBBox* GetOBB() const { return m_pOBB; }
+    CBBox* GetOBB() const { return m_pOBB.get(); }
 
     // 四分木登録用：XZ平面でのAABB中心と大きさを返す
     bool GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const;
@@ -51,14 +52,14 @@ public:
     void ResolveEnemyCollision(class CEnemyBase* pEnemy);
 
     bool HitGround(const VECTOR3& rayStart, const VECTOR3& rayEnd,
-                   MeshCollider::CollInfo* outInfo);
+                   MeshCollider::CollInfo* outInfo) const;
+    bool MayHitGround(float fromY, float toY) const;
 
-    bool GetCanStandOn() const;
+    void SetIsHitFlag(bool flag);
+    bool GetIsHitFlag() const;
 
-    void SetCanStandOn(bool b);
-
-protected:
-    CBBox* m_pOBB; // OBB衝突判定
-    bool m_bUseOBB; // OBBを使用するか
-    bool m_canStandOn;
+private:
+    std::unique_ptr<CBBox> m_pOBB; // OBB衝突判定
+    bool m_useOBB; // OBBを使用するか
+    bool m_isHitGround; //床判定に使うか
 };

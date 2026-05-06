@@ -3,12 +3,16 @@
 #include <string>
 #include <vector>
 #include "../Common/Object3D.h"
+#include "../Stage/StageCollision.h"
+
 struct Info
 {
     std::string modelName;
     std::string modelPath;
     Transform transform;
+    StageColl soc;
 };
+
 namespace Import
 {
     /// <summary>
@@ -17,10 +21,8 @@ namespace Import
     /// </summary>
     /// <param name="path">インポートするJSONファイルのパス</param>
     std::vector<Info> StageInfo(const std::string& path);
-    
+
     ///<summary>JSONファイルからモデルのパスを読み込む</summary>
     ///<param name="path">インポートするJSONファイルのパス</param>
     std::vector<std::string> ModelPath(const std::string& path);
-    
-    
 };

@@ -10,9 +10,10 @@
 // @param scale オブジェクトのサイズ
 // @param useOBB OBBを使用するか //
 ////////////////////
-CStageObject::CStageObject(const char* name, const VECTOR3& pos, float scale, bool useOBB)
+CStageObject::CStageObject(const char* name, const VECTOR3& pos, float scale, StageColl soc)
 {
-    m_bUseOBB = useOBB;
+    m_useOBB = soc.useOBB;
+    m_isHitGround = soc.useHitGround;
     m_pOBB = nullptr;
 
     // ResourceManagerからメッシュを取得（キャッシュされる）
@@ -27,9 +28,10 @@ CStageObject::CStageObject(const char* name, const VECTOR3& pos, float scale, bo
     transform.scale = VECTOR3(1.0f, 1.0f, 1.0f) * scale;
 }
 
-CStageObject::CStageObject(const char* name, const Transform& t, bool useOBB)
+CStageObject::CStageObject(const char* name, const Transform& t, StageColl soc)
 {
-    m_bUseOBB = useOBB;
+    m_useOBB = soc.useOBB;
+    m_isHitGround = soc.useHitGround;
     m_pOBB = nullptr;
 
     // ResourceManagerからメッシュを取得（キャッシュされる）
@@ -44,28 +46,17 @@ CStageObject::CStageObject(const char* name, const Transform& t, bool useOBB)
 void CStageObject::MakeOBB()
 {
     // OBBの作成
-    if (m_bUseOBB)
+    if (m_useOBB)
     {
         // メッシュから境界バウンディングボックスを取得
         VECTOR3 vMin = m_pMesh->m_vMin;
         VECTOR3 vMax = m_pMesh->m_vMax;
 
         // OBBを作成
-        m_pOBB = new CBBox(vMin, vMax);
+        m_pOBB = std::make_unique<CBBox>(vMin, vMax);
     }
 }
 
-//------------------------------------------------------------------------
-// デストラクタ
-//------------------------------------------------------------------------
-CStageObject::~CStageObject()
-{
-    if (m_pOBB)
-    {
-        delete m_pOBB;
-        m_pOBB = nullptr;
-    }
-}
 
 //------------------------------------------------------------------------
 // 更新処理
@@ -144,7 +135,7 @@ bool CStageObject::GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const
 ////////////////////
 bool CStageObject::HitOBB(CBBox* other, VECTOR3* vHit, VECTOR3* vNormal) const
 {
-    if (!m_pOBB || !other || !m_bUseOBB)
+    if (!m_pOBB || !other || !m_useOBB)
     {
         return false;
     }
@@ -210,19 +201,8 @@ void CStageObject::ResolveEnemyCollision(CEnemyBase* pEnemy)
     }
 }
 
-bool CStageObject::GetCanStandOn() const
+bool CStageObject::HitGround(const VECTOR3& rayStart, const VECTOR3& rayEnd, MeshCollider::CollInfo* outInfo) const
 {
-    return m_canStandOn;
-}
-
-void CStageObject::SetCanStandOn(bool b)
-{
-    m_canStandOn = b;
-}
-
-bool CStageObject::HitGround(const VECTOR3& rayStart, const VECTOR3& rayEnd, MeshCollider::CollInfo* outInfo)
-{
-    if (!m_canStandOn) return false;
     if (m_pMesh == nullptr) return false;
     auto meshColl = ResourceManager::GetColl(m_pMesh);
     if (meshColl == nullptr) return false;
@@ -234,4 +214,22 @@ bool CStageObject::HitGround(const VECTOR3& rayStart, const VECTOR3& rayEnd, Mes
     return false;
 }
 
+bool CStageObject::MayHitGround(float fromY, float toY) const
+{
+    const float rayTop = (std::max)(fromY, toY);
+    const float rayBottom = (std::min)(fromY, toY);
+
+    const float objectTop = transform.position.y + m_pMesh->m_vMax.y * transform.scale.y;
+    const float objectBottom = transform.position.y;
+    return (rayTop >= objectBottom) && (rayBottom <= objectTop);
+}
+
+void CStageObject::SetIsHitFlag(bool flag)
+{
+    m_isHitGround = flag;
+}
+
+bool CStageObject::GetIsHitFlag() const
+{
+    return m_isHitGround;
 }

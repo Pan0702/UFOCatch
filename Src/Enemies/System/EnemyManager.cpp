@@ -132,5 +132,5 @@ bool CEnemyManager::FindGroundBelow(const VECTOR2& pos, const VECTOR2& size, con
                                     float to, GroundHitResult* groundType) const
 {
     if (m_pStaticQuadTreeIndex == nullptr)return false;
-    return m_pStaticQuadTreeIndex->FindGroundBelow(pos, size, basePos, from, to, groundType);
+    return m_pStaticQuadTreeIndex->FindGroundBelow(pos, size, from, to, groundType);
 }

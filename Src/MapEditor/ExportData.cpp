@@ -5,6 +5,7 @@
 
 #include "Import.h"
 #include "StageData.h"
+#include "../Stage/StageCollision.h"
 
 using json = nlohmann::json;
 
@@ -28,7 +29,7 @@ namespace
 }
 
 // モデル名とTransformをJSONオブジェクトに変換して返す
-json ExportData::TransformToJson(const std::string& modelName, const Transform& transform)
+json ExportData::TransformToJson(const std::string& modelName, const Transform& transform, const StageColl& c)
 {
     json j;
     const char* p = ResourceManager::GetPath(modelName.c_str());
@@ -44,6 +45,8 @@ json ExportData::TransformToJson(const std::string& modelName, const Transform& 
     };
     j["transform"]["scale"] = {{"x", transform.scale.x}, {"y", transform.scale.y}, {"z", transform.scale.z}};
 
+    j["useOBB"] = c.useOBB;
+    j["useHitGround"] = c.useHitGround;
     return j;
 }
 
@@ -55,7 +58,7 @@ void ExportData::AllModelsInfo(const std::string& fileName,
 
     for (const auto& item : modelList)
     {
-        root.push_back(TransformToJson(item.modelName, item.transform));
+        root.push_back(TransformToJson(item.modelName, item.transform, item.c));
     }
 
     std::ofstream file(fileName);

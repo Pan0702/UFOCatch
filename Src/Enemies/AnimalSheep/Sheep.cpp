@@ -11,7 +11,7 @@ CSheep::CSheep(const VECTOR3& iniPos)
     m_pAnimator = std::make_unique<Animator>();
     m_pAnimator->SetModel(m_pMesh);
     m_pAnimator->Play(A_IDEL);
-    m_pGround = ObjectManager::FindGameObject<CGround>();
+
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     InitStates();
     transform.position = iniPos;

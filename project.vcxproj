@@ -607,6 +607,7 @@
     <ClInclude Include="Src\Scene\Title\TitleUI.h" />
     <ClInclude Include="Src\Stage\GroundHitResult.h"/>
       <ClInclude Include="Src\Stage\SkyBox.h"/>
+    <ClInclude Include="Src\Stage\StageCollision.h"/>
     <ClInclude Include="Src\Stage\StageFactor.h" />
     <ClInclude Include="Src\Stage\StageObject.h" />
     <ClInclude Include="Src\Stage\CubeBox.h" />

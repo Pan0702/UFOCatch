@@ -3,31 +3,39 @@
 #include "CubeBox.h"
 #include "Ground.h"
 #include "StageObject.h"
+#include "StageQuadTree.h"
 #include "../MapEditor/Import.h"
 #include "../Framework/ResourceManager.h"
 #include "../Utils/MyLib.h"
+#include "StageCollision.h"
 using namespace Constants;
+
 CStageFactor::CStageFactor()
 {
-    Instantiate<CGround>(Model::GROUND,VECTOR3(5.0f,3.0f,5.0f));
+    StageColl soc;
+    soc.useOBB = false;
+    soc.useHitGround = true;
+    Instantiate<CStageObject>(Model::GROUND, VECTOR3(5.0f, 3.0f, 5.0f), 1.0f, soc);
     Instantiate<CCubeBox>(Model::BACK_DROP);
-   // new CStageObject("data/Ground/Prefabs/Tree1a.mesh",VECTOR3(1.0f,0.0f,1.0f),2);
-    
+    // new CStageObject("data/Ground/Prefabs/Tree1a.mesh",VECTOR3(1.0f,0.0f,1.0f),2);
 }
 
-void CStageFactor::SpawnObjects(float sizeX,float sizeZ,int num)
+void CStageFactor::SpawnObjects(float sizeX, float sizeZ, int num)
 {
     for (int i = 0; i < num; ++i)
     {
-       float randomX = Randomf(-sizeX, sizeX);
+        float randomX = Randomf(-sizeX, sizeX);
         float randomZ = Randomf(-sizeZ, sizeZ);
-        Instantiate< CStageObject>("data/Ground/Prefabs/Tree1a.mesh",VECTOR3(randomX,0.0f,randomZ),true);
+        StageColl coll;
+        coll.useOBB = true;
+        coll.useHitGround = false;
+        Instantiate<CStageObject>("data/Ground/Prefabs/Tree1a.mesh", VECTOR3(randomX, 0.0f, randomZ), 1.0f, coll);
     }
 }
 
-void CStageFactor::SpawnObjects(const std::string& path,const VECTOR2& size, int num)
+void CStageFactor::SpawnObjects(const std::string& path, const VECTOR2& size, int num)
 {
-    if (MyLib::IsSameFormat(path,"json"))
+    if (MyLib::IsSameFormat(path, "json"))
     {
         std::vector<Info> vector = Import::StageInfo(path);
         for (auto v : vector)
@@ -37,16 +45,19 @@ void CStageFactor::SpawnObjects(const std::string& path,const VECTOR2& size, int
             {
                 ResourceManager::LoadFbx(v.modelName.c_str(), v.modelPath.c_str());
             }
-            Instantiate<CStageObject>(v.modelPath.c_str(),v.transform,true);
+            Instantiate<CStageObject>(v.modelPath.c_str(), v.transform, v.soc);
         }
-    }else
+    }
+    else
     {
         for (int i = 0; i < num; ++i)
         {
             float randomX = Randomf(-size.x, size.x);
             float randomZ = Randomf(-size.y, size.y);
-            Instantiate< CStageObject>("data/Ground/Prefabs/Tree1a.mesh",VECTOR3(randomX,0.0f,randomZ),true);
+            StageColl coll;
+            coll.useOBB = true;
+            coll.useHitGround = false;
+            Instantiate<CStageObject>("data/Ground/Prefabs/Tree1a.mesh", VECTOR3(randomX, 0.0f, randomZ), 1.0f, coll);
         }
     }
-
 }

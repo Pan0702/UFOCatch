@@ -18,7 +18,7 @@ CAnimalChicken::CAnimalChicken(const VECTOR3& iniPos, const VECTOR2& moveAreaSiz
 
     transform.position = iniPos;
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
-    m_pGround = ObjectManager::FindGameObject<CGround>();
+
 
     m_components[CBaseState::State::IDLE] = std::make_unique<CIdle>(this, 360.0f);
     m_components[CBaseState::State::WALK] = std::make_unique<CWalk>(this, 1.2f);
@@ -99,4 +99,3 @@ bool CAnimalChicken::ShouldApplyGravity() const
 {
     return m_pComponent != m_components.at(CBaseState::State::SUCTION).get();
 }
-

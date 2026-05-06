@@ -10,7 +10,6 @@ CAShepherdDog::CAShepherdDog()
     m_pAnimator = std::make_unique<Animator>();
     m_pAnimator->SetModel(m_pMesh);
     m_pAnimator->Play(A_WALK);
-    m_pGround = ObjectManager::FindGameObject<CGround>();
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
     //移動スピード:2.0f
     m_components[CBaseState::State::COLLECTING] = std::make_unique<CCollecting>(this, 8.0f);
@@ -34,7 +33,7 @@ CAShepherdDog::CAShepherdDog(const VECTOR3& iniPos)
     m_pAnimator = std::make_unique<Animator>();
     m_pAnimator->SetModel(m_pMesh);
     m_pAnimator->Play(A_WALK);
-    m_pGround = ObjectManager::FindGameObject<CGround>();
+
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
 
     constexpr float ALGORITHM_MOVE_SPEED = 3.0f;

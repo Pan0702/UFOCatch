@@ -42,6 +42,13 @@ std::vector<Info> Import::StageInfo(const std::string& path)
             item["transform"]["scale"]["y"],
             item["transform"]["scale"]["z"]);
         info.transform = transform;
+        info.soc.useOBB = item.contains("useOBB")
+                              ? item["useOBB"].get<bool>()
+                              : true;
+
+        info.soc.useHitGround = item.contains("useHitGround")
+                                    ? item["useHitGround"].get<bool>()
+                                    : false;
         infos.push_back(info);
     }
     return infos;
@@ -50,17 +57,17 @@ std::vector<Info> Import::StageInfo(const std::string& path)
 std::vector<std::string> Import::ModelPath(const std::string& path)
 {
     std::vector<std::string> paths;
-    
+
     std::ifstream file(path);
     if (!file.is_open()) return {};
     json root;
     file >> root;
-    
+
     for (const auto& item : root)
     {
         if (item.contains("path"))
             paths.push_back(item["path"]);
     }
-    
+
     return paths;
 }
