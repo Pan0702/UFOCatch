@@ -7,10 +7,10 @@
 namespace
 {
     // Transform ウィンドウの初期位置とサイズ
-    constexpr float kTransformWindowX    = 10.0f;
-    constexpr float kTransformWindowY    = 10.0f;
-    constexpr float kTransformWindowW    = 300.0f;
-    constexpr float kTransformWindowH    = 160.0f;
+    constexpr float kTransformWindowX = 10.0f;
+    constexpr float kTransformWindowY = 10.0f;
+    constexpr float kTransformWindowW = 300.0f;
+    constexpr float kTransformWindowH = 160.0f;
 
     // DragFloat3 の1フレームあたりの変化量
     constexpr float kDragSpeed = 0.1f;
@@ -30,15 +30,24 @@ void Controller::SetCatchFlag(bool f)
     m_isCatch = f;
 }
 
-
 void Controller::Update()
 {
     const ImGuiIO& io = ImGui::GetIO();
 
     if (!io.WantCaptureMouse)
     {
+        const bool is_alt = m_pInput->CheckKey(KD_DAT, DIK_LMENU)
+            || m_pInput->CheckKey(KD_DAT, DIK_RMENU);
+
+        // Alt 系のUE風カメラ操作を最優先する
+        if (is_alt && (m_pInput->CheckMouse(KD_DAT, DIM_LBUTTON)
+            || m_pInput->CheckMouse(KD_DAT, DIM_MBUTTON)
+            || m_pInput->CheckMouse(KD_DAT, DIM_RBUTTON)))
+        {
+            CameraControl();
+        }
         // 右クリック中はカメラ操作を優先し、TRS 操作は無効
-        if (m_pInput->CheckMouse(KD_DAT, DIM_RBUTTON))
+        else if (m_pInput->CheckMouse(KD_DAT, DIM_RBUTTON))
         {
             CameraControl();
         }
@@ -62,7 +71,7 @@ void Controller::Update()
         }
 
         // BackSpace / Delete でオブジェクト削除
-        if (m_pInput->CheckMouse(KD_TRG, DIM_LBUTTON))
+        if (!is_alt && m_pInput->CheckMouse(KD_TRG, DIM_LBUTTON))
         {
             HandleLeftClick();
         }
@@ -105,7 +114,6 @@ void Controller::Update()
 
         HandleUndoRedo();
     }
-
 }
 
 // 左クリック時にTRSギズモまたはステージオブジェクトへのレイ判定を行う
@@ -119,13 +127,14 @@ void Controller::HandleLeftClick()
     {
         if (m_isRandomPlacer)
         {
-            m_pUndoManager->Push(std::make_unique<CRawTransformCommand>(m_pRandomPlacer->GetTransform()));  
-        }else
+            m_pUndoManager->Push(std::make_unique<CRawTransformCommand>(m_pRandomPlacer->GetTransform()));
+        }
+        else
         {
             // ドラッグ開始前に現状を保存
             m_pUndoManager->Push(std::make_unique<CTransformCommand>());
         }
-  
+
         m_pTrs->SetDraggingAxis(a);
         return;
     }
@@ -156,14 +165,15 @@ void Controller::HandleUndoRedo() const
 
 void Controller::Random()
 {
-    if (m_pRandomPlacer == nullptr) return;  
+    if (m_pRandomPlacer == nullptr) return;
     if (m_isRandomPlacer)
     {
         m_pRandomPlacer->SetDrawFlag(true);
         m_pTrs->SetOverrideTarget(m_pRandomPlacer->GetTransform());
         m_pTrs->SetState(TRS::State::kTranslation);
         m_isCatch = true; // ギズモ表示ON
-    }else
+    }
+    else
     {
         m_pRandomPlacer->SetDrawFlag(false);
         m_pTrs->SetOverrideTarget(nullptr);
@@ -199,6 +209,28 @@ void Controller::TRSControl() const
 // 右クリック中のマウス移動やキー入力でカメラを操作する
 void Controller::CameraControl() const
 {
+    const bool is_alt = m_pInput->CheckKey(KD_DAT, DIK_LMENU)
+        || m_pInput->CheckKey(KD_DAT, DIK_RMENU);
+
+    if (is_alt)
+    {
+        if (m_pInput->CheckMouse(KD_DAT, DIM_LBUTTON))
+        {
+            Camera::Orbit();
+            return;
+        }
+        if (m_pInput->CheckMouse(KD_DAT, DIM_MBUTTON))
+        {
+            Camera::Pan();
+            return;
+        }
+        if (m_pInput->CheckMouse(KD_DAT, DIM_RBUTTON))
+        {
+            Camera::Dolly();
+            return;
+        }
+    }
+
     //マウスによる回転
     if (m_pInput->IsMouseMove())
     {
@@ -225,6 +257,20 @@ void Controller::DrawSettingPanel()
         m_pRandomPlacer->DrawPanel();
 }
 
+void Controller::DrawCollisionBox()
+{
+    static StageColl c = m_pStageData->GetColl();
+
+    if (ImGui::Checkbox("UseOBB", &c.useOBB))
+    {
+        m_pStageData->SetColl(c);
+    }
+    if (ImGui::Checkbox("UseHitGround", &c.useHitGround))
+    {
+        m_pStageData->SetColl(c);
+    }
+}
+
 void Controller::DrawTransformPanel()
 {
     Transform* t = m_pStageData ? m_pStageData->GetSelectedTransform() : nullptr;
@@ -233,20 +279,26 @@ void Controller::DrawTransformPanel()
     ImGui::Separator();
     ImGui::Text("Position: %.2f, %.2f, %.2f", t->position.x,
                 t->position.y, t->position.z);
-    if (ImGui::DragFloat3("Position", &t->position.x, kDragSpeed)) {}
+    if (ImGui::DragFloat3("Position", &t->position.x, kDragSpeed))
+    {
+    }
     if (ImGui::IsItemActivated()) m_pUndoManager->Push(std::make_unique<CTransformCommand>());
 
     ImGui::Separator();
     VECTOR3& tmp_r = t->rotation;
     ImGui::Text("Rotation: %.2f, %.2f, %.2f", tmp_r.x,
                 tmp_r.y, tmp_r.z);
-    if (ImGui::DragFloat3("Rotation", &tmp_r.x, kDragSpeed)) {}
+    if (ImGui::DragFloat3("Rotation", &tmp_r.x, kDragSpeed))
+    {
+    }
     if (ImGui::IsItemActivated()) m_pUndoManager->Push(std::make_unique<CTransformCommand>());
 
     ImGui::Separator();
     ImGui::Text("Scale:    %.2f, %.2f, %.2f", t->scale.x,
                 t->scale.y, t->scale.z);
-    if (ImGui::DragFloat3("Scale", &t->scale.x, kDragSpeed)) {}
+    if (ImGui::DragFloat3("Scale", &t->scale.x, kDragSpeed))
+    {
+    }
     if (ImGui::IsItemActivated()) m_pUndoManager->Push(std::make_unique<CTransformCommand>());
 
     ImGui::Separator();
@@ -256,4 +308,3 @@ bool Controller::HasSelectedObject() const
 {
     return m_isCatch && m_pStageData && m_pStageData->GetSelectedTransform() != nullptr;
 }
-

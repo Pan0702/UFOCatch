@@ -7,6 +7,13 @@ namespace
 
     // マウスホイールの生値をズーム移動量に変換するスケール
     constexpr float WHEEL_SCALE = 100.0f;
+
+    void UpdateView()
+    {
+        auto device = GameDevice();
+        if (device == nullptr) return;
+        device->m_mView = XMMatrixLookAtLH(device->m_vEyePt, device->m_vLookatPt, up);
+    }
 }
 
 
@@ -37,9 +44,9 @@ void Camera::Focus()
     // 仰角45度: cos45° = sin45° = 1/√2 なので水平・垂直成分が等しい
     const float COS_45 = cosf(XM_PI / 4.0f);
     device->m_vLookatPt = t->position;
-    device->m_vEyePt    = t->position
-                        + horiz                        * (dist * COS_45)   // 水平成分
-                        + VECTOR3(0.0f, dist * COS_45, 0.0f);              // 垂直成分
+    device->m_vEyePt = t->position
+        + horiz * (dist * COS_45) // 水平成分
+        + VECTOR3(0.0f, dist * COS_45, 0.0f); // 垂直成分
 
     device->m_mView = XMMatrixLookAtLH(device->m_vEyePt, device->m_vLookatPt, up);
 }
@@ -52,7 +59,7 @@ void Camera::Move()
 
     // カメラの向きからワールド空間の前方・右方向を計算
     const VECTOR3 forward = normalize((device->m_vLookatPt - device->m_vEyePt));
-    const VECTOR3 right   = XMVector3Normalize(XMVector3Cross(up, forward));
+    const VECTOR3 right = XMVector3Normalize(XMVector3Cross(up, forward));
 
     // 押されたキーに対応する方向を加算
     VECTOR3 move = VECTOR3(0.0f, 0.0f, 0.0f);
@@ -64,7 +71,7 @@ void Camera::Move()
 
     // Eye と LookAt を同量移動して視点方向を維持
     constexpr float speed = 0.1f;
-    device->m_vEyePt    = device->m_vEyePt    + move * speed;
+    device->m_vEyePt = device->m_vEyePt + move * speed;
     device->m_vLookatPt = device->m_vLookatPt + move * speed;
 
     device->m_mView = XMMatrixLookAtLH(device->m_vEyePt, device->m_vLookatPt, up);
@@ -84,7 +91,7 @@ void Camera::Rotate()
     // lX（水平移動）は right 軸方向、lY（垂直移動）は -up 方向に注視点をずらす
     constexpr float speed = 0.005f;
     const VECTOR3 move = right * static_cast<float>(mouse.lX) * speed
-                    - up * static_cast<float>(mouse.lY) * speed;
+        - up * static_cast<float>(mouse.lY) * speed;
 
     device->m_vLookatPt = device->m_vLookatPt + move;
 
@@ -112,4 +119,65 @@ void Camera::Zoom()
 
     device->m_mView = XMMatrixLookAtLH(device->m_vEyePt, device->m_vLookatPt,
                                        up);
+}
+
+// Alt+左ドラッグで注視点を中心にカメラを回転する
+void Camera::Orbit()
+{
+    auto device = GameDevice();
+    if (device == nullptr) return;
+
+    const DIMOUSESTATE mouse = device->m_pDI->GetMouseState();
+    VECTOR3 offset = device->m_vEyePt - device->m_vLookatPt;
+    if (offset.LengthSquare() <= 0.0001f) return;
+
+    const VECTOR3 forward = normalize(device->m_vLookatPt - device->m_vEyePt);
+    const VECTOR3 right = XMVector3Normalize(XMVector3Cross(up, forward));
+
+    constexpr float speed = 0.005f;
+    const XMMATRIX yaw = XMMatrixRotationAxis(up, -static_cast<float>(mouse.lX) * speed);
+    const XMMATRIX pitch = XMMatrixRotationAxis(right, -static_cast<float>(mouse.lY) * speed);
+
+    offset = XMVector3TransformNormal(offset, pitch * yaw);
+    device->m_vEyePt = device->m_vLookatPt + offset;
+    UpdateView();
+}
+
+// Alt+中ドラッグでカメラを平行移動する
+void Camera::Pan()
+{
+    auto device = GameDevice();
+    if (device == nullptr) return;
+
+    const DIMOUSESTATE mouse = device->m_pDI->GetMouseState();
+    const VECTOR3 forward = normalize(device->m_vLookatPt - device->m_vEyePt);
+    const VECTOR3 right = XMVector3Normalize(XMVector3Cross(up, forward));
+
+    const float distance = (device->m_vLookatPt - device->m_vEyePt).Length();
+    const float scaledSpeed = distance * 0.001f;
+    const float speed = scaledSpeed > 0.01f ? scaledSpeed : 0.01f;
+    const VECTOR3 move = right * -static_cast<float>(mouse.lX) * speed
+        + up * static_cast<float>(mouse.lY) * speed;
+
+    device->m_vEyePt = device->m_vEyePt + move;
+    device->m_vLookatPt = device->m_vLookatPt + move;
+    UpdateView();
+}
+
+// Alt+右ドラッグでカメラを前後移動する
+void Camera::Dolly()
+{
+    auto device = GameDevice();
+    if (device == nullptr) return;
+
+    const DIMOUSESTATE mouse = device->m_pDI->GetMouseState();
+    const VECTOR3 forward = normalize(device->m_vLookatPt - device->m_vEyePt);
+
+    const float distance = (device->m_vLookatPt - device->m_vEyePt).Length();
+    const float scaledSpeed = distance * 0.01f;
+    const float speed = scaledSpeed > 0.05f ? scaledSpeed : 0.05f;
+    const VECTOR3 move = forward * static_cast<float>(mouse.lX + mouse.lY) * speed;
+
+    device->m_vEyePt = device->m_vEyePt + move;
+    UpdateView();
 }

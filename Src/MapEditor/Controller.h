@@ -8,14 +8,14 @@
 class Controller : public Object3D
 {
 private:
-    TRS*                            m_pTrs;
-    CDirectInput*                   m_pInput;
-    StageData*                      m_pStageData;
-    std::unique_ptr<CUndoManager>    m_pUndoManager;
-    std::unique_ptr<RandomPlacer>   m_pRandomPlacer;
-    bool                            m_isCatch = false;
-    bool                            m_isRandomPlacer = false;
-    int                             m_copyObjectIndex = -1;
+    TRS* m_pTrs;
+    CDirectInput* m_pInput;
+    StageData* m_pStageData;
+    std::unique_ptr<CUndoManager> m_pUndoManager;
+    std::unique_ptr<RandomPlacer> m_pRandomPlacer;
+    bool m_isCatch = false;
+    bool m_isRandomPlacer = false;
+    int m_copyObjectIndex = -1;
 
 private:
     void Update() override;
@@ -34,13 +34,13 @@ private:
     void HandleUndoRedo() const;
     void Random();
 
-
 public:
     Controller();
     ~Controller() = default;
 
     void SetCatchFlag(bool f);
 
+    void DrawCollisionBox();
     /// <summary>"Setting"ウィンドウのRandom Placer部分を描画する（Begin/Endなし）</summary>
     void DrawSettingPanel();
 

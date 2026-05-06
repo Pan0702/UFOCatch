@@ -14,18 +14,21 @@ struct StageDataInfo
     {
         transform.position = VECTOR3(0, 0, 0);
         modelName = "";
+        c = StageColl();
     }
 
     StageDataInfo(const std::string& model_name, const VECTOR3& pos)
     {
         modelName = model_name;
         transform.position = pos;
+        c = StageColl();
     }
 
     StageDataInfo(const std::string& model_name, const Transform& t)
     {
         modelName = std::move(model_name);
         transform = t;
+        c = StageColl();
     }
 };
 
@@ -52,7 +55,7 @@ public:
     /// <summary>Transform  全体を指定してオブジェクトをステージに追加する（インポート用）</summary>               
     /// <param name="modelName">使用する モデルの名前</param>        
     /// <param name="transform">配置するTransform（位置・回転・スケール）</param>  
-    void AddModelWithTransform(const std::string& modelName, const Transform& transform);
+    void AddModelWithTransform(const std::string& modelName, const Transform& transform, const StageColl& coll);
 
     /// <summary>ステージデータをJSONファイルにエクスポートする</summary>
     /// <param name="filename">出力ファイル名（拡張子なし）</param>
@@ -95,6 +98,11 @@ public:
     /// <summary>ステージに設置されているすべてのオブジェクトを返す</summary>
     const std::vector<StageDataInfo>& GetStageDataInfo() const;
 
+    /// <summary>現在選択中のオブジェクトの衝突情報を設定する</summary>
+    void SetColl(const StageColl& coll);
+
+    /// <summary>現在選択中のオブジェクトの衝突情報を取得する</summary>
+    StageColl GetColl() const;
     Transform GetTrans() const;
 
     std::string GetModelName() const;

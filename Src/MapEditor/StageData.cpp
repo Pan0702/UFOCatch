@@ -7,6 +7,7 @@ namespace
     // レイ判定に使用するレイの長さ
     constexpr float kRayLength = 1000.0f;
 }
+
 StageData::StageData()
 {
 }
@@ -31,11 +32,12 @@ int StageData::AddModel(const Transform& t, const std::string& modelName)
 }
 
 // Transform全体を指定してオブジェクトをステージに追加する（インポート用）
-void StageData::AddModelWithTransform(const std::string& modelName, const Transform& transform)
+void StageData::AddModelWithTransform(const std::string& modelName, const Transform& transform, const StageColl& coll)
 {
     StageDataInfo info;
     info.modelName = modelName;
-    info.transform  = transform;
+    info.transform = transform;
+    info.c = coll;
     m_stageData.push_back(info);
 }
 
@@ -47,7 +49,7 @@ void StageData::Export(const std::string& filename) const
 
 
 // レイとステージ上の全オブジェクトのコライダーを判定し、最接近のインデックスを返す
-int StageData::RayHitTest(const Ray& ray,MeshCollider::CollInfo* collOut) const
+int StageData::RayHitTest(const Ray& ray, MeshCollider::CollInfo* collOut) const
 {
     VECTOR3 to = ray.origin + ray.direction * kRayLength;
     int hit_index = -1;
@@ -56,12 +58,12 @@ int StageData::RayHitTest(const Ray& ray,MeshCollider::CollInfo* collOut) const
     // 全オブジェクトを走査して当たり判定を行い、最もレイ始点に近いものを選ぶ
     for (int i = 0; i < m_stageData.size(); i++)
     {
-        MeshCollider* coll =ResourceManager::GetColl(m_stageData[i].modelName.c_str());
+        MeshCollider* coll = ResourceManager::GetColl(m_stageData[i].modelName.c_str());
         if (coll == nullptr) continue;
 
         MeshCollider::CollInfo info;
         MATRIX4X4 mat = m_stageData[i].transform.matrix();
-        if (coll->CheckCollisionLine(mat,ray.origin,to,&info))
+        if (coll->CheckCollisionLine(mat, ray.origin, to, &info))
         {
             float dist = (info.hitPosition - ray.origin).LengthSquare();
             if (dist < nearest)
@@ -92,7 +94,7 @@ void StageData::DeleteModel(int index)
 
 void StageData::DeleteModel(const std::string& modelName)
 {
-    for (auto it = m_stageData.end(); it != m_stageData.begin();--it)
+    for (auto it = m_stageData.end(); it != m_stageData.begin(); --it)
     {
         if (it->modelName == modelName)
         {
@@ -105,13 +107,13 @@ void StageData::DeleteModel(const std::string& modelName)
 
 void StageData::Draw()
 {
-    for (auto& data : m_stageData) {
+    for (auto& data : m_stageData)
+    {
         CFbxMesh* mesh = ResourceManager::GetModel(data.modelName.c_str());
         if (mesh == nullptr) continue;
         mesh->Render(data.transform.matrix());
     }
 }
-
 
 
 // 選択中のオブジェクトインデックスを設定する
@@ -143,6 +145,16 @@ const std::vector<StageDataInfo>& StageData::GetStageDataInfo() const
     return m_stageData;
 }
 
+void StageData::SetColl(const StageColl& coll)
+{
+    m_stageData[m_selectedModel].c = coll;
+}
+
+StageColl StageData::GetColl() const
+{
+    return m_stageData[m_selectedModel].c;
+}
+
 Transform StageData::GetTrans() const
 {
     return m_stageData[m_selectedModel].transform;
@@ -165,5 +177,3 @@ void StageData::SetSelectedTransform(int index, const Transform& transform)
 {
     m_stageData[index].transform = transform;
 }
-
-

@@ -13,9 +13,9 @@ Button::Button()
     // CModelStorage からメッシュを取得して1回だけ描画しSRV に焼き付ける
     m_pData = ObjectManager::FindGameObject<StageData>();
 
-    AddButton("Plane", ResourceManager::GetModel("Plane"));
-    AddButton("Curve", ResourceManager::GetModel("Curve"));
-    AddButton("GoalLine", ResourceManager::GetModel("GoalLine"));
+    // AddButton("Plane", ResourceManager::GetModel("Plane"));
+    // AddButton("Curve", ResourceManager::GetModel("Curve"));
+    // AddButton("GoalLine", ResourceManager::GetModel("GoalLine"));
 
 
     m_pModelCreator = new ModelCreator();
@@ -246,7 +246,7 @@ void Button::DrawSettingPanel()
         if (!path.empty())
         {
             auto* stage_data = ObjectManager::FindGameObject<StageData>();
-            
+
             std::vector<Info> vector = Import::StageInfo(path);
             for (auto v : vector)
             {
@@ -256,7 +256,7 @@ void Button::DrawSettingPanel()
                     ResourceManager::LoadFbx(v.modelName.c_str(), v.modelPath.c_str());
                     AddButton(v.modelName, ResourceManager::GetModel(v.modelName.c_str()));
                 }
-                stage_data->AddModelWithTransform(v.modelName, transform);
+                stage_data->AddModelWithTransform(v.modelName, v.transform, v.soc);
             }
         }
     }
