@@ -4,6 +4,10 @@ CSkyBox::CSkyBox(const char* meshPath)
 {
     m_pMesh = new CFbxMesh();
     m_pMesh->Load(meshPath);
+    if (m_pMesh == nullptr)
+    {
+        MessageBox(0, _T("NonSky"), nullptr, MB_OK);
+    }
     transform.scale = VECTOR3(10, 10, 10);
     SetDrawOrder(-1000);
     D3D11_RASTERIZER_DESC rdc = {};
@@ -15,7 +19,6 @@ CSkyBox::CSkyBox(const char* meshPath)
 
 CSkyBox::~CSkyBox()
 {
-    SAFE_DELETE(m_pRStateCullNone);
 }
 
 void CSkyBox::Update()

@@ -15,6 +15,11 @@ CShadowObject::~CShadowObject()
     m_pSpriteImage = nullptr;
 }
 
+void CShadowObject::Start()
+{
+    SetDrawOrder(3);
+}
+
 void CShadowObject::DestroyMe()
 {
     ObjectManager::Destroy(this);

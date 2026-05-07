@@ -1,10 +1,13 @@
 ﻿#include "TutorialAnimal.h"
 
+#include <algorithm>
+#include <cfloat>
+
 #include "../System/GameInstance.h"
 #include "../Player/Player.h"
 #include "../Utils/Animator.h"
 #include "../Enemies/System/EnemyManager.h"
-#include "../Stage/Ground.h"
+#include "../Stage/GroundHitResult.h"
 
 
 CTutorialAnimal::CTutorialAnimal(const VECTOR3& pos)
@@ -20,13 +23,13 @@ CTutorialAnimal::CTutorialAnimal(const VECTOR3& pos)
     transform.position = pos;
     transform.rotation = VECTOR3(0, XM_PI, 0);
 
-    m_pGround = ObjectManager::FindGameObject<CGround>();
+    m_pEnemyManager = ObjectManager::FindGameObject<CEnemyManager>();
 }
 
 void CTutorialAnimal::Update()
 {
     CPlayer* pPl = ObjectManager::FindGameObject<CPlayer>();
-    
+
     // 吸い込み範囲内かつ、吸い込みボタンを押していたら位置を加算していく //
     if (pPl->IsWithSuctionCone(transform.position) && pPl->GetIsSuckUp())
     {
@@ -34,7 +37,7 @@ void CTutorialAnimal::Update()
         constexpr int SUCTION_SPEED_FACTOR = 1;
 
         transform.position += pPl->CalcSuctionDisplacement(SUCTION_SPEED_FACTOR, transform.position);
-        m_velocityY = 0.0f;  // 吸い込み中は重力をリセット //
+        m_velocityY = 0.0f; // 吸い込み中は重力をリセット //
     }
     else
     {
@@ -53,7 +56,7 @@ void CTutorialAnimal::Destroy()
     constexpr int CAPTURE_SCORE = 100;
     // 捕獲時に加算する捕獲数 //
     constexpr int CAPTURE_COUNT = 1;
-    
+
     ObjectManager::FindGameObject<CPlayerLevel>()->AddExp(CAPTURE_EXP);
     CGameInstance::Get()->AddScore(CAPTURE_SCORE);
     CGameInstance::Get()->AddCapture(CAPTURE_COUNT);
@@ -75,20 +78,19 @@ void CTutorialAnimal::ApplyGravity()
     const float dt = SceneManager::DeltaTime();
     const float nextY = transform.position.y + m_velocityY * dt;
 
-    if (m_pGround != nullptr)
+    if (m_pEnemyManager != nullptr)
     {
         const float fromY = transform.position.y + GROUND_CHECK_OFFSET;
         const float toY = nextY - GROUND_CHECK_OFFSET;
 
         if (toY < fromY)
         {
-            const VECTOR3 rayStart = VECTOR3(transform.position.x, fromY, transform.position.z);
-            const VECTOR3 rayEnd = VECTOR3(transform.position.x, toY, transform.position.z);
-
-            MeshCollider::CollInfo collInfo;
-            if (m_pGround->HitLineToMesh(rayStart, rayEnd, &collInfo))
+            VECTOR2 pos, size;
+            GroundHitResult hit;
+            if (GetBounds2D(pos, size) &&
+                m_pEnemyManager->FindGroundBelow(pos, size, transform.position, fromY, toY, &hit))
             {
-                transform.position.y = collInfo.hitPosition.y + GROUND_SKIN;
+                transform.position.y = hit.y + GROUND_SKIN;
                 m_velocityY = 0.0f;
                 return;
             }
@@ -96,4 +98,45 @@ void CTutorialAnimal::ApplyGravity()
     }
 
     transform.position.y = nextY;
+}
+
+bool CTutorialAnimal::GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const
+{
+    if (m_pMesh == nullptr)
+    {
+        return false;
+    }
+
+    const VECTOR3 min = m_pMesh->m_vMin;
+    const VECTOR3 max = m_pMesh->m_vMax;
+
+    VECTOR3 corners[4] = {
+        VECTOR3(min.x, 0, min.z),
+        VECTOR3(max.x, 0, min.z),
+        VECTOR3(min.x, 0, max.z),
+        VECTOR3(max.x, 0, max.z)
+    };
+
+    MATRIX4X4 rotY = XMMatrixRotationY(transform.rotation.y);
+    MATRIX4X4 scaleM = XMMatrixScaling(transform.scale.x, transform.scale.y, transform.scale.z);
+    MATRIX4X4 transformMatrix = scaleM * rotY;
+
+    float minX = FLT_MAX, maxX = -FLT_MAX;
+    float minZ = FLT_MAX, maxZ = -FLT_MAX;
+
+    for (const auto& corner : corners)
+    {
+        VECTOR3 transformed = XMVector3TransformCoord(corner, transformMatrix);
+        minX = (std::min)(minX, transformed.x);
+        maxX = (std::max)(maxX, transformed.x);
+        minZ = (std::min)(minZ, transformed.z);
+        maxZ = (std::max)(maxZ, transformed.z);
+    }
+
+    outPos = VECTOR2(
+        (minX + maxX) * 0.5f + transform.position.x,
+        (minZ + maxZ) * 0.5f + transform.position.z
+    );
+    outSize = VECTOR2(maxX - minX, maxZ - minZ);
+    return true;
 }

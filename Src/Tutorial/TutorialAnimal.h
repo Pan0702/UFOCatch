@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "../Common/Object3D.h"
 
-class CGround;
+class CEnemyManager;
 
 // チュートリアル用の動物クラス //
 class CTutorialAnimal : public Object3D
@@ -11,17 +11,17 @@ public:
     // @param pos 生成位置 //
     CTutorialAnimal(const VECTOR3& pos);
     ~CTutorialAnimal();
-    
+
     // Scoreを加算してオブジェクトをDestroy //
     void Destroy();
 
 private:
-
     void Update() override;
 
     // 重力を適用する //
     void ApplyGravity();
+    bool GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const;
 
-    float m_velocityY = 0.0f;      // Y軸方向の速度 //
-    CGround* m_pGround = nullptr;  // 地面オブジェクトへのポインタ //
+    float m_velocityY = 0.0f; // Y軸方向の速度 //
+    CEnemyManager* m_pEnemyManager = nullptr;
 };

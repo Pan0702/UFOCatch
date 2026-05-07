@@ -13,10 +13,11 @@ public:
     ~CConeDraw() override;
 
 private:
+    void Start() override;
     void Update() override;
-    void Draw()   override;
+    void Draw() override;
 
-    CPlayer*      m_pPlayer;
+    CPlayer* m_pPlayer;
     CPlayerLevel* m_pLevel;
 };
 
@@ -28,12 +29,13 @@ public:
     ~CCircleDraw() override;
 
 private:
+    void Start() override;
     void Update() override;
-    void Draw()   override;
+    void Draw() override;
 
-    CPlayer*      m_pPlayer;
+    CPlayer* m_pPlayer;
     std::unique_ptr<CSpriteImage> m_pCircleImage;
     CPlayerLevel* m_pLevel;
-    
+
     float m_radius;
 };

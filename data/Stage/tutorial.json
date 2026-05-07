@@ -1,0 +1,48 @@
+[
+    {
+        "model_name": "Objectes001",
+        "path": "C:\\Users\\A24048-PC\\RiderProjects\\UFOCatch\\data\\Ground\\Prefabs\\Objectes001.mesh",
+        "transform": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        },
+        "useHitGround": false,
+        "useOBB": true
+    },
+    {
+        "model_name": "StagePlaneGreen1",
+        "path": "C:\\Users\\A24048-PC\\RiderProjects\\UFOCatch\\data\\Ground\\StagePlaneGreen1.mesh",
+        "transform": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 3.9000000953674316,
+                "y": 1.0,
+                "z": 3.9000000953674316
+            }
+        },
+        "useHitGround": true,
+        "useOBB": false
+    }
+]

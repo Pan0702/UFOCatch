@@ -4,23 +4,26 @@
 #include "../Utils/Sprite3D.h"
 #include "../Utils/FbxMesh.h"
 
-CConeDraw::CConeDraw(float coneTopPos,CPlayer* p)
+CConeDraw::CConeDraw(float coneTopPos, CPlayer* p)
 {
-    m_pMesh =  new CFbxMesh();
+    m_pMesh = new CFbxMesh();
     m_pMesh->Load("data/Player/Cone2.mesh");
     m_pMesh->SetLightIntensity(1.0f, 1.0f, 1.0f, 1.0f);
     transform.position = VECTOR3(0, 0, 0);
     m_pPlayer = p;
-    m_pLevel  = ObjectManager::FindGameObject<CPlayerLevel>();
+    m_pLevel = ObjectManager::FindGameObject<CPlayerLevel>();
     transform.scale.y = coneTopPos;
     SetDrawOrder(-1);
-
 }
 
 CConeDraw::~CConeDraw()
 {
     SAFE_DELETE(m_pMesh);
+}
 
+void CConeDraw::Start()
+{
+    SetDrawOrder(-10);
 }
 
 void CConeDraw::Update()
@@ -57,12 +60,17 @@ CCircleDraw::CCircleDraw(CPlayer* p)
 {
     SetDrawOrder(1);
     m_pPlayer = p;
-    m_pLevel  = ObjectManager::FindGameObject<CPlayerLevel>();
+    m_pLevel = ObjectManager::FindGameObject<CPlayerLevel>();
     m_pCircleImage = std::make_unique<CSpriteImage>(TEXT("data/CircleSuction.png"));
 }
 
 CCircleDraw::~CCircleDraw()
 {
+}
+
+void CCircleDraw::Start()
+{
+    SetDrawOrder(-10);
 }
 
 void CCircleDraw::Update()
@@ -76,14 +84,14 @@ void CCircleDraw::Draw()
     {
         return;
     }
-    if (!m_pCircleImage )
+    if (!m_pCircleImage)
     {
         printf("CCircleDraw");
         return;
     }
     CSprite spr;
     VECTOR3 plPos = m_pPlayer->GetPos();
-    spr.DrawWorld(m_pCircleImage.get(), VECTOR3(plPos.x,0,plPos.z), m_pLevel->GetRadius(),0.7f);
+    spr.DrawWorld(m_pCircleImage.get(), VECTOR3(plPos.x, 0, plPos.z), m_pLevel->GetRadius(), 0.7f);
 }
 
 ///Debug///

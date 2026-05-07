@@ -43,6 +43,8 @@ void EditorUI::DrawSettingWindow() const
     ImGui::Begin("Setting", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
     m_pButton->DrawSettingPanel();
     ImGui::Separator();
+    m_pController->DrawSettingPanel();
+    ImGui::Separator();
     m_pController->DrawCollisionBox();
     ImGui::End();
 }

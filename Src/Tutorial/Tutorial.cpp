@@ -17,16 +17,16 @@ namespace
 CTutorial::CTutorial()
 {
     // 各ステートを生成してマップに登録 //
-    m_states[CTutorialState::State::Move] = std::make_unique< CMoveState>(this);
-    m_states[CTutorialState::State::Expands] = std::make_unique< CExpands>(this);
-    m_states[CTutorialState::State::Discovery] = std::make_unique< CDiscoveryState>(this);
-    m_states[CTutorialState::State::Suction] = std::make_unique< CSuctionState>(this);
-    m_states[CTutorialState::State::Play] = std::make_unique< CPlayState>(this);
+    m_states[CTutorialState::State::Move] = std::make_unique<CMoveState>(this);
+    m_states[CTutorialState::State::Expands] = std::make_unique<CExpands>(this);
+    m_states[CTutorialState::State::Discovery] = std::make_unique<CDiscoveryState>(this);
+    m_states[CTutorialState::State::Suction] = std::make_unique<CSuctionState>(this);
+    m_states[CTutorialState::State::Play] = std::make_unique<CPlayState>(this);
     m_pCurrentState = m_states[CTutorialState::State::Move].get();
 
     // 最初のチュートリアル用動物を生成 //
     static constexpr float INITIAL_ANIMAL_Z = 5.0f;
-    Instantiate< CTutorialAnimal>(VECTOR3(0, 0, INITIAL_ANIMAL_Z));
+    Instantiate<CTutorialAnimal>(VECTOR3(0, 0, INITIAL_ANIMAL_Z));
 }
 
 void CTutorial::Update()
@@ -78,23 +78,23 @@ void CTutorial::SpawnHuman()
 ////////////////////
 void CTutorial::Lesson()
 {
-    Instantiate< CTimer>(20);
+    Instantiate<CTimer>(20);
     static constexpr int LESSON_TIME_SECONDS = 30;
     static constexpr int LESSON_ANIMAL_COUNT = 5;
 
-    Instantiate< CEnemyManager>();
-    Instantiate< CTimer>(LESSON_TIME_SECONDS);
+    SingleInstantiate<CEnemyManager>()->BuildStaticTree();
+    Instantiate<CTimer>(LESSON_TIME_SECONDS);
 
     // 人間を1体生成 //
     float randomX = Randomf(SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
     float randomZ = Randomf(SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
-    Instantiate< CHuman>(VECTOR3(randomX, 0, randomZ));
+    Instantiate<CHuman>(VECTOR3(randomX, 0, randomZ));
 
     // 動物を複数体生成 //
     for (int i = 0; i < LESSON_ANIMAL_COUNT; i++)
     {
         randomX = Randomf(SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
         randomZ = Randomf(SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
-        Instantiate< CTutorialAnimal>(VECTOR3(randomX, 0, randomZ));
+        Instantiate<CTutorialAnimal>(VECTOR3(randomX, 0, randomZ));
     }
 }
