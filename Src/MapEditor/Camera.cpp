@@ -7,6 +7,8 @@ namespace
 
     // マウスホイールの生値をズーム移動量に変換するスケール
     constexpr float WHEEL_SCALE = 100.0f;
+    constexpr float SPEED_SCALE_BY_DISTANCE = 0.001f;
+    constexpr float MIN_MOVE_SPEED = 0.01f;
 
     void UpdateView()
     {
@@ -36,7 +38,7 @@ void Camera::Focus()
     // 現在の水平方向（XZ平面）を取り出して正規化
     VECTOR3 horiz = VECTOR3(toEye.x, 0.0f, toEye.z);
     const float hLen = sqrtf(horiz.x * horiz.x + horiz.z * horiz.z);
-    if (hLen > 0.0001f)
+    if (hLen > NEAR_ZERO_LENSQ)
         horiz = VECTOR3(horiz.x / hLen, 0.0f, horiz.z / hLen);
     else
         horiz = VECTOR3(1.0f, 0.0f, 0.0f); // 真上にいた場合のフォールバック
@@ -129,14 +131,14 @@ void Camera::Orbit()
 
     const DIMOUSESTATE mouse = device->m_pDI->GetMouseState();
     VECTOR3 offset = device->m_vEyePt - device->m_vLookatPt;
-    if (offset.LengthSquare() <= 0.0001f) return;
+    if (offset.LengthSquare() <= NEAR_ZERO_LENSQ) return;
 
     const VECTOR3 forward = normalize(device->m_vLookatPt - device->m_vEyePt);
     const VECTOR3 right = XMVector3Normalize(XMVector3Cross(up, forward));
 
-    constexpr float speed = 0.005f;
-    const XMMATRIX yaw = XMMatrixRotationAxis(up, -static_cast<float>(mouse.lX) * speed);
-    const XMMATRIX pitch = XMMatrixRotationAxis(right, -static_cast<float>(mouse.lY) * speed);
+    constexpr float SPEED = 0.005f;
+    const XMMATRIX yaw = XMMatrixRotationAxis(up, static_cast<float>(mouse.lX) * SPEED);
+    const XMMATRIX pitch = XMMatrixRotationAxis(right, static_cast<float>(mouse.lY) * SPEED);
 
     offset = XMVector3TransformNormal(offset, pitch * yaw);
     device->m_vEyePt = device->m_vLookatPt + offset;
@@ -154,8 +156,8 @@ void Camera::Pan()
     const VECTOR3 right = XMVector3Normalize(XMVector3Cross(up, forward));
 
     const float distance = (device->m_vLookatPt - device->m_vEyePt).Length();
-    const float scaledSpeed = distance * 0.001f;
-    const float speed = scaledSpeed > 0.01f ? scaledSpeed : 0.01f;
+    const float scaledSpeed = distance * SPEED_SCALE_BY_DISTANCE;
+    const float speed = scaledSpeed > MIN_MOVE_SPEED ? scaledSpeed : MIN_MOVE_SPEED;
     const VECTOR3 move = right * -static_cast<float>(mouse.lX) * speed
         + up * static_cast<float>(mouse.lY) * speed;
 

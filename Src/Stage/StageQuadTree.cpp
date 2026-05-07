@@ -23,7 +23,8 @@ void CStageQuadTree::Build() const
     std::list<CStageObject*> objects = ObjectManager::FindGameObjects<CStageObject>();
     for (auto* obj : objects)
     {
-        if (obj->GetOBB() == nullptr) continue; // OBBなし（地面など）は登録しない
+        if (obj->GetOBB() == nullptr && !obj->GetIsHitFlag())
+            continue; // OBBなし（地面など）は登録しない
         VECTOR2 pos, size;
         if (obj->GetBounds2D(pos, size))
         {
@@ -54,6 +55,8 @@ std::vector<CStageObject*> CStageQuadTree::GetOverlappingObjects(
     std::vector<CStageObject*> result;
     for (auto* obj : candidates)
     {
+        if (obj == nullptr) continue;
+        if (obj->GetOBB() == nullptr) continue;
         VECTOR2 objPos, objSize;
         if (!obj->GetBounds2D(objPos, objSize)) continue;
         const bool overlapX = objPos.x + objSize.x * HALF_SIZE > pos.x &&

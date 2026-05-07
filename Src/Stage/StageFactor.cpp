@@ -20,6 +20,11 @@ CStageFactor::CStageFactor()
     // new CStageObject("data/Ground/Prefabs/Tree1a.mesh",VECTOR3(1.0f,0.0f,1.0f),2);
 }
 
+CStageFactor::CStageFactor(const char* path)
+{
+    Instantiate<CCubeBox>(Model::BACK_DROP);
+}
+
 void CStageFactor::SpawnObjects(float sizeX, float sizeZ, int num)
 {
     for (int i = 0; i < num; ++i)

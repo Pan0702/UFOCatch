@@ -4,7 +4,6 @@
 
 ICommande::~ICommande()
 {
-    SAFE_DELETE(m_pData);
 }
 
 CTransformCommand::CTransformCommand()
@@ -40,7 +39,7 @@ void CAddCommand::Undo()
 
 void CAddCommand::Redo()
 {
-    m_pData->AddModel(m_trans,m_modelName);
+    m_pData->AddModel(m_trans, m_modelName);
     m_index = m_pData->GetSelectIndex();
 }
 
@@ -53,7 +52,7 @@ CDeleteCommand::CDeleteCommand()
 
 void CDeleteCommand::Undo()
 {
-    m_index = m_pData->AddModel(m_trans,m_modelName);
+    m_index = m_pData->AddModel(m_trans, m_modelName);
 }
 
 void CDeleteCommand::Redo()
@@ -92,9 +91,9 @@ void CUndoManager::Undo()
 {
     if (m_undoStack.empty()) return;
     auto u = std::move(m_undoStack.top());
-    m_undoStack.pop(); 
+    m_undoStack.pop();
     u->Undo();
-    m_redoStack.push(std::move(u)); 
+    m_redoStack.push(std::move(u));
 }
 
 void CUndoManager::Redo()
@@ -105,4 +104,3 @@ void CUndoManager::Redo()
     r->Redo();
     m_undoStack.push(std::move(r));
 }
-

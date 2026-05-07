@@ -259,7 +259,11 @@ void Controller::DrawSettingPanel()
 
 void Controller::DrawCollisionBox()
 {
-    static StageColl c = m_pStageData->GetColl();
+    if (!m_pStageData)
+        return;
+    if (m_pStageData->GetSelectIndex() < 0)
+        return;
+    StageColl c = m_pStageData->GetColl();
 
     if (ImGui::Checkbox("UseOBB", &c.useOBB))
     {

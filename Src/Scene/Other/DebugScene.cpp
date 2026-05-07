@@ -44,8 +44,9 @@ namespace
 
 CDebugScene::CDebugScene()
 {
-    Instantiate<CStageFactor>();
-    SingleInstantiate<CEnemyManager>();
+    Instantiate<CStageFactor>("a")->SpawnObjects("data/Stage/test.json");
+    SingleInstantiate<CEnemyManager>()->BuildStaticTree();
+    Instantiate<CADog>(VECTOR3(0.0f, 5.0f, 0.0f));
     Instantiate<CPlayerCamera>();
     Instantiate<CVisionSystem>();
     Instantiate<CPlayer>(50);

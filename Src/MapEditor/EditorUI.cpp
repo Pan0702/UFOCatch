@@ -3,15 +3,16 @@
 #include "Controller.h"
 #include "TRSObject/TRS.h"
 
-namespace 
+namespace
 {
-    constexpr float WINDOW_Y = 10.0f; 
+    constexpr float WINDOW_Y = 10.0f;
     constexpr float OFFSET_FROM_RIGHT = 320.0f;
 }
+
 EditorUI::EditorUI()
 {
-    m_pButton     = ObjectManager::FindGameObject<Button>();
-    m_pTRS        = ObjectManager::FindGameObject<TRS>();
+    m_pButton = ObjectManager::FindGameObject<Button>();
+    m_pTRS = ObjectManager::FindGameObject<TRS>();
     m_pController = ObjectManager::FindGameObject<Controller>();
 }
 
@@ -26,7 +27,6 @@ void EditorUI::Draw()
 
 void EditorUI::DrawEditorToolsWindow() const
 {
-
     ImGui::SetNextWindowPos(
         ImVec2(ImGui::GetIO().DisplaySize.x - OFFSET_FROM_RIGHT, WINDOW_Y),
         ImGuiCond_FirstUseEver);
@@ -43,7 +43,7 @@ void EditorUI::DrawSettingWindow() const
     ImGui::Begin("Setting", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
     m_pButton->DrawSettingPanel();
     ImGui::Separator();
-    m_pController->DrawSettingPanel();
+    m_pController->DrawCollisionBox();
     ImGui::End();
 }
 

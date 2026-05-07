@@ -15,7 +15,7 @@ CEditorScene::CEditorScene()
     Instantiate<TRS>();
     Instantiate<Controller>();
     Instantiate<EditorUI>(); // Button/TRS/Controller の後に生成する
-    Instantiate<CCubeBox>("data/Ground/SkyBox.mesh");
+    Instantiate<CSkyBox>("data/Ground/SkyBox.mesh");
 }
 
 CEditorScene::~CEditorScene()
