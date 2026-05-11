@@ -1,0 +1,393 @@
+[
+    {
+        "model_name": "Objectes001",
+        "path": "C:\\Users\\A24048-PC\\RiderProjects\\UFOCatch\\data\\Ground\\Prefabs\\Objectes001.mesh",
+        "transform": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        },
+        "useHitGround": false,
+        "useOBB": true
+    },
+    {
+        "model_name": "StagePlaneGreen1",
+        "path": "C:\\Users\\A24048-PC\\RiderProjects\\UFOCatch\\data\\Ground\\StagePlaneGreen1.mesh",
+        "transform": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 7.5,
+                "y": 1.0,
+                "z": 7.5
+            }
+        },
+        "useHitGround": true,
+        "useOBB": false
+    },
+    {
+        "model_name": "Tree2",
+        "path": "C:\\Users\\A24048-PC\\RiderProjects\\UFOCatch\\data\\Ground\\Prefabs\\Tree2.mesh",
+        "transform": {
+            "position": {
+                "x": -33.197133992289416,
+                "y": 0.0,
+                "z": -30.125053776113333
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 243.61181547224808,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 2.2364712141640126,
+                "y": 2.2364712141640126,
+                "z": 2.2364712141640126
+            }
+        },
+        "useHitGround": false,
+        "useOBB": false
+    },
+    {
+        "model_name": "Tree1",
+        "path": "C:\\Users\\A24048-PC\\RiderProjects\\UFOCatch\\data\\Ground\\Prefabs\\Tree1.mesh",
+        "transform": {
+            "position": {
+                "x": -30.434694163147082,
+                "y": 0.0,
+                "z": -32.109609098426354
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 9.552949086190905,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 2.0053552881033623,
+                "y": 2.0053552881033623,
+                "z": 2.0053552881033623
+            }
+        },
+        "useHitGround": false,
+        "useOBB": false
+    },
+    {
+        "model_name": "Tree1",
+        "path": "C:\\Users\\A24048-PC\\RiderProjects\\UFOCatch\\data\\Ground\\Prefabs\\Tree1.mesh",
+        "transform": {
+            "position": {
+                "x": -33.58009806461202,
+                "y": 0.0,
+                "z": -33.50662486795118
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 312.94811548545624,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.7781907082306627,
+                "y": 1.7781907082306627,
+                "z": 1.7781907082306627
+            }
+        },
+        "useHitGround": false,
+        "useOBB": false
+    },
+    {
+        "model_name": "Tree1",
+        "path": "C:\\Users\\A24048-PC\\RiderProjects\\UFOCatch\\data\\Ground\\Prefabs\\Tree1.mesh",
+        "transform": {
+            "position": {
+                "x": -33.49069697494114,
+                "y": 0.0,
+                "z": 31.70125258258996
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 33.38850361685325,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.8365945451126269,
+                "y": 1.8365945451126269,
+                "z": 1.8365945451126269
+            }
+        },
+        "useHitGround": false,
+        "useOBB": false
+    },
+    {
+        "model_name": "Tree1a",
+        "path": "C:\\Users\\A24048-PC\\RiderProjects\\UFOCatch\\data\\Ground\\Prefabs\\Tree1a.mesh",
+        "transform": {
+            "position": {
+                "x": 32.297124398359216,
+                "y": 0.0,
+                "z": -30.624130814266046
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 226.31032781799962,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.793178281407093,
+                "y": 1.793178281407093,
+                "z": 1.793178281407093
+            }
+        },
+        "useHitGround": false,
+        "useOBB": false
+    },
+    {
+        "model_name": "Tree2",
+        "path": "C:\\Users\\A24048-PC\\RiderProjects\\UFOCatch\\data\\Ground\\Prefabs\\Tree2.mesh",
+        "transform": {
+            "position": {
+                "x": 31.04753515385744,
+                "y": 0.0,
+                "z": 31.334889110245566
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 61.609913351314916,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 2.1091310056669883,
+                "y": 2.1091310056669883,
+                "z": 2.1091310056669883
+            }
+        },
+        "useHitGround": false,
+        "useOBB": false
+    },
+    {
+        "model_name": "Tree2",
+        "path": "C:\\Users\\A24048-PC\\RiderProjects\\UFOCatch\\data\\Ground\\Prefabs\\Tree2.mesh",
+        "transform": {
+            "position": {
+                "x": 30.27968973774642,
+                "y": 0.0,
+                "z": -34.109012970034044
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 328.7290047067962,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.5661886052115472,
+                "y": 1.5661886052115472,
+                "z": 1.5661886052115472
+            }
+        },
+        "useHitGround": false,
+        "useOBB": false
+    },
+    {
+        "model_name": "Tree1",
+        "path": "C:\\Users\\A24048-PC\\RiderProjects\\UFOCatch\\data\\Ground\\Prefabs\\Tree1.mesh",
+        "transform": {
+            "position": {
+                "x": -30.45454706086897,
+                "y": 0.0,
+                "z": 30.23558187712367
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 151.97758804788626,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 2.292079364362964,
+                "y": 2.292079364362964,
+                "z": 2.292079364362964
+            }
+        },
+        "useHitGround": false,
+        "useOBB": false
+    },
+    {
+        "model_name": "Tree1",
+        "path": "C:\\Users\\A24048-PC\\RiderProjects\\UFOCatch\\data\\Ground\\Prefabs\\Tree1.mesh",
+        "transform": {
+            "position": {
+                "x": 34.423942250645545,
+                "y": 0.0,
+                "z": -33.754388997958046
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 56.9367915640811,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.7935001286474261,
+                "y": 1.7935001286474261,
+                "z": 1.7935001286474261
+            }
+        },
+        "useHitGround": false,
+        "useOBB": false
+    },
+    {
+        "model_name": "Tree2",
+        "path": "C:\\Users\\A24048-PC\\RiderProjects\\UFOCatch\\data\\Ground\\Prefabs\\Tree2.mesh",
+        "transform": {
+            "position": {
+                "x": -34.7690796376054,
+                "y": 0.0,
+                "z": 34.37926470189097
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 328.54602216413537,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.6786518805301314,
+                "y": 1.6786518805301314,
+                "z": 1.6786518805301314
+            }
+        },
+        "useHitGround": false,
+        "useOBB": false
+    },
+    {
+        "model_name": "Tree1",
+        "path": "C:\\Users\\A24048-PC\\RiderProjects\\UFOCatch\\data\\Ground\\Prefabs\\Tree1.mesh",
+        "transform": {
+            "position": {
+                "x": 33.812554000375755,
+                "y": 0.0,
+                "z": 32.69689515059813
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 116.69618052168231,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.5005718961279435,
+                "y": 1.5005718961279435,
+                "z": 1.5005718961279435
+            }
+        },
+        "useHitGround": false,
+        "useOBB": false
+    },
+    {
+        "model_name": "Tree1a",
+        "path": "C:\\Users\\A24048-PC\\RiderProjects\\UFOCatch\\data\\Ground\\Prefabs\\Tree1a.mesh",
+        "transform": {
+            "position": {
+                "x": -30.959200464950737,
+                "y": 0.0,
+                "z": 33.32464717106386
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 204.87789175169135,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.674027343209944,
+                "y": 1.674027343209944,
+                "z": 1.674027343209944
+            }
+        },
+        "useHitGround": false,
+        "useOBB": false
+    },
+    {
+        "model_name": "Tree1a",
+        "path": "C:\\Users\\A24048-PC\\RiderProjects\\UFOCatch\\data\\Ground\\Prefabs\\Tree1a.mesh",
+        "transform": {
+            "position": {
+                "x": 30.09370768292823,
+                "y": 0.0,
+                "z": 34.60581217251206
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 255.41962616481632,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 2.073399680885843,
+                "y": 2.073399680885843,
+                "z": 2.073399680885843
+            }
+        },
+        "useHitGround": false,
+        "useOBB": false
+    },
+    {
+        "model_name": "Tree1",
+        "path": "C:\\Users\\A24048-PC\\RiderProjects\\UFOCatch\\data\\Ground\\Prefabs\\Tree1.mesh",
+        "transform": {
+            "position": {
+                "x": -30.59316583642638,
+                "y": 0.0,
+                "z": -34.96423388038794
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 300.5357802007376,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 2.478724377026336,
+                "y": 2.478724377026336,
+                "z": 2.478724377026336
+            }
+        },
+        "useHitGround": false,
+        "useOBB": false
+    },
+    {
+        "model_name": "Tree2",
+        "path": "C:\\Users\\A24048-PC\\RiderProjects\\UFOCatch\\data\\Ground\\Prefabs\\Tree2.mesh",
+        "transform": {
+            "position": {
+                "x": 34.819273780987736,
+                "y": 0.0,
+                "z": 30.021688138334614
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 210.6434560854398,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.9328103798539646,
+                "y": 1.9328103798539646,
+                "z": 1.9328103798539646
+            }
+        },
+        "useHitGround": false,
+        "useOBB": false
+    }
+]
