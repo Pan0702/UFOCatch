@@ -38,6 +38,11 @@ CTutorialDisplayInfo::~CTutorialDisplayInfo()
 {
 }
 
+void CTutorialDisplayInfo::Start()
+{
+    SetDrawOrder(-100);
+}
+
 void CTutorialDisplayInfo::Draw()
 {
     OperationDraw();
@@ -56,7 +61,8 @@ void CTutorialDisplayInfo::OperationDraw() const
         spr.Draw(m_pImage.get(), MOVE_UI_X, MOVE_UI_Y, MOVE_UI_SRC_X, MOVE_UI_SRC_Y, MOVE_UI_WIDTH, MOVE_UI_HEIGHT);
         break;
     case Suction:
-        spr.Draw(m_pImage.get(), SUCTION_UI_X, SUCTION_UI_Y, SUCTION_UI_SRC_X, SUCTION_UI_SRC_Y, SUCTION_UI_WIDTH, SUCTION_UI_HEIGHT);
+        spr.Draw(m_pImage.get(), SUCTION_UI_X, SUCTION_UI_Y, SUCTION_UI_SRC_X, SUCTION_UI_SRC_Y, SUCTION_UI_WIDTH,
+                 SUCTION_UI_HEIGHT);
         break;
     default:
         break;

@@ -4,6 +4,7 @@
 #include "../Player/PlayerHP.h"
 #include "../Utils/Animator.h"
 #include "../Enemies/System/EnemyManager.h"
+#include "../Enemies/Human/FunShape.h"
 
 namespace
 {
@@ -24,10 +25,18 @@ CTutorialHuman::CTutorialHuman(const VECTOR3& pos)
 
     m_inSight = false;
     transform.rotation.y = INITIAL_ROTATION_DEG * DegToRad;
+    m_pFunShape = Instantiate<CFunShape>();
 }
 
 
-CTutorialHuman::~CTutorialHuman() = default;
+CTutorialHuman::~CTutorialHuman()
+{
+    if (m_pFunShape != nullptr)
+    {
+        ObjectManager::DeleteGameObject(m_pFunShape);
+        m_pFunShape = nullptr;
+    }
+}
 
 void CTutorialHuman::Update()
 {
@@ -35,7 +44,8 @@ void CTutorialHuman::Update()
     CPlayer* player = ObjectManager::FindGameObject<CPlayer>();
 
     vision->SetCircleCenter(player->GetPos());
-    
+    UpdateVisionShape();
+
     // 扇形の視界内にプレイヤーがいて、かつ吸い込みボタンが押されているかチェック //
     m_inSight = vision->SectorCircleCollision(ToVec2XZ(transform.position), transform.rotation.y)
         && player->GetIsSuckUp();
@@ -49,5 +59,13 @@ void CTutorialHuman::Update()
     {
         // 視界外ならフラグをリセット //
         ObjectManager::FindGameObject<CPlayerHP>()->ResetFlag();
+    }
+}
+
+void CTutorialHuman::UpdateVisionShape() const
+{
+    if (m_pFunShape != nullptr)
+    {
+        m_pFunShape->PosSet(transform.position, transform.rotation.y);
     }
 }

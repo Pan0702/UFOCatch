@@ -9,7 +9,7 @@
 #include "../Component/ComponentFwd.h"
 
 CHuman::CHuman(const VECTOR3& pos, const VECTOR2& areaSize)
-    : m_AreaSize(areaSize), m_pFunShape(nullptr)
+    : m_pFunShape(nullptr), m_AreaSize(areaSize)
 {
     transform.position = pos;
     auto m = ObjectManager::FindGameObject<CEnemyManager>();
@@ -72,7 +72,10 @@ void CHuman::Update()
 
     if (m_inSight)
     {
-        ChangeState(CBaseState::State::FIND_PLAYER);
+        if (m_pState->GetCurrentState() != CBaseState::State::FIND_PLAYER)
+        {
+            ChangeState(CBaseState::State::FIND_PLAYER);
+        }
     }
     else
     {

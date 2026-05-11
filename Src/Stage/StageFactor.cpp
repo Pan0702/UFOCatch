@@ -2,6 +2,7 @@
 
 #include "CubeBox.h"
 #include "Ground.h"
+#include "SkyBox.h"
 #include "StageObject.h"
 #include "StageQuadTree.h"
 #include "../MapEditor/Import.h"
@@ -12,17 +13,14 @@ using namespace Constants;
 
 CStageFactor::CStageFactor()
 {
-    StageColl soc;
-    soc.useOBB = false;
-    soc.useHitGround = true;
-    Instantiate<CStageObject>(Model::GROUND, VECTOR3(5.0f, 3.0f, 5.0f), 1.0f, soc);
     Instantiate<CCubeBox>(Model::BACK_DROP);
     // new CStageObject("data/Ground/Prefabs/Tree1a.mesh",VECTOR3(1.0f,0.0f,1.0f),2);
 }
 
 CStageFactor::CStageFactor(const char* path)
 {
-    Instantiate<CCubeBox>(Model::BACK_DROP);
+    Instantiate<CSkyBox>(Model::BACK_DROP);
+    SpawnObjects(path);
 }
 
 void CStageFactor::SpawnObjects(float sizeX, float sizeZ, int num)
@@ -55,7 +53,8 @@ void CStageFactor::SpawnObjects(const std::string& path, const VECTOR2& size, in
     }
     else
     {
-        for (int i = 0; i < num; ++i)
+        constexpr int TREE_NUM = 80;
+        for (int i = 0; i < TREE_NUM; ++i)
         {
             float randomX = Randomf(-size.x, size.x);
             float randomZ = Randomf(-size.y, size.y);
@@ -64,5 +63,9 @@ void CStageFactor::SpawnObjects(const std::string& path, const VECTOR2& size, in
             coll.useHitGround = false;
             Instantiate<CStageObject>("data/Ground/Prefabs/Tree1a.mesh", VECTOR3(randomX, 0.0f, randomZ), 1.0f, coll);
         }
+        StageColl soc;
+        soc.useOBB = false;
+        soc.useHitGround = true;
+        Instantiate<CStageObject>(Model::GROUND, VECTOR3(5.0f, 3.0f, 5.0f), 1.0f, soc);
     }
 }

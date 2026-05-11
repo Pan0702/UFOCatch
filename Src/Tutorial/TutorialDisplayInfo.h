@@ -10,14 +10,14 @@ public:
 
     // 表示タイプを設定する
     // @param type 表示タイプ //
-    void SetDisplayType(int type){ m_nDisplayType = type; }
+    void SetDisplayType(int type) { m_nDisplayType = type; }
 
     // クエスト番号を設定する
     // @param quest クエスト番号 //
-    void SetQuest(int quest){ m_questNum = quest; }
+    void SetQuest(int quest) { m_questNum = quest; }
 
 private:
-
+    void Start() override;
     void Draw() override;
 
     // 操作説明UIを描画する //
@@ -29,11 +29,11 @@ private:
     // 表示タイプ定数 //
     enum
     {
-        Move = 0,     // 移動操作 //
-        Suction = 1,  // 吸い込み操作 //
+        Move = 0, // 移動操作 //
+        Suction = 1, // 吸い込み操作 //
     };
 
-    int m_nDisplayType;       // 現在の表示タイプ //
-    int m_questNum;           // 現在のクエスト番号 //
-    std::unique_ptr<CSpriteImage> m_pImage;   // UI画像 //
+    int m_nDisplayType; // 現在の表示タイプ //
+    int m_questNum; // 現在のクエスト番号 //
+    std::unique_ptr<CSpriteImage> m_pImage; // UI画像 //
 };

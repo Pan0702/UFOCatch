@@ -13,7 +13,7 @@ CDisplayInfo::CDisplayInfo()
     m_expImage = new CSpriteImage("data/PlayUIParts.png");
     m_giwakuImage = new CSpriteImage("data/Circle.png");
     m_pLogo = new CSpriteImage("data/Logo.png");
-    
+
     // 経験値ゲージ初期化
     m_prevProportion = 0;
     m_currentWidth = 0;
@@ -33,6 +33,11 @@ CDisplayInfo::~CDisplayInfo()
     SAFE_DELETE(m_expImage);
     SAFE_DELETE(m_giwakuImage);
     SAFE_DELETE(m_pLogo);
+}
+
+void CDisplayInfo::Start()
+{
+    SetDrawOrder(-100);
 }
 
 void CDisplayInfo::Update()
@@ -168,10 +173,10 @@ void CDisplayInfo::HPDraw()
 }
 
 void CDisplayInfo::LvDraw()
-{ 
+{
     CPlayerLevel* pl = ObjectManager::FindGameObject<CPlayerLevel>();
     int lv = pl->GetLv();
-    
+
     // 桁数を計算
     int count = 0;
     int tmp = lv;
@@ -183,13 +188,13 @@ void CDisplayInfo::LvDraw()
     count = (std::max)(count, 1);
 
     static constexpr float centerX = 50;
-    float halfWidth = count * 33;  
-    
+    float halfWidth = count * 33;
+
     for (int i = 0; i < count; i++)
     {
         int divisor = static_cast<int>(Pow(10, count - 1 - i));
         int num = (lv / divisor) % 10;
-        m_pSprite->Draw(m_expImage, (83 - halfWidth) + i * 64, 666, 68 * num, 540, 68, 103, 64, 80);                                                                               
+        m_pSprite->Draw(m_expImage, (83 - halfWidth) + i * 64, 666, 68 * num, 540, 68, 103, 64, 80);
     }
 }
 

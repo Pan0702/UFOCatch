@@ -9,8 +9,9 @@ class CDisplayInfo : public Object3D
 public:
     CDisplayInfo();
     ~CDisplayInfo();
-private:
 
+private:
+    void Start() override;
     void Update() override;
     void Draw() override;
     void GiwakuDraw();
@@ -35,7 +36,7 @@ private:
     LerpValue m_giwakuAngleLerp;
     float m_prevGiwakuProportion;
     float m_currentAngle;
-    
+
     int m_cutInCnt;
     bool m_isCutInDraw;
 };

@@ -79,8 +79,7 @@ HRESULT CSpriteImage::Load(const TCHAR* TName)
         std::string message =
             std::string("SpriteLoad:false ") + name;
         MessageBox(0, message.c_str(), TName, MB_OK
-        )
-        ;
+        );
         return E_FAIL;
     }
     return S_OK;
@@ -800,12 +799,11 @@ void CSprite::DrawCircle(CSpriteImage* pImage, float posX, float posY, DWORD src
     ResetShader();
 }
 
-void CSprite::DrawArc(CSpriteImage* pImage, float posX, float posY, DWORD srcX, DWORD srcY,DWORD srcWid, DWORD srcHei,
+void CSprite::DrawArc(CSpriteImage* pImage, float posX, float posY, DWORD srcX, DWORD srcY, DWORD srcWid, DWORD srcHei,
                       ArcDrawParams& arcParams, float fAlpha)
 {
-  
     m_pImage = pImage;
-    SetSrc(srcX,srcY,srcWid,srcHei);
+    SetSrc(srcX, srcY, srcWid, srcHei);
     // SpriteVertex vertices[] = {
     //     {VECTOR3(0, static_cast<float>(srcHei), 0), VECTOR2(0, 1)},
     //     {VECTOR3(0, 0, 0), VECTOR2(0, 0)},
@@ -823,7 +821,7 @@ void CSprite::DrawArc(CSpriteImage* pImage, float posX, float posY, DWORD srcX, 
     //         m_pD3D->m_pDeviceContext->Unmap(m_pVertexBufferSprite, 0);
     //     }
     // }
-    
+
     SetShader();
 
     UINT stride = sizeof(SpriteVertex);
@@ -1112,8 +1110,8 @@ bool CSprite::Draw3DWithWorldMatrix(CSpriteImage* pImage, const MATRIX4X4& mWorl
         m_pD3D->m_pDeviceContext->OMSetBlendState(m_pD3D->m_pBlendStateAdd, nullptr, mask);
     }
 
-    // デプスステンシル（Zテスト）の設定
-    m_pD3D->m_pDeviceContext->OMSetDepthStencilState(m_pD3D->m_pDepthStencilStateNoZTest, 0);
+    // 3D上の半透明スプライトは、木などの手前オブジェクトには隠れるがZバッファには書き込まない。
+    m_pD3D->m_pDeviceContext->OMSetDepthStencilState(m_pD3D->m_pDepthStencilStateNoWrite, 0);
 
     // 定数バッファの更新
     D3D11_MAPPED_SUBRESOURCE pData;
