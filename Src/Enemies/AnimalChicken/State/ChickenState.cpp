@@ -40,7 +40,6 @@ void CChickenIdleState::Enter(State type)
     stateIdle = static_cast<int>(std::round(Randomf(0, 1)));
     if (stateIdle == 1)
     {
-        
         m_pOwner->GetAnimator()->MergePlay(A_IDEL);
         m_pOwner->GetAnimator()->SetPlaySpeed(1.0f);
     }
@@ -85,6 +84,7 @@ void CChickenIdleState::IdleAnim()
         m_pOwner->ChangeState(NextStatePop());
     }
 }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CChickenWalkState::CChickenWalkState(CAnimalChicken* chicken)
     : CChickenBase(chicken, State::WALK)
@@ -101,7 +101,7 @@ void CChickenWalkState::Enter(State type)
     while (!boundaryFlag && retryCount < MAX_RETRY)
     {
         m_totalPosZMoveAmount = 0;
-        static  float MAX_MOVE_AMOUNT = 3.5f;
+        static float MAX_MOVE_AMOUNT = 3.5f;
         static constexpr float MIN_MOVE_AMOUNT = 1.0f;
         m_turnAmount = Randomf(-TURN_ANGLE, TURN_ANGLE) * DegToRad;
         m_moveAmount = Randomf(MIN_MOVE_AMOUNT, MAX_MOVE_AMOUNT);
@@ -128,6 +128,7 @@ void CChickenWalkState::Enter(State type)
 bool CChickenWalkState::BoundaryCheck(const VECTOR2& areaSize) const
 {
     VECTOR3 tmpPos = m_position + VECTOR3(0, 0, m_moveAmount) * XMMatrixRotationY(m_turnAmount);
+    // 複数の状態や境界条件をまとめて判定する。
     if (tmpPos.x <= areaSize.x && tmpPos.x >= -areaSize.x && tmpPos.z <= areaSize.y && tmpPos.z >= -areaSize.y)
     {
         return true;
@@ -170,32 +171,33 @@ CChickenSuction::CChickenSuction(CAnimalChicken* chicken)
 
 void CChickenSuction::Enter(State type)
 {
-   m_pOwner->GetAudio()->Play();
+    m_pOwner->GetAudio()->Play();
 
-   // 距離5以下のHumanをチキンの方向に向かせる
-   VECTOR3 chickenPos = m_pOwner->GetTransform().position;
-   auto humans = ObjectManager::FindGameObjects<CHuman>();
-   for (auto* human : humans)
-   {
-       VECTOR3 humanPos = human->GetTransform().position;
-       VECTOR3 dir = chickenPos - humanPos;
-       float distance = sqrtf(dir.x * dir.x + dir.y * dir.y + dir.z * dir.z);
-       if (distance <= 5.0f)
-       {
-           float angle = atan2f(dir.x, dir.z);
-           human->SetRotateY(angle);
-       }
-   }
+    // 距離5以下のHumanをチキンの方向に向かせる
+    VECTOR3 chickenPos = m_pOwner->GetTransform().position;
+    auto humans = ObjectManager::FindGameObjects<CHuman>();
+    for (auto* human : humans)
+    {
+        VECTOR3 humanPos = human->GetTransform().position;
+        VECTOR3 dir = chickenPos - humanPos;
+        float distance = sqrtf(dir.x * dir.x + dir.y * dir.y + dir.z * dir.z);
+        if (distance <= 5.0f)
+        {
+            float angle = atan2f(dir.x, dir.z);
+            human->SetRotateY(angle);
+        }
+    }
 }
 
 void CChickenSuction::Update()
 {
     m_distanceFromObjectToUFO = m_pOwner->SuctionSpeed();
     m_pPlayer = ObjectManager::FindGameObject<CPlayer>();
-    if (m_pPlayer != nullptr){
+    if (m_pPlayer != nullptr)
+    {
         if (m_pPlayer->GetIsSuckUp())
         {
-            if (m_pPlayer->GetTransform().position.y - 0.15f <= m_pOwner->GetTransform().position.y )
+            if (m_pPlayer->GetTransform().position.y - 0.15f <= m_pOwner->GetTransform().position.y)
             {
                 m_pOwner->ChangeState(State::DESTROY);
             }

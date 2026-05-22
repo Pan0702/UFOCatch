@@ -35,7 +35,7 @@ void CEnemyManager::RegisterEnemy(CEnemyBase* enemy)
 
 void CEnemyManager::UnregisterEnemy(CEnemyBase* enemy)
 {
-    // swap-and-pop 縺ｧ O(1) 蜑企勁
+    // swap-and-pop で O(1) 削除
     for (size_t i = 0; i < m_enemies.size(); ++i)
     {
         if (m_enemies[i] == enemy)
@@ -49,7 +49,6 @@ void CEnemyManager::UnregisterEnemy(CEnemyBase* enemy)
 
 void CEnemyManager::Update()
 {
-    // QuadTreeIndex繧呈峩譁ｰ・育ｮ｡逅・Μ繧ｹ繝医ｒ貂｡縺呻ｼ・
     if (m_pQuadTreeIndex)
     {
         m_pQuadTreeIndex->Update(m_enemies);

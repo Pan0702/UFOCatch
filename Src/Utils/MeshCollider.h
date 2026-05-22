@@ -6,17 +6,19 @@
 #include "MyMath.h"
 #include "Animator.h"
 
+/// <summary>Transform、メッシュ、アニメーション、コライダーを持つ3Dオブジェクト基底クラス</summary>
 class Object3D;
+/// <summary>汎用ユーティリティで使う Fbx Mesh の情報と処理をまとめる型</summary>
 class CFbxMesh;
 
 /// <summary>
 /// モデルデータとの当たり判定処理を行います
-/// 保持しているポリゴンの頂点座標・法線・重み付き頂点を返します
 /// また、当たり、押し、戻し処理を行います
 /// </summary>
 class MeshCollider
 {
 public:
+    /// <summary>汎用ユーティリティで使う Vertex の情報と処理をまとめる型</summary>
     struct Vertex
     {
         VECTOR3 pos;
@@ -24,6 +26,7 @@ public:
         VECTOR4 weits; // (weightsのタイポと思われますが元の定義を維持)
     };
 
+    /// <summary>汎用ユーティリティで使う Coll Info の情報と処理をまとめる型</summary>
     struct CollInfo
     {
         VECTOR3 hitPosition; // 衝突した位置
@@ -32,127 +35,89 @@ public:
         int meshNo; // メッシュ番号
     };
 
+    /// MeshCollider を初期化する
     MeshCollider();
+    /// MeshCollider を初期化する
+    /// @param object 対象オブジェクト
     MeshCollider(Object3D* object);
+    /// MeshCollider の終了処理を行う
     ~MeshCollider();
 
-    /// <summary>
-    /// FbxMeshデータから、当たりデータを作成する
-    /// スキンメッシュの場合は必ずAnimatorを指定してください
-    /// スタティックメッシュの場合は指定不要です
-    /// </summary>
-    /// <param name="meshIn">メッシュデータ</param>
-    /// <param name="animatorIn">アニメーター</param>
+    /// From Mesh を作成する
+    /// @param meshIn meshIn に渡す値
+    /// @param animatorIn animatorIn に渡す値
     void MakeFromMesh(CFbxMesh* meshIn, Animator* animatorIn = nullptr);
 
-    /// <summary>
-    /// meshファイルから、当たりデータを作成する
-    /// 当たり判定用に軽量化したモデルを使う場合はこちらを使ってください
-    /// なお、スキンメッシュには適用できません
-    /// </summary>
-    /// <param name="fileName">モデルデータのパス</param>
+    /// From File を作成する
+    /// @param fileName ファイル名
     void MakeFromFile(std::string fileName);
 
-    /// <summary>
-    /// ポリゴンの中心頂点からウェイト値を参照しボーン番号を一つ返す
-    /// </summary>
-    /// <param name="vt">頂点[3]</param>
-    /// <returns>ボーン番号</returns>
+    /// Bone No を選択する
+    /// @return 処理結果の数値
     int SelectBoneNo(Vertex vt[3]);
 
-    /// <summary>
-    /// スキンメッシュの頂点をボーン配列で変形させる
-    /// </summary>
+    /// transform Skin Vertices の処理を行う
     void transformSkinVertices();
 
-    /// <summary>
-    /// 線分との交差判定を行います。
-    /// 始点から一番近いポリゴンの交差点を返します。
-    /// ポリゴンの表面のみ判定し、裏面は判定しません。
-    /// </summary>
-    /// <param name="trans">このコライダーの位置情報</param>
-    /// <param name="from">線分の始点</param>
-    /// <param name="to">線分の終点</param>
-    /// <param name="hitOut">交差したポリゴンの情報を格納する場所</param>
-    /// <returns>交差していたらtrue</returns>
+    /// Collision Line を確認する
+    /// @param trans trans に渡す値
+    /// @param from from に渡す値
+    /// @param to to に渡す値
+    /// @param hitOut 衝突情報の出力先
+    /// @return 成功または条件を満たす場合 true
     bool CheckCollisionLine(const MATRIX4X4& trans, const VECTOR3& from, const VECTOR3& to, CollInfo* hitOut = nullptr);
 
-    /// <summary>
-    /// 球との交差判定を行う
-    /// 
-    /// 球の中心座標から一番近いポリゴンの交差情報を返します
-    /// infoがnullptrの場合、交差判定のみ行い、交差したか否かのみ返します
-    /// 
-    /// 複数のポリゴンと接触する可能性があるため、CheckCollisionSphereList関数の使用を推奨します
-    /// </summary>
-    /// <param name="trans">このコライダーの位置行列</param>
-    /// <param name="center">球の中心座標</param>
-    /// <param name="radius">球の半径</param>
-    /// <param name="hitOut">衝突したポリゴンの情報格納先</param>
-    /// <returns>衝突していたらtrue</returns>
+    /// Collision Sphere を確認する
+    /// @param trans trans に渡す値
+    /// @param center center に渡す値
+    /// @param radius 半径
+    /// @param hitOut 衝突情報の出力先
+    /// @return 成功または条件を満たす場合 true
     bool CheckCollisionSphere(const MATRIX4X4& trans, const VECTOR3& center, float radius, CollInfo* hitOut = nullptr);
 
-    /// <summary>
-    /// 球との交差判定を行う
-    /// 
-    /// 交差しているポリゴンすべての情報を返します
-    /// 交差しているものがなければ、returnのsizeは0になります
-    /// </summary>
-    /// <param name="trans">このコライダーの位置行列</param>
-    /// <param name="center">球の中心座標</param>
-    /// <param name="radius">球の半径</param>
-    /// <returns>衝突した全ポリゴンの情報リスト</returns>
+    /// Collision Sphere List を確認する
+    /// @param trans trans に渡す値
+    /// @param center center に渡す値
+    /// @param radius 半径
+    /// @return 取得した要素一覧
     std::list<MeshCollider::CollInfo> CheckCollisionSphereList(const MATRIX4X4& trans, const VECTOR3& center,
                                                                float radius);
 
-    /// <summary>
     /// カプセルとの交差判定を行う
     /// ポリゴンの表面のみ判定し、裏面は判定しません
-    /// 
     /// カプセルのp1の点から一番近いポリゴンの交差情報を返します
     /// infoがnullptrの場合、交差判定のみ行い、交差したか否かのみ返します
-    /// 
     /// 複数のポリゴンと接触する可能性があるため、CheckCollisionCapsuleList関数の使用を推奨します
-    /// </summary>
-    /// <param name="trans">このコライダーの位置行列</param>
-    /// <param name="p1">カプセルの点1</param>
-    /// <param name="p2">カプセルの点2</param>
-    /// <param name="radius">球の半径</param>
-    /// <param name="hitOut">衝突したポリゴンの情報格納先</param>
-    /// <returns>衝突していたらtrue</returns>
+    /// @param trans このコライダーの位置行列
+    /// @param p1 カプセルの点1
+    /// @param p2 カプセルの点2
+    /// @param radius 球の半径
+    /// @param hitOut 衝突したポリゴンの情報格納先
+    /// @return 衝突していたらtrue
     //bool CheckCollisionCapsule(const MATRIX4X4& trans, const VECTOR3& p1, const VECTOR3& p2, float radius, CollInfo* hitOut = nullptr);
 
-    /// <summary>
     /// カプセルとの交差判定を行う
     /// 交差している全ポリゴンの情報を返します
-    /// 
     /// ポリゴンの表面のみ判定し、裏面は判定しません
-    /// </summary>
-    /// <param name="trans">このコライダーの位置行列</param>
-    /// <param name="p1">カプセルの点1</param>
-    /// <param name="p2">カプセルの点2</param>
-    /// <param name="radius">球の半径</param>
-    /// <returns>衝突した全ポリゴンの情報リスト</returns>
+    /// @param trans このコライダーの位置行列
+    /// @param p1 カプセルの点1
+    /// @param p2 カプセルの点2
+    /// @param radius 球の半径
+    /// @return 衝突した全ポリゴンの情報リスト
     //std::list<MeshCollider::CollInfo> CheckCollisionCapsuleList(const MATRIX4X4& trans, const VECTOR3& p1, const VECTOR3& p2, float radius);
 
     //bool CheckCollisionTriangle(const MATRIX4X4& trans, const VECTOR3* vertexes, CollInfo* info = nullptr);
 
-    /// <summary>
-    /// 境界線との交差判定を行う
-    /// 始点から一番近いポリゴンの交差情報を返します
-    /// ポリゴンの表面のみ判定し、裏面は判定しません
-    /// </summary>
-    /// <param name="trans">このコライダーの位置行列</param>
-    /// <param name="from">線分の始点</param>
-    /// <param name="to">線分の終点</param>
-    /// <returns>交差していたらtrue</returns>
+    /// Bounding Line を確認する
+    /// @param trans trans に渡す値
+    /// @param from from に渡す値
+    /// @param to to に渡す値
+    /// @return 成功または条件を満たす場合 true
     bool CheckBoundingLine(const MATRIX4X4& trans, const VECTOR3& from, const VECTOR3& to);
 
-    /// <summary>
-    /// 境界球の情報を取得
-    /// </summary>
-    /// <param name="center">中心位置(Out)</param>
-    /// <param name="radius">半径(Out)</param>
+    /// Ball を取得する
+    /// @param center center に渡す値
+    /// @param radius 半径
     void GetBall(VECTOR3* center, float* radius) const
     {
         *center = bBall.center;
@@ -162,6 +127,7 @@ public:
 private:
     Object3D* parent;
 
+    /// <summary>汎用ユーティリティで使う Bounding Box の情報と処理をまとめる型</summary>
     struct BoundingBox
     {
         VECTOR3 min;
@@ -173,6 +139,7 @@ private:
         }
     };
 
+    /// <summary>汎用ユーティリティで使う Bounding Ball の情報と処理をまとめる型</summary>
     struct BoundingBall
     {
         VECTOR3 center;
@@ -185,6 +152,7 @@ private:
         }
     };
 
+    /// <summary>汎用ユーティリティで使う Polygon Info の情報と処理をまとめる型</summary>
     struct PolygonInfo
     {
         int indices[3]; // 頂点番号
@@ -204,8 +172,22 @@ public:
     BoundingBall bBall;
 
 private:
+    /// check Polygon To Line を返す
+    /// @param m m に渡す値
+    /// @param info info に渡す値
+    /// @param from from に渡す値
+    /// @param to to に渡す値
+    /// @param hit hit に渡す値
+    /// @return 成功または条件を満たす場合 true
     bool checkPolygonToLine(const int m, const PolygonInfo& info, const VECTOR3& from, const VECTOR3& to,
                             CollInfo* hit = nullptr);
+    /// check Polygon To Sphere を返す
+    /// @param m m に渡す値
+    /// @param info info に渡す値
+    /// @param center center に渡す値
+    /// @param radius 半径
+    /// @param hit hit に渡す値
+    /// @return 成功または条件を満たす場合 true
     bool checkPolygonToSphere(const int m, const PolygonInfo& info, const VECTOR3& center, float radius,
                               CollInfo* hit = nullptr);
 };

@@ -1,13 +1,10 @@
 ﻿//=============================================================================
-//		・ｽR・ｽc・ｽQ・ｽ[・ｽ・ｽ・ｽv・ｽ・ｽ・ｽO・ｽ・ｽ・ｽ・ｽ・ｽ@・ｽ@・ｽ@・ｽ@・ｽ@                 ver 3.2        2023.1.31
 //
-//		・ｽQ・ｽ[・ｽ・ｽ・ｽﾌ・ｿｽ・ｽC・ｽ・ｽ・ｽ・ｽ・ｽ・ｽ
 //																GameMain.h
 //=============================================================================
 
 #pragma once
 
-//・ｽw・ｽb・ｽ_・ｽ[・ｽt・ｽ@・ｽC・ｽ・ｽ・ｽﾌイ・ｽ・ｽ・ｽN・ｽ・ｽ・ｽ[・ｽh
 #include <stdio.h>
 #include <windows.h>
 #include <vector>
@@ -26,55 +23,81 @@
 
 // --------------------------------------------
 class CMain;
+/// <summary>エンジン基盤で使う Direct3 D の情報と処理をまとめる型</summary>
 class CDirect3D;
+/// <summary>エンジン基盤で使う XAudio の情報と処理をまとめる型</summary>
 class CXAudio;
+/// <summary>エンジン基盤で使う Direct Input の情報と処理をまとめる型</summary>
 class CDirectInput;
+/// <summary>エンジン基盤で使う Font Texture の情報と処理をまとめる型</summary>
 class CFontTexture;
+/// <summary>Direct3D用シェーダと定数バッファを管理するクラス</summary>
 class CShader;
+/// <summary>エンジン基盤で使う Fbx Mesh Ctrl の情報と処理をまとめる型</summary>
 class CFbxMeshCtrl;
 
 // --------------------------------------------------------------------------------------------------
-//  ・ｽQ・ｽ[・ｽ・ｽ・ｽ・ｽ・ｽC・ｽ・ｽ・ｽN・ｽ・ｽ・ｽX
 // --------------------------------------------------------------------------------------------------
 class CGameMain
 {
 public:
-	// ・ｽ・ｽ・ｽ・ｽ・ｽo・ｽﾏ撰ｿｽ
-	CMain*			m_pMain;		// ・ｽ・ｽ・ｽC・ｽ・ｽ・ｽN・ｽ・ｽ・ｽX
-	CDirect3D*		m_pD3D;			//	Direct3D・ｽI・ｽu・ｽW・ｽF・ｽN・ｽg
-	CXAudio*		m_pXAudio;		//	XAudio・ｽI・ｽu・ｽW・ｽF・ｽN・ｽg
-	CDirectInput*	m_pDI;			//	DirectInputD・ｽI・ｽu・ｽW・ｽF・ｽN・ｽg
-	CFontTexture*	m_pFont;		//	・ｽt・ｽH・ｽ・ｽ・ｽg・ｽe・ｽN・ｽX・ｽ`・ｽ・ｽ・ｽ[
-	CShader*		m_pShader;		//	・ｽV・ｽF・ｽ[・ｽ_・ｽ[
-	CFbxMeshCtrl*	m_pFbxMeshCtrl;	// ・ｽ・ｽ・ｽb・ｽV・ｽ・ｽ・ｽR・ｽ・ｽ・ｽg・ｽ・ｽ・ｽ[・ｽ・ｽ・ｽN・ｽ・ｽ・ｽX    // -- 2021.2.4
-	
-	// ・ｽJ・ｽ・ｽ・ｽ・ｽ・ｽE・ｽ・ｽ・ｽC・ｽg・ｽE・ｽr・ｽ・ｽ・ｽ[
-	VECTOR3         m_vEyePt;		//・ｽJ・ｽ・ｽ・ｽ・ｽ・ｽi・ｽ・ｽ・ｽ_・ｽj・ｽﾊ置
-	VECTOR3         m_vLookatPt;	//・ｽ・ｽ・ｽ・ｽ・ｽﾊ置
-	MATRIX4X4       m_mView;
-	MATRIX4X4       m_mProj;
-	VECTOR3         m_vLightDir;	//・ｽf・ｽB・ｽ・ｽ・ｽN・ｽV・ｽ・ｽ・ｽi・ｽ・ｽ・ｽ・ｽ・ｽC・ｽg・ｽﾌ包ｿｽ・ｽ・ｽ
-	VECTOR4         m_vLightIntensity;	//・ｽ・ｽ・ｽC・ｽg・ｽﾌ具ｿｽ・ｽx(RGB) + Alpha
+    CMain* m_pMain;
+    CDirect3D* m_pD3D;
+    CXAudio* m_pXAudio;
+    CDirectInput* m_pDI;
+    CFontTexture* m_pFont;
+    CShader* m_pShader;
+    CFbxMeshCtrl* m_pFbxMeshCtrl;
+
+    VECTOR3 m_vEyePt;
+    VECTOR3 m_vLookatPt;
+    MATRIX4X4 m_mView;
+    MATRIX4X4 m_mProj;
+    VECTOR3 m_vLightDir;
+    VECTOR4 m_vLightIntensity;
+
 public:
-	// ・ｽ・ｽ・ｽ\・ｽb・ｽh
-	CGameMain(CMain* pMain);
-	~CGameMain();
+    /// CGameMain を初期化する
+    /// @param pMain pMain に渡す値
+    CGameMain(CMain* pMain);
+    /// CGameMain の終了処理を行う
+    ~CGameMain();
 
-	HRESULT Init();
-	void    Update();
-	void	Draw();
-	void    Quit();
+    /// 初期化する
+    /// @return 処理結果
+    HRESULT Init();
+    /// 毎フレームの状態を更新する
+    void Update();
+    /// 描画する
+    void Draw();
+    /// 終了処理を行う
+    void Quit();
 
-	void    GameMain();
-	HRESULT ChangeScreenMode(int nMode=-1);    // -- 2020.1.15
+    /// Game Main の処理を行う
+    void GameMain();
+    /// Screen Mode を切り替える
+    /// @param nMode nMode に渡す値
+    /// @return 処理結果
+    HRESULT ChangeScreenMode(int nMode = -1); // -- 2020.1.15
 
-	void SetWindowName(const char* name);
+    /// Window Name を設定する
+    /// @param name 名前
+    void SetWindowName(const char* name);
 
-	// ・ｽ・ｽ・ｽC・ｽg・ｽﾌ具ｿｽ・ｽx・ｽ・ｽﾝ抵ｿｽ/・ｽ謫ｾ
-	void    SetLightIntensity(float r, float g, float b, float a = 1.0f);
-	void    SetLightIntensity(VECTOR4 intensity);
-	VECTOR4 GetLightIntensity() const { return m_vLightIntensity; }
+    /// Light Intensity を設定する
+    /// @param r r に渡す値
+    /// @param g g に渡す値
+    /// @param b b に渡す値
+    /// @param a a に渡す値
+    void SetLightIntensity(float r, float g, float b, float a = 1.0f);
+    /// Light Intensity を設定する
+    /// @param intensity intensity に渡す値
+    void SetLightIntensity(VECTOR4 intensity);
+    /// Light Intensity を取得する
+    /// @return 4次元ベクトル
+    VECTOR4 GetLightIntensity() const { return m_vLightIntensity; }
 };
 
+/// Game Device を返す
+/// @return 対象のポインタ
 CGameMain* GameDevice();
-

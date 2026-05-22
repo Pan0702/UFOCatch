@@ -3,42 +3,47 @@
 #include "Destroy.h"
 
 #include "../System/AStarPathFinder.h"
+/// <summary>敵AIで使う AShepherd Dog の情報と処理をまとめる型</summary>
 class CAShepherdDog;
+/// <summary>敵AIで使う Sheep の情報と処理をまとめる型</summary>
 class CSheep;
 
+/// <summary>敵AIで使う Shepherd Dog Walk の情報と処理をまとめる型</summary>
 class CShepherdDogWalk : public CComponentBase
 {
 public:
+    /// CShepherdDogWalk を初期化する
+    /// @param dog dog に渡す値
+    /// @param speed speed に渡す値
     CShepherdDogWalk(CAShepherdDog* dog, float speed);
+    /// Enter の処理を行う
     void Enter() override;
+    /// 毎フレームの状態を更新する
     void Update() override;
 
 private:
-    /// @brief 群れの外側リング（FlockRadius+MARGIN〜MoveRadius-MARGIN）からランダムな目標位置を決める
-    /// @return Flock があれば true、無ければ false
+    /// Random Move In Ring を計算する
+    /// @return 成功または条件を満たす場合 true
     bool CalcRandomMoveInRing();
 
-    /// @brief 次の位置が移動許容範囲内か判定する
-    /// @brief 内側円（FlockRadius）に侵入していたり、外側のMoveAreaを超えていたら false。
-    /// @param nextPos 次フレームに到達する予定の位置
-    /// @return 移動可能なら true
+    /// Move To を実行できるか判定する
+    /// @param nextPos 座標
+    /// @return 成功または条件を満たす場合 true
     bool CanMoveTo(const VECTOR3& nextPos) const;
 
-    /// @brief 指定位置が群れの内側円（FlockRadius）の内部にあるか
-    /// @param nextPos チェック対象の位置
-    /// @return 内側にある（侵入する）なら true、Flock が無いときは false
+    /// Inside Inner Circle を判定する
+    /// @param nextPos 座標
+    /// @return 成功または条件を満たす場合 true
     bool IsInsideInnerCircle(const VECTOR3& nextPos) const;
 
-    /// @brief 目標位置の方向へ滑らかに回転する
-    /// @brief 目標までの距離が ARRIVAL_DISTANCE 未満なら m_isFinish=true にして false を返す。
-    /// @param targetPos 向かいたい位置
-    /// @return 回転を適用した場合 true、到着済みで終了した場合 false
+    /// Try Rotate Toward を返す
+    /// @param targetPos 座標
+    /// @return 成功または条件を満たす場合 true
     bool TryRotateToward(const VECTOR3& targetPos);
 
-    /// @brief 移動先が内側円に入る場合、接線方向にスライドさせて回り込ませる
-    /// @brief 中心方向への成分を除去して接線成分のみ残す。それでも内側に残るなら境界外へ押し出してクランプする。
-    /// @param moveVec 補正前の移動ベクトル
-    /// @return 内側円を侵さないように補正した移動ベクトル
+    /// Slide Along Inner Circle を返す
+    /// @param moveVec 移動量
+    /// @return 3次元ベクトル
     VECTOR3 SlideAlongInnerCircle(const VECTOR3& moveVec) const;
 
     CAShepherdDog* m_pOwner = nullptr;
@@ -46,37 +51,39 @@ private:
     float m_moveSpeed = 0.0f;
 };
 
+/// <summary>敵AIで使う Collecting の情報と処理をまとめる型</summary>
 class CCollecting : public CComponentBase
 {
 public:
+    /// CCollecting を初期化する
+    /// @param dog dog に渡す値
+    /// @param speed speed に渡す値
     CCollecting(CAShepherdDog* dog, float speed);
+    /// Enter の処理を行う
     void Enter() override;
+    /// 毎フレームの状態を更新する
     void Update() override;
 
 private:
-    /// @brief 経路インデックスを次へ進める。直線的に並ぶ次ポイントはまとめてスキップ
-    /// @brief 経路の最後に到達した場合は FinishAndHerdTarget() を呼ぶ。
+    /// Advance Path Index の処理を行う
     void AdvancePathIndex();
 
-    /// @brief はぐれ羊を再選定し、目標位置と経路を作り直す
-    /// @brief 失敗時（Flock 無し / はぐれ羊無し / 中心と一致）は m_isFinish=true。
-    /// @brief 目標が既に十分近い場合は FinishAndHerdTarget() で完了。
+    /// Recompute Path の処理を行う
     void RecomputePath();
 
-    /// @brief 群れの内側円から最も離れたはぐれ羊を1匹選んで返す
-    /// @return 一番遠いはぐれ羊。1匹もいなければ nullptr
+    /// Furthest Stray Sheep を検索する
+    /// @return 対象のポインタ
     CSheep* FindFurthestStraySheep() const;
 
-    /// @brief 対象羊の位置関係から、犬が向かうべき目標位置 m_targetPos を決める
-    /// @brief 群れ中心からの距離が outsideThreshold 以内なら羊の手前へ、それより遠ければ背後へ回り込む位置にする。
-    /// @param targetSheep 連れ戻したいはぐれ羊
-    /// @return 計算できれば true、羊が群れ中心と重なっていて方向が決まらない場合は false
+    /// Collect Target Pos を計算する
+    /// @param targetSheep 対象
+    /// @return 成功または条件を満たす場合 true
     bool CalcCollectTargetPos(CSheep* targetSheep);
 
-    /// @brief 現在位置から m_targetPos までの経路を A* で計算し、m_path/m_pathIndex を更新する
+    /// Build Path の処理を行う
     void BuildPath();
 
-    /// @brief 対象羊を HERDED 状態にして自身を完了させる
+    /// Finish And Herd Target の処理を行う
     void FinishAndHerdTarget();
 
     CAShepherdDog* m_pOwner;
@@ -91,15 +98,19 @@ private:
     const float REPATH_INTERVAL = 0.2f;
 };
 
+/// <summary>敵AIで使う Driving の情報と処理をまとめる型</summary>
 class CDriving : public CComponentBase
 {
 public:
+    /// CDriving を初期化する
+    /// @param dog dog に渡す値
+    /// @param speed speed に渡す値
     CDriving(CAShepherdDog* dog, float speed);
 
-    /// @brief UFOから群れを遠ざけるため、群れの向こう側に目標位置を決める
+    /// Enter の処理を行う
     void Enter() override;
 
-    /// @brief 目標位置へ直進し、到着したら完了する
+    /// 毎フレームの状態を更新する
     void Update() override;
 
 private:
@@ -109,18 +120,22 @@ private:
     float m_moveSpeed;
 };
 
+/// <summary>敵AIで使う Rescue の情報と処理をまとめる型</summary>
 class CRescue : public CComponentBase
 {
 public:
+    /// CRescue を初期化する
+    /// @param dog dog に渡す値
     CRescue(CAShepherdDog* dog);
 
-    /// @brief 救出キューの先頭羊を対象にし、群れの重心を保存して救出を開始する
+    /// Enter の処理を行う
     void Enter() override;
 
-    /// @brief 対象羊へ近づいた後、群れの重心方向へ誘導する
+    /// 毎フレームの状態を更新する
     void Update() override;
 
 private:
+    /// <summary>Phase で扱う状態や種別を表す列挙型</summary>
     enum Phase : int8_t
     {
         APPROACH_SHEEP, // フェーズ1: 羊に近づく
@@ -133,10 +148,16 @@ private:
     Phase m_phase;
 };
 
+/// <summary>敵AIで使う Destroy Shepherd Dog の情報と処理をまとめる型</summary>
 class CDestroyShepherdDog : public CDestroy
 {
 public:
+    /// CDestroyShepherdDog を初期化する
+    /// @param dog dog に渡す値
+    /// @param score score に渡す値
+    /// @param exp exp に渡す値
     CDestroyShepherdDog(CAShepherdDog* dog, int score, float exp);
+    /// Enter の処理を行う
     void Enter() override;
 
 private:

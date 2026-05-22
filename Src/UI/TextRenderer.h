@@ -8,15 +8,19 @@
 class CUIText : public CUIWidget
 {
 public:
-    /// @param pFont    フォントシートのテクスチャ
-    /// @param pos      描画位置
-    /// @param srcPos   フォントシート上の切り抜き開始座標 (srcX, srcY)
-    /// @param srcSize  フォントシート上の1文字のサイズ (srcW, srcH)//
+    /// CUIText を初期化する
+    /// @param pFont pFont に渡す値
+    /// @param pos 座標
+    /// @param srcPos 座標
+    /// @param srcSize サイズ
     CUIText(CSpriteImage* pFont, const VECTOR2& pos, const VECTOR2& srcPos, const VECTOR2& srcSize);
 
-    /// @brief 表示する文字のフォントシート座標を変更する//
+    /// Src Pos を設定する
+    /// @param srcPos 座標
     void SetSrcPos(const VECTOR2& srcPos);
 
+    /// 描画する
+    /// @param sprite sprite に渡す値
     void Draw(CSprite& sprite) override;
 
 private:

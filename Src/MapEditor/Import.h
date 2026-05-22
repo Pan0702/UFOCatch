@@ -5,6 +5,7 @@
 #include "../Common/Object3D.h"
 #include "../Stage/StageCollision.h"
 
+/// <summary>ステージエディタで使う Info の情報と処理をまとめる型</summary>
 struct Info
 {
     std::string modelName;
@@ -15,14 +16,13 @@ struct Info
 
 namespace Import
 {
-    /// <summary>
-    /// JSONファイルを読み込み、記録されたモデルをステージに復元する。
-    /// 未ロードのモデルは自動的にロードしてボタンにも追加する。
-    /// </summary>
-    /// <param name="path">インポートするJSONファイルのパス</param>
+    /// Stage Info を返す
+    /// @param path パス
+    /// @return 取得した要素一覧
     std::vector<Info> StageInfo(const std::string& path);
 
-    ///<summary>JSONファイルからモデルのパスを読み込む</summary>
-    ///<param name="path">インポートするJSONファイルのパス</param>
+    /// Model Path を返す
+    /// @param path パス
+    /// @return 取得した要素一覧
     std::vector<std::string> ModelPath(const std::string& path);
 };

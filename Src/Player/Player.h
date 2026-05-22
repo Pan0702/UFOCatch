@@ -8,39 +8,44 @@ class CPlayer : public Object3D
 public:
     // 原点から移動できる距離
     // 例えば-20~20なら20と入力 //
+    /// CPlayer を初期化する
+    /// @param moveRange moveRange に渡す値
     CPlayer(float moveRange);
+    /// CPlayer の終了処理を行う
     ~CPlayer();
 
-    ///
-    /// 指定した座標が、吸い込みコーンの範囲内にあるか判定する
-    /// @param targetPos 判定したい対象の座標
-    /// @return true: コーン内 / false: コーン外
-    ///
+    /// With Suction Cone を判定する
+    /// @param targetPos 座標
+    /// @return 成功または条件を満たす場合 true
     bool IsWithSuctionCone(const VECTOR3& targetPos) const;
 
-    ///
     /// 経過時間と対象位置をもとに、吸い込みによって移動する量を計算する
     /// @param moveTimeSecond 経過時間[秒]
     /// @param animalPos 対象オブジェクトの座標
     /// @return 吸い込み移動量
-    ///
     VECTOR3 CalcSuctionDisplacement(float moveTimeSecond, const VECTOR3& animalPos) const;
 
-    ///
-    /// 指定した座標が、吸い込み円の範囲内にあるか判定する
-    /// @param targetPos 判定したい対象の座標
-    /// @return true: 円内 / false: 円外
-    ///
+    /// Inside Suction Circle を判定する
+    /// @param targetPos 座標
+    /// @return 成功または条件を満たす場合 true
     bool IsInsideSuctionCircle(const VECTOR3& targetPos) const;
 
+    /// Pos を取得する
+    /// @return 3次元ベクトル
     const VECTOR3& GetPos() const { return transform.position; }
-    bool GetIsSuckUp()      const { return m_SuctionActive; }
+    /// Is Suck Up を取得する
+    /// @return 成功または条件を満たす場合 true
+    bool GetIsSuckUp() const { return m_SuctionActive; }
 
 private:
+    /// 毎フレームの状態を更新する
     void Update() override;
-    void Draw()   override;
+    /// 描画する
+    void Draw() override;
 
+    /// Movement Input を処理する
     void HandleMovementInput();
+    /// Camera Pos を毎フレームの状態を更新する
     void UpdateCameraPos();
 
 

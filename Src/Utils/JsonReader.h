@@ -1,13 +1,11 @@
 ﻿#pragma once
 #include <string>
 
+/// <summary>汎用ユーティリティで使う Json Reader の情報と処理をまとめる型</summary>
 class JsonReader
 {
 public:
-    /// <summary>
-    /// JSONファイルを読み込み、記録されたモデルをステージに復元する。
-    /// 未ロードのモデルは自動的にロードしてボタンにも追加する。
-    /// </summary>
-    /// <param name="path">インポートするJSONファイルのパス</param>
+    /// Model Data を読み込む
+    /// @param path パス
     static void ImportModelData(const std::string& path);
 };

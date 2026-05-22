@@ -10,34 +10,60 @@ struct UIImageInfo
     float alpha;
     int layer;
 
+    /// UIImageInfo を初期化する
+    /// @param tex 使用するテクスチャ
+    /// @param pos 座標
+    /// @param size サイズ
+    /// @param a a に渡す値
+    /// @param l l に渡す値
     UIImageInfo(CSpriteImage* tex, const VECTOR2& pos, const VECTOR4&
                 size, float a = 1.0f, int l = 0)
         : pTexture(tex), position(pos),
           imageSize(size), alpha(a), layer(l)
     {
     }
+
+    /// UIImageInfo を初期化する
     UIImageInfo() = default;
 };
 
 /// @brief ウィジェット階層を使わずに画像をシンプルに描画する軽量UIクラス
 /// @details AddElement()で要素を登録し、Draw()でlayer順に一括描画する。
-///          インデックスで各要素の位置・透明度・レイヤーを後から変更できる。
 class CUIDraw
 {
 public:
-    /// @brief 描画要素を追加してインデックスを返す
-    /// @param name ImageRegistryに登録済みのテクスチャ名
-    /// @return 追加された要素のインデックス（テクスチャが見つからない場合は-1）
+    /// Element を追加する
+    /// @param name 名前
+    /// @param pos 座標
+    /// @param size サイズ
+    /// @param alpha 透明度
+    /// @param layer layer に渡す値
+    /// @return 処理結果の数値
     int AddElement(const char* name, const VECTOR2& pos, const VECTOR4& size, float alpha = 1.0f, int layer = 0);
+    /// クリアする
     void Clear();
+    /// Pos を設定する
+    /// @param index インデックス
+    /// @param pos 座標
     void SetPos(int index, const VECTOR2& pos);
+    /// Alpha を設定する
+    /// @param index インデックス
+    /// @param alpha 透明度
     void SetAlpha(int index, float alpha);
+    /// Layer を設定する
+    /// @param index インデックス
+    /// @param layer layer に渡す値
     void SetLayer(int index, int layer);
+    /// 描画する
     void Draw();
+    /// Element Count を取得する
+    /// @return 処理結果の数値
     int GetElementCount();
+    /// Element を取得する
+    /// @param index インデックス
+    /// @return 処理結果
     UIImageInfo GetElement(int index) const;
 
 private:
     std::vector<UIImageInfo> m_elements;
-
 };

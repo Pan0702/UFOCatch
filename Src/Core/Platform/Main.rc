@@ -1,4 +1,4 @@
-// Microsoft Visual C++ generated resource script.
+﻿// Microsoft Visual C++ generated resource script.
 //
 #include "../../Utils/resource.h"
 
@@ -15,7 +15,6 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// ���{�� (���{) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
 LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
@@ -28,9 +27,9 @@ LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
 
 IDR_MENU MENU
 BEGIN
-    POPUP "�t�@�C��(&F)"
+    POPUP "ファイル(&F)"
     BEGIN
-        MENUITEM "�I��(&X)",                      IDM_EXIT
+        MENUITEM "終了(&X)",                      IDM_EXIT
     END
 END
 
@@ -44,12 +43,11 @@ END
 // remains consistent on all systems.
 IDI_MAIN_ICON           ICON                    "Icon1.ico"
 
-#endif    // ���{�� (���{) resources
+#endif
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// �p�� (�č�) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
@@ -82,7 +80,7 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
-#endif    // �p�� (�č�) resources
+#endif
 /////////////////////////////////////////////////////////////////////////////
 
 

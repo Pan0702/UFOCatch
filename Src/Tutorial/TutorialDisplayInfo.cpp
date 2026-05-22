@@ -2,7 +2,6 @@
 
 namespace
 {
-    // 移動操作UIの描画位置・サイズ //
     constexpr int MOVE_UI_X = 486;
     constexpr int MOVE_UI_Y = 580;
     constexpr int MOVE_UI_SRC_X = 0;
@@ -10,7 +9,6 @@ namespace
     constexpr int MOVE_UI_WIDTH = 382;
     constexpr int MOVE_UI_HEIGHT = 124;
 
-    // 吸い込み操作UIの描画位置・サイズ //
     constexpr int SUCTION_UI_X = 477;
     constexpr int SUCTION_UI_Y = 600;
     constexpr int SUCTION_UI_SRC_X = 0;
@@ -18,7 +16,6 @@ namespace
     constexpr int SUCTION_UI_WIDTH = 406;
     constexpr int SUCTION_UI_HEIGHT = 84;
 
-    // 目標表示UIの描画位置・サイズ //
     constexpr int TARGET_UI_X = 330;
     constexpr int TARGET_UI_Y = 30;
     constexpr int TARGET_UI_SRC_X = 0;

@@ -10,19 +10,20 @@
 ///          テクスチャの所有権はレジストリ内部が持ち、ポインタは借用として返す。
 namespace ImageRegistry
 {
-    ///<summary>テクスチャのロード</summary>
-    ///<@param textureName = テクスチャの識別名(キー)
-    ///<@param path = テクスチャファイルのパス
+    /// Texture を読み込む
+    /// @param textureName 名前
+    /// @param path パス
+    /// @return 対象のポインタ
     CSpriteImage* LoadTexture(const char* textureName, const char* path);
-    
-    ///<summary>テクスチャのロード</summary>
-    ///<para>std::string型のパスを指定してテクスチャをロードする</para>
-    ///<@param path = テクスチャファイルのパス(ファイル名が自動的に識別名として使用される)
+
+    /// Texture を読み込む
+    /// @param path パス
+    /// @return 対象のポインタ
     CSpriteImage* LoadTexture(const std::string& path);
-    
-    ///<summary>既にロード済みのテクスチャを取得</summary>
-    ///<@param textureName = テクスチャの識別名(キー)
-    ///<@return 指定された識別名のテクスチャ、見つからない場合はnullptr
+
+    /// Texture を取得する
+    /// @param textureName 名前
+    /// @return 対象のポインタ
     CSpriteImage* GetTexture(const char* textureName);
 }
 
@@ -31,11 +32,12 @@ struct ImageInfo
 {
     const char* path;
     std::unique_ptr<CSpriteImage> pTexture;
-    
-    ImageInfo( const char* path)
-    :  path(path),pTexture(nullptr)
+
+    /// ImageInfo を初期化する
+    /// @param path パス
+    ImageInfo(const char* path)
+        : path(path), pTexture(nullptr)
     {
         pTexture = std::make_unique<CSpriteImage>(path);
     }
-    
 };

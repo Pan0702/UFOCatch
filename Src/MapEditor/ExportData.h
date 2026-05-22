@@ -5,28 +5,30 @@
 #include "../Stage/StageCollision.h"
 #include "StageData.h"
 
+/// <summary>ステージエディタで使う Transform の情報と処理をまとめる型</summary>
 class Transform;
 
 namespace ExportData
 {
-    /// <summary>単一オブジェクトのTransformをJSONファイルにエクスポートする</summary>
-    /// <param name="name">ファイル名（拡張子なし）</param>
-    /// <param name="t">エクスポートするtransform</param>
-    /// <returns>成功でtrue</returns>
+    /// 単一オブジェクトのTransformをJSONファイルにエクスポートする
+    /// @param name ファイル名（拡張子なし）
+    /// @param t エクスポートするtransform
+    /// @return 成功でtrue
     //bool Export(const std::string& name, const Transform& t);
 
-    /// <summary>モデル名とTransformをJSONオブジェクトに変換して返す</summary>
-    /// <param name="modelName">モデルの名前</param>
-    /// <param name="transform">変換するTransform</param>
-    /// <returns>変換後のJSONオブジェクト</returns>
+    /// Transform To Json を返す
+    /// @param modelName モデル名
+    /// @param transform transform に渡す値
+    /// @param c c に渡す値
+    /// @return 処理結果
     nlohmann::json TransformToJson(const std::string& modelName, const Transform& transform, const StageColl& c);
 
-    /// <summary>ステージ上の全オブジェクトをJSON配列にシリアライズしてファイルに書き出す</summary>
-    /// <param name="fileName">出力ファイル名（拡張子なし）</param>
-    /// <param name="modelList">エクスポートするオブジェクトのリスト</param>
+    /// All Models Info の処理を行う
+    /// @param fileName ファイル名
+    /// @param modelList modelList に渡す値
     void AllModelsInfo(const std::string& fileName, const std::vector<StageDataInfo>& modelList);
 
-    ///<summary>ステージ上の全オブジェクトのパスをJSON配列にシリアライズしてファイルに書き出す</summary>
-    ///<param name="fileName">出力ファイル名（拡張子なし）</param>
+    /// All Models Path の処理を行う
+    /// @param fileName ファイル名
     void AllModelsPath(const std::string& fileName);
 };

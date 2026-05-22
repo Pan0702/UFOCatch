@@ -4,12 +4,14 @@
 #include "../Common/Object3D.h"
 #include "../Stage/StageCollision.h"
 
+/// <summary>ステージエディタで使う Stage Data Info の情報と処理をまとめる型</summary>
 struct StageDataInfo
 {
     Transform transform;
     std::string modelName;
     StageColl c;
 
+    /// StageDataInfo を初期化する
     StageDataInfo()
     {
         transform.position = VECTOR3(0, 0, 0);
@@ -17,6 +19,9 @@ struct StageDataInfo
         c = StageColl();
     }
 
+    /// StageDataInfo を初期化する
+    /// @param model_name 名前
+    /// @param pos 座標
     StageDataInfo(const std::string& model_name, const VECTOR3& pos)
     {
         modelName = model_name;
@@ -24,6 +29,9 @@ struct StageDataInfo
         c = StageColl();
     }
 
+    /// StageDataInfo を初期化する
+    /// @param model_name 名前
+    /// @param t t に渡す値
     StageDataInfo(const std::string& model_name, const Transform& t)
     {
         modelName = std::move(model_name);
@@ -32,6 +40,7 @@ struct StageDataInfo
     }
 };
 
+/// <summary>ステージエディタで使う Stage Data の情報と処理をまとめる型</summary>
 class StageData : public Object3D
 {
 private:
@@ -39,71 +48,90 @@ private:
     int m_selectedModel = -1;
 
 private:
+    /// 描画する
     void Draw() override;
 
 public:
+    /// StageData を初期化する
     StageData();
+    /// StageData の終了処理を行う
     ~StageData() = default;
 
-    /// <summary>指定座標とモデル名でオブジェクトをステージに追加する</summary>
-    /// <param name="pos">配置するワールド座標</param>
-    /// <param name="modelName">使用するモデルの名前</param>
+    /// Model を追加する
+    /// @param pos 座標
+    /// @param modelName モデル名
     void AddModel(const VECTOR3& pos, const std::string& modelName);
 
+    /// Model を追加する
+    /// @param t t に渡す値
+    /// @param modelName モデル名
+    /// @return 処理結果の数値
     int AddModel(const Transform& t, const std::string& modelName);
 
-    /// <summary>Transform  全体を指定してオブジェクトをステージに追加する（インポート用）</summary>               
-    /// <param name="modelName">使用する モデルの名前</param>        
-    /// <param name="transform">配置するTransform（位置・回転・スケール）</param>  
+    /// Model With Transform を追加する
+    /// @param modelName モデル名
+    /// @param transform transform に渡す値
+    /// @param coll coll に渡す値
     void AddModelWithTransform(const std::string& modelName, const Transform& transform, const StageColl& coll);
 
-    /// <summary>ステージデータをJSONファイルにエクスポートする</summary>
-    /// <param name="filename">出力ファイル名（拡張子なし）</param>
+    /// 書き出す
+    /// @param filename ファイル名
     void Export(const std::string& filename) const;
 
-    /// <summary>レイとステージ上の全オブジェクトのメッシュコライダーを判定し、最接近のインデックスを返す</summary>
-    /// <param name="ray">判定に使用するレイ</param>
-    /// <param name="collOut">衝突情報の出力先</param>
-    /// <returns>当たったオブジェクトのインデックス。当たらなければ-1</returns>
+    /// Ray Hit Test を返す
+    /// @param ray 判定に使用するレイ
+    /// @param collOut 衝突情報の出力先
+    /// @return 処理結果の数値
     int RayHitTest(const Ray& ray, MeshCollider::CollInfo* collOut) const;
 
-    /// <summary>現在選択中のオブジェクトをステージから削除する</summary>
+    /// Model を削除する
     void DeleteModel();
 
-    /// <summary>指定インデックスにあるオブジェクトをステージから削除する</summary>
-    /// /// <param name="index">指定インデックス</param>
+    /// Model を削除する
+    /// @param index インデックス
     void DeleteModel(int index);
 
+    /// Model を削除する
+    /// @param modelName モデル名
     void DeleteModel(const std::string& modelName);
 
-    /// <summary>現在選択中のオブジェクトのTransformポインタを返す。未選択時はnullptr</summary>
+    /// Selected Transform を取得する
+    /// @return 対象のポインタ
     Transform* GetSelectedTransform();
 
-    /// <summary>指定インデックスのオブジェクトのTransformを上書きする（Undo/Redo用）</summary>
-    /// <param name="index">対象インデックス</param>
-    /// <param name="transform">設定するtransform</param>
+    /// Selected Transform を設定する
+    /// @param index インデックス
+    /// @param transform transform に渡す値
     void SetSelectedTransform(int index, const Transform& transform);
 
-    /// <summary>選択中のオブジェクトインデックスを設定する</summary>
-    /// <param name="index">選択するインデックス</param>
+    /// Model を設定する
+    /// @param index インデックス
     void SetModel(int index);
 
-    /// <summary>指定インデックスのオブジェクトをステージにコピーする</summary>
-    /// <param name="index"> コピーするオブジェクトの配列番号　</param>
+    /// Copy Model の処理を行う
+    /// @param index インデックス
     void CopyModel(int index);
 
-    /// <summary>現在選択中のオブジェクトインデックスを返す</summary>
+    /// Select Index を取得する
+    /// @return 処理結果の数値
     int GetSelectIndex() const;
 
-    /// <summary>ステージに設置されているすべてのオブジェクトを返す</summary>
+    /// Stage Data Info を取得する
+    /// @return 取得した要素一覧
     const std::vector<StageDataInfo>& GetStageDataInfo() const;
 
-    /// <summary>現在選択中のオブジェクトの衝突情報を設定する</summary>
+    /// Coll を設定する
+    /// @param coll coll に渡す値
     void SetColl(const StageColl& coll);
 
-    /// <summary>現在選択中のオブジェクトの衝突情報を取得する</summary>
+    /// Coll を取得する
+    /// @return 処理結果
     StageColl GetColl() const;
+    /// Trans を取得する
+    /// @return 処理結果
     Transform GetTrans() const;
 
+    /// Model Name を取得する
+    /// @return 取得した文字列
     std::string GetModelName() const;
 };

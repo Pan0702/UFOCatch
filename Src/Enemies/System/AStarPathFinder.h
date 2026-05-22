@@ -5,15 +5,19 @@
 #include <vector>
 #include "../../Utils/MyMath.h"
 
+/// <summary>敵AIで使う Stage Quad Tree の情報と処理をまとめる型</summary>
 class CStageQuadTree;
 
 /// @brief A*探索で使用するノード情報//
 struct AStarNode
 {
     VECTOR2 pos; //!< ワールド座標//
-    float g;     //!< スタートからのコスト（実コスト）//
-    float h;     //!< ゴールまでの予測コスト（ヒューリスティック）//
-    float f;     //!< 総コスト（g + h）//
+    float g; //!< スタートからのコスト（実コスト）//
+    float h; //!< ゴールまでの予測コスト（ヒューリスティック）//
+    float f; //!< 総コスト（g + h）//
+    /// operator> の処理を行う
+    /// @param o o に渡す値
+    /// @return 成功または条件を満たす場合 true
     bool operator>(const AStarNode& o) const { return f > o.f; }
 };
 
@@ -21,12 +25,17 @@ struct AStarNode
 struct Vec2Int
 {
     int x, y;
+    /// operator== の処理を行う
+    /// @param o o に渡す値
+    /// @return 成功または条件を満たす場合 true
     bool operator==(const Vec2Int& o) const { return x == o.x && y == o.y; }
 };
 
 /// @brief Vec2IntKey 用のハッシュ関数
 struct Vec2IntKeyHash
 {
+    /// operator の処理を行う
+    /// @return 処理結果
     size_t operator()(const Vec2Int& k) const
     {
         return std::hash<long long>()(static_cast<long long>(k.x) << 32 | static_cast<unsigned int>(k.y));
@@ -40,46 +49,47 @@ struct Vec2IntKeyHash
 class CAStarPathFinder
 {
 public:
-    /// @brief コンストラクタ
-    /// @param cellSize グリッド1セルのサイズ（ワールド単位）//
+    /// CAStarPathFinder を初期化する
+    /// @param cellSize サイズ
     CAStarPathFinder(float cellSize = 0.4f);
 
-    /// @brief A*アルゴリズムで経路を探索する
-    /// @param start 開始位置（ワールド座標）
-    /// @param goal  目標位置（ワールド座標）
-    /// @return スタートからゴールへのウェイポイント列。経路が見つからない場合は空ベクター//
+    /// Search Route を返す
+    /// @param start start に渡す値
+    /// @param goal goal に渡す値
+    /// @return 取得した要素一覧
     std::vector<VECTOR2> SearchRoute(VECTOR2 start, VECTOR2 goal);
 
-    /// @brief グリッドのセルサイズを返す
+    /// Cell Size を取得する
+    /// @return 計算結果の値
     float GetCellSize() const { return m_cellSize; }
 
-    /// @brief 衝突判定に使うエージェントのサイズを設定する
-    /// @param size エージェントのAABBサイズ（幅・高さ）//
+    /// Agent Size を設定する
+    /// @param size サイズ
     void SetAgentSize(const VECTOR2& size);
 
 private:
-    /// @brief 座標を最近傍グリッドセル中心にスナップする
-    /// @param pos スナップ前のワールド座標
-    /// @return スナップ後のワールド座標//
+    /// Snap を返す
+    /// @param pos 座標
+    /// @return 2次元ベクトル
     VECTOR2 Snap(const VECTOR2& pos) const;
 
-    /// @brief ワールド座標をグリッド整数キーに変換する
-    /// @param pos ワールド座標
-    /// @return グリッドキー
+    /// To Key を返す
+    /// @param pos 座標
+    /// @return 処理結果
     Vec2Int ToKey(const VECTOR2& pos) const;
 
-    /// @brief 指定セルが障害物と重なっているか判定する
-    /// @param pos        判定するセルのワールド座標（中心）
-    /// @param pQuadTree  ステージの四分木（nullptr の場合は障害物なしとみなす）//
-    /// @return 障害物があれば true
+    /// Obstacle を保持しているか判定する
+    /// @param pos 座標
+    /// @param pQuadTree pQuadTree に渡す値
+    /// @return 成功または条件を満たす場合 true
     bool HasObstacle(const VECTOR2& pos, const CStageQuadTree* pQuadTree) const;
 
-    /// @brief ゴールからスタートへ遡って経路を復元する
-    /// @param effectiveGoal 到達したゴールのワールド座標
-    /// @param start         スタートのワールド座標
-    /// @param startKey      スタートのグリッドキー
-    /// @param cameFrom      各ノードの親ノード座標マップ
-    /// @return スタートからゴール順に並んだウェイポイント列//
+    /// Reconstruct Path を返す
+    /// @param effectiveGoal effectiveGoal に渡す値
+    /// @param start start に渡す値
+    /// @param startKey startKey に渡す値
+    /// @param cameFrom cameFrom に渡す値
+    /// @return 取得した要素一覧
     std::vector<VECTOR2> ReconstructPath(
         const VECTOR2& effectiveGoal,
         const VECTOR2& start,
@@ -87,6 +97,6 @@ private:
         const std::unordered_map<Vec2Int, VECTOR2, Vec2IntKeyHash>& cameFrom) const;
 
 private:
-    float m_cellSize = 0;    //!< グリッド1セルのサイズ//
+    float m_cellSize = 0; //!< グリッド1セルのサイズ//
     VECTOR2 m_agentSize = {}; //!< 障害物判定に使うエージェントのAABBサイズ//
 };

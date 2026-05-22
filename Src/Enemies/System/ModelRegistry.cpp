@@ -82,7 +82,7 @@ CFbxMesh* CModelRegistry::GetMesh(const std::string& name) const
     }
 
     MessageBox(nullptr, _T("CModelRegistry::GetMesh()"),
-               _T("繧ｨ繝ｩ繝ｼ: 謖・ｮ壹・繝｢繝・Ν蜷阪′隕九▽縺九ｊ縺ｾ縺帙ｓ"), MB_OK);
+               _T("処理に失敗しました。"), MB_OK);
     return nullptr;
 }
 

@@ -14,17 +14,23 @@
  * @param t 補間係数 (0.0 ~ 1.0)
  * @return 曲線上の点
  */
+/// Cubic Bezier を返す
+/// @param p0 p0 に渡す値
+/// @param p1 p1 に渡す値
+/// @param p2 p2 に渡す値
+/// @param p3 p3 に渡す値
+/// @param t t に渡す値
+/// @return 3次元ベクトル
 inline VECTOR3 CubicBezier(const VECTOR3& p0, const VECTOR3& p1, const VECTOR3& p2, const VECTOR3& p3, float t)
 {
-	float oneMinusT = 1.0f - t;
-	float oneMinusT2 = oneMinusT * oneMinusT;
-	float oneMinusT3 = oneMinusT2 * oneMinusT;
-	float t2 = t * t;
-	float t3 = t2 * t;
+    float oneMinusT = 1.0f - t;
+    float oneMinusT2 = oneMinusT * oneMinusT;
+    float oneMinusT3 = oneMinusT2 * oneMinusT;
+    float t2 = t * t;
+    float t3 = t2 * t;
 
-	return p0 * oneMinusT3 +
-	       p1 * (3.0f * oneMinusT2 * t) +
-	       p2 * (3.0f * oneMinusT * t2) +
-	       p3 * t3;
+    return p0 * oneMinusT3 +
+        p1 * (3.0f * oneMinusT2 * t) +
+        p2 * (3.0f * oneMinusT * t2) +
+        p3 * t3;
 }
-

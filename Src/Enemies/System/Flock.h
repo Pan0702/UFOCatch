@@ -11,43 +11,65 @@ struct FlockInfo
     float maxDistance; // 重心から一番遠い羊までの距離の二乗
 };
 
+/// <summary>敵AIで使う Flock の情報と処理をまとめる型</summary>
 class CFlock : public Object3D
 {
 public:
+    /// CFlock を初期化する
+    /// @param center center に渡す値
+    /// @param radius 半径
+    /// @param sheepCount 個数
     CFlock(const VECTOR3& center = VECTOR3(0, 0, 0), float radius = 4.0f, int sheepCount = 10);
+    /// All Sheeps を取得する
+    /// @return 取得した要素一覧
     const std::vector<CSheep*>& GetAllSheeps() const { return m_allSheep; }
 
-    /// @brief  群れの中心と半径を取得
+    /// Flock Center を取得する
+    /// @return 3次元ベクトル
     const VECTOR3& GetFlockCenter() const { return m_flockCenter; }
+    /// Flock Radius を取得する
+    /// @return 計算結果の値
     float GetFlockRadius() const { return m_flockRadius; }
 
-    /// @brief 羊を追加
+    /// Sheep を追加する
+    /// @param sheep sheep に渡す値
     void AddSheep(CSheep* sheep);
-    /// @brief 羊を削除
+    /// Sheep を削除する
+    /// @param sheep sheep に渡す値
     void RemoveSheep(const CSheep* sheep);
-    /// @brief 群れの犬を設定
+    /// Shepherd Dog を設定する
+    /// @param dog dog に渡す値
     void SetShepherdDog(CAShepherdDog* dog) { m_pShepherdDog = dog; }
-    /// @brief 群れの犬を取得
+    /// Shepherd Dog を取得する
+    /// @return 対象のポインタ
     CAShepherdDog* GetShepherdDog() const { return m_pShepherdDog; }
 
-    /// @brief 複数の羊から重心と、重心から最も遠い羊を計算する
-    /// @param manySheep 集計対象の羊リスト
-    /// @return 重心、最遠羊、最遠距離の二乗を含む情報
+    /// Cal CFlock Info Static を返す
+    /// @param manySheep manySheep に渡す値
+    /// @return 処理結果
     static FlockInfo CalCFlockInfoStatic(const std::vector<CSheep*>& manySheep);
 
-    /// @brief 羊と犬が通常移動できる外側円の半径を取得する
+    /// Move Radius を取得する
+    /// @return 計算結果の値
     float GetMoveRadius() const;
 
-    /// @brief 回収開始判定に使う円の半径を取得する
+    /// Collect Radius を取得する
+    /// @return 計算結果の値
     float GetCollectRadius() const;
 
-    /// @brief 指定位置が群れの内側円に含まれるか判定する
+    /// Contain Pos を返す
+    /// @param pos 座標
+    /// @return 成功または条件を満たす場合 true
     bool ContainPos(const VECTOR3& pos) const;
 
-    /// @brief 指定位置が回収開始円に含まれるか判定する
+    /// Contain Collect Area を返す
+    /// @param pos 座標
+    /// @return 成功または条件を満たす場合 true
     bool ContainCollectArea(const VECTOR3& pos) const;
 
-    /// @brief 指定位置が移動可能な外側円に含まれるか判定する
+    /// Contain Move Area を返す
+    /// @param pos 座標
+    /// @return 成功または条件を満たす場合 true
     bool ContainMoveArea(const VECTOR3& pos) const;
 
 private:

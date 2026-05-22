@@ -5,8 +5,10 @@
 #include "../../Common/Object3D.h"
 
 
+/// <summary>ステージエディタで使う Stage Data の情報と処理をまとめる型</summary>
 class StageData;
 
+/// <summary>ステージエディタで使う TRS の情報と処理をまとめる型</summary>
 class TRS : public Object3D
 {
 private:
@@ -24,62 +26,70 @@ private:
     float m_scaleSpeed = 1.0f;
     float m_translateAccum = 0.0f;
     float m_rotateAccum = 0.0f;
+
 public:
-    /// <summary>"MoveAmount"ウィンドウの中身を描画する（Begin/Endなし）</summary>
+    /// Panel を描画する
     void DrawPanel();
 
 private:
-    /// <summary>ImGuiで移動スナップ量を選択するラジオボタンを描画する</summary>
+    /// Radio Translate の処理を行う
     void RadioTranslate();
 
-    /// <summary>ImGuiで回転スナップ量を選択するラジオボタンを描画する</summary>
+    /// Radio Rotate の処理を行う
     void RadioRotate();
 
-    /// <summary>ImGuiでスケールスピードを選択するラジオボタンを描画する</summary>
+    /// Radio Scale の処理を行う
     void RadioScale();
 
-    /// <summary>移動量をスナップ単位に丸めてcompoに累積加算する</summary>
-    /// <param name="compo">更新対象の座標成分（参照）</param>
-    /// <param name="delta">今フレームの移動量</param>
+    /// Snap Translation の処理を行う
+    /// @param compo compo に渡す値
+    /// @param delta 変化量
     void SnapTranslation(float& compo, float delta);
 
-    /// <summary>回転量をスナップ単位に丸めてcompoに累積加算する</summary>
-    /// <param name="compo">更新対象の回転成分（参照）</param>
-    /// <param name="delta">今フレームの回転量</param>
+    /// Snap Rotation の処理を行う
+    /// @param compo compo に渡す値
+    /// @param delta 変化量
     void SnapRotation(float& compo, float delta);
-    
+
+    /// Target を取得する
+    /// @return 対象のポインタ
     Transform* GetTarget() const;
 
 public:
     TRS();
 
-    /// <summary>TRSの操作モードを設定する（State列挙を参照）</summary>
-    /// <param name="state">設定するState値</param>
+    /// State を設定する
+    /// @param state 状態
     void SetState(int state) { m_state = state; }
 
+    /// 描画する
     void Draw() override;
+    /// 毎フレームの状態を更新する
     void Update() override;
 
-    /// <summary>現在のモードに応じたギズモとレイの当たり判定を行い、当たった軸を返す</summary>
-    /// <param name="ray">判定に使用するレイ</param>
-    /// <returns>当たった軸（X/Y/Z）、当たらなければNone</returns>
+    /// Ray Hit Test を返す
+    /// @param ray 判定に使用するレイ
+    /// @return 処理結果
     Axis RayHitTest(const Ray& ray) const;
 
-    /// <summary>ドラッグ中の軸に沿って選択オブジェクトのTransformを更新する</summary>
+    /// Transform を設定する
     void SetTransform();
 
-    /// <summary>マウス移動量を指定軸のスクリーン投影ベクトルに射影し、ワールド空間の変化量を返す</summary>
-    /// <param name="axis">操作軸</param>
-    /// <param name="objPos">対象オブジェクトのワールド座標</param>
-    /// <returns>軸方向の変化量</returns>
+    /// Transform を追加する
+    /// @param axis axis に渡す値
+    /// @param objPos 座標
+    /// @return 計算結果の値
     static float AddTransform(Axis axis, const VECTOR3& objPos);
 
-    /// <summary>ドラッグ中の軸を設定する。Noneを指定するとドラッグを解除する</summary>
-    /// <param name="axis">設定する軸</param>
+    /// Dragging Axis を設定する
+    /// @param axis axis に渡す値
     void SetDraggingAxis(Axis axis) { m_draggingAxis = axis; }
 
+    /// Override Target を設定する
+    /// @param t t に渡す値
     void SetOverrideTarget(Transform* t);
-    
+
+    /// <summary>State で扱う状態や種別を表す列挙型</summary>
     enum State : uint8_t
     {
         kNone,

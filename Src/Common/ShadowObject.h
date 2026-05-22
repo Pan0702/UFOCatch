@@ -2,20 +2,27 @@
 #include "../Framework/GameObject.h"
 #include "../Utils/Sprite3D.h"
 
+/// <summary>Transform、メッシュ、アニメーション、コライダーを持つ3Dオブジェクト基底クラス</summary>
 class Object3D;
 
 /// <summary>
-/// 繧ｪ繝悶ず繧ｧ繧ｯ繝医・荳九↓蠖ｱ繧呈緒逕ｻ縺吶ｋ繧ｯ繝ｩ繧ｹ
-/// 繧ｳ繝ｳ繧ｹ繝医Λ繧ｯ繧ｿ縺ｧ貂｡縺励◆繧ｪ繝ｼ繝翫・縺ｮ菴咲ｽｮ繝ｻ蝗櫁ｻ｢繧貞盾辣ｧ縺励※謠冗判縺吶ｋ
-/// SetDrawOrder() 縺ｧ謠冗判繧ｿ繧､繝溘Φ繧ｰ繧堤峡遶九＠縺ｦ蛻ｶ蠕｡縺ｧ縺阪ｋ
+/// SetDrawOrder() で描画タイミングを独立して制御できる
 /// </summary>
 class CShadowObject : public GameObject
 {
 public:
+    /// CShadowObject を初期化する
+    /// @param pOwner pOwner に渡す値
+    /// @param imagePath パス
+    /// @param drawOrder drawOrder に渡す値
     CShadowObject(Object3D* pOwner, const TCHAR* imagePath, int drawOrder = -5);
+    /// CShadowObject の終了処理を行う
     ~CShadowObject();
+    /// 開始する
     void Start() override;
+    /// 描画する
     void Draw() override;
+    /// Me を破棄する
     void DestroyMe() override;
 
 private:

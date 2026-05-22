@@ -105,7 +105,7 @@
 #define RANGE_MIN      (-1000)        // 軸の最小値
 #define FF_CHILD       (5000)         // 振動強度 50%
 #define FF_ADULT       (7500)         // 振動強度 75%
-#define FF_BODYBUILDER ()10000)        // 振動強度 100%
+#define FF_BODYBUILDER (10000)        // 振動強度 100%
 //-----------------------------------------------------------------------------
 // 内部エフェクト識別子
 //-----------------------------------------------------------------------------
@@ -113,6 +113,7 @@
 #define EF_EXPLODE  1
 #define EF_FIRE     2
 
+/// <summary>ButtonAction で扱う状態や種別を表す列挙型</summary>
 enum ButtonAction : int8_t
 {
     UP = -1,
@@ -128,7 +129,6 @@ private:
     // 共通
     //-----------------------------------------------------------------------------
 private:
-    // --- 1. 8バイト（ポインタ・ハンドル） ---
     HWND m_hWnd;
     LPDIRECTINPUT8 m_pDI8;
     LPDIRECTINPUTDEVICE8 m_pKey;
@@ -172,61 +172,160 @@ public:
     //-----------------------------------------------------------------------------
     // 基本操作
     //-----------------------------------------------------------------------------
+    /// CDirectInput を初期化する
     CDirectInput(void);
+    /// CDirectInput の終了処理を行う
     ~CDirectInput();
 
+    /// Direct Input を開始する
+    /// @return 成功または条件を満たす場合 true
     bool StartDirectInput(HINSTANCE, HWND, int, DWORD, DWORD);
+    /// Direct Input を終了する
+    /// @return 成功または条件を満たす場合 true
     bool EndDirectInput(void);
+    /// Acquire を設定する
     void SetAcquire(void); // デバイスの権限を取得
+    /// Input を取得する
+    /// @return 成功または条件を満たす場合 true
     bool GetInput(void); // 全デバイスの入力を更新
 
     //-----------------------------------------------------------------------------
     // キーボード
     //-----------------------------------------------------------------------------
+    /// Key を取得する
+    /// @return 成功または条件を満たす場合 true
     bool GetKey(void);
+    /// Key を確認する
+    /// @param nKey nKey に渡す値
+    /// @param nMode nMode に渡す値
+    /// @return 成功または条件を満たす場合 true
     bool CheckKey(const int& nKey, const DWORD& nMode);
+    /// Push Up Key を判定する
+    /// @return 処理結果の数値
     int IsPushUpKey();
+    /// Push Down Key を判定する
+    /// @return 処理結果の数値
     int IsPushDownKey();
+    /// Push Enter を判定する
+    /// @return 成功または条件を満たす場合 true
     bool IsPushEnter();
+    /// Key を初期化する
+    /// @return 成功または条件を満たす場合 true
     bool InitKey(HWND);
+    /// Property Key を設定する
+    /// @return 成功または条件を満たす場合 true
     bool SetPropertyKey(void);
 
     //-----------------------------------------------------------------------------
     // マウス
     //-----------------------------------------------------------------------------
+    /// Mouse を取得する
+    /// @return 成功または条件を満たす場合 true
     bool GetMouse(void);
+    /// Mouse を確認する
+    /// @param nButton nButton に渡す値
+    /// @param nMode nMode に渡す値
+    /// @return 成功または条件を満たす場合 true
     bool CheckMouse(const int& nButton, const DWORD& nMode);
+    /// Mouse State を取得する
+    /// @return 処理結果
     DIMOUSESTATE GetMouseState(void);
+    /// Mouse Wheel を取得する
+    /// @return 計算結果の値
     float GetMouseWheel() const;
+    /// Mouse Move を判定する
+    /// @return 成功または条件を満たす場合 true
     bool IsMouseMove() const;
+    /// Move Input を判定する
+    /// @return 成功または条件を満たす場合 true
     bool IsMoveInput();
+    /// Mouse Pos を取得する
+    /// @return 座標
     POINT GetMousePos(); // マウスの現在の座標を取得
+    /// Show Mouse Cursor の処理を行う
+    /// @param bFlag bFlag に渡す値
     void ShowMouseCursor(bool bFlag);
+    /// Mouse を初期化する
+    /// @return 成功または条件を満たす場合 true
     bool InitMouse(HWND);
+    /// Property Mouse を設定する
+    /// @return 成功または条件を満たす場合 true
     bool SetPropertyMouse(void);
 
     //-----------------------------------------------------------------------------
     // ジョイスティック
     //-----------------------------------------------------------------------------
+    /// Joy を取得する
+    /// @return 成功または条件を満たす場合 true
     bool GetJoy(void);
+    /// If Joy FF を返す
+    /// @param nSum nSum に渡す値
+    /// @return 成功または条件を満たす場合 true
     bool IfJoyFF(int nSum = JOY_PLAYER1); // 振動対応か確認
+    /// Joy State を取得する
+    /// @param nSum nSum に渡す値
+    /// @return 処理結果
     DIJOYSTATE2 GetJoyState(int nSum = JOY_PLAYER1);
+    /// Joy Num を取得する
+    /// @return 処理結果の数値
     int GetJoyNum(void);
+    /// Joy を確認する
+    /// @param nButton nButton に渡す値
+    /// @param nMode nMode に渡す値
+    /// @param nSum nSum に渡す値
+    /// @return 成功または条件を満たす場合 true
     bool CheckJoy(const int& nButton, const DWORD& nMode, int nSum = JOY_PLAYER1);
+    /// Up Down Left Right を確認する
+    /// @param nDir nDir に渡す値
+    /// @param nMode nMode に渡す値
+    /// @param nSum nSum に渡す値
+    /// @return 成功または条件を満たす場合 true
     bool CheckUpDownLeftRight(int nDir, DWORD nMode, int nSum = JOY_PLAYER1);
+    /// Joy を初期化する
+    /// @return 成功または条件を満たす場合 true
     bool InitJoy(HWND);
+    /// Joy Normal を初期化する
+    /// @return 成功または条件を満たす場合 true
     bool InitJoyNormal(HWND);
+    /// Joy FF を初期化する
+    /// @return 成功または条件を満たす場合 true
     bool InitJoyFF(HWND);
+    /// Property Joy を設定する
+    /// @return 成功または条件を満たす場合 true
     bool SetPropertyJoy(void);
+    /// Joy Imm を確認する
+    /// @param nButton nButton に渡す値
+    /// @param nSum nSum に渡す値
+    /// @return 成功または条件を満たす場合 true
     bool CheckJoyImm(DWORD nButton, int nSum = JOY_PLAYER1);
+    /// Joy Effect を再生する
+    /// @param nEffectNo nEffectNo に渡す値
+    /// @param nNum nNum に渡す値
+    /// @param nSum nSum に渡す値
+    /// @return 成功または条件を満たす場合 true
     bool PlayJoyEffect(int nEffectNo, int nNum = 1, int nSum = JOY_PLAYER1);
+    /// Joy Effect Standard を作成する
+    /// @return 成功または条件を満たす場合 true
     bool CreateJoyEffectStandard(void);
+    /// Joy Effect を読み込む
+    /// @param szFName 名前
+    /// @param nEffectNo nEffectNo に渡す値
+    /// @param nNum nNum に渡す値
+    /// @return 成功または条件を満たす場合 true
     bool ReadJoyEffect(const TCHAR* szFName, int& nEffectNo, int& nNum);
 
     //-----------------------------------------------------------------------------
     // コールバック関数
     //-----------------------------------------------------------------------------
+    /// Enum Joysticks Cb を返す
+    /// @param pInst pInst に渡す値
+    /// @param lpvContext 使用するテクスチャ
+    /// @return 処理結果
     BOOL EnumJoysticksCb(LPCDIDEVICEINSTANCE pInst, LPVOID lpvContext);
+    /// Enum Effects In File Cb を返す
+    /// @param lpdife lpdife に渡す値
+    /// @param pvRef pvRef に渡す値
+    /// @return 処理結果
     BOOL EnumEffectsInFileCb(LPCDIFILEEFFECT lpdife, LPVOID pvRef);
 };
 

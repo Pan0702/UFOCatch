@@ -1,54 +1,61 @@
 ﻿#pragma once
 #include "ComponentBase.h"
 #include "../System/AStarPathFinder.h"
+/// <summary>敵AIで使う Sheep の情報と処理をまとめる型</summary>
 class CSheep;
 
 
+/// <summary>敵AIで使う Walk の情報と処理をまとめる型</summary>
 class CWalk : public CComponentBase
 {
 public:
+    /// CWalk を初期化する
+    /// @param e e に渡す値
+    /// @param speed speed に渡す値
     CWalk(CEnemyBase* e, float speed);
+    /// Enter の処理を行う
     void Enter() override;
+    /// 毎フレームの状態を更新する
     void Update() override;
 
 private:
-    /// @brief 境界内に収まるランダムな回転量と移動距離を決定する
-    /// @brief ランダムに回転量（-180°～180°）と移動距離（1.5～4.0）を決定し、境界チェックに通るまで最大50回リトライする。
-    /// @brief 妥当な組み合わせが見つかった場合、m_turnAmountとm_targetPosに設定される。
-    /// @return 妥当な移動パラメータが見つかった場合true、最大試行回数を超えた場合false
+    /// Random Move を計算する
+    /// @return 成功または条件を満たす場合 true
     bool CalcRandomMove();
 
-    /// @brief 羊用のランダム移動目標を群れの内側または外側リングから決定する
-    /// @param sheep 群れ情報を参照する羊
-    /// @return 目標位置と回転量を決定できた場合true
+    /// Sheep Random Move を計算する
+    /// @param sheep sheep に渡す値
+    /// @return 成功または条件を満たす場合 true
     bool CalcSheepRandomMove(const CSheep* sheep);
 
-    /// @brief 通常の敵用に境界内へ収まるランダムな移動目標を決定する
-    /// @return 境界内の移動目標が見つかった場合true、最大試行回数を超えた場合false
+    /// Default Random Move を計算する
+    /// @return 成功または条件を満たす場合 true
     bool CalcDefaultRandomMove();
 
-    /// @brief Walkのアニメーションを1.0fの速度で再生する
+    /// Walk Animation を再生する
     void PlayWalkAnimation() const;
 
-    /// @brief 回転角をRadで-π～πの範囲に正規化する
-    /// @param angle 回転角
-    /// @return -π～πの範囲に正規化した回転角を返す
+    /// Clamp Rotate Y を返す
+    /// @param angle 角度
+    /// @return 計算結果の値
     static float ClampRotateY(float angle);
 
-    /// @brief m_targetPos がステージオブジェクトと重なっていれば、近隣の空きセルに修正する
-    /// @param pTree      : ステージ四分木（nullptr なら何もしない）
-    /// @param mapBounds  : CGameInstance::Get()->GetMapSize() の値(xMin, zMin, xMax, zMax)
-    /// @param cellSize   :グリッドセルサイズ（m_pathFinder.GetCellSize()）
+    /// Adjust Target To Free Cell の処理を行う
+    /// @param pTree pTree に渡す値
+    /// @param mapBounds mapBounds に渡す値
+    /// @param cellSize サイズ
     void AdjustTargetToFreeCell(const CStageQuadTree* pTree,
                                 const VECTOR4& mapBounds, float cellSize);
 
-    /// @brief 経路が無いとき、回転のみを補間して終了判定する
+    /// Rotation Only を毎フレームの状態を更新する
     void UpdateRotationOnly();
 
-    /// @brief 羊が群れの移動可能エリアの外に出ようとしていないか
+    /// Blocked By Flock Boundary を判定する
+    /// @param moveVec 移動量
+    /// @return 成功または条件を満たす場合 true
     bool IsBlockedByFlockBoundary(const VECTOR3& moveVec) const;
 
-    /// @brief 経路インデックスを進める。直線的に並ぶ次ポイントはスキップ
+    /// Advance Path Index の処理を行う
     void AdvancePathIndex();
 
     VECTOR3 m_position;

@@ -10,181 +10,175 @@
 #include <memory>
 #include <string>
 
+/// <summary>ゲーム共通基盤で使う Quadtree System の情報と処理をまとめる型</summary>
 class CQuadtreeSystem;
+/// <summary>ObjectManagerに登録される全ゲームオブジェクトの基底クラス</summary>
 class GameObject;
 
-namespace ObjectManager {
-	void Start();
-	void Update();
-	void Draw();
-	void Release();
-	void ChangeScene();
+namespace ObjectManager
+{
+    /// 開始する
+    void Start();
+    /// 毎フレームの状態を更新する
+    void Update();
+    /// 描画する
+    void Draw();
+    /// 解放する
+    void Release();
+    /// Scene を切り替える
+    void ChangeScene();
 
-	/// <summary>
-	/// Objectを追加する
-	/// この関数は、GameObjectのコンストラクタから呼ばれる
-	/// </summary>
-	/// <param name="obj"></param>
-	void Push(std::unique_ptr<GameObject> obj);
+    /// 追加する
+    /// @param obj 対象オブジェクト
+    void Push(std::unique_ptr<GameObject> obj);
 
-	/// <summary>
-	/// Objectを削除する
-	/// この関数では、削除の要求をするだけで、
-	/// 実際に削除されるのは、Update()が呼ばれる直前
-	/// </summary>
-	/// <param name="obj"></param>
-	void Destroy(GameObject* obj);
+    /// 破棄する
+    /// @param obj 対象オブジェクト
+    void Destroy(GameObject* obj);
 
-	std::list<GameObject*> GetAllObjects();
-	
-	std::list<CQuadtreeSystem*> GetAllQuadTree();
-	void PushTree(std::unique_ptr<CQuadtreeSystem>  tree);
+    /// All Objects を取得する
+    /// @return 取得した要素一覧
+    std::list<GameObject*> GetAllObjects();
 
-	/// <summary>
-	/// クラス名でオブジェクトを探す
-	/// </summary>
-	/// <typeparam name="C">クラス</typeparam>
-	/// <returns>オブジェクトの実態（存在しなければnullptr）</returns>
-	template<class C> C* FindGameObject()
-	{
-		const std::list<GameObject*> objs = GetAllObjects();
+    /// All Quad Tree を取得する
+    /// @return 取得した要素一覧
+    std::list<CQuadtreeSystem*> GetAllQuadTree();
+    /// Tree を追加する
+    /// @param tree tree に渡す値
+    void PushTree(std::unique_ptr<CQuadtreeSystem> tree);
 
-		for (GameObject* node : objs) {
-			C* obj = dynamic_cast<C*>(node);
-			if (obj != nullptr)
-				return obj;
-		}
-		return nullptr;
-	}
+    /// Game Object を検索する
+    /// @return 対象のポインタ
+    template <class C>
+    C* FindGameObject()
+    {
+        const std::list<GameObject*> objs = GetAllObjects();
 
-	/// <summary>
-	/// クラスのオブジェクトをすべて探す
-	/// </summary>
-	/// <typeparam name="C">クラス名</typeparam>
-	/// <returns>オブジェクトの実態list</returns>
-	template<class C> std::list<C*> FindGameObjects()
-	{
-		std::list<C*> out;
-		out.clear();
+        for (GameObject* node : objs)
+        {
+            C* obj = dynamic_cast<C*>(node);
+            if (obj != nullptr)
+                return obj;
+        }
+        return nullptr;
+    }
 
-		const std::list<GameObject*> objs = GetAllObjects();
+    /// Game Objects を検索する
+    /// @return 取得した要素一覧
+    template <class C>
+    std::list<C*> FindGameObjects()
+    {
+        std::list<C*> out;
+        out.clear();
 
-		for (GameObject* node : objs) {
-			C* obj = dynamic_cast<C*>(node);
-			if (obj != nullptr)
-				out.emplace_back(obj);
-		}
-		return out;
-	}
+        const std::list<GameObject*> objs = GetAllObjects();
 
-	/// <summary>
-	/// クラス名とタグからオブジェクトを探す
-	/// </summary>
-	/// <typeparam name="C">クラス名</typeparam>
-	/// <param name="tag">タグ</param>
-	/// <returns>オブジェクトの実態（存在しなければnullptr）</returns>
-	template<class C> C* FindGameObjectWithTag(std::string tag)
-	{
-		const std::list<GameObject*> objs = GetAllObjects();
+        for (GameObject* node : objs)
+        {
+            C* obj = dynamic_cast<C*>(node);
+            if (obj != nullptr)
+                out.emplace_back(obj);
+        }
+        return out;
+    }
 
-		for (GameObject* node : objs) {
-			C* obj = dynamic_cast<C*>(node);
-			if (obj != nullptr) {
-				if (obj->IsTag(tag))
-					return obj;
-			}
-		}
-		return nullptr;
-	}
+    /// Game Object With Tag を検索する
+    /// @param tag タグ
+    /// @return 対象のポインタ
+    template <class C>
+    C* FindGameObjectWithTag(std::string tag)
+    {
+        const std::list<GameObject*> objs = GetAllObjects();
 
-	/// <summary>
-	/// クラス名とタグからオブジェクトをすべて探す
-	/// </summary>
-	/// <typeparam name="C">クラス名</typeparam>
-	/// <param name="tag">タグ</param>
-	/// <returns>オブジェクトの実態list</returns>
-	template<class C> std::list<C*> FindGameObjectsWithTag(std::string tag)
-	{
-		std::list<C*> out;
-		out.clear();
+        for (GameObject* node : objs)
+        {
+            C* obj = dynamic_cast<C*>(node);
+            if (obj != nullptr)
+            {
+                if (obj->IsTag(tag))
+                    return obj;
+            }
+        }
+        return nullptr;
+    }
 
-		const std::list<GameObject*> objs = GetAllObjects();
+    /// Game Objects With Tag を検索する
+    /// @param tag タグ
+    /// @return 取得した要素一覧
+    template <class C>
+    std::list<C*> FindGameObjectsWithTag(std::string tag)
+    {
+        std::list<C*> out;
+        out.clear();
 
-		for (GameObject* node : objs) {
-			C* obj = dynamic_cast<C*>(node);
-			if (obj != nullptr) {
-				if (obj->IsTag(tag))
-					out.emplace_back(obj);
-			}
-		}
-		return out;
-	}
-	
-	template<class C> C* FindQuadTree()
-	{
-		const std::list<CQuadtreeSystem*> objs = GetAllQuadTree();
+        const std::list<GameObject*> objs = GetAllObjects();
 
-		for (CQuadtreeSystem* node : objs) {
-			C* obj = dynamic_cast<C*>(node);
-			if (obj != nullptr)
-				return obj;
-		}
-		return nullptr;
-	}
-	/// <summary>
-	/// 描画のプライオリティを設定する
-	/// 数値が少ない順に描画されるので、２Ｄでは奥に表示される
-	/// ２Ｄで手前に表示したい時、３Ｄで後に描画したい時は、値を高くする
-	/// プライオリティが同じものの順番は保証されない
-	/// プライオリティのデフォルトは０です
-	/// </summary>
-	/// <param name="obj">プライオリティを設定するオブジェクト</param>
-	/// <param name="order">描画プライオリティ</param>
-	void SetDrawOrder(const GameObject* obj, int _order);
+        for (GameObject* node : objs)
+        {
+            C* obj = dynamic_cast<C*>(node);
+            if (obj != nullptr)
+            {
+                if (obj->IsTag(tag))
+                    out.emplace_back(obj);
+            }
+        }
+        return out;
+    }
 
-	/// <summary>
-	/// Updateの優先順位を付ける
-	/// </summary>
-	/// <param name="_obj"></param>
-	/// <param name="_priority"></param>
-	void SetPriority(const GameObject* obj, int _priority);
+    /// Quad Tree を検索する
+    /// @return 対象のポインタ
+    template <class C>
+    C* FindQuadTree()
+    {
+        const std::list<CQuadtreeSystem*> objs = GetAllQuadTree();
 
-	/// <summary>
-	/// GameObjectを削除する
-	/// </summary>
-	/// <param name="obj">GameObjectのインスタンス</param>
-	void DeleteGameObject(GameObject* obj);
+        for (CQuadtreeSystem* node : objs)
+        {
+            C* obj = dynamic_cast<C*>(node);
+            if (obj != nullptr)
+                return obj;
+        }
+        return nullptr;
+    }
 
-	/// <summary>
-	/// 全てのGameObjectを削除する
-	/// </summary>
-	void DeleteAllGameObject();
-	
-	void DontDestroy(const GameObject* obj, bool dont = true);
+    /// Draw Order を設定する
+    /// @param obj 対象オブジェクト
+    /// @param _order _order に渡す値
+    void SetDrawOrder(const GameObject* obj, int _order);
 
-	/// <summary>
-	/// Updateを実行するか設定する
-	/// </summary>
-	/// <param name="obj">GameObjectのインスタンス</param>
-	/// <param name="active">実行する場合はtrue</param>
-	void SetActive(const GameObject* obj, bool active = true);
+    /// Priority を設定する
+    /// @param obj 対象オブジェクト
+    /// @param _priority _priority に渡す値
+    void SetPriority(const GameObject* obj, int _priority);
 
-	/// <summary>
-	/// Drawを実行するか設定する
-	/// </summary>
-	/// <param name="obj">GameObjectのインスタンス</param>
-	/// <param name="visible">Drawする場合はtrue</param>
-	void SetVisible(const GameObject* obj, bool visible = true);
+    /// Game Object を削除する
+    /// @param obj 対象オブジェクト
+    void DeleteGameObject(GameObject* obj);
 
-	/// <summary>
-	/// 指定のオブジェクトが存在するかを調べる
-	/// Activeでも、非Activeでも、存在していればtrueとなる
-	/// </summary>
-	/// <param name="obj">GameObjectのインスタンス</param>
-	/// <returns>存在すれtrue</returns>
-	bool IsExist(GameObject* obj);
+    /// All Game Object を削除する
+    void DeleteAllGameObject();
+
+    /// Dont Destroy の処理を行う
+    /// @param obj 対象オブジェクト
+    /// @param dont dont に渡す値
+    void DontDestroy(const GameObject* obj, bool dont = true);
+
+    /// Active を設定する
+    /// @param obj 対象オブジェクト
+    /// @param active 有効フラグ
+    void SetActive(const GameObject* obj, bool active = true);
+
+    /// Visible を設定する
+    /// @param obj 対象オブジェクト
+    /// @param visible 表示フラグ
+    void SetVisible(const GameObject* obj, bool visible = true);
+
+    /// Exist を判定する
+    /// @param obj 対象オブジェクト
+    /// @return 成功または条件を満たす場合 true
+    bool IsExist(GameObject* obj);
 
 
-	void DeleteAllQuadTree();
+    /// All Quad Tree を削除する
+    void DeleteAllQuadTree();
 };
-

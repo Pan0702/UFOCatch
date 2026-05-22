@@ -3,11 +3,14 @@
 #include "../MouseRay.h"
 #include <d3d11.h>
 
+/// <summary>Axis で扱う状態や種別を表す列挙型</summary>
 enum class Axis : uint8_t { None, X, Y, Z };
 
+/// <summary>ステージエディタで使う TRSBase の情報と処理をまとめる型</summary>
 class TRSBase : public Object3D
 {
 protected:
+    /// <summary>ステージエディタで使う Info の情報と処理をまとめる型</summary>
     struct Info
     {
         std::unique_ptr<CFbxMesh> mesh;
@@ -22,26 +25,27 @@ private:
     ID3D11DepthStencilState* m_pDepthOffState = nullptr;
 
 public:
-    /// <summary>ギズモの表示位置を指定座標に設定する</summary>
-    /// <param name="pos">設定するワールド座標</param>
+    /// Position を設定する
+    /// @param pos 座標
     virtual void SetPosition(const VECTOR3& pos);
 
-    /// <summary>カメラ距離に比例してギズモのスケールを更新し、常に同じ見かけサイズにする</summary>
-    /// <param name="camPos">カメラのワールド座標</param>
+    /// Scale By Camera を毎フレームの状態を更新する
+    /// @param camPos 座標
     void UpdateScaleByCamera(const VECTOR3& camPos);
 
 public:
+    /// TRSBase を初期化する
     TRSBase();
+    /// TRSBase の終了処理を行う
     ~TRSBase();
 
-    /// <summary>X/Y/Z軸のギズモメッシュをすべて描画する</summary>
+    /// 描画する
     virtual void Render();
-    
 
-    /// <summary>レイとX/Y/Zギズモのコライダーを判定し、当たった軸を返す</summary>
-    /// <param name="ray">判定に使用するレイ</param>
-    /// <param name="length">レイの長さ（デフォルト1000）</param>
-    /// <returns>当たった軸（X/Y/Z）、当たらなければNone</returns>
+
+    /// Ray Hit Test を返す
+    /// @param ray 判定に使用するレイ
+    /// @param length length に渡す値
+    /// @return 処理結果
     Axis RayHitTest(const Ray& ray, float length = 1000.0f);
 };
-

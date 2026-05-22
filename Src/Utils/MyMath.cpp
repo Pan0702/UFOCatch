@@ -117,7 +117,6 @@ VECTOR3 GetRotateVector(const MATRIX4X4& matIn)
     float dist = magnitude(VECTOR3(toTarget.x, 0, toTarget.z)); // XZ方向の距離
     rotation.x = atan2f(-toTarget.y, dist); // Ｘ回転角度
 
-    // X・Y回転をリセットする
     MATRIX4X4 zMat = mat * XMMatrixInverse(NULL, XMMatrixRotationX(rotation.x) * XMMatrixRotationY(rotation.y));
     VECTOR3 toTargetZ = VECTOR3(0, 1, 0) * zMat;
     rotation.z = atan2f(-toTargetZ.x, toTargetZ.y); // Ｚ回転角度
@@ -176,7 +175,6 @@ MATRIX4X4 GetRotateMatrixZ(const MATRIX4X4& mat)
 //============================================================================
 //   マトリックスから角度の行列を求める
 //    
-//    ・位置成分を取り除く
 //    
 //   const MATRIX4X4& mat	マトリックス
 //   戻り値
@@ -242,7 +240,6 @@ VECTOR3 GetTargetRotateVector(const MATRIX4X4& mWorld, const VECTOR3& vTarget)
     vOut = vRb - vRa; // 自分がターゲットを向くための角度
 
     // 作成した角度の正規化
-    // 念のために角度を０?２πに正規化する
     if (vOut.x < 0) vOut.x += XM_PI * 2;
     if (vOut.x >= XM_PI * 2) vOut.x -= XM_PI * 2;
     if (vOut.y < 0) vOut.y += XM_PI * 2;
@@ -275,9 +272,7 @@ VECTOR3 GetScaleVector(const MATRIX4X4& mat)
 
 //------------------------------------------------------------------------------
 //
-//　２次元・３次元ベクトル用汎用ライブラリ
 //
-//　２次元・３次元ベクトル用の各種汎用ライブラリを設定する
 //　同様の働きをするＸＭライブラリなどもあるが、此処では全てを自作する
 //
 //------------------------------------------------------------------------------
@@ -549,6 +544,3 @@ float Randomf(float min1, float max1)
     std::uniform_real_distribution<float> randLimit(min1, max1);
     return randLimit(mt);
 }
-
-
-

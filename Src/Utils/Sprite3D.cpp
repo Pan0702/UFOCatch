@@ -2,7 +2,6 @@
 //
 // 3Dおよび2Dスプライト描画ライブラリ                                ver 3.3        2024.10.5
 //
-//   ポリゴンでの画像表示、およびライン・矩形表示を行います
 //   Sprite3D.cpp Direct3D.h などと連携して動作します
 //
 //                                                                             Sprite3D.cpp
@@ -893,7 +892,6 @@ void CSprite::DrawArc(CSpriteImage* pImage, float posX, float posY, DWORD srcX, 
 //------------------------------------------------------------------------
 void CSprite::SetShader()
 {
-    // 使用する頂点シェーダー・ピクセルシェーダーをセット
     m_pD3D->m_pDeviceContext->VSSetShader(m_pShader->m_pSprite3D_VS, nullptr, 0);
     m_pD3D->m_pDeviceContext->PSSetShader(m_pShader->m_pSprite3D_PS, nullptr, 0);
 
@@ -904,7 +902,6 @@ void CSprite::SetShader()
     // 頂点インプットレイアウトをセット
     m_pD3D->m_pDeviceContext->IASetInputLayout(m_pShader->m_pSprite3D_VertexLayout);
 
-    // プリミティブ・トポロジーをセット（スプライトなのでトライアングルストリップ）
     m_pD3D->m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
     // サンプラー（線形補間）をセット
@@ -1072,7 +1069,6 @@ bool CSprite::DrawLine3D(const VECTOR3& vStart, const VECTOR3& vEnd, const DWORD
 }
 
 //------------------------------------------------------------------------
-// 3D空間にワールド行列（向き・スケール等）を指定して描画
 //------------------------------------------------------------------------
 bool CSprite::Draw3DWithWorldMatrix(CSpriteImage* pImage, const MATRIX4X4& mWorld, const MATRIX4X4& mView,
                                     const MATRIX4X4& mProj, const VECTOR2& vSize, const VECTOR2& vSrcPos,
@@ -1163,7 +1159,6 @@ bool CSprite::DrawWorld(CSpriteImage* pImage, const VECTOR3& vPos, float radius,
     static constexpr float GROUND_ROTATION = -XM_PI / 2.0f; // X軸で-90度回転させて地面と平行にする
     static constexpr float SPRITE_SIZE = 1.0f;
 
-    // スケール・回転・平行移動行列を作成
     const MATRIX4X4 mScale = XMMatrixScaling(radius * CIRCLE_DIAMETER_SCALE,
                                              radius * CIRCLE_DIAMETER_SCALE,
                                              CIRCLE_DEPTH);
@@ -1287,7 +1282,6 @@ bool CSprite::Draw3D(const VECTOR3& vPos, const MATRIX4X4& mView, const MATRIX4X
     if (SUCCEEDED(
         m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferSprite3D, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
     {
-        // WVP（ワールド・ビュー・投影）行列を転置してセット
         cb.mWVP = XMMatrixTranspose(mWorld * mView * mProj);
 
         // UVアニメーション等のオフセット設定
@@ -1390,7 +1384,6 @@ bool CSprite::DrawLine3D(const VECTOR3& vStart, const VECTOR3& vEnd, const MATRI
     m_pD3D->m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBufferLine, &stride, &offset);
     m_pD3D->m_pDeviceContext->IASetInputLayout(m_pShader->m_pSprite3D_VertexLayout);
 
-    // プリミティブ・トポロジーをラインリストに設定
     m_pD3D->m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
     // テクスチャは無効
@@ -1405,7 +1398,6 @@ bool CSprite::DrawLine3D(const VECTOR3& vStart, const VECTOR3& vEnd, const MATRI
     if (SUCCEEDED(
         m_pD3D->m_pDeviceContext->Map(m_pShader->m_pConstantBufferSprite3D, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
     {
-        // ビュー・投影行列を合成して転送
         cb.mWVP = XMMatrixTranspose(mWorld * mView * mProj);
 
         cb.vUVOffset = VECTOR2(0, 0);
@@ -1971,6 +1963,7 @@ bool CFontTexture::Draw3D(const VECTOR3& vPos, const MATRIX4X4& mView, const MAT
     // ※ 3Dフォントの場合は m_dwKbn = 1 を使用
     DWORD fontsize = (DWORD)vSize.y * 100;
 
+    // 複数の状態や境界条件をまとめて判定する。
     if (m_TextData[m_Idx].m_dwKbn != 1 || m_TextData[m_Idx].m_szText == nullptr || _tcscmp(
             m_TextData[m_Idx].m_szText, szText) != 0 ||
         m_TextData[m_Idx].m_iFontsize != fontsize || m_TextData[m_Idx].m_dwColor != colorABGR || m_TextData[m_Idx].

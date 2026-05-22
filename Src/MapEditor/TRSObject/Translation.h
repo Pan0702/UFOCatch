@@ -1,14 +1,18 @@
 ﻿#pragma once
 #include "TRSBase.h"
 
+/// <summary>ステージエディタで使う Translation の情報と処理をまとめる型</summary>
 class CTranslation : public TRSBase
 {
 private:
-    /// <summary>X/Y/Z軸の移動ギズモメッシュとコライダーを初期化する</summary>
+    /// Meshes を初期化する
     void InitMeshes();
-    void Draw() override{}
+    /// 描画する
+    void Draw() override
+    {
+    }
+
 public:
+    /// CTranslation を初期化する
     CTranslation();
 };
-
-

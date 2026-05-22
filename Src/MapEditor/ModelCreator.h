@@ -8,25 +8,21 @@
 class ModelCreator
 {
 private:
+    /// <summary>ステージエディタで使う Model Info の情報と処理をまとめる型</summary>
     struct ModelInfo
     {
         std::string name;
         CFbxMesh* mesh;
     };
+
     std::vector<ModelInfo> m_models;
+
 public:
-    /// <summary>
-    /// 指定パスのメッシュをロードし、ボタンリストとモデルストレージに登録する
-    /// </summary>
-    /// <param name="path">ロードするメッシュファイルのパス</param>
+    /// Model を作成する
+    /// @param path パス
     void CreateModel(const std::string& path);
 
-    /// <summary>
-    /// FBX ファイルを .mesh に変換してからロードする。
-    /// 出力先は FBX と同じフォルダ・同名の .mesh ファイル。
-    /// </summary>
-    /// <param name="fbxPath">変換する FBX ファイルのパス</param>
+    /// Convert And Load の処理を行う
+    /// @param fbxPath パス
     void ConvertAndLoad(const std::string& fbxPath);
-
 };
-
