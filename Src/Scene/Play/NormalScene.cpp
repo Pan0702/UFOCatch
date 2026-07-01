@@ -11,11 +11,13 @@
 #include "../../System/VisionSystem.h"
 #include "../../Stage/StageFactor.h"
 #include "../../System/Timer.h"
+#include "../../Stage/SkyBox.h"
 using namespace Constants;
 
 CNormalScene::CNormalScene()
 {
-    Instantiate<CStageFactor>()->SpawnObjects(40, 40, 90);
+    Instantiate<CStageFactor>("data/Stage/normal.json");
+    Instantiate<CSkyBox>(Model::BACK_DROP);
     Instantiate<CPlayerCamera>();
     SingleInstantiate<CEnemyManager>()->BuildStaticTree();
     Instantiate<CTimer>(70);
@@ -25,6 +27,7 @@ CNormalScene::CNormalScene()
     Instantiate<CVisionSystem>();
     Instantiate<CDisplayInfo>();
     CGameInstance::Get()->Init(6000);
+    Instantiate<CSkyBox>("data/Ground/SkyBox.mesh");
     AudioManager::Load(Sound::Path::PLAY_BGM,_T(Sound::Key::PLAY_BGM));
     AudioManager::Play(_T(Sound::Key::PLAY_BGM));
 }

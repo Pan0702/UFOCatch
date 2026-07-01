@@ -5,11 +5,23 @@
 #include "SkyBox.h"
 #include "StageObject.h"
 #include "StageQuadTree.h"
+#include "../Common/ShadowObject.h"
 #include "../MapEditor/Import.h"
 #include "../Framework/ResourceManager.h"
 #include "../Utils/MyLib.h"
 #include "StageCollision.h"
 using namespace Constants;
+
+namespace
+{
+    void AttachShadowIfStageObstacle(CStageObject* object, const StageColl& coll)
+    {
+        if (object != nullptr && coll.useOBB && !coll.useHitGround)
+        {
+            Instantiate<CShadowObject>(object, TEXT("data/CircleSuction.png"));
+        }
+    }
+}
 
 CStageFactor::CStageFactor()
 {
@@ -32,7 +44,9 @@ void CStageFactor::SpawnObjects(float sizeX, float sizeZ, int num)
         StageColl coll;
         coll.useOBB = true;
         coll.useHitGround = false;
-        Instantiate<CStageObject>("data/Ground/Prefabs/Tree1a.mesh", VECTOR3(randomX, 0.0f, randomZ), 1.0f, coll);
+        CStageObject* object = Instantiate<CStageObject>(
+            "data/Ground/Prefabs/Tree1a.mesh", VECTOR3(randomX, 0.0f, randomZ), 1.0f, coll);
+        AttachShadowIfStageObstacle(object, coll);
     }
 }
 
@@ -48,7 +62,8 @@ void CStageFactor::SpawnObjects(const std::string& path, const VECTOR2& size, in
             {
                 ResourceManager::LoadFbx(v.modelName.c_str(), v.modelPath.c_str());
             }
-            Instantiate<CStageObject>(v.modelPath.c_str(), v.transform, v.soc);
+            CStageObject* object = Instantiate<CStageObject>(v.modelPath.c_str(), v.transform, v.soc);
+            AttachShadowIfStageObstacle(object, v.soc);
         }
     }
     else
@@ -61,7 +76,9 @@ void CStageFactor::SpawnObjects(const std::string& path, const VECTOR2& size, in
             StageColl coll;
             coll.useOBB = true;
             coll.useHitGround = false;
-            Instantiate<CStageObject>("data/Ground/Prefabs/Tree1a.mesh", VECTOR3(randomX, 0.0f, randomZ), 1.0f, coll);
+            CStageObject* object = Instantiate<CStageObject>(
+                "data/Ground/Prefabs/Tree1a.mesh", VECTOR3(randomX, 0.0f, randomZ), 1.0f, coll);
+            AttachShadowIfStageObstacle(object, coll);
         }
         StageColl soc;
         soc.useOBB = false;

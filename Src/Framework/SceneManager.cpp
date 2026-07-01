@@ -11,14 +11,15 @@
 #include "../Utils/ScreenTransition.h"
 
 using namespace Constants;
+
 namespace
 {
     std::string currentName;
     std::string nextName;
     std::unique_ptr<SceneBase> currentScene;
     std::unique_ptr<SceneFactory> factory;
-    std::unordered_map<BYTE,std::string> sceneTable; 
-    
+    std::unordered_map<BYTE, std::string> sceneTable;
+
     // トランジション（画面遷移演出）
     std::unique_ptr<CScreenTransition> transition;
     std::string pendingSceneName; // トランジション中の次のシーン名
@@ -45,7 +46,7 @@ namespace
         QueryPerformanceCounter(&current);
         float t = static_cast<float>(current.QuadPart - last.QuadPart) / freq.QuadPart;
         float t2 = t;
-        
+
         // deltaTimeは、平均フレームレートの3倍を超えないように制限する（スパイク対策）
         if (recCount >= REC_SIZE)
         {
@@ -69,7 +70,7 @@ void SceneManager::Start()
     nextName = "";
     currentName = "";
 
-    factory =  std::make_unique<SceneFactory>();
+    factory = std::make_unique<SceneFactory>();
     transition = std::make_unique<CScreenTransition>();
     DebugSceneInit();
     currentScene = factory->CreateFirst();
@@ -78,9 +79,9 @@ void SceneManager::Start()
 void SceneManager::Update()
 {
     timeUpdate();
-#ifdef _DEBUG 
+#ifdef _DEBUG
     DebugInput();
-#endif _DEBUG 
+#endif _DEBUG
 
     // トランジション更新
     if (transition)
@@ -91,8 +92,8 @@ void SceneManager::Update()
     {
         if (currentScene != nullptr)
         {
-            if (currentName == SceneName::EDITOR)                                
-            {   
+            if (currentName == SceneName::EDITOR)
+            {
                 ExportData::AllModelsPath(FileName::MODEL_LIST);
             }
             currentScene.reset();
@@ -111,6 +112,15 @@ void SceneManager::Update()
         waitingForFadeIn = false;
         // シーンのロード（currentSceneの生成）が完了した直後にFadeInを開始する
         transition->StartFadeIn();
+    }
+
+    auto input = GameDevice()->m_pDI;
+    if (currentName != SceneName::TITLE
+        && transition
+        && !transition->IsTransitioning()
+        && input->CheckKey(KD_TRG, DIK_T))
+    {
+        ChangeSceneWithTransition(SceneName::TITLE);
     }
 
     if (currentScene != nullptr)
@@ -194,17 +204,16 @@ void SceneManager::DebugInput()
     auto input = GameDevice()->m_pDI;
     for (auto s : sceneTable)
     {
-        if (input->CheckKey(KD_TRG, s.first))       
+        if (input->CheckKey(KD_TRG, s.first))
         {
-            ChangeSceneWithTransition(s.second);    
-            return ;
+            ChangeSceneWithTransition(s.second);
+            return;
         }
     }
 }
 
 void SceneManager::DebugSceneInit()
 {
-  
     sceneTable.emplace(DIK_1, SceneName::TITLE);
     sceneTable.emplace(DIK_2, SceneName::SELECT);
     sceneTable.emplace(DIK_3, SceneName::EASY);

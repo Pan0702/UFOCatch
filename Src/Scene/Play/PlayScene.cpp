@@ -8,17 +8,16 @@
 #include "../../Player/Player.h"
 #include "../../Enemies/AnimalDog/Dog.h"
 #include "../../Enemies/System/AnimalFactor.h"
-#include "../../Enemies/System/Flock.h"
-#include "../../System/DisplayInfo.h"
 #include "../../System/VisionSystem.h"
 #include "../../Stage/StageFactor.h"
 #include "../../System/Timer.h"
+#include "../../Stage/SkyBox.h"
 using namespace Constants;
 
 PlayScene::PlayScene()
 {
+    Instantiate<CStageFactor>("data/Stage/easy.json");
     SingleInstantiate<CEnemyManager>()->BuildStaticTree();
-    Instantiate<CStageFactor>()->SpawnObjects(30, 30, 90);
     Instantiate<CPlayerCamera>();
     Instantiate<CTimer>(30);
     Instantiate<CPlayer>(25);
@@ -27,6 +26,7 @@ PlayScene::PlayScene()
     Instantiate<CVisionSystem>();
     //Instantiate<CDisplayInfo>();
     CGameInstance::Get()->Init(3000);
+    Instantiate<CSkyBox>("data/Ground/SkyBox.mesh");
     m_pUI = new CPlayUI();
     AudioManager::Load(_T(Sound::Key::PLAY_BGM), _T(Sound::Path::PLAY_BGM));
     AudioManager::Play(_T(Sound::Key::PLAY_BGM));
