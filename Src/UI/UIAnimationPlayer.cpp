@@ -10,21 +10,21 @@ CUIAnimationPlayer::CUIAnimationPlayer()
 void CUIAnimationPlayer::AddAnimation(const std::string& name, std::shared_ptr<CUIAnimation> anim)
 {
     anim->SetName(name);
-    m_animations[name] = std::move(anim);  
+    m_animations[name] = std::move(anim);
 }
 
 void CUIAnimationPlayer::Play(const std::string& name, bool loop)
 {
     auto it = m_animations.find(name);
     if (it == m_animations.end()) return;
-    m_pCurrentAnim = it->second.get(); 
+    m_pCurrentAnim = it->second.get();
     m_currentTime = 0.0f;
     m_isPlaying = true;
     m_isPaused = false;
-    m_isLoop = loop; 
-    
+    m_isLoop = loop;
+
     m_currentValues.clear();
-    m_pCurrentAnim->Evaluate(0.0f,m_currentValues);
+    m_pCurrentAnim->Evaluate(0.0f, m_currentValues);
 }
 
 void CUIAnimationPlayer::Stop()
@@ -53,6 +53,7 @@ void CUIAnimationPlayer::Resume()
 
 void CUIAnimationPlayer::Update(float deltaTime)
 {
+    // 複数の状態や境界条件をまとめて判定する。
     if (!m_isPlaying || m_isPaused || !m_pCurrentAnim) return;
 
     m_currentTime += deltaTime;

@@ -32,7 +32,6 @@
 //#define  GRAVITY  -9.8f
 
 // AddAngle関数の戻り値である角度（ラジアン）の限界値
-// 理論値、2.0であるが誤差を考慮して >=1.99f? 1.95f程度とする
 #define  ADDANGLELIMIT  1.99f
 
 // HeightCheck関数で使用する移動先段差を判定する高さの上限値
@@ -61,10 +60,10 @@
 // コリジョン関数の戻り値
 enum CollRet
 {
-    clError = -1,  // エラー
-    clMove = 1,    // 歩行移動中
-    clLand = 2,    // 着地
-    clFall = 3     // 落下中
+    clError = -1, // エラー
+    clMove = 1, // 歩行移動中
+    clLand = 2, // 着地
+    clFall = 3 // 落下中
 };
 
 // ---------------------------------------------------------
@@ -77,20 +76,41 @@ class CAABB
 public:
     VECTOR3 m_vMax;
     VECTOR3 m_vMin;
+
 public:
     CAABB() = default;
+
     CAABB(const VECTOR3& v1, const VECTOR3& v2, const VECTOR3& v3)
     {
-       MakeAABB(v1, v2, v3);
+        MakeAABB(v1, v2, v3);
     }
+
     CAABB(const VECTOR3& v1, const VECTOR3& v2, const FLOAT& r = 0.0f)
     {
-       MakeAABB(v1, v2, r);
+        MakeAABB(v1, v2, r);
     }
+
+    /// AABB を作成する
+    /// @param v1 v1 に渡す値
+    /// @param v2 v2 に渡す値
+    /// @param v3 v3 に渡す値
     void MakeAABB(const VECTOR3& v1, const VECTOR3& v2, const VECTOR3& v3);
+    /// AABB を作成する
+    /// @param v1 v1 に渡す値
+    /// @param v2 v2 に渡す値
+    /// @param r r に渡す値
     void MakeAABB(const VECTOR3& v1, const VECTOR3& v2, const FLOAT& r = 0.0f);
+    /// Hitcheck を返す
+    /// @param other other に渡す値
+    /// @return 成功または条件を満たす場合 true
     bool Hitcheck(const CAABB& other);
+    /// Hitcheck XZ を返す
+    /// @param other other に渡す値
+    /// @return 成功または条件を満たす場合 true
     bool HitcheckXZ(const CAABB& other);
+    /// Vec Pos を取得する
+    /// @param nIdx nIdx に渡す値
+    /// @return 3次元ベクトル
     VECTOR3 GetVecPos(const int& nIdx);
 };
 
@@ -99,9 +119,9 @@ public:
 // ---------------------------------------------------------
 struct ColFace
 {
-    DWORD           dwIdx[3];  // 三角形ポリゴンインデックス
-    VECTOR3         vNormal;   // 三角形ポリゴン法線
-    CAABB           AABB;      // 軸並行バウンディングボックス
+    DWORD dwIdx[3]; // 三角形ポリゴンインデックス
+    VECTOR3 vNormal; // 三角形ポリゴン法線
+    CAABB AABB; // 軸並行バウンディングボックス
 };
 
 // ---------------------------------------------------------
@@ -111,17 +131,19 @@ struct ColMesh
 {
     ColFace* pFace;
     VECTOR3* pVert;
-    int              nNumFace;
-    int              nNumVert;
+    int nNumFace;
+    int nNumVert;
 
+    /// ColMesh を初期化する
     ColMesh()
     {
-       pFace     = nullptr;
-       pVert     = nullptr;
-       nNumFace   = 0;
-       nNumVert   = 0;
+        pFace = nullptr;
+        pVert = nullptr;
+        nNumFace = 0;
+        nNumVert = 0;
     }
 };
+
 // ---------------------------------------------------------
 // 空間分割マップ
 // ---------------------------------------------------------
@@ -133,236 +155,285 @@ struct ChkFace
 {
     ColFace* pFace;
     ChkFace* pNext;
+    /// ChkFace を初期化する
     ChkFace()
     {
-       ZeroMemory(this, sizeof(struct ChkFace));
+        ZeroMemory(this, sizeof(struct ChkFace));
     }
 };
+
 //
 // 空間分割後のポリゴンリスト格納用
 //
 struct ChkBlk
 {
-    ChkFace** ppChkFace;  // dwNumX*dwNumY*dwNumZのポインタ配列
-    VECTOR3          vBlksize;
-    DWORD            dwNumX, dwNumY, dwNumZ;
+    ChkFace** ppChkFace; // dwNumX*dwNumY*dwNumZのポインタ配列
+    VECTOR3 vBlksize;
+    DWORD dwNumX, dwNumY, dwNumZ;
+    /// ChkBlk を初期化する
     ChkBlk()
     {
-       ZeroMemory(this, sizeof(struct ChkBlk));
+        ZeroMemory(this, sizeof(struct ChkBlk));
     }
 };
+
 //
 // 空間分割マップ格納用
 //
 struct ChkColMesh
 {
-    ChkBlk          ChkBlkArray[MESHCKTBL_FACE_MAX];
-    VECTOR3         vMin;
-    VECTOR3         vMax;                    // -- 2020.12.3
+    ChkBlk ChkBlkArray[MESHCKTBL_FACE_MAX];
+    VECTOR3 vMin;
+    VECTOR3 vMax; // -- 2020.12.3
+    /// ChkColMesh を初期化する
     ChkColMesh()
     {
-       ZeroMemory(this, sizeof(struct ChkColMesh));
+        ZeroMemory(this, sizeof(struct ChkColMesh));
     }
 };
 
+/// <summary>汎用ユーティリティで使う Fbx Mesh Ctrl の情報と処理をまとめる型</summary>
 class CFbxMeshCtrl;
+/// <summary>汎用ユーティリティで使う Fbx Mesh の情報と処理をまとめる型</summary>
 class CFbxMesh;
 // ---------------------------------------------------------
 //
 // コリジョンクラス
 //
 // ---------------------------------------------------------
-class  CCollision
+class CCollision
 {
 private:
     CDirect3D* m_pD3D;
     CShader* m_pShader;
-    CFbxMeshCtrl* m_pFbxMeshCtrl;          // -- 2021.2.4
+    CFbxMeshCtrl* m_pFbxMeshCtrl; // -- 2021.2.4
 
     // 衝突判定用の変数
     struct ColFace* m_pIndex;
-    VECTOR3          m_vNormalH;
-    float            m_fHeight;
-    VECTOR3          m_vVertexH[3];
+    VECTOR3 m_vNormalH;
+    float m_fHeight;
+    VECTOR3 m_vVertexH[3];
 
     // メッシュ衝突判定用配列
     // (vectorクラスは遅いため配列を使用する)
-    ColMesh          m_ColArray[MCKTBL_MAX];
-    int              m_nNum;          // 配列の要素数
+    ColMesh m_ColArray[MCKTBL_MAX];
+    int m_nNum; // 配列の要素数
 
     // 空間分割マップ
-    ChkColMesh       m_ChkColMesh[MCKTBL_MAX];
+    ChkColMesh m_ChkColMesh[MCKTBL_MAX];
 
     // コリジョン移動用
-    bool             m_bMoveFlag;     // 移動するかどうか (移動の主導)
-    MATRIX4X4        m_mWorldOld;     // 移動マトリックス（現在位置の一つ前）
-    MATRIX4X4        m_mWorld;        // 移動マトリックスの現在位置
-    MATRIX4X4        m_mWorldInv;     // 移動マトリックスの現在位置の逆マトリックス
+    bool m_bMoveFlag; // 移動するかどうか (移動の主導)
+    MATRIX4X4 m_mWorldOld; // 移動マトリックス（現在位置の一つ前）
+    MATRIX4X4 m_mWorld; // 移動マトリックスの現在位置
+    MATRIX4X4 m_mWorldInv; // 移動マトリックスの現在位置の逆マトリックス
 
 public:
-    CCollision();        // -- 2024.3.13
-    CCollision(CFbxMeshCtrl* pFbxMeshCtrl);   // -- 2021.2.4
+    /// CCollision を初期化する
+    CCollision(); // -- 2024.3.13
+    /// CCollision を初期化する
+    /// @param pFbxMeshCtrl pFbxMeshCtrl に渡す値
+    CCollision(CFbxMeshCtrl* pFbxMeshCtrl); // -- 2021.2.4
 
+    /// CCollision の終了処理を行う
     ~CCollision();
 
-    /// <summary>
-    /// FbxMeshファイルから、コリジョン用の当たりデータを作成する
-    /// 当たりデータは原点に設定される
-    /// </summary>
-    /// <param name="">モデルデータのパス</param>
-    /// <returns>true:成功  false:ファイルが見つからない等</returns>
-    bool   AddFbxLoad( const TCHAR*);
+    /// Fbx Load を追加する
+    /// @return 成功または条件を満たす場合 true
+    bool AddFbxLoad(const TCHAR*);
 
-    /// <summary>
-    /// FbxMeshファイルから、コリジョン用の当たりデータを作成する
-    /// 当たりデータを設定する座標を指定する
-    /// </summary>
-    /// <param name="">モデルデータのパス</param>
-    /// <param name="vOffset">設定する座標</param>
-    /// <returns>true:成功  false:ファイルが見つからない等</returns>
-    bool   AddFbxLoad( const TCHAR*, const VECTOR3& vOffset);
+    /// Fbx Load を追加する
+    /// @param vOffset vOffset に渡す値
+    /// @return 成功または条件を満たす場合 true
+    bool AddFbxLoad(const TCHAR*, const VECTOR3& vOffset);
 
-    /// <summary>
-    /// FbxMeshファイルから、コリジョン用の当たりデータを作成する
-    /// 当たりデータを設定するワールドマトリックスを指定する
-    /// </summary>
-    /// <param name="">モデルデータのパス</param>
-    /// <param name="mOffset">設定するマトリックス</param>
-    /// <returns>true:成功  false:ファイルが見つからない等</returns>
-    bool   AddFbxLoad( const TCHAR*, const MATRIX4X4& mOffset);
+    /// Fbx Load を追加する
+    /// @param mOffset mOffset に渡す値
+    /// @return 成功または条件を満たす場合 true
+    bool AddFbxLoad(const TCHAR*, const MATRIX4X4& mOffset);
 
-    /// <summary>
-    /// FbxMeshデータから、コリジョン用の当たりデータを作成する
-    /// 当たりデータは原点に設定される
-    /// </summary>
-    /// <param name="">メッシュデータ</param>
-    /// <returns>true:成功  false:ファイルが見つからない等</returns>
-    bool   AddFbxLoad(const CFbxMesh* pFbxMesh);
+    /// Fbx Load を追加する
+    /// @param pFbxMesh pFbxMesh に渡す値
+    /// @return 成功または条件を満たす場合 true
+    bool AddFbxLoad(const CFbxMesh* pFbxMesh);
 
-    /// <summary>
-    /// FbxMeshデータから、コリジョン用の当たりデータを作成する
-    /// 当たりデータを設定する座標を指定する
-    /// </summary>
-    /// <param name="">メッシュデータ</param>
-    /// <param name="vOffset">設定する座標</param>
-    /// <returns>true:成功  false:ファイルが見つからない等</returns>
-    bool   AddFbxLoad(const CFbxMesh* pFbxMesh, const VECTOR3& vOffset);
+    /// Fbx Load を追加する
+    /// @param pFbxMesh pFbxMesh に渡す値
+    /// @param vOffset vOffset に渡す値
+    /// @return 成功または条件を満たす場合 true
+    bool AddFbxLoad(const CFbxMesh* pFbxMesh, const VECTOR3& vOffset);
 
-    /// <summary>
-    /// FbxMeshデータから、コリジョン用の当たりデータを作成する
-    /// 当たりデータを設定するワールドマトリックスを指定する
-    /// </summary>
-    /// <param name="">メッシュデータ</param>
-    /// <param name="mOffset">設定するワールドマトリックス</param>
-    /// <returns>true:成功  false:ファイルが見つからない等</returns>
-    bool   AddFbxLoad(const CFbxMesh* pFbxMesh, const MATRIX4X4& mOffset);
+    /// Fbx Load を追加する
+    /// @param pFbxMesh pFbxMesh に渡す値
+    /// @param mOffset mOffset に渡す値
+    /// @return 成功または条件を満たす場合 true
+    bool AddFbxLoad(const CFbxMesh* pFbxMesh, const MATRIX4X4& mOffset);
 
-    /// <summary>
-    /// 線分との交差判定を行う
-    /// 始点から一番近いポリゴンの交差情報を返します
-    /// ポリゴンの表面のみ判定し、裏面は判定しません
-    /// </summary>
-    /// <param name="startIn">線分の始点</param>
-    /// <param name="endIn">線分の終点</param>
-    /// <param name="vHit">交差した座標を受け取る場所(Out)</param>
-    /// <param name="vNormal">交差した場所の法線を受け取る場所(Out)</param>
-    /// <returns>交差していたらtrue</returns>
-    bool    IsCollisionLay(const VECTOR3& startIn, const VECTOR3& endIn, VECTOR3& vHit, VECTOR3& vNormal);
+    /// Collision Lay を判定する
+    /// @param startIn startIn に渡す値
+    /// @param endIn endIn に渡す値
+    /// @param vHit vHit に渡す値
+    /// @param vNormal vNormal に渡す値
+    /// @return 成功または条件を満たす場合 true
+    bool IsCollisionLay(const VECTOR3& startIn, const VECTOR3& endIn, VECTOR3& vHit, VECTOR3& vNormal);
 
-    /// <summary>
-    /// 球との交差判定を行う
-    /// 移動開始点から一番近いポリゴンの交差情報を返します
-    /// </summary>
-    /// <param name="startIn">移動開始点</param>
-    /// <param name="endIn">移動終了点</param>
-    /// <param name="fRadius">半径</param>
-    /// <param name="vHit">交差した座標を受け取る場所(Out)</param>
-    /// <param name="vNormal">交差した場所の法線を受け取る場所(Out)</param>
-    /// <returns>交差していたらtrue</returns>
-    bool    IsCollisionSphere(const VECTOR3& startIn, const VECTOR3& endIn, const float& fRadius, VECTOR3& vHit, VECTOR3& vNormal);
+    /// Collision Sphere を判定する
+    /// @param startIn startIn に渡す値
+    /// @param endIn endIn に渡す値
+    /// @param fRadius 半径
+    /// @param vHit vHit に渡す値
+    /// @param vNormal vNormal に渡す値
+    /// @return 成功または条件を満たす場合 true
+    bool IsCollisionSphere(const VECTOR3& startIn, const VECTOR3& endIn, const float& fRadius, VECTOR3& vHit,
+                           VECTOR3& vNormal);
 
-    /// <summary>
-    /// 球の移動経路とポリゴンとの交差判定を行う
-    /// 移動開始点から一番近いポリゴンで交差判定を行います
-    /// 交差している場合、球がポリゴンの外に出るように移動終了点positionの値を変更します
-    /// </summary>
-    /// <param name="positionOld">移動前点</param>
-    /// <param name="position">移動後点(In/Out)</param>
-    /// <param name="fRadius">半径</param>
-    /// <returns>交差していたらtrue</returns>
-    bool    IsCollisionMove(const VECTOR3& positionOld, VECTOR3& position, float fRadius = 0.2f);
+    /// Collision Move を判定する
+    /// @param positionOld 座標
+    /// @param position 座標
+    /// @param fRadius 半径
+    /// @return 成功または条件を満たす場合 true
+    bool IsCollisionMove(const VECTOR3& positionOld, VECTOR3& position, float fRadius = 0.2f);
 
-    /// <summary>
-    /// 球の移動経路とポリゴンとの交差判定を行う
-    /// 移動開始点から一番近いポリゴンの交差情報を返します
-    /// 交差している場合、球がポリゴンの外に出るように移動終了点positionの値を変更します
-    /// </summary>
-    /// <param name="positionOld">移動前点</param>
-    /// <param name="position">移動後点(In/Out)</param>
-    /// <param name="vHit">交差した座標を受け取る場所(Out)</param>
-    /// <param name="vNormal">交差した場所の法線を受け取る場所(Out)</param>
-    /// <param name="fRadius">半径</param>
-    /// <returns>交差していたらtrue</returns>
-    bool    IsCollisionMove(const VECTOR3& positionOld, VECTOR3& position, VECTOR3& vHit, VECTOR3& vNormal, float fRadius = 0.2f);
+    /// Collision Move を判定する
+    /// @param positionOld 座標
+    /// @param position 座標
+    /// @param vHit vHit に渡す値
+    /// @param vNormal vNormal に渡す値
+    /// @param fRadius 半径
+    /// @return 成功または条件を満たす場合 true
+    bool IsCollisionMove(const VECTOR3& positionOld, VECTOR3& position, VECTOR3& vHit, VECTOR3& vNormal,
+                         float fRadius = 0.2f);
 
-    /// <summary>
-    /// 球の移動経路と重力の影響を考慮した交差判定を行う
-    /// 移動開始点から一番近いポリゴンで交差判定を行います
-    /// 交差している場合、球がポリゴンの外に出るように移動終了点positionの値を変更します
-    /// </summary>
-    /// <param name="positionOld">移動前点</param>
-    /// <param name="position">移動後点(In/Out)</param>
-    /// <param name="fRadius">半径</param>
-    /// <returns>コリジョン判定の結果</returns>
+    /// Collision Move Gravity を判定する
+    /// @param positionOld 座標
+    /// @param position 座標
+    /// @param fRadius 半径
+    /// @return 処理結果
     CollRet IsCollisionMoveGravity(const VECTOR3& positionOld, VECTOR3& position, float fRadius = 0.2f);
 
-    /// <summary>
-    /// 球の移動経路と重力の影響を考慮した交差判定を行う
-    /// 移動開始点から一番近いポリゴンで交差判定を行います
-    /// 交差している場合、球がポリゴンの外に出るように移動終了点positionの値を変更します
-    /// </summary>
-    /// <param name="positionOld">移動前点</param>
-    /// <param name="position">移動後点(In/Out)</param>
-    /// <param name="vHit">交差した座標を受け取る場所(Out)</param>
-    /// <param name="vNormal">交差した場所の法線を受け取る場所(Out)</param>
-    /// <param name="fRadius">半径</param>
-    /// <returns>コリジョン判定の結果</returns>
-    CollRet IsCollisionMoveGravity(const VECTOR3& positionOld, VECTOR3& position, VECTOR3& vHit, VECTOR3& vNormal, float fRadius = 0.2f);
+    /// Collision Move Gravity を判定する
+    /// @param positionOld 座標
+    /// @param position 座標
+    /// @param vHit vHit に渡す値
+    /// @param vNormal vNormal に渡す値
+    /// @param fRadius 半径
+    /// @return 処理結果
+    CollRet IsCollisionMoveGravity(const VECTOR3& positionOld, VECTOR3& position, VECTOR3& vHit, VECTOR3& vNormal,
+                                   float fRadius = 0.2f);
 
-    /// <summary>
-    /// 移動マップのマトリックスの初期化と設定、参照用
-    /// (通常のマップには関係ない)
-    /// </summary>
-    /// <param name="">ワールドマトリックス</param>
-    void   InitWorldMatrix(const MATRIX4X4&);
-    void   SetWorldMatrix(const MATRIX4X4&);
-    void   SaveWorldMatrix() { m_mWorldOld = m_mWorld; }
-    MATRIX4X4 WorldMatrix(){ return m_mWorld;}
+    /// World Matrix を初期化する
+    void InitWorldMatrix(const MATRIX4X4&);
+    /// World Matrix を設定する
+    void SetWorldMatrix(const MATRIX4X4&);
+    /// World Matrix を保存する
+    void SaveWorldMatrix() { m_mWorldOld = m_mWorld; }
+    /// World Matrix を返す
+    /// @return 行列
+    MATRIX4X4 WorldMatrix() { return m_mWorld; }
 
-    /// <summary>
-    /// マップフラグの参照
-    /// </summary>
-    /// <returns>移動マップのときtrue</returns>
-    bool   MoveFlag() { return m_bMoveFlag; }
+    /// Flag を移動する
+    /// @return 成功または条件を満たす場合 true
+    bool MoveFlag() { return m_bMoveFlag; }
 
-    void    GetChkAABB(VECTOR3& vMin, VECTOR3& vMax);
+    /// Chk AABB を取得する
+    /// @param vMin vMin に渡す値
+    /// @param vMax vMax に渡す値
+    void GetChkAABB(VECTOR3& vMin, VECTOR3& vMax);
 
 private:
-    void   makeChkColMesh(const int& nNum, const VECTOR3& vMin, const VECTOR3& vMax);
-    void   getChkArrayIdx(const int& nNum, const int& nNo, CAABB AABB, int nIdx[], int& nIMax);
-    void   setChkArray(const int& nNum, const int& nNo, const int& nIdx, ColFace* pFace);
-    void   clearAll(void);
-    void   deleteAll(void);
+    /// make Chk Col Mesh の処理を行う
+    /// @param nNum nNum に渡す値
+    /// @param vMin vMin に渡す値
+    /// @param vMax vMax に渡す値
+    void makeChkColMesh(const int& nNum, const VECTOR3& vMin, const VECTOR3& vMax);
+    /// get Chk Array Idx の処理を行う
+    /// @param nNum nNum に渡す値
+    /// @param nNo nNo に渡す値
+    /// @param AABB AABB に渡す値
+    /// @param nIMax nIMax に渡す値
+    void getChkArrayIdx(const int& nNum, const int& nNo, CAABB AABB, int nIdx[], int& nIMax);
+    /// set Chk Array の処理を行う
+    /// @param nNum nNum に渡す値
+    /// @param nNo nNo に渡す値
+    /// @param nIdx nIdx に渡す値
+    /// @param pFace pFace に渡す値
+    void setChkArray(const int& nNum, const int& nNo, const int& nIdx, ColFace* pFace);
+    /// clear All の処理を行う
+    void clearAll(void);
+    /// delete All の処理を行う
+    void deleteAll(void);
 
-    void    getMeshLimit(const int& nNum, const int& nNo, const VECTOR3& vNow, const VECTOR3& vOld, const float& fRadius,
+    /// get Mesh Limit の処理を行う
+    /// @param nNum nNum に渡す値
+    /// @param nNo nNo に渡す値
+    /// @param vNow vNow に渡す値
+    /// @param vOld vOld に渡す値
+    /// @param fRadius 半径
+    /// @param nStatrX nStatrX に渡す値
+    /// @param nEndX nEndX に渡す値
+    /// @param nStatrY nStatrY に渡す値
+    /// @param nEndY nEndY に渡す値
+    /// @param nStatrZ nStatrZ に渡す値
+    /// @param nEndZ nEndZ に渡す値
+    void getMeshLimit(const int& nNum, const int& nNo, const VECTOR3& vNow, const VECTOR3& vOld, const float& fRadius,
                       int& nStatrX, int& nEndX, int& nStatrY, int& nEndY, int& nStatrZ, int& nEndZ);
-    int     checkWallMove(const VECTOR3& positionOld, VECTOR3& position, VECTOR3& vHit, VECTOR3& vNormal, float fRadius); 
-    void    initHeightCheck();
-    bool    checkHeight(const VECTOR3& positionOld, VECTOR3& position, const float fObjheight);
+    /// check Wall Move を返す
+    /// @param positionOld 座標
+    /// @param position 座標
+    /// @param vHit vHit に渡す値
+    /// @param vNormal vNormal に渡す値
+    /// @param fRadius 半径
+    /// @return 処理結果の数値
+    int checkWallMove(const VECTOR3& positionOld, VECTOR3& position, VECTOR3& vHit, VECTOR3& vNormal, float fRadius);
+    /// init Height Check の処理を行う
+    void initHeightCheck();
+    /// check Height を返す
+    /// @param positionOld 座標
+    /// @param position 座標
+    /// @param fObjheight 高さ
+    /// @return 成功または条件を満たす場合 true
+    bool checkHeight(const VECTOR3& positionOld, VECTOR3& position, const float fObjheight);
+    /// check Floor Move を返す
+    /// @param positionOld 座標
+    /// @param position 座標
+    /// @return 処理結果
     CollRet checkFloorMove(const VECTOR3& positionOld, VECTOR3& position);
-    int     checkCollisionMove(const VECTOR3& positionOld, VECTOR3& position, VECTOR3& vHit, VECTOR3& vNormal, float fRadius);    // -- 2024.9.10
-    void    getDistNormal(const VECTOR3 vVec[], const VECTOR3& vNow, const VECTOR3& vOld, const VECTOR3& vFaceNorm, float& fNowDist, float& fOldDist, float& fLayDist);
-    int     checkLay(const VECTOR3[], const VECTOR3& vNow, const VECTOR3& vOld, const VECTOR3& vFaceNorm, const float& fNowDist, const float& fOldDist, const float& fLayDist, VECTOR3& vHit);
-    int     checkNear(const VECTOR3 vVec[], const VECTOR3& vNow, const VECTOR3& vFaceNorm, const float& fNowDist, float fRadius, VECTOR3& vHit);
-
+    /// check Collision Move を返す
+    /// @param positionOld 座標
+    /// @param position 座標
+    /// @param vHit vHit に渡す値
+    /// @param vNormal vNormal に渡す値
+    /// @param fRadius 半径
+    /// @return 処理結果の数値
+    int checkCollisionMove(const VECTOR3& positionOld, VECTOR3& position, VECTOR3& vHit, VECTOR3& vNormal,
+                           float fRadius); // -- 2024.9.10
+    /// get Dist Normal の処理を行う
+    /// @param vNow vNow に渡す値
+    /// @param vOld vOld に渡す値
+    /// @param vFaceNorm vFaceNorm に渡す値
+    /// @param fNowDist fNowDist に渡す値
+    /// @param fOldDist fOldDist に渡す値
+    /// @param fLayDist fLayDist に渡す値
+    void getDistNormal(const VECTOR3 vVec[], const VECTOR3& vNow, const VECTOR3& vOld, const VECTOR3& vFaceNorm,
+                       float& fNowDist, float& fOldDist, float& fLayDist);
+    /// check Lay を返す
+    /// @param vNow vNow に渡す値
+    /// @param vOld vOld に渡す値
+    /// @param vFaceNorm vFaceNorm に渡す値
+    /// @param fNowDist fNowDist に渡す値
+    /// @param fOldDist fOldDist に渡す値
+    /// @param fLayDist fLayDist に渡す値
+    /// @param vHit vHit に渡す値
+    /// @return 処理結果の数値
+    int checkLay(const VECTOR3 [], const VECTOR3& vNow, const VECTOR3& vOld, const VECTOR3& vFaceNorm,
+                 const float& fNowDist, const float& fOldDist, const float& fLayDist, VECTOR3& vHit);
+    /// check Near を返す
+    /// @param vNow vNow に渡す値
+    /// @param vFaceNorm vFaceNorm に渡す値
+    /// @param fNowDist fNowDist に渡す値
+    /// @param fRadius 半径
+    /// @param vHit vHit に渡す値
+    /// @return 処理結果の数値
+    int checkNear(const VECTOR3 vVec[], const VECTOR3& vNow, const VECTOR3& vFaceNorm, const float& fNowDist,
+                  float fRadius, VECTOR3& vHit);
 };

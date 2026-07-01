@@ -43,7 +43,6 @@ void Camera::Focus()
     else
         horiz = VECTOR3(1.0f, 0.0f, 0.0f); // 真上にいた場合のフォールバック
 
-    // 仰角45度: cos45° = sin45° = 1/√2 なので水平・垂直成分が等しい
     const float COS_45 = cosf(XM_PI / 4.0f);
     device->m_vLookatPt = t->position;
     device->m_vEyePt = t->position
@@ -59,7 +58,6 @@ void Camera::Move()
     auto device = GameDevice();
     if (device == nullptr) return;
 
-    // カメラの向きからワールド空間の前方・右方向を計算
     const VECTOR3 forward = normalize((device->m_vLookatPt - device->m_vEyePt));
     const VECTOR3 right = XMVector3Normalize(XMVector3Cross(up, forward));
 

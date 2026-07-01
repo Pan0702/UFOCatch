@@ -3,30 +3,33 @@
 #include "../../UI/UIButtons.h"
 #include "../../UI/UIImage.h"
 
+/// <summary>シーンで使う Select UI の情報と処理をまとめる型</summary>
 class CSelectUI : public CUIBase
 {
 public:
+    /// CSelectUI を初期化する
     CSelectUI();
 
 private:
-    /// @brief buttonの初期化処理
+    /// Buttons を初期化する
     void InitButtons();
 
-    /// @brief バックイメージの初期化処理
+    /// Back Image の処理を行う
     void BackImage();
 
-    /// @brief 難易度画像の初期化処理
+    /// Difficulty Image を初期化する
     void InitDifficultyImage();
 
-    /// @brief フォーカス中のボタンに対応する難易度画像を更新する
+    /// Difficulty Image を毎フレームの状態を更新する
     void UpdateDifficultyImage();
 
+    /// 毎フレームの状態を更新する
     void Update() override;
 
     CUIButtons m_buttons;
     std::vector<std::string> m_sceneNames;
 
-    CUIImage* m_pDifficultyImage;               // 難易度表示画像ウィジェット
+    CUIImage* m_pDifficultyImage; // 難易度表示画像ウィジェット
     std::vector<CSpriteImage*> m_difficultyTextures; // N/E/T に対応するテクスチャ
-    int m_lastFocusIndex;                        // 前フレームのフォーカスインデックス
+    int m_lastFocusIndex; // 前フレームのフォーカスインデックス
 };

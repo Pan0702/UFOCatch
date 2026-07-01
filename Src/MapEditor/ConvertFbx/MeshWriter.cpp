@@ -4,13 +4,12 @@
 
 #include <windows.h>
 
-// 頂点・インデックスデータを .mesh フォーマットでファイルに書き出す
 // フォーマットは FbxMesh.cpp の Load 関数から逆算
 bool MeshWriter::Write(
-    const std::string&             path,
-    const std::string&             textureName,
+    const std::string& path,
+    const std::string& textureName,
     const std::vector<MeshVertex>& verts,
-    const std::vector<uint32_t>&   indices)
+    const std::vector<uint32_t>& indices)
 {
     std::ofstream file(path, std::ios::binary);
     if (!file)
@@ -21,7 +20,7 @@ bool MeshWriter::Write(
 
     // ---- Magic "MESH2010" (WCHAR[8] = 16 bytes) ----
     // Head[6] = '1' -> static mesh として認識される
-    WCHAR magic[] = L"MESH2010";  // 9要素（ヌル終端含む）だが書き込みは8文字分のみ
+    WCHAR magic[] = L"MESH2010"; // 9要素（ヌル終端含む）だが書き込みは8文字分のみ
     file.write(reinterpret_cast<const char*>(magic), 8 * sizeof(WCHAR));
 
     // ---- テクスチャ数 ----
@@ -59,9 +58,9 @@ bool MeshWriter::Write(
 
     // ---- このメッシュのテクスチャ数 + テクスチャ番号インデックス ----
     const int texNumforMesh = 1;
-    const int texIndex        = 0;
+    const int texIndex = 0;
     file.write(reinterpret_cast<const char*>(&texNumforMesh), sizeof(int));
-    file.write(reinterpret_cast<const char*>(&texIndex),        sizeof(int));
+    file.write(reinterpret_cast<const char*>(&texIndex), sizeof(int));
 
     return true;
 }

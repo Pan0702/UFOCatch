@@ -134,7 +134,6 @@ bool CEnemyBase::GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const
     MATRIX4X4 scaleM = XMMatrixScaling(transform.scale.x, transform.scale.y, transform.scale.z);
     MATRIX4X4 transformMatrix = scaleM * rotY;
 
-    // 変換後の頂点の最小・最大値を求める
     float minX = FLT_MAX, maxX = -FLT_MAX;
     float minZ = FLT_MAX, maxZ = -FLT_MAX;
 
@@ -208,6 +207,7 @@ void CEnemyBase::ResolveOBBCollisions()
 
 void CEnemyBase::CalcApplyPushback(CEnemyBase* other)
 {
+    // 複数の状態や境界条件をまとめて判定する。
     if (m_pBBox == nullptr || other == nullptr || other->GetBBox() == nullptr) return;
 
     // 自分と相手のOBB中心座標を計算

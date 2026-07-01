@@ -3,14 +3,13 @@
 
 namespace MyLib
 {
-    /// pathからファイル名を取り出す
-    /// @param path ファイルパス
-    /// @return ファイル名
+    /// Path To Name を切り替える
+    /// @param path パス
+    /// @return 取得した文字列
     std::string ChangePathToName(const std::string& path);
-    /// 与えられたファイルのフォーマットが自分が欲しいものと同じかどうか
-    /// @param path ファイルパス
-    /// @param format 自分が欲しい形式
-    /// @return 同じフォーマットならtrue
+    /// Same Format を判定する
+    /// @param path パス
+    /// @param format format に渡す値
+    /// @return 成功または条件を満たす場合 true
     bool IsSameFormat(const std::string& path, const std::string& format = "json");
 }
-

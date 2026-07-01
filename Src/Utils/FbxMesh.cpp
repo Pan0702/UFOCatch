@@ -153,6 +153,7 @@ bool CFbxMesh::Load(const TCHAR* FName)
         // ファイルヘッダ(WCHARの8文字)のチェック
         WCHAR Head[8];
         memcpy_s(Head, sizeof(Head), p, sizeof(Head));
+        // 複数の状態や境界条件をまとめて判定する。
         if (Head[0] == L'M' && Head[1] == L'E' && Head[2] == L'S' && Head[3] == L'H')
         {
             ;
@@ -305,9 +306,7 @@ bool CFbxMesh::Load(const TCHAR* FName)
                     m_pMeshArray[mi].m_pTextureHeight = m_pTextureHeightArray[n]; // テクスチャーHeight配列のアドレスをセット
                     m_pMeshArray[mi].m_pTextureSpecular = m_pTextureSpecularArray[n]; // テクスチャーSpecular配列のアドレスをセット
                     m_pMeshArray[mi].m_pMaterialDiffuse = m_pMaterialDiffuseArray[n];
-                    // マテリアル・ディフューズ色   // -- 2020.12.15
                     m_pMeshArray[mi].m_pMaterialSpecular = m_pMaterialSpecularArray[n];
-                    // マテリアル・スペキュラー色   // -- 2020.12.15
                     p += sizeof(int);
                 }
 
@@ -370,9 +369,8 @@ bool CFbxMesh::Load(const TCHAR* FName)
                     m_pMeshArray[mi].m_pTextureNormal = m_pTextureNormalArray[n]; // ノーマルテクスチャー配列のアドレスをセット
                     m_pMeshArray[mi].m_pTextureHeight = m_pTextureHeightArray[n]; // ハイトテクスチャー配列のアドレスをセット
                     m_pMeshArray[mi].m_pTextureSpecular = m_pTextureSpecularArray[n]; // Specularテクスチャー配列のアドレスをセット
-                    m_pMeshArray[mi].m_pMaterialDiffuse = m_pMaterialDiffuseArray[n]; // マテリアル・ディフューズ色  // -- 2020.12.15
+                    m_pMeshArray[mi].m_pMaterialDiffuse = m_pMaterialDiffuseArray[n];
                     m_pMeshArray[mi].m_pMaterialSpecular = m_pMaterialSpecularArray[n];
-                    // マテリアル・スペキュラー色  // -- 2020.12.15
                     p += sizeof(int);
                 }
 
@@ -698,7 +696,6 @@ HRESULT CFbxMesh::SetSkinVIBuffer(const DWORD& mi, const SkinVertexNormal* verti
 //
 // 	メッシュの描画順を決定し、m_dwRenderIdxArrayに設定する関数
 // 
-//	・視点からメッシュの中心点までの距離を元に並び替え、
 //    描画順をm_dwRenderIdxArrayに設定する
 // 
 // 引数
@@ -949,6 +946,7 @@ bool CFbxMesh::LoadAnimation(int id, const TCHAR* FName, bool loopFlag, const RO
         // ファイルヘッダ(WCHARの8文字)のチェック
         WCHAR Head[8];
         memcpy_s(Head, sizeof(Head), p, sizeof(Head));
+        // 複数の状態や境界条件をまとめて判定する。
         if (Head[0] == L'A' && Head[1] == L'N' && Head[2] == L'M' && Head[3] == L'X')
         {
             ;
@@ -1393,7 +1391,6 @@ MATRIX4X4 CFbxMesh::GetRootAnimMatrices(Animator* animStatus, const int& UpFrame
     }
 
     // アニメーションフレームに増分値を加味して現在値とする。
-    // 上限・下限値を超えていた場合は適切な位置に訂正する。
     // なお、最初とはanimFrameを０フレームにすること。startFrameではない。理由はanimFrameは添字番号だからである。
     int animFrameW;
     animFrameW = animStatus->CurrentFrame() + UpFrame; // -- 2024.9.5
@@ -1402,6 +1399,7 @@ MATRIX4X4 CFbxMesh::GetRootAnimMatrices(Animator* animStatus, const int& UpFrame
         animFrameW = animFrameW + (m_Animation[animStatus->PlayingID()].endFrame - m_Animation[animStatus->PlayingID()].
             startFrame);
     }
+    // 複数の状態や境界条件をまとめて判定する。
     if (animFrameW > m_Animation[animStatus->PlayingID()].endFrame - m_Animation[animStatus->PlayingID()].startFrame)
     {
         animFrameW = animFrameW - (m_Animation[animStatus->PlayingID()].endFrame - m_Animation[animStatus->PlayingID()].
@@ -1445,7 +1443,6 @@ MATRIX4X4 CFbxMesh::GetRootAnimUpMatrices(Animator* animStatus, const int& UpFra
     }
 
     // アニメーションフレームに増分値を加味して現在値とする。
-    // 上限・下限値を超えていた場合は適切な位置に訂正する。
     // なお、最初とはanimFrameを０フレームにすること。startFrameではない。理由はanimFrameは添字番号だからである。
     int animFrameW;
     animFrameW = animStatus->CurrentFrame() + UpFrame; // -- 2024.9.5
@@ -1454,6 +1451,7 @@ MATRIX4X4 CFbxMesh::GetRootAnimUpMatrices(Animator* animStatus, const int& UpFra
         animFrameW = animFrameW + (m_Animation[animStatus->PlayingID()].endFrame - m_Animation[animStatus->PlayingID()].
             startFrame); // -- 2024.9.5
     }
+    // 複数の状態や境界条件をまとめて判定する。
     if (animFrameW > m_Animation[animStatus->PlayingID()].endFrame - m_Animation[animStatus->PlayingID()].startFrame)
     {
         animFrameW = animFrameW - (m_Animation[animStatus->PlayingID()].endFrame - m_Animation[animStatus->PlayingID()].
@@ -1616,7 +1614,6 @@ void CFbxMesh::RenderStatic(const MATRIX4X4& mWorld, const MATRIX4X4& mView, con
     //頂点インプットレイアウトをセット
     m_pD3D->m_pDeviceContext->IASetInputLayout(m_pShader->m_pFbxStaticMesh_VertexLayout);
 
-    //プリミティブ・トポロジーをセット
     m_pD3D->m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     //テクスチャーサンプラーをシェーダーに渡す
@@ -1755,7 +1752,6 @@ void CFbxMesh::RenderDisplaceStatic(const MATRIX4X4& mWorld, const MATRIX4X4& mV
     //  (ディスプレイスメントマッピングも、頂点レイアウトは、スタティックメッシュと共用)
     m_pD3D->m_pDeviceContext->IASetInputLayout(m_pShader->m_pFbxStaticMesh_VertexLayout);
 
-    // プリミティブ・トポロジーをセット(ディスプレイスメントマッピング用)
     m_pD3D->m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 
 
@@ -1991,7 +1987,6 @@ void CFbxMesh::Draw(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4
     //頂点インプットレイアウトをセット
     m_pD3D->m_pDeviceContext->IASetInputLayout(m_pShader->m_pFbxSkinMesh_VertexLayout);
 
-    //プリミティブ・トポロジーをセット
     m_pD3D->m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     //テクスチャーサンプラーをシェーダーに渡す
@@ -2026,7 +2021,7 @@ void CFbxMesh::Draw(Animator* animStatus, const MATRIX4X4& mWorld, const MATRIX4
 
         // ボーン行列をボーンのコンスタントバッファにセット
         if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(
-            m_pShader->m_pConstantBufferBone2, // マップするリソース・ボーン行列用コンスタントバッファ
+            m_pShader->m_pConstantBufferBone2,
             0, // サブリソースのインデックス番号
             D3D11_MAP_WRITE_DISCARD, // 書き込みアクセス
             0, //
@@ -2173,7 +2168,6 @@ void CFbxMesh::DrawDisplace(Animator* animStatus, const MATRIX4X4& mWorld, const
     //  (ディスプレイスメントマッピングも、頂点レイアウトは、スキンメッシュと共用)
     m_pD3D->m_pDeviceContext->IASetInputLayout(m_pShader->m_pFbxSkinMesh_VertexLayout);
 
-    // プリミティブ・トポロジーをセット(ディスプレイスメントマッピング用)
     m_pD3D->m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 
 
@@ -2211,7 +2205,7 @@ void CFbxMesh::DrawDisplace(Animator* animStatus, const MATRIX4X4& mWorld, const
 
         // ボーン行列をボーンのコンスタントバッファにセット
         if (SUCCEEDED(m_pD3D->m_pDeviceContext->Map(
-            m_pShader->m_pConstantBufferBone2, // マップするリソース・ボーン行列用コンスタントバッファ
+            m_pShader->m_pConstantBufferBone2,
             0, // サブリソースのインデックス番号
             D3D11_MAP_WRITE_DISCARD, // 書き込みアクセス
             0, //

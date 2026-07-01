@@ -8,27 +8,36 @@
 class WipeAnimator
 {
 public:
+    /// WipeAnimator を初期化する
+    /// @param slotCount 個数
     WipeAnimator(int slotCount)
         : m_clipT(slotCount, 0.0f), m_closing(slotCount, true)
     {
         if (slotCount > 0)
         {
-            m_clipT[0]   = 1.0f;
+            m_clipT[0] = 1.0f;
             m_closing[0] = false;
         }
     }
 
     // 選択変更時に呼ぶ (direction: 1=下移動, -1=上移動)
+    /// To を切り替える
+    /// @param prevIndex インデックス
+    /// @param newIndex インデックス
+    /// @param direction direction に渡す値
     void ChangeTo(int prevIndex, int newIndex, int direction)
     {
         m_direction = direction;
-        m_clipT[prevIndex]   = 1.0f;
+        m_clipT[prevIndex] = 1.0f;
         m_closing[prevIndex] = true;
-        m_clipT[newIndex]    = 0.0f;
-        m_closing[newIndex]  = false;
+        m_clipT[newIndex] = 0.0f;
+        m_closing[newIndex] = false;
     }
 
     // 毎フレーム呼ぶ
+    /// 毎フレームの状態を更新する
+    /// @param speed speed に渡す値
+    /// @param deltaTime 経過時間[秒]
     void Update(float speed = 0.12f, float deltaTime = 0.0f)
     {
         for (int i = 0; i < (int)m_clipT.size(); i++)
@@ -47,6 +56,14 @@ public:
     }
 
     // スロットindexをワイプ付きで描画する
+    /// 描画する
+    /// @param spr spr に渡す値
+    /// @param index インデックス
+    /// @param image image に渡す値
+    /// @param posX 座標
+    /// @param posY 座標
+    /// @param srcW srcW に渡す値
+    /// @param srcH srcH に渡す値
     void Draw(CSprite& spr, int index, CSpriteImage* image,
               float posX, float posY, float srcW, float srcH)
     {
@@ -55,15 +72,15 @@ public:
 
         float clipH = srcH * t;
         float drawY = posY;
-        float srcY  = 0.0f;
+        float srcY = 0.0f;
 
         // 下端固定(上からワイプ): 下移動の閉じる / 上移動の開く
-        bool useBottomFixed = (m_direction == 1  &&  m_closing[index])
-                           || (m_direction == -1 && !m_closing[index]);
+        bool useBottomFixed = (m_direction == 1 && m_closing[index])
+            || (m_direction == -1 && !m_closing[index]);
         if (useBottomFixed)
         {
             drawY = posY + (srcH - clipH);
-            srcY  = srcH - clipH;
+            srcY = srcH - clipH;
         }
 
         spr.Draw(image, posX, drawY, 0, (DWORD)srcY, (DWORD)srcW, (DWORD)clipH);
@@ -72,5 +89,5 @@ public:
 private:
     int m_direction = 1;
     std::vector<float> m_clipT;
-    std::vector<bool>  m_closing;
+    std::vector<bool> m_closing;
 };

@@ -8,23 +8,57 @@
 /// @brief よく使うUIアニメーションをワンライナーで生成するファクトリ関数群
 namespace UIPreset
 {
-    /// @brief UIAnimationTweenをワンライナーで生成するヘルパー
+    /// Transition を返す
+    /// @param speed speed に渡す値
+    /// @param easing easing に渡す値
+    /// @return 処理結果
     UIAnimationTween Transition(float speed, std::function<float(float)> easing = EaseOutQuint);
 
     // フェード
-    /// @brief 指定秒数でアルファをfromからtoへ変化させるアニメーションを生成する
-    std::unique_ptr<CUIAnimation> FadeIn (float duration, float from = 0.0f, float to = 1.0f);
+    /// Fade In を返す
+    /// @param duration duration に渡す値
+    /// @param from from に渡す値
+    /// @param to to に渡す値
+    /// @return 処理結果
+    std::unique_ptr<CUIAnimation> FadeIn(float duration, float from = 0.0f, float to = 1.0f);
+    /// Fade Out を返す
+    /// @param duration duration に渡す値
+    /// @param from from に渡す値
+    /// @param to to に渡す値
+    /// @return 処理結果
     std::unique_ptr<CUIAnimation> FadeOut(float duration, float from = 1.0f, float to = 0.0f);
 
     // スケール
-    std::unique_ptr<CUIAnimation> ScaleIn (float duration, float from = 0.0f, float to = 1.0f);
-    /// @brief スケールが 1→peak→1 と膨らんで戻るポップアニメーションを生成する
+    /// In を拡大縮小する
+    /// @param duration duration に渡す値
+    /// @param from from に渡す値
+    /// @param to to に渡す値
+    /// @return 処理結果
+    std::unique_ptr<CUIAnimation> ScaleIn(float duration, float from = 0.0f, float to = 1.0f);
+    /// Pop を拡大縮小する
+    /// @param duration duration に渡す値
+    /// @param peak peak に渡す値
+    /// @return 処理結果
     std::unique_ptr<CUIAnimation> ScalePop(float duration, float peak = 1.2f);
 
     // スライド（親からの相対ピクセル移動）
+    /// Slide In X を返す
+    /// @param duration duration に渡す値
+    /// @param fromOffset fromOffset に渡す値
+    /// @param toOffset toOffset に渡す値
+    /// @return 処理結果
     std::unique_ptr<CUIAnimation> SlideInX(float duration, float fromOffset, float toOffset = 0.0f);
+    /// Slide In Y を返す
+    /// @param duration duration に渡す値
+    /// @param fromOffset fromOffset に渡す値
+    /// @param toOffset toOffset に渡す値
+    /// @return 処理結果
     std::unique_ptr<CUIAnimation> SlideInY(float duration, float fromOffset, float toOffset = 0.0f);
 
-    /// @brief FadeIn + ScaleIn を1つのアニメーションにまとめたポップイン演出を生成する
+    /// In を取り出す
+    /// @param duration duration に渡す値
+    /// @param fromScale スケール
+    /// @param fromAlpha 透明度
+    /// @return 処理結果
     std::unique_ptr<CUIAnimation> PopIn(float duration, float fromScale = 0.8f, float fromAlpha = 0.0f);
 };

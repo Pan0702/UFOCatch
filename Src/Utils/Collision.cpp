@@ -291,7 +291,6 @@ bool CCollision::AddFbxLoad(const CFbxMesh* pFbxMesh, const MATRIX4X4& mOffset)
     nNumvert = 0;
     nNumidx = 0;
 
-    // 子データ毎の頂点データとインデックスデータをすべて一つの頂点・インデックスとして設定する
     for (i = 0; i < pFbxMesh->m_dwMeshNum; i++)
     {
         // 頂点データの設定
@@ -419,7 +418,6 @@ void CCollision::makeChkColMesh(const int& nNum, const VECTOR3& vMin, const VECT
             }
             else
             {
-                // １／２、１／４、１／８・・・・・の配列
                 m_ChkColMesh[n].ChkBlkArray[i].vBlksize.x = m_ChkColMesh[n].ChkBlkArray[i - 1].vBlksize.x / 2;
                 m_ChkColMesh[n].ChkBlkArray[i].vBlksize.y = m_ChkColMesh[n].ChkBlkArray[i - 1].vBlksize.y / 2;
                 m_ChkColMesh[n].ChkBlkArray[i].vBlksize.z = m_ChkColMesh[n].ChkBlkArray[i - 1].vBlksize.z / 2;
@@ -846,7 +844,6 @@ bool CCollision::IsCollisionSphere(const VECTOR3& startIn, const VECTOR3& endIn,
             if (m_ChkColMesh[n].ChkBlkArray[i].ppChkFace == nullptr) break; // 配列にデータがないとき
 
             // 配列の対象とする開始点と終了点のブロック番号を求める
-            // ・半径分移動させるため、判定範囲を半径の２倍とする
             getMeshLimit(n, i, vNow, vOld, fRadius * 2, nStartX, nEndX, nStartY, nEndY, nStartZ, nEndZ);
 
             // 配列の検索を開始する
@@ -873,12 +870,10 @@ bool CCollision::IsCollisionSphere(const VECTOR3& startIn, const VECTOR3& endIn,
                             VECTOR3 vNormalRadius = vFaceNorm * fRadius;
 
                             // 直線の３角形ポリゴン法線方向の距離を求める
-                            // ・オブジェクトの中心点から法線方向の逆方向に半径分移動させた点で判定する
                             getDistNormal(vVert, vNow - vNormalRadius, vOld - vNormalRadius, vFaceNorm, fNowDist,
                                           fOldDist, fLayDist);
 
                             // ３角形ポリゴンと直線（レイ）との接触判定を行う
-                            // ・オブジェクトの中心点から法線方向の逆方向に半径分移動させた点で判定する
                             if (checkLay(vVert, vNow - vNormalRadius, vOld - vNormalRadius, vFaceNorm, fNowDist,
                                          fOldDist, fLayDist, vInsPt) == 1)
                             {
@@ -1169,8 +1164,6 @@ int CCollision::checkCollisionMove(const VECTOR3& positionOld, VECTOR3& position
     }
 
     // 接触判定後の移動処理
-    //  0:接触・近接していない  1:接触している  2:近接している
-    // （接触・近接しているときは、平面よりfRadiusだけ外側に移動させる）
     if (nRet != 0)
     {
         if (nRet == 1)
@@ -1276,6 +1269,7 @@ CollRet CCollision::IsCollisionMoveGravity(const VECTOR3& positionOld, VECTOR3& 
     {
         // コリジョンマップが移動しているときは、マップ移動の行列を掛けて元の値に戻す
         vNow = XMVector3TransformCoord(vNow, m_mWorld);
+        // 複数の状態や境界条件をまとめて判定する。
         if (nRetWall == 0 && (RetFloor == clMove || RetFloor == clLand)) // 壁に接触していなくて、移動マップに着地しているとき
         {
             // 移動マップの水平移動の処理
@@ -1453,8 +1447,6 @@ int CCollision::checkWallMove(const VECTOR3& positionOld, VECTOR3& position, VEC
     }
 
     // 接触判定後の移動処理
-    //  0:接触・近接していない  1:接触している  2:近接している
-    // （接触・近接しているときは、平面よりfRadiusだけ外側に移動させる）
     if (nRet != 0)
     {
         if (nRet == 1)
@@ -1484,7 +1476,6 @@ int CCollision::checkWallMove(const VECTOR3& positionOld, VECTOR3& position, VEC
 //	高さ判定変数の初期化
 //																		2019.8.6
 //
-//	引数・戻り値　なし
 //----------------------------------------------------------------------------
 void CCollision::initHeightCheck()
 {
@@ -1531,7 +1522,7 @@ bool CCollision::checkHeight(const VECTOR3& positionOld, VECTOR3& position, cons
     FLOAT MaxY = max(vOld.y, vNow.y);
     //FLOAT MinY = min(vOld.y, vNow.y);
 
-    float fRadius = (fObjheight < fHeightRadius) ? fHeightRadius : fObjheight; // キャラクタの半径を最低fHeightRadiusとする
+    float fRadius = (fObjheight < fHeightRadius) ? fHeightRadius : fObjheight;
 
     CAABB NowAABB; // 移動後点vNowのAABB
     NowAABB.MakeAABB(vOld, vNow, fRadius); // 移動後点vNowのAABBを作成する。最低幅半径をfRadiusとする。
@@ -1621,7 +1612,6 @@ bool CCollision::checkHeight(const VECTOR3& positionOld, VECTOR3& position, cons
         //	見つかった現在の高さより低くて最大高さの面を記憶する
         m_pIndex = pWIndex; // 面データのアドレス
         m_vNormalH = m_pIndex->vNormal;
-        //m_fHeight = (wkHeight == m_fHeight) ? m_fHeight : wkHeight;  // 最大高さを記憶する
         m_fHeight = wkHeight; // 最大高さを記憶する  // -- 2019.9.3
 
         bRet = true; // 最大高さが見つかった
@@ -1659,8 +1649,8 @@ CollRet CCollision::checkFloorMove(const VECTOR3& positionOld, VECTOR3& position
     FLOAT MaxY = max(vOld.y, vNow.y);
     FLOAT MinY = min(vOld.y, vNow.y);
 
-    //vOld = vNow;   // ?????
 
+    // 複数の状態や境界条件をまとめて判定する。
     if (m_pIndex && m_fHeight <= vNow.y + 0.000001f && m_fHeight >= vNow.y - 0.000001f)
     {
         // 面上を水平に移動中のとき（誤差を考慮し0.000001fを調整する）// -- 2025.1.6
@@ -1686,6 +1676,7 @@ CollRet CCollision::checkFloorMove(const VECTOR3& positionOld, VECTOR3& position
     }
     else
     {
+        // 複数の状態や境界条件をまとめて判定する。
         if (!bJumpUp && m_pIndex && m_vNormalH.y > GROUND && m_fHeight <= MaxY && m_fHeight >= MinY + LOWFLOORLIMIT)
         {
             // ジャンプ上昇中でなくて、床が移動前と移動後の高さの間にあるとき。または、床が足下LOWFLOORLIMIT(-0.2m)以内の時
@@ -1861,7 +1852,6 @@ void CCollision::SetWorldMatrix(const MATRIX4X4& mWorld)
 //------------------------------------------------------------------------  // -- 2020.12.3
 //	複数分割度マップからコリジョンマップ全体を囲むAABBを求める
 //		
-//	・この処理はCollision.cppの中では使用しない	
 //	　外部でコリジョンマップの大きさを知りたいときに使用する
 //		
 //  引数
@@ -2122,4 +2112,3 @@ VECTOR3 CAABB::GetVecPos(const int& nIdx)
     }
     return vPos;
 }
-

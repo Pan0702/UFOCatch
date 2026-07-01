@@ -2,11 +2,14 @@
 #include <algorithm>
 
 
-template<class T, size_t MAXSIZE> class PoolAllocator
+template <class T, size_t MAXSIZE>
+class PoolAllocator
 {
 public:
-    // 繧ｳ繝ｳ繧ｹ繝医Λ繧ｯ繧ｿ
-    PoolAllocator() {
+    // コンストラクタ
+    /// Pool Allocator を返す
+    PoolAllocator()
+    {
         for (size_t i = 0; i < MAXSIZE; i++)
         {
             element* elems = reinterpret_cast<element*>(buffer_);
@@ -15,27 +18,30 @@ public:
         freelist_ = reinterpret_cast<element*>(buffer_);
     }
 
-    // 繝・せ繝医Λ繧ｯ繧ｿ
+    /// PoolAllocator の終了処理を行う
     ~PoolAllocator() = default;
 
-    // 蝗ｺ螳夐聞繝｡繝｢繝ｪ繝励・繝ｫ縺九ｉ繝｡繝｢繝ｪ繝悶Ο繝・け繧貞牡繧贋ｻ倥￠繧九・
-    T* Alloc() {
+    /// Alloc を返す
+    /// @return 対象のポインタ
+    T* Alloc()
+    {
         if (!freelist_)return nullptr;
         void* result = reinterpret_cast<void*>(freelist_);
         freelist_ = freelist_->next;
-        return  static_cast<T*>(result);
+        return static_cast<T*>(result);
     }
 
-    // 蝗ｺ螳夐聞繝｡繝｢繝ｪ繝励・繝ｫ縺九ｉ蜑ｲ繧贋ｻ倥￠縺溘Γ繝｢繝ｪ繝悶Ο繝・け繧定ｧ｣謾ｾ縺吶ｋ縲・
-    void Free(T* addr) {
-        if (addr) {
+    /// Free の処理を行う
+    /// @param addr addr に渡す値
+    void Free(T* addr)
+    {
+        if (addr)
+        {
             element* e = reinterpret_cast<element*>(addr);
             e->next = freelist_;
             freelist_ = e;
         }
-
     }
-
 
 private:
     union element
@@ -43,8 +49,9 @@ private:
         alignas(T) char data[sizeof(T)];
         element* next;
     };
+
+    /// alignas を返す
+    /// @param element element に渡す値
     alignas(element) char buffer_[MAXSIZE * sizeof(element)];
     element* freelist_;
-
 };
-

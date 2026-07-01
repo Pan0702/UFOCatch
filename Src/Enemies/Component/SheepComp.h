@@ -2,35 +2,41 @@
 #include "ComponentBase.h"
 #include "../AnimalSheep/Sheep.h"
 
+/// <summary>敵AIで使う Herded の情報と処理をまとめる型</summary>
 class CHerded : public CComponentBase
 {
 public:
+    /// CHerded を初期化する
+    /// @param sheep sheep に渡す値
     CHerded(CSheep* sheep);
+    /// Enter の処理を行う
     void Enter() override;
+    /// 毎フレームの状態を更新する
     void Update() override;
 
 private:
-    /// @brief 羊が群れの中心寄りまで戻ったか判定する
+    /// Deep Inside Flock を判定する
+    /// @return 成功または条件を満たす場合 true
     bool IsDeepInsideFlock() const;
 
-    /// @brief 合成された力の方向へ回転しながら移動する
-    /// @param force 群れに戻る力やBoidsの合計ベクトル
+    /// Apply Movement の処理を行う
+    /// @param force force に渡す値
     void ApplyMovement(const VECTOR3& force);
 
-    /// @brief 仲間への凝集と近すぎる仲間からの分離を計算する
-    /// @return Boidsで得た移動方向の力
+    /// Boids を計算する
+    /// @return 3次元ベクトル
     VECTOR3 CalcBoids() const;
 
-    /// @brief 牧羊犬が近い場合に犬から逃げる力を計算する
-    /// @return 犬から離れる方向の力。犬がいない場合はゼロベクトル
+    /// Escape From Dog を計算する
+    /// @return 3次元ベクトル
     VECTOR3 CalcEscapeFromDog() const;
 
-    /// @brief 一定間隔でランダム方向を変えながら徘徊する力を計算する
-    /// @return 徘徊方向の力
+    /// Wandering を計算する
+    /// @return 3次元ベクトル
     VECTOR3 CalcWandering(); // ランダムな徘徊行動
 
-    /// @brief 群れの外側または端にいる羊を中心へ戻す力を計算する
-    /// @return 群れ中心へ戻る力。十分内側ならゼロベクトル
+    /// Retrun To Flock を計算する
+    /// @return 3次元ベクトル
     VECTOR3 CalcRetrunToFlock();
 
 
@@ -49,21 +55,26 @@ private:
 };
 
 
+/// <summary>敵AIで使う Panic の情報と処理をまとめる型</summary>
 class CPanic : public CComponentBase
 {
 public:
+    /// CPanic を初期化する
+    /// @param sheep sheep に渡す値
     CPanic(CSheep* sheep);
+    /// Enter の処理を行う
     void Enter() override;
+    /// 毎フレームの状態を更新する
     void Update() override;
 
 private:
-    /// @brief 一定時間ごとにパニック移動の方向をランダムに更新する
+    /// Direction を毎フレームの状態を更新する
     void UpdateDirection();
 
-    /// @brief パニック方向へ向きを合わせて移動する
+    /// Movement を毎フレームの状態を更新する
     void UpdateMovement() const;
 
-    /// @brief パニック時間終了後、所属する群れの有無でHERDEDまたはIDLEへ遷移する
+    /// Boundary And Transition を確認する
     void CheckBoundaryAndTransition();
 
     CSheep* m_pOwner;

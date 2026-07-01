@@ -1,7 +1,8 @@
 ﻿#include "MeshCollider.h"
 #include "../Framework/ResourceManager.h"
 
-namespace {
+namespace
+{
     // スキンメッシュを変形させるときのフレームのポーズ更新しきい値
     // (0に近いほど正確だが重くなる)
     const float FrameLimit = 8;
@@ -35,7 +36,8 @@ void MeshCollider::MakeFromMesh(CFbxMesh* meshIn, Animator* animatorIn)
 
     // CFbxMeshからデータを取得する
     // 複数のメッシュに分かれているので、各メッシュごとに作成する
-    for (DWORD m = 0; m < mesh->m_dwMeshNum; m++) {
+    for (DWORD m = 0; m < mesh->m_dwMeshNum; m++)
+    {
         vertices.emplace_back(ve);
         polygons.emplace_back(pi);
         CFbxMeshArray* arr = &mesh->m_pMeshArray[m];
@@ -43,14 +45,17 @@ void MeshCollider::MakeFromMesh(CFbxMesh* meshIn, Animator* animatorIn)
         // 頂点数
         int vNum = arr->m_dwVerticesNum;
         vertices.back().reserve(vertices.size() + vNum);
-        for (int v = 0; v < vNum; v++) {
+        for (int v = 0; v < vNum; v++)
+        {
             Vertex vt = {};
-            if (mesh->m_nMeshType == 1)  // スタティックメッシュ
+            if (mesh->m_nMeshType == 1) // スタティックメッシュ
             {
                 vt.pos = arr->m_vStaticVerticesNormal[v].Pos;
                 vertices.back().push_back(vt);
             }
-            else {     // スキンメッシュ
+            else
+            {
+                // スキンメッシュ
                 vt.pos = arr->m_vSkinVerticesNormal[v].Pos;
                 vt.bone[0] = arr->m_vSkinVerticesNormal[v].ClusterNum[0];
                 vt.bone[1] = arr->m_vSkinVerticesNormal[v].ClusterNum[1];
@@ -64,7 +69,8 @@ void MeshCollider::MakeFromMesh(CFbxMesh* meshIn, Animator* animatorIn)
         // インデックス数
         int iNum = arr->m_dwIndicesNum / 3;
         polygons.back().reserve(polygons.size() + iNum);
-        for (int i = 0; i < iNum; i++) {
+        for (int i = 0; i < iNum; i++)
+        {
             PolygonInfo inf;
             inf.indices[0] = arr->m_nIndices[i * 3 + 0];
             inf.indices[1] = arr->m_nIndices[i * 3 + 1];
@@ -82,8 +88,8 @@ void MeshCollider::MakeFromMesh(CFbxMesh* meshIn, Animator* animatorIn)
     bBox.max = mesh->m_vMax;
 
     // バウンディングボール
-    bBall.center = (bBox.min + bBox.max) / 2;   // 全体のメッシュの中心になる
-    bBall.radius = magnitude(bBox.max - bBall.center);    // メッシュの半径(メッシュを全て包む最大半径)
+    bBall.center = (bBox.min + bBox.max) / 2; // 全体のメッシュの中心になる
+    bBall.radius = magnitude(bBox.max - bBall.center); // メッシュの半径(メッシュを全て包む最大半径)
 }
 
 void MeshCollider::MakeFromFile(std::string fileName)
@@ -98,21 +104,24 @@ int MeshCollider::SelectBoneNo(Vertex vt[3])
 {
     int bone = 0;
 
-    if (vt[0].bone[0] == vt[1].bone[0] || vt[0].bone[0] == vt[2].bone[0])    // 2点以上が同じボーン番号のとき
+    if (vt[0].bone[0] == vt[1].bone[0] || vt[0].bone[0] == vt[2].bone[0]) // 2点以上が同じボーン番号のとき
     {
         bone = vt[0].bone[0];
     }
-    else if (vt[1].bone[0] == vt[2].bone[0])      // 2点以上が同じボーン番号のとき
+    else if (vt[1].bone[0] == vt[2].bone[0]) // 2点以上が同じボーン番号のとき
     {
         bone = vt[1].bone[0];
     }
-    else {  // 3点ともボーン番号が異なるときはウェイトが高いものを優先する
+    else
+    {
+        // 3点ともボーン番号が異なるときはウェイトが高いものを優先する
         if (vt[0].weits.x > vt[1].weits.x)
         {
             if (vt[0].weits.x > vt[2].weits.x) bone = vt[0].bone[0];
             else bone = vt[2].bone[0];
         }
-        else {
+        else
+        {
             if (vt[1].weits.x > vt[2].weits.x) bone = vt[1].bone[0];
             else bone = vt[2].bone[0];
         }
@@ -124,10 +133,12 @@ int MeshCollider::SelectBoneNo(Vertex vt[3])
 // スキンメッシュのときボーン行列による変形を行う
 void MeshCollider::transformSkinVertices()
 {
-    if (animator == nullptr)  return;
+    if (animator == nullptr) return;
     if (animator->PlayingID() == id)
     {
-        if (animator->CurrentFrame() <= (static_cast<float>(frame) + FrameLimit) && animator->CurrentFrame() >= static_cast<int>(frame) - FrameLimit) 
+        // 複数の状態や境界条件をまとめて判定する。
+        if (animator->CurrentFrame() <= (static_cast<float>(frame) + FrameLimit) && animator->CurrentFrame() >=
+            static_cast<int>(frame) - FrameLimit)
             return;
     }
     id = animator->PlayingID();
@@ -140,15 +151,27 @@ void MeshCollider::transformSkinVertices()
         for (Vertex& vt : vertices[m])
         {
             vt.pos = VECTOR3(0, 0, 0);
-            if (vt.bone[0] < 254) vt.pos += vt.weits.x * XMVector3TransformCoord(mesh->m_pMeshArray[m].m_vSkinVerticesNormal[i].Pos, XMMatrixTranspose(mesh->m_pMeshArray[m].m_pBoneShader[id][frame].shaderFramePose[vt.bone[0]]));
-            if (vt.bone[1] < 254) vt.pos += vt.weits.y * XMVector3TransformCoord(mesh->m_pMeshArray[m].m_vSkinVerticesNormal[i].Pos, XMMatrixTranspose(mesh->m_pMeshArray[m].m_pBoneShader[id][frame].shaderFramePose[vt.bone[1]]));
-            if (vt.bone[2] < 254) vt.pos += vt.weits.z * XMVector3TransformCoord(mesh->m_pMeshArray[m].m_vSkinVerticesNormal[i].Pos, XMMatrixTranspose(mesh->m_pMeshArray[m].m_pBoneShader[id][frame].shaderFramePose[vt.bone[2]]));
-            if (vt.bone[3] < 254) vt.pos += vt.weits.w * XMVector3TransformCoord(mesh->m_pMeshArray[m].m_vSkinVerticesNormal[i].Pos, XMMatrixTranspose(mesh->m_pMeshArray[m].m_pBoneShader[id][frame].shaderFramePose[vt.bone[3]]));
+            // 複数の状態や境界条件をまとめて判定する。
+            if (vt.bone[0] < 254) vt.pos += vt.weits.x * XMVector3TransformCoord(
+                mesh->m_pMeshArray[m].m_vSkinVerticesNormal[i].Pos,
+                XMMatrixTranspose(mesh->m_pMeshArray[m].m_pBoneShader[id][frame].shaderFramePose[vt.bone[0]]));
+            // 複数の状態や境界条件をまとめて判定する。
+            if (vt.bone[1] < 254) vt.pos += vt.weits.y * XMVector3TransformCoord(
+                mesh->m_pMeshArray[m].m_vSkinVerticesNormal[i].Pos,
+                XMMatrixTranspose(mesh->m_pMeshArray[m].m_pBoneShader[id][frame].shaderFramePose[vt.bone[1]]));
+            // 複数の状態や境界条件をまとめて判定する。
+            if (vt.bone[2] < 254) vt.pos += vt.weits.z * XMVector3TransformCoord(
+                mesh->m_pMeshArray[m].m_vSkinVerticesNormal[i].Pos,
+                XMMatrixTranspose(mesh->m_pMeshArray[m].m_pBoneShader[id][frame].shaderFramePose[vt.bone[2]]));
+            // 複数の状態や境界条件をまとめて判定する。
+            if (vt.bone[3] < 254) vt.pos += vt.weits.w * XMVector3TransformCoord(
+                mesh->m_pMeshArray[m].m_vSkinVerticesNormal[i].Pos,
+                XMMatrixTranspose(mesh->m_pMeshArray[m].m_pBoneShader[id][frame].shaderFramePose[vt.bone[3]]));
             i++;
         }
 
         // 面法線の再計算
-        for ( PolygonInfo &inf : polygons[m] )
+        for (PolygonInfo& inf : polygons[m])
         {
             VECTOR3 v0 = vertices[m][inf.indices[0]].pos;
             VECTOR3 v1 = vertices[m][inf.indices[1]].pos;
@@ -158,7 +181,8 @@ void MeshCollider::transformSkinVertices()
     }
 }
 
-bool MeshCollider::CheckCollisionLine(const MATRIX4X4& trans, const VECTOR3& from, const VECTOR3& to, MeshCollider::CollInfo* hitOut)
+bool MeshCollider::CheckCollisionLine(const MATRIX4X4& trans, const VECTOR3& from, const VECTOR3& to,
+                                      MeshCollider::CollInfo* hitOut)
 {
     MATRIX4X4 invTrans = XMMatrixInverse(nullptr, trans);
     VECTOR3 invFrom = from * invTrans;
@@ -169,7 +193,8 @@ bool MeshCollider::CheckCollisionLine(const MATRIX4X4& trans, const VECTOR3& fro
     VECTOR3 center = (invTo + invFrom) / 2.0f;
     float radius = (invTo - invFrom).Length() / 2.0f;
     float radiusSq = (radius + bBall.radius) * (radius + bBall.radius);
-    if ((center - bBall.center).LengthSquare() > radiusSq) {
+    if ((center - bBall.center).LengthSquare() > radiusSq)
+    {
         return false;
     }
     // AABBバウンディングボックスで判定(スタティックメッシュのみ)
@@ -191,22 +216,33 @@ bool MeshCollider::CheckCollisionLine(const MATRIX4X4& trans, const VECTOR3& fro
     float minLengthSq = maxLengthSq;
     CollInfo minColl;
     int m = 0;
-    for( const std::vector<PolygonInfo> &pi : polygons) { // 全メッシュのポリゴンとの接触判定
-        for (const PolygonInfo& pol : pi) {   // 1つのメッシュの全ポリゴンとの接触判定
+    for (const std::vector<PolygonInfo>& pi : polygons)
+    {
+        // 全メッシュのポリゴンとの接触判定
+        for (const PolygonInfo& pol : pi)
+        {
+            // 1つのメッシュの全ポリゴンとの接触判定
             CollInfo coll;
-            if (checkPolygonToLine(m, pol, invFrom, invTo, &coll)) {     // 1つのポリゴンとの接触判定
+            if (checkPolygonToLine(m, pol, invFrom, invTo, &coll))
+            {
+                // 1つのポリゴンとの接触判定
                 float lenSq = (coll.hitPosition - invFrom).LengthSquare();
-                if (minLengthSq > lenSq) {    // 一番近い接触するポリゴンであるかどうか調べる
+                if (minLengthSq > lenSq)
+                {
+                    // 一番近い接触するポリゴンであるかどうか調べる
                     minColl = coll;
-                    minLengthSq = lenSq;   // 一番近い接触位置
+                    minLengthSq = lenSq; // 一番近い接触位置
                 }
             }
         }
         m++;
     }
-    if (minLengthSq < maxLengthSq) { // 1個以上見つかっている
-        if (hitOut != nullptr) {
-            hitOut->hitPosition = minColl.hitPosition * trans;   // 接触するポリゴンの情報を返す
+    if (minLengthSq < maxLengthSq)
+    {
+        // 1個以上見つかっている
+        if (hitOut != nullptr)
+        {
+            hitOut->hitPosition = minColl.hitPosition * trans; // 接触するポリゴンの情報を返す
             hitOut->triangle[0] = minColl.triangle[0];
             hitOut->triangle[0].pos = minColl.triangle[0].pos * trans;
             hitOut->triangle[1] = minColl.triangle[1];
@@ -218,9 +254,9 @@ bool MeshCollider::CheckCollisionLine(const MATRIX4X4& trans, const VECTOR3& fro
             hitOut->normal = XMVector4Transform(n, trans);
             hitOut->meshNo = minColl.meshNo;
         }
-        return true;          // 接触してる
+        return true; // 接触してる
     }
-    return false;             // 接触してない
+    return false; // 接触してない
 }
 
 bool MeshCollider::CheckCollisionSphere(const MATRIX4X4& trans, const VECTOR3& center, float radius, CollInfo* hitOut)
@@ -246,16 +282,24 @@ bool MeshCollider::CheckCollisionSphere(const MATRIX4X4& trans, const VECTOR3& c
     transformSkinVertices();
 
     // 球の中心から、表面に一番近いものを求める
-    float minLengthSq = radius*radius;
+    float minLengthSq = radius * radius;
     CollInfo minColl;
     bool found = false;
     int m = 0;
-    for (const std::vector<PolygonInfo>& pi : polygons) { // 全メッシュのポリゴンとの接触判定
-        for (const PolygonInfo& pol : pi) {   // 1つのメッシュの全ポリゴンとの接触判定
+    for (const std::vector<PolygonInfo>& pi : polygons)
+    {
+        // 全メッシュのポリゴンとの接触判定
+        for (const PolygonInfo& pol : pi)
+        {
+            // 1つのメッシュの全ポリゴンとの接触判定
             CollInfo coll;
-            if (checkPolygonToSphere(m, pol, invCenter, radius, &coll)) {           // 1つのポリゴンとの接触判定  // -- 2024.9.27
+            if (checkPolygonToSphere(m, pol, invCenter, radius, &coll))
+            {
+                // 1つのポリゴンとの接触判定  // -- 2024.9.27
                 float lenSq = (coll.hitPosition - invCenter).LengthSquare();
-                if (lenSq < minLengthSq) {         // 一番近い接触するポリゴンであるかどうか調べる
+                if (lenSq < minLengthSq)
+                {
+                    // 一番近い接触するポリゴンであるかどうか調べる
                     minColl = coll;
                     found = true;
                 }
@@ -265,8 +309,9 @@ bool MeshCollider::CheckCollisionSphere(const MATRIX4X4& trans, const VECTOR3& c
     }
     if (!found) return false;
 
-    if (hitOut != nullptr) {
-        hitOut->hitPosition = minColl.hitPosition * trans;       // 接触するポリゴンの情報を返す
+    if (hitOut != nullptr)
+    {
+        hitOut->hitPosition = minColl.hitPosition * trans; // 接触するポリゴンの情報を返す
         hitOut->triangle[0] = minColl.triangle[0];
         hitOut->triangle[0].pos = minColl.triangle[0].pos * trans;
         hitOut->triangle[1] = minColl.triangle[1];
@@ -281,7 +326,8 @@ bool MeshCollider::CheckCollisionSphere(const MATRIX4X4& trans, const VECTOR3& c
     return true;
 }
 
-std::list<MeshCollider::CollInfo> MeshCollider::CheckCollisionSphereList(const MATRIX4X4& trans, const VECTOR3& center, float radius)
+std::list<MeshCollider::CollInfo> MeshCollider::CheckCollisionSphereList(
+    const MATRIX4X4& trans, const VECTOR3& center, float radius)
 {
     MATRIX4X4 invTrans = XMMatrixInverse(nullptr, trans);
     VECTOR3 invCenter = center * invTrans;
@@ -306,10 +352,15 @@ std::list<MeshCollider::CollInfo> MeshCollider::CheckCollisionSphereList(const M
 
     // 球の中心から、表面に一番近いものを求める
     int m = 0;
-    for (const std::vector<PolygonInfo>& pi : polygons) { // 全メッシュのポリゴンとの接触判定
-        for (const PolygonInfo& pol : pi) {   // 1つのメッシュの全ポリゴンとの接触判定
+    for (const std::vector<PolygonInfo>& pi : polygons)
+    {
+        // 全メッシュのポリゴンとの接触判定
+        for (const PolygonInfo& pol : pi)
+        {
+            // 1つのメッシュの全ポリゴンとの接触判定
             CollInfo coll;
-            if (checkPolygonToSphere(m, pol, invCenter, radius, &coll)) {
+            if (checkPolygonToSphere(m, pol, invCenter, radius, &coll))
+            {
                 coll.hitPosition = coll.hitPosition * trans;
                 VECTOR4 n = VECTOR4(coll.normal);
                 n.w = 0.0f;
@@ -380,7 +431,8 @@ bool MeshCollider::CheckBoundingLine(const MATRIX4X4& trans, const VECTOR3& from
     VECTOR3 center = (invTo + invFrom) / 2.0f;
     float radius = (invTo - invFrom).Length() / 2.0f;
     float radiusSq = (radius + bBall.radius) * (radius + bBall.radius);
-    if ((center - bBall.center).LengthSquare() > radiusSq) {
+    if ((center - bBall.center).LengthSquare() > radiusSq)
+    {
         return false;
     }
     // バウンディングボックスで判定
@@ -394,7 +446,8 @@ bool MeshCollider::CheckBoundingLine(const MATRIX4X4& trans, const VECTOR3& from
     return true;
 }
 
-bool MeshCollider::checkPolygonToLine(const int m, const PolygonInfo& info, const VECTOR3& from, const VECTOR3& to, CollInfo* hit)
+bool MeshCollider::checkPolygonToLine(const int m, const PolygonInfo& info, const VECTOR3& from, const VECTOR3& to,
+                                      CollInfo* hit)
 {
     // 法線が0の時、縮退点なので、交点は求めない
     if (info.normal.LengthSquare() == 0.0f)
@@ -430,9 +483,9 @@ bool MeshCollider::checkPolygonToLine(const int m, const PolygonInfo& info, cons
     return true;
 }
 
-bool MeshCollider::checkPolygonToSphere(const int m, const PolygonInfo& info, const VECTOR3& center, float radius, CollInfo* hit)
+bool MeshCollider::checkPolygonToSphere(const int m, const PolygonInfo& info, const VECTOR3& center, float radius,
+                                        CollInfo* hit)
 {
-
 #define EDGE_HIT 0    // エッジのヒットを計算する場合１
 
     // 法線が0の時、縮退点
@@ -447,7 +500,7 @@ bool MeshCollider::checkPolygonToSphere(const int m, const PolygonInfo& info, co
     float len = Dot(center - v[0], info.normal);
 
 #if EDGE_HIT>0
-    
+
     if (len < 0 || len > radius) return false; // 垂線の長さが半径より大きい
     VECTOR3 pos = center - info.normal * len; // 垂線との交点(平面上の交点)
     if (Dot(center - pos, info.normal) < 0) // 法線側から当たってない
@@ -462,12 +515,14 @@ bool MeshCollider::checkPolygonToSphere(const int m, const PolygonInfo& info, co
     int hitIdx[3];
 #endif
     int hitNum = 0;
-    for (int vi = 0; vi < 3; vi++) {
+    for (int vi = 0; vi < 3; vi++)
+    {
         VECTOR3& v0 = v[vi];
         VECTOR3& v1 = v[(vi + 1) % 3];
         float n = Dot(XMVector3Cross(v1 - v0, pos - v0), info.normal);
-        if (n < 0.0f)       // 外積の向きが法線と異なるとマイナスになる
-        {                   // 辺の上にあると、外積が0なので、nも0になる
+        if (n < 0.0f) // 外積の向きが法線と異なるとマイナスになる
+        {
+            // 辺の上にあると、外積が0なので、nも0になる
 #if EDGE_HIT>0
             hitIdx[hitNum++] = vi;
 #else
@@ -475,8 +530,10 @@ bool MeshCollider::checkPolygonToSphere(const int m, const PolygonInfo& info, co
 #endif
         }
     }
-    if (hitNum == 0) {
-        if (hit != nullptr) {
+    if (hitNum == 0)
+    {
+        if (hit != nullptr)
+        {
             hit->hitPosition = pos;
             hit->normal = info.normal;
             hit->triangle[0] = vertices[m][info.indices[0]];
@@ -487,14 +544,17 @@ bool MeshCollider::checkPolygonToSphere(const int m, const PolygonInfo& info, co
         return true;
     }
 #if EDGE_HIT>0
-    else if (hitNum==1) { // １つだけ外なので、そのエッジに落とす
+    else if (hitNum == 1)
+    {
+        // １つだけ外なので、そのエッジに落とす
         int vi = hitIdx[0];
         VECTOR3 edge = XMVector3Normalize(v[(vi + 1) % 3] - v[vi]); // 当たっているエッジの向き
         float len = Dot(center - v[vi], edge);
         VECTOR3 hitPos = edge * len + v[vi];
-        if ((hitPos-center).LengthSquare() > radius*radius)
+        if ((hitPos - center).LengthSquare() > radius * radius)
             return false;
-        if (hit != nullptr) {
+        if (hit != nullptr)
+        {
             hit->hitPosition = hitPos;
             hit->normal = info.normal;
             hit->triangle[0] = vertices[m][info.indices[0]];
@@ -503,7 +563,10 @@ bool MeshCollider::checkPolygonToSphere(const int m, const PolygonInfo& info, co
             hit->meshNo = m;
         }
         return true;
-    } else { // ２つの外なので、その頂点に当たる
+    }
+    else
+    {
+        // ２つの外なので、その頂点に当たる
         // 0-1と1-2に当たっていたら1、1-2と2-0に当たっていたら2、2-0と0-1に当たっていたら0の頂点が該当と逆算
         int n = hitIdx[0] + hitIdx[1];
         n = 2 - (n % 3);
@@ -511,7 +574,8 @@ bool MeshCollider::checkPolygonToSphere(const int m, const PolygonInfo& info, co
         float lenSq = (center - v[n]).LengthSquare();
         if (lenSq > radius * radius)
             return false;
-        if (hit != nullptr) {
+        if (hit != nullptr)
+        {
             hit->hitPosition = v[n];
             hit->normal = info.normal;
             hit->triangle[0] = vertices[m][info.indices[0]];

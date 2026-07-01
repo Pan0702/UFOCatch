@@ -1,19 +1,24 @@
 ﻿#pragma once
 #include "../Common/Object3D.h"
 
+/// <summary>ステージエディタで使う Grid Draw の情報と処理をまとめる型</summary>
 class GridDraw : public Object3D
 {
 private:
     bool is_grid_draw_ = false;
 
 private:
+    /// 描画する
     void Draw() override;
 
-    /// <summary>XZ平面にグリッド線を描画する。10マスごとに線を太く表示する</summary>
+    /// Grid の処理を行う
     static void Grid();
 
 public:
-    /// <summary>グリッド描画フラグの現在値を返す</summary>
+    /// Draw Flag を取得する
+    /// @return 成功または条件を満たす場合 true
     bool GetDrawFlag() const { return is_grid_draw_; }
+    /// Draw Flag を設定する
+    /// @param flag flag に渡す値
     void SetDrawFlag(bool flag) { is_grid_draw_ = flag; }
 };

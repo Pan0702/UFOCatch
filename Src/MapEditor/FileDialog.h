@@ -3,19 +3,14 @@
 
 namespace Platform
 {
-    /// <summary>
-    /// Windowsのファイルオープンダイアログを表示し、選択されたファイルのパスを返す
-    /// </summary>
-    /// <param name="filter">ファイルフィルター（例：L"*.mesh"\0*.*\0"）</param>
-    /// <returns>選択されたファイルのフルパス（UTF-8）。キャンセル時は空文字列</returns>
+    /// Open File Dialog を返す
+    /// @param filter filter に渡す値
+    /// @return 取得した文字列
     std::string OpenFileDialog(const wchar_t* filter = L"All Files (*.*)\0*.*\0");
 
-    /// <summary>
-    /// Windowsのファイルセーブダイアログを表示し、選択されたファイルのパスを返す
-    /// </summary>
-    /// <param name="filter">ファイルフィルター（例：L"*.mesh"\0*.*\0"）</param>
-    /// <returns>選択されたファイルのフルパス（UTF-8）。キャンセル時は空文字列</returns>
+    /// File Dialog を保存する
+    /// @param filter filter に渡す値
+    /// @param initial_dir initial_dir に渡す値
+    /// @return 取得した文字列
     std::string SaveFileDialog(const wchar_t* filter = L"All Files (*.*)\0*.*\0", const wchar_t* initial_dir = nullptr);
 }
-
-

@@ -6,7 +6,7 @@
 /// </summary>
 struct Ray
 {
-    VECTOR3 origin;    // 始点（カメラ位置）
+    VECTOR3 origin; // 始点（カメラ位置）
     VECTOR3 direction; // 正規化済み方向ベクトル
 };
 
@@ -17,29 +17,23 @@ struct Ray
 class MouseRay
 {
 public:
-    /// <summary>
-    /// 現在のマウスカーソル位置からワールド空間のレイを生成する
-    /// </summary>
-    /// <returns>生成されたRay</returns>
+    /// 作成する
+    /// @return 処理結果
     static Ray Create();
 
-    /// <summary>
-    /// レイとObject3Dのメッシュの当たり判定
-    /// </summary>
-    /// <param name="ray">判定するレイ</param>
-    /// <param name="obj">判定対象のObject3D</param>
-    /// <param name="collOut">衝突情報の出力先（不要な場合はnullptr）</param>
-    /// <param name="rayLength">レイの長さ（デフォルト1000）</param>
-    /// <returns>当たっていればtrue</returns>
+    /// Hit Test を返す
+    /// @param ray 判定に使用するレイ
+    /// @param obj 対象オブジェクト
+    /// @param collOut 衝突情報の出力先
+    /// @param rayLength 判定に使用するレイ
+    /// @return 成功または条件を満たす場合 true
     static bool HitTest(const Ray& ray, Object3D* obj,
                         MeshCollider::CollInfo* collOut = nullptr,
                         float rayLength = 1000.0f);
 
-    /// <summary>
-    /// レイと球の当たり判定
-    /// </summary>
-    /// <param name="ray">判定するレイ</param>
-    /// <param name="sphere">判定対象の球コライダ</param>
-    /// <returns>当たっていればtrue</returns>
+    /// Hit Test Sphere を返す
+    /// @param ray 判定に使用するレイ
+    /// @param sphere 判定対象の球コライダー
+    /// @return 成功または条件を満たす場合 true
     static bool HitTestSphere(const Ray& ray, const SphereCollider& sphere);
 };

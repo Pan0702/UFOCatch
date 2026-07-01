@@ -1,14 +1,20 @@
 ﻿#pragma once
 #include "TRSBase.h"
-class CRotation: public TRSBase
+
+/// <summary>ステージエディタで使う Rotation の情報と処理をまとめる型</summary>
+class CRotation : public TRSBase
 {
 private:
-    /// <summary>X/Y/Z軸の回転ギズモメッシュとコライダーを初期化する</summary>
+    /// Meshes を初期化する
     void InitMeshes();
 
 public:
+    /// CRotation を初期化する
     CRotation();
+    /// CRotation の終了処理を行う
     ~CRotation();
-    void Draw() override{}
-
+    /// 描画する
+    void Draw() override
+    {
+    }
 };

@@ -10,10 +10,9 @@
 // 指定パスのメッシュをロードし、ボタンリストとモデルストレージに登録する
 void ModelCreator::CreateModel(const std::string& path)
 {
-
     const size_t lastSlash = path.find_last_of("\\/");
     const size_t lastDot = path.find_last_of(".");
-    
+
     const size_t start = (lastSlash == std::string::npos) ? 0 : lastSlash + 1;
     std::string name;
     if (lastDot != std::string::npos && lastDot > start)
@@ -47,20 +46,21 @@ void ModelCreator::CreateModel(const std::string& path)
 // FBX を .mesh に変換してからロードする
 void ModelCreator::ConvertAndLoad(const std::string& fbxPath)
 {
-    // FBX を解析して頂点・インデックスを取得
     FbxParser parser;
     if (!parser.Load(fbxPath)) return;
 
     std::vector<MeshVertex> verts;
-    std::vector<uint32_t>   indices;
+    std::vector<uint32_t> indices;
     if (!parser.ExtractMesh(verts, indices)) return;
 
-    // FBX と同じフォルダ・同名で .mesh として保存
     std::string meshPath = fbxPath;
     size_t lastDot = meshPath.find_last_of('.');
-    if (lastDot != std::string::npos) {
+    if (lastDot != std::string::npos)
+    {
         meshPath.replace(lastDot, meshPath.length() - lastDot, ".mesh");
-    } else {
+    }
+    else
+    {
         meshPath += ".mesh";
     }
     std::string texName = parser.GetTextureFileName();
@@ -82,4 +82,3 @@ void ModelCreator::ConvertAndLoad(const std::string& fbxPath)
     // 変換した .mesh を通常ロード
     CreateModel(meshPath);
 }
-

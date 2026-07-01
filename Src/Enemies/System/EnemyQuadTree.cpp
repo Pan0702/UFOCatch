@@ -8,10 +8,10 @@ CEnemyQuadTree::CEnemyQuadTree()
 {
     const VECTOR4 size = CGameInstance::Get()->GetMapSize();
     // 四分木の初期化（レベル3、範囲-200～200など）
-    m_pTree =  std::make_unique<CLiner4Tree<CEnemyBase>>(4, size);
+    m_pTree = std::make_unique<CLiner4Tree<CEnemyBase>>(4, size);
 
     // 統計情報の初期化
-    m_processTimes.reserve(60);  // 60フレーム分の履歴
+    m_processTimes.reserve(60); // 60フレーム分の履歴
 }
 
 CEnemyQuadTree::~CEnemyQuadTree() = default;
@@ -34,7 +34,7 @@ void CEnemyQuadTree::Update(const std::vector<CEnemyBase*>& enemies)
 }
 
 std::vector<CEnemyBase*> CEnemyQuadTree::GetNearbyEnemies(
-    CEnemyBase* pObj,const VECTOR2& pos,const VECTOR2& size) const
+    CEnemyBase* pObj, const VECTOR2& pos, const VECTOR2& size) const
 {
     std::vector<CEnemyBase*> result;
 
@@ -58,16 +58,16 @@ std::vector<CEnemyBase*> CEnemyQuadTree::GetNearbyEnemies(
     return result;
 }
 
-void CEnemyQuadTree::CalcCollisionStats(float elapsedMs, const std::vector<CEnemyBase*>& enemies, int totalEnemyCount) const
+void CEnemyQuadTree::CalcCollisionStats(float elapsedMs, const std::vector<CEnemyBase*>& enemies,
+                                        int totalEnemyCount) const
 {
     // 統計情報の更新
     m_processTimes.push_back(elapsedMs);
-    if (m_processTimes.size() > 60)  // 60フレーム分のみ保持
+    if (m_processTimes.size() > 60) // 60フレーム分のみ保持
     {
         m_processTimes.erase(m_processTimes.begin());
     }
 
-    // 平均・最大処理時間の計算
     float sum = 0.0f;
     m_stats.maxProcessTimeMs = 0.0f;
     for (float time : m_processTimes)
@@ -92,7 +92,8 @@ void CEnemyQuadTree::CalcCollisionStats(float elapsedMs, const std::vector<CEnem
     // 削減率の計算
     if (m_stats.potentialChecks > 0)
     {
-        m_stats.reductionRate = 100.0f * (1.0f - static_cast<float>(m_stats.totalChecks) / static_cast<float>(m_stats.potentialChecks));
+        m_stats.reductionRate = 100.0f * (1.0f - static_cast<float>(m_stats.totalChecks) / static_cast<float>(m_stats.
+            potentialChecks));
     }
     else
     {

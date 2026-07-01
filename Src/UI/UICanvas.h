@@ -1,18 +1,22 @@
 ﻿#pragma once
 #include "UIWidget.h"
 
-/// @brief 複数のウィジェットを管理し、更新・描画を統括するクラス
 /// @details ウィジェットはlayer順にソートして描画される
 class CUICanvas
 {
 public:
-    /// @param size キャンバスの論理サイズ（デフォルト: 1366x768）
+    /// CUICanvas を初期化する
+    /// @param size サイズ
     CUICanvas(const VECTOR2& size = VECTOR2(1366, 768));
+    /// CUICanvas の終了処理を行う
     ~CUICanvas();
 
     /// @brief ウィジェットを追加して生ポインタを返す
     /// @details 所有権はキャンバスに移る。返されたポインタは所有しない参照として使う。
     template <typename T>
+    /// Widget を追加する
+    /// @param widget widget に渡す値
+    /// @return 対象のポインタ
     T* AddWidget(std::unique_ptr<T> widget)
     {
         T* ptr = widget.get();
@@ -20,13 +24,19 @@ public:
         return ptr;
     }
 
+    /// Widget を削除する
+    /// @param widget widget に渡す値
     void RemoveWidget(CUIWidget* widget);
 
+    /// 毎フレームの状態を更新する
     void Update();
+    /// 描画する
     void Draw();
 
-    /// @brief 全ウィジェットを削除する
+    /// クリアする
     void Clear();
+    /// Canvas Size を取得する
+    /// @return 2次元ベクトル
     VECTOR2 GetCanvasSize() const;
 
 private:

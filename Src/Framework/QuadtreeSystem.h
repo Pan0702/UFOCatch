@@ -1,12 +1,18 @@
 ﻿#pragma once
 #include "ObjectManager.h"
 
+/// <summary>ゲーム共通基盤で使う Quadtree System の情報と処理をまとめる型</summary>
 class CQuadtreeSystem
 {
 public:
+    /// CQuadtreeSystem の終了処理を行う
     virtual ~CQuadtreeSystem() = default;
 };
-template<class C> C* InstanceQTree()
+
+/// Instance QTree を返す
+/// @return 対象のポインタ
+template <class C>
+C* InstanceQTree()
 {
     C* obj = ObjectManager::FindQuadTree<C>();
     if (obj == nullptr)
@@ -18,4 +24,3 @@ template<class C> C* InstanceQTree()
     }
     return obj;
 }
-

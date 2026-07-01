@@ -1,5 +1,6 @@
-#pragma once
+﻿#pragma once
 #include "../Utils/MeshCollider.h"
+/// <summary>ステージで使う Stage Object の情報と処理をまとめる型</summary>
 class CStageObject;
 
 //床に当たったかの結果を保持

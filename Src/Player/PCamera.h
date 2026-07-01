@@ -6,22 +6,35 @@
 class CPlayerCamera : public Object3D
 {
 public:
+    /// CPlayerCamera を初期化する
     CPlayerCamera();
+    /// CPlayerCamera の終了処理を行う
     ~CPlayerCamera();
     // カメラ位置を設定する
     // @param pos プレイヤーの位置
     // @param distance コーンの高さ //
+    /// Pos Set の処理を行う
+    /// @param pos 座標
+    /// @param distance distance に渡す値
     void PosSet(const VECTOR3& pos, const float& distance);
     // カメラをズームインさせる
     // @param pos プレイヤーの位置 //
+    /// Zoom In の処理を行う
+    /// @param pos 座標
     void ZoomIn(const VECTOR3& pos);
     // カメラをズームアウトさせる
     // @param pos プレイヤーの位置 //
+    /// Zoom Out の処理を行う
+    /// @param pos 座標
+    /// @param coneHeight 高さ
     void ZoomOut(const VECTOR3& pos, const float& coneHeight);
 
 private:
+    /// Debug Im Gui の処理を行う
     //void DebugImGui();
+    /// 毎フレームの状態を更新する
     void Update() override;
+    /// Camera Bezier を毎フレームの状態を更新する
     void UpdateCameraBezier();
 
     VECTOR3 m_camPos;
@@ -40,19 +53,16 @@ private:
     };
 
 #if 0
-    // ZoomIn逕ｨ縺ｮ蛻ｶ蠕｡轤ｹ・育峩謗･謖・ｮ夲ｼ・/
-    VECTOR3 m_zoomInCtrl1 = VECTOR3(0, 5, -5); // 繧ｫ繝｡繝ｩ菴咲ｽｮ縺ｮ蛻ｶ蠕｡轤ｹ1//
-    VECTOR3 m_zoomInCtrl2 = VECTOR3(0, 3, -6); // 繧ｫ繝｡繝ｩ菴咲ｽｮ縺ｮ蛻ｶ蠕｡轤ｹ2//
-    VECTOR3 m_zoomInLookCtrl1 = VECTOR3(0, 1, 0); // 豕ｨ隕也せ縺ｮ蛻ｶ蠕｡轤ｹ1//
-    VECTOR3 m_zoomInLookCtrl2 = VECTOR3(0, 0, 0); // 豕ｨ隕也せ縺ｮ蛻ｶ蠕｡轤ｹ2//
+    VECTOR3 m_zoomInCtrl1 = VECTOR3(0, 5, -5); // カメラ位置の制御点1//
+    VECTOR3 m_zoomInCtrl2 = VECTOR3(0, 3, -6); // カメラ位置の制御点2//
+    VECTOR3 m_zoomInLookCtrl1 = VECTOR3(0, 1, 0); // 注視点の制御点1//
+    VECTOR3 m_zoomInLookCtrl2 = VECTOR3(0, 0, 0); // 注視点の制御点2//
 
-    // ZoomOut逕ｨ縺ｮ蛻ｶ蠕｡轤ｹ・育峩謗･謖・ｮ夲ｼ・/
     VECTOR3 m_zoomOutCtrl1 = VECTOR3(0, 5, -5);
     VECTOR3 m_zoomOutCtrl2 = VECTOR3(0, 6, -4);
     VECTOR3 m_zoomOutLookCtrl1 = VECTOR3(0, 1, 0);
     VECTOR3 m_zoomOutLookCtrl2 = VECTOR3(0, 1, -1);
 
-    // 繝・ヰ繝・げ逕ｨ・壼ｧ狗せ繝ｻ邨らせ縺ｮ險倬鹸//
     VECTOR3 m_debugStartLook = VECTOR3(0, 0, 0);
     VECTOR3 m_debugTargetLook = VECTOR3(0, 0, 0);
 #endif

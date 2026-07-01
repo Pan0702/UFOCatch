@@ -3,24 +3,24 @@
 
 namespace Camera
 {
-    /// <summary>選択オブジェクトにカメラをフォーカスする</summary>
+    /// Focus の処理を行う
     void Focus();
 
-    /// <summary>WASDキーでカメラを前後左右に平行移動する</summary>
+    /// 移動する
     void Move();
 
-    /// <summary>マウス移動量に応じてカメラの注視点を回転する</summary>
+    /// 回転する
     void Rotate();
 
-    /// <summary>マウスホイールでカメラを前後方向にズームする</summary>
+    /// Zoom の処理を行う
     void Zoom();
 
-    /// <summary>Alt+左ドラッグで注視点を中心にカメラを回転する</summary>
+    /// Orbit の処理を行う
     void Orbit();
 
-    /// <summary>Alt+中ドラッグでカメラを平行移動する</summary>
+    /// Pan の処理を行う
     void Pan();
 
-    /// <summary>Alt+右ドラッグでカメラを前後移動する</summary>
+    /// Dolly の処理を行う
     void Dolly();
 };

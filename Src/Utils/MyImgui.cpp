@@ -44,7 +44,7 @@ namespace MyImgui
 
         // ウィンドウの色（スタイル）の設定
         //ImGui::StyleColorsLight();    // 明るい色
-        ImGui::StyleColorsClassic();    // 以前の標準色
+        ImGui::StyleColorsClassic(); // 以前の標準色
         //ImGui::StyleColorsDark();     // 暗い色（現在の標準）
 
         // 【注】ImGui_ImplWin32_Init()は、オリジナルの関数をカスタマイズしている
@@ -74,8 +74,8 @@ namespace MyImgui
         io.Fonts->AddFontDefault();
         io.Fonts->AddFontFromFileTTF(FontPath, 18.0f, &imgui_config, io.Fonts->GetGlyphRangesJapanese());
         io.Fonts->AddFontFromFileTTF("C:/WINDOWS/FONTS/BIZ-UDGOTHICR.TTC",
-                             18.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
-        
+                                     18.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
+
         io.ImeWindowHandle = ImmGetDefaultIMEWnd(hWnd); // 日本語入力に対応
     }
 
@@ -173,8 +173,6 @@ namespace MyImgui
         ImGui::GetStyle().FrameBorderSize = 1.0f; // 枠線の太さ
 
         // ウィンドウ描画の設定
-        // ・Beginでウィンドウの名前設定。なお、名前はウィンドウごとにユニークにすること
-        // ・p_openにより、閉じるボタンが押されたときにfalseを返す
         if (ImGui::Begin(u8"ImGui デモウィンドウ2のタイトルバー", p_open))
         {
             // -----------------------------------------------
@@ -197,7 +195,6 @@ namespace MyImgui
 
             ImGui::PushItemWidth(220); // 項目の幅を220にする。必ずPopItemWidth()と対にする
 
-            // ホイールタイプ・色のアルファバーを表示。PickerHueWheelを指定しないとボードタイプ
             static float Colorpick[4] = {0};
             ImGui::ColorPicker4(u8"カラーピッカー", Colorpick,
                                 ImGuiColorEditFlags_PickerHueWheel |
@@ -207,7 +204,6 @@ namespace MyImgui
 
             ImGui::Separator();
 
-            // テキスト・数値入力のいろいろ -------------------------
 
             // 英数パスワード等の入力
             static char str[256] = {""}; // char型
@@ -252,14 +248,14 @@ namespace MyImgui
                 "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIII", "JJJJ", "KKKK", "LLLLLLL",
                 "MMMM", "OOOOOOO"
             };
-            static const char* item_current = items[0]; 
+            static const char* item_current = items[0];
             if (ImGui::BeginCombo("Combo 1", item_current, 0))
             {
                 for (int n = 0; n < IM_ARRAYSIZE(items); n++)
                 {
                     bool is_selected = (item_current == items[n]);
                     if (ImGui::Selectable(items[n], is_selected))
-                        item_current = items[n]; 
+                        item_current = items[n];
                     if (is_selected)
                         ImGui::SetItemDefaultFocus();
                 }
@@ -267,11 +263,11 @@ namespace MyImgui
             }
 
             // ② コンボボックス2 (NULL文字区切りの単一文字列)
-            static int item_current_2 = 1; 
+            static int item_current_2 = 1;
             ImGui::Combo("Combo 2", &item_current_2, "aaaa\0bbbb\0cccc\0dddd\0eeee\0\0");
 
             // ③ コンボボックス3 (配列と要素数指定)
-            static int item_current_3 = -1; 
+            static int item_current_3 = -1;
             ImGui::Combo("Combo 3", &item_current_3, items, IM_ARRAYSIZE(items));
 
             ImGui::Separator();
@@ -279,11 +275,11 @@ namespace MyImgui
 
             // リストボックスのいろいろ ---------------------------
 
-            ImGui::PushItemWidth(100); 
+            ImGui::PushItemWidth(100);
 
             // ① リストボックス1
             const char* list_item[] = {"TTTTT", "UUUUU", "VVVVV", "WWWWW", "XXXXX", "YYYYY", "ZZZZZ"};
-            static int item_count = 0; 
+            static int item_count = 0;
 
             if (ImGui::ListBoxHeader(u8"ListBox 1", item_count, 3))
             {
@@ -293,7 +289,7 @@ namespace MyImgui
                     ImGui::PushID(n);
                     if (ImGui::Selectable(list_item[n], is_selected))
                     {
-                        item_count = n; 
+                        item_count = n;
                     }
                     if (is_selected)
                         ImGui::SetItemDefaultFocus();
@@ -306,11 +302,11 @@ namespace MyImgui
 
             // ② リストボックス2 (簡易版)
             const char* list_item2[] = {"MMMMM", "NNNNN", "OOOOO", "PPPPP", "QQQQQ", "RRRRR", "SSSSS"};
-            static int item_count2 = 0; 
+            static int item_count2 = 0;
 
             ImGui::ListBox(u8"ListBox 2", &item_count2, list_item2, IM_ARRAYSIZE(list_item2), 3);
 
-            ImGui::PopItemWidth(); 
+            ImGui::PopItemWidth();
 
             // 区切り線
             ImGui::Separator();

@@ -4,9 +4,10 @@
 
 #include "../../Common/Object3D.h"
 
+/// <summary>敵AIで使う Fbx Mesh の情報と処理をまとめる型</summary>
 class CFbxMesh;
 
-// 繧｢繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ繧ｿ繧､繝・
+// アニメーションタイチE
 enum AnimationType
 {
     A_IDEL = 0,
@@ -15,20 +16,27 @@ enum AnimationType
     A_SEACH
 };
 
-// 繝｢繝・Ν逋ｻ骭ｲ繝ｻ蜿門ｾ励け繝ｩ繧ｹat
+/// <summary>敵AIで使う Model Registry の情報と処理をまとめる型</summary>
 class CModelRegistry : public Object3D
 {
 public:
+    /// CModelRegistry を初期化する
     CModelRegistry();
+    /// CModelRegistry の終了処理を行う
     ~CModelRegistry();
 
-    // 繝｡繝・す繝･繧貞錐蜑阪〒蜿門ｾ・
+    /// Mesh を取得する
+    /// @param name 名前
+    /// @return 対象のポインタ
     CFbxMesh* GetMesh(const std::string& name) const;
 
-    // 繝｡繝・す繝･繧定ｿｽ蜉
+    /// Register の処理を行う
+    /// @param name 名前
+    /// @param mesh mesh に渡す値
     void Register(const std::string& name, CFbxMesh* mesh);
 
 private:
+    /// <summary>敵AIで使う Model Entry の情報と処理をまとめる型</summary>
     struct ModelEntry
     {
         std::string name;
@@ -37,7 +45,6 @@ private:
 
     std::list<ModelEntry> m_models;
 
-    // 繝・ヵ繧ｩ繝ｫ繝医・繝｡繝・す繝･繧偵Ο繝ｼ繝・
+    /// Default Models を読み込む
     void LoadDefaultModels();
 };
-

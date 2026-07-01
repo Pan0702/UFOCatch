@@ -174,7 +174,6 @@ void CPlayerCamera::DebugImGui()
     ImGui::Text("Current Camera Pos: %.2f, %.2f, %.2f", m_camPos.x, m_camPos.y, m_camPos.z);
     ImGui::Text("Current Camera Look: %.2f, %.2f, %.2f", m_camLook.x, m_camLook.y, m_camLook.z);
 
-    // === デバッグ：開始点・終了点 ===
     ImGui::Separator();
     ImGui::Text("DEBUG - Look Animation:");
     ImGui::Text("  Start:  %.2f, %.2f, %.2f", m_debugStartLook.x, m_debugStartLook.y, m_debugStartLook.z);

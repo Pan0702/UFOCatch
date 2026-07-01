@@ -6,19 +6,19 @@
 
 namespace
 {
-    constexpr int   MAX_SPAWN_ATTEMPTS = 30;
-    constexpr float SPAWN_CHECK_HALF   = 0.5f; // モブのフットプリント半径（ワールド単位）
+    constexpr int MAX_SPAWN_ATTEMPTS = 30;
+    constexpr float SPAWN_CHECK_HALF = 0.5f; // モブのフットプリント半径（ワールド単位）
 
     // 障害物のないスポーン位置を探す。見つからなければ最後の候補をそのまま返す
     VECTOR2 FindFreeSpawn(float sizeX, float sizeZ, const CStageQuadTree* pTree)
     {
-        VECTOR2 pos = { Randomf(-sizeX, sizeX), Randomf(-sizeZ, sizeZ) };
+        VECTOR2 pos = {Randomf(-sizeX, sizeX), Randomf(-sizeZ, sizeZ)};
         if (pTree == nullptr) return pos;
 
         for (int attempt = 0; attempt < MAX_SPAWN_ATTEMPTS; ++attempt)
         {
-            const VECTOR2 topLeft = { pos.x - SPAWN_CHECK_HALF, pos.y - SPAWN_CHECK_HALF };
-            const VECTOR2 size    = { SPAWN_CHECK_HALF * 2.0f,  SPAWN_CHECK_HALF * 2.0f  };
+            const VECTOR2 topLeft = {pos.x - SPAWN_CHECK_HALF, pos.y - SPAWN_CHECK_HALF};
+            const VECTOR2 size = {SPAWN_CHECK_HALF * 2.0f, SPAWN_CHECK_HALF * 2.0f};
             if (pTree->GetOverlappingObjects(topLeft, size).empty())
                 return pos;
             pos = VECTOR2(Randomf(-sizeX, sizeX), Randomf(-sizeZ, sizeZ));
@@ -27,13 +27,12 @@ namespace
     }
 }
 
-///蜍慕黄繧堤函謌・
-/// @param sizeX 逕滓・縺吶ｋ蜍慕黄縺ｮX縺ｮ遽・峇
-/// @param sizeZ 逕滓・縺吶ｋ蜍慕黄縺ｮZ縺ｮ遽・峇 //
+///動物を生戁E
 CAnimalFactor::CAnimalFactor(float sizeX, float sizeZ, int type)
 {
     CStageQuadTree* pTree = ObjectManager::FindQuadTree<CStageQuadTree>();
-    if (pTree == nullptr) assert(false);
+    if (pTree == nullptr)
+        assert(false);
 
     for (int i = 0; i < 60; i++)
     {
@@ -64,4 +63,3 @@ CAnimalFactor::~CAnimalFactor() = default;
 void CAnimalFactor::Normal(float sizeX, float sizeZ)
 {
 }
-

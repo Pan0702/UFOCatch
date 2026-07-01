@@ -1,13 +1,10 @@
 ﻿//=============================================================================
-//		・ｽR・ｽc・ｽQ・ｽ[・ｽ・ｽ・ｽv・ｽ・ｽ・ｽO・ｽ・ｽ・ｽ・ｽ			               ver 3.2        2023.1.31
 //
-//		・ｽE・ｽB・ｽ・ｽ・ｽh・ｽE・ｽY・ｽﾌ主処・ｽ・ｽ
 //																Main.h
 //=============================================================================
 
 #pragma once
 
-//・ｽw・ｽb・ｽ_・ｽ[・ｽt・ｽ@・ｽC・ｽ・ｽ・ｽﾌイ・ｽ・ｽ・ｽN・ｽ・ｽ・ｽ[・ｽh
 #include <atomic>
 #include <stdio.h>
 #include <thread>
@@ -15,53 +12,80 @@
 
 //#include "GameMain.h"
 
- // #define WINDOW_WIDTH   1920 //讓ｪ蟷・
- // #define WINDOW_HEIGHT  1080 //鬮倥＆
+// #define WINDOW_HEIGHT  1080 //鬮倥＆
 
-#define WINDOW_WIDTH   1366   
-#define WINDOW_HEIGHT  768    
+#define WINDOW_WIDTH   1366
+#define WINDOW_HEIGHT  768
 
 #define APP_NAME _T("UFOAbducition")
 
+/// <summary>ゲーム全体の初期化、更新、描画、終了処理をまとめる中枢クラス</summary>
 class CGameMain;
 
 //  ---------------------------------------------------------
-//  Windows・ｽ・ｽ・ｽC・ｽ・ｽ・ｽN・ｽ・ｽ・ｽX
 //  ---------------------------------------------------------
 class CMain
 {
 public:
-	// ・ｽ・ｽ・ｽ・ｽ・ｽo・ｽﾏ撰ｿｽ
-	CGameMain*	   m_pGMain;		  // ・ｽQ・ｽ[・ｽ・ｽ・ｽ・ｽ・ｽC・ｽ・ｽ・ｽN・ｽ・ｽ・ｽX
-	HINSTANCE      m_hInstance;
-	HWND           m_hWnd;
-	bool           m_bLoopFlag;       // ・ｽ・ｽ・ｽ[・ｽv・ｽt・ｽ・ｽ・ｽO・ｽ@true:・ｽ・ｽ・ｽ[・ｽv・ｽ@false:・ｽ・ｽ・ｽ[・ｽv・ｽI・ｽ・ｽ
-	double         m_MainLoopTime;    // ・ｽ・ｽ・ｽ[・ｽv・ｽX・ｽs・ｽ[・ｽh・ｽ@1/60Sec
+    CGameMain* m_pGMain;
+    HINSTANCE m_hInstance;
+    HWND m_hWnd;
+    bool m_bLoopFlag;
+    double m_MainLoopTime;
 
 public:
-	// ・ｽ・ｽ・ｽ\・ｽb・ｽh
-	HRESULT InitWindow(HINSTANCE,INT,INT,INT,INT,LPCTSTR);
-	LRESULT MsgProc(HWND,UINT,WPARAM,LPARAM);
-	HRESULT Init();
-	void    MessageLoop();
-	bool    MessageProcess(MSG* msg);
-	void    Loop();
-	void    DispFps();
-	void    Quit();
-	CMain();
-	~CMain();
+    /// Window を初期化する
+    /// @param INT INT に渡す値
+    /// @param INT INT に渡す値
+    /// @param INT INT に渡す値
+    /// @param INT INT に渡す値
+    /// @return 処理結果
+    HRESULT InitWindow(HINSTANCE, INT, INT, INT, INT, LPCTSTR);
+    /// Msg Proc を返す
+    /// @param WPARAM WPARAM に渡す値
+    /// @param LPARAM LPARAM に渡す値
+    /// @return メッセージ処理結果
+    LRESULT MsgProc(HWND, UINT, WPARAM, LPARAM);
+    /// 初期化する
+    /// @return 処理結果
+    HRESULT Init();
+    /// Message Loop の処理を行う
+    void MessageLoop();
+    /// Message Process を返す
+    /// @param msg msg に渡す値
+    /// @return 成功または条件を満たす場合 true
+    bool MessageProcess(MSG* msg);
+    /// Loop の処理を行う
+    void Loop();
+    /// Disp Fps の処理を行う
+    void DispFps();
+    /// 終了処理を行う
+    void Quit();
+    /// CMain を初期化する
+    CMain();
+    /// CMain の終了処理を行う
+    ~CMain();
 
 private:
-	// 霑ｽ蜉・壹ご繝ｼ繝繝ｫ繝ｼ繝礼畑繧ｹ繝ｬ繝・ラ
-	std::thread        m_GameThread;
-	std::atomic<bool>  m_RunGame{false};
+    std::thread m_GameThread;
+    std::atomic<bool> m_RunGame{false};
 
-	void GameThreadFunc(); // 繧ｹ繝ｬ繝・ラ譛ｬ菴・
+    /// Game Thread Func の処理を行う
+    void GameThreadFunc();
 };
-// ・ｽﾖ撰ｿｽ・ｽv・ｽ・ｽ・ｽg・ｽ^・ｽC・ｽv・ｽﾌ宣言
+
+/// Wnd Proc を返す
+/// @param hWnd hWnd に渡す値
+/// @param uMsg uMsg に渡す値
+/// @param wParam wParam に渡す値
+/// @param lParam lParam に渡す値
+/// @return メッセージ処理結果
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-// imGUI2・ｽﾌプ・ｽ・ｽ・ｽg・ｽ^・ｽC・ｽv                                                       // -- 2020.8.7
+/// Im Gui Impl Win32 Wnd Proc Handler を返す
+/// @param hWnd hWnd に渡す値
+/// @param iMsg iMsg に渡す値
+/// @param wParam wParam に渡す値
+/// @param lParam lParam に渡す値
+/// @return メッセージ処理結果
 LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
-
-

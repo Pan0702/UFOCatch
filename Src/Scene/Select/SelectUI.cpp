@@ -13,7 +13,6 @@ namespace
         "data/Select/N.png",
     };
 
-    // 難易度画像の描画位置・サイズ
     constexpr float DIFF_IMG_X = 0.0f;
     constexpr float DIFF_IMG_Y = 0.0f;
     constexpr float DIFF_IMG_W = 1366.0f;
@@ -96,6 +95,7 @@ void CSelectUI::UpdateDifficultyImage()
 
     // インデックス0は戻るボタンなので難易度画像は対象外
     const int diffIndex = focusIndex - 1;
+    // 複数の状態や境界条件をまとめて判定する。
     if (m_pDifficultyImage && diffIndex >= 0 && diffIndex < static_cast<int>(m_difficultyTextures.size()))
         m_pDifficultyImage->SetImage(m_difficultyTextures[diffIndex]);
 }

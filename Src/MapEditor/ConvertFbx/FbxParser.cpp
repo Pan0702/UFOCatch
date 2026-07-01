@@ -50,7 +50,6 @@ bool FbxParser::Load(const std::string& path)
 }
 
 // ----------------------------------------------------------------
-//  読み込んだ FBX から頂点・インデックスデータを展開する
 //
 //  仕様
 //    - Objects 直下の全 Geometry を結合して1つのメッシュとして出力する
@@ -59,7 +58,7 @@ bool FbxParser::Load(const std::string& path)
 //    - 頂点の一意性は (pos_idx, uv_idx) の組み合わせで判定する（法線は含めない）
 //    - UV の V 軸反転は行わない（シェーダー側で処理する）
 // ----------------------------------------------------------------
-bool FbxParser::ExtractMesh(std::vector<MeshVertex>& outVerts,std::vector<uint32_t>& outIndices)
+bool FbxParser::ExtractMesh(std::vector<MeshVertex>& outVerts, std::vector<uint32_t>& outIndices)
 {
     Node* objects = FindNode(m_roots, "Objects");
     if (!objects)
@@ -154,7 +153,6 @@ bool FbxParser::ExtractMesh(std::vector<MeshVertex>& outVerts,std::vector<uint32
             // char buf[256];
             // sprintf_s(buf, "[FbxParser] geo_id=%lld  model_id_from_conn=%lld  in_model_map=%s\n",
             //           geo_id, it->second,
-            //           model_map_.count(it->second) ? "YES" : "NO");
             // OutputDebugStringA(buf);
 
 
@@ -172,7 +170,7 @@ bool FbxParser::ExtractMesh(std::vector<MeshVertex>& outVerts,std::vector<uint32
 std::string FbxParser::GetTextureFileName() const
 {
     // Objects 直下の最初の Texture ノードを探す
-     Node* objects = FindNode(const_cast<std::vector<Node>&>(m_roots), "Objects");
+    Node* objects = FindNode(const_cast<std::vector<Node>&>(m_roots), "Objects");
     if (!objects) return "";
 
     Node* tex = FindNode(objects->children, "Texture");
@@ -280,11 +278,11 @@ bool FbxParser::ExtractGeometry(
     auto emit_vertex = [&](uint32_t pos_idx, uint32_t pv_idx)
     {
         const uint32_t n_idx = (norm_ref == "IndexToDirect")
-                             ? static_cast<uint32_t>(norm_idx[pv_idx])
-                             : pv_idx;
+                                   ? static_cast<uint32_t>(norm_idx[pv_idx])
+                                   : pv_idx;
         const uint32_t u_idx = (uv_ref == "IndexToDirect")
-                             ? static_cast<uint32_t>(uv_idx[pv_idx])
-                             : pv_idx;
+                                   ? static_cast<uint32_t>(uv_idx[pv_idx])
+                                   : pv_idx;
 
         const float px = static_cast<float>(raw_pos[pos_idx * 3 + 0]);
         const float py = static_cast<float>(raw_pos[pos_idx * 3 + 1]);
@@ -623,4 +621,3 @@ std::string FbxParser::ReadString(Node* parent, const std::string& nodeName) con
     const uint32_t len = Read<uint32_t>(off + 1);
     return std::string(reinterpret_cast<const char*>(m_data.data() + off + 5), len);
 }
-

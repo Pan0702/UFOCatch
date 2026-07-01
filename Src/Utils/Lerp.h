@@ -2,25 +2,38 @@
 #include "../Utils/MyMath.h"
 #include <cmath>
 #include "MyMath.h"
+/// Ease Out Quint を返す
+/// @param t t に渡す値
+/// @return 計算結果の値
 inline float EaseOutQuint(const float& t)
 {
-    return 1 - Pow2(Pow2(1 -t)) * (1 - t);
+    return 1 - Pow2(Pow2(1 - t)) * (1 - t);
 }
 
+/// Ease In Quint を返す
+/// @param t t に渡す値
+/// @return 計算結果の値
 inline float EaseInQuint(const float& t)
 {
     return Pow2(Pow2(t)) * t;
 }
 
-inline float EaseLinear(float t)                       
-{                                                      
-    return t;   
+/// Ease Linear を返す
+/// @param t t に渡す値
+/// @return 計算結果の値
+inline float EaseLinear(float t)
+{
+    return t;
 }
+
 /**
  * 前半減速、後半加速のイージング関数
  * 0.0～0.5: 減速（ゆっくり）
  * 0.5～1.0: 加速
  */
+/// Ease Slow To Fast を返す
+/// @param t t に渡す値
+/// @return 計算結果の値
 inline float EaseSlowToFast(float t)
 {
     if (t < 0.5f)
@@ -39,6 +52,12 @@ inline float EaseSlowToFast(float t)
     }
 }
 
-inline float Lerp(float start, float end, float t) {
+/// Lerp を返す
+/// @param start start に渡す値
+/// @param end end に渡す値
+/// @param t t に渡す値
+/// @return 計算結果の値
+inline float Lerp(float start, float end, float t)
+{
     return start + (end - start) * t;
 }

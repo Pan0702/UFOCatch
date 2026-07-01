@@ -1,27 +1,38 @@
 ﻿#pragma once
 #include "../Base/EnemyBase.h"
 
+/// <summary>敵AIで使う Flock の情報と処理をまとめる型</summary>
 class CFlock;
 
+/// <summary>敵AIで使う Sheep の情報と処理をまとめる型</summary>
 class CSheep : public CEnemyBase
 {
 public:
+    /// CSheep を初期化する
+    /// @param iniPos 初期座標
     CSheep(const VECTOR3& iniPos = VECTOR3(0, 0, 0));
+    /// CSheep の終了処理を行う
     ~CSheep();
 
+    /// Suction Speed を返す
+    /// @return 3次元ベクトル
     VECTOR3 SuctionSpeed() const override;
+    /// Flock を設定する
+    /// @param flock flock に渡す値
     void SetFlock(CFlock* flock);
+    /// Flock を取得する
+    /// @return 対象のポインタ
     CFlock* GetFlock() const;
 
 private:
-    /// @brief 羊の各状態コンポーネントを生成し、初期状態をIDLEに設定する
+    /// States を初期化する
     void InitStates();
 
-    /// @brief 吸い込みコーン内判定を更新してから敵共通の更新を行う
+    /// 毎フレームの状態を更新する
     void Update() override;
 
-    /// @brief 吸い込み中以外は重力を適用するか判定する
-    /// @return SUCTION状態でなければtrue
+    /// Should Apply Gravity を返す
+    /// @return 成功または条件を満たす場合 true
     bool ShouldApplyGravity() const override;
 
 private:

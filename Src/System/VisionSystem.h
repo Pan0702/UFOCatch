@@ -6,28 +6,41 @@ class CVisionSystem : public Object3D
 {
 public:
     // コンストラクタ //
+    /// CVisionSystem を初期化する
     CVisionSystem();
 
     // デストラクタ //
+    /// CVisionSystem の終了処理を行う
     ~CVisionSystem();
 
     // 指定された角度が扇形の視野角内にあるか判定
     // @param angle 判定する角度（ラジアン）
     // @return 角度が視野角内ならtrue、範囲外ならfalse //
+    /// Angle In Sector を判定する
+    /// @param angle 角度
+    /// @return 成功または条件を満たす場合 true
     bool IsAngleInSector(const float& angle) const;
 
     // 扇形と円の衝突判定（人間の視界範囲内にプレイヤーがいるかチェック）
     // @param humanPos 人間の位置（2Dベクトル）
     // @param humanAngle 人間の向き（ラジアン）
     // @return 円が視界扇形内、または扇形の境界と交差している場合true、それ以外はfalse //
+    /// Sector Circle Collision を返す
+    /// @param humanPos 座標
+    /// @param humanAngle 角度
+    /// @return 成功または条件を満たす場合 true
     bool SectorCircleCollision(const VECTOR2& humanPos, float humanAngle);
-    
+
     // 円の中心座標を設定
     // @param pos 設定する3D座標 //
+    /// Circle Center を設定する
+    /// @param pos 座標
     void SetCircleCenter(const VECTOR3& pos);
 
     // 円の半径を設定
     // @param radius 設定する半径 //
+    /// Circle Radius を設定する
+    /// @param radius 半径
     void SetCircleRadius(const float& radius);
 
 private:
@@ -37,17 +50,25 @@ private:
     // @param circleCenter 円の中心座標
     // @param circleRadius 円の半径
     // @return 線分と円が交差している場合true、それ以外はfalse //
-    bool LineSegmentCircleIntersection(const VECTOR2& lineStart, const VECTOR2& lineEnd, const VECTOR2& circleCenter, float circleRadius) const;
-    
+    /// Line Segment Circle Intersection を返す
+    /// @param lineStart lineStart に渡す値
+    /// @param lineEnd lineEnd に渡す値
+    /// @param circleCenter circleCenter に渡す値
+    /// @param circleRadius 半径
+    /// @return 成功または条件を満たす場合 true
+    bool LineSegmentCircleIntersection(const VECTOR2& lineStart, const VECTOR2& lineEnd, const VECTOR2& circleCenter,
+                                       float circleRadius) const;
+
     // 円の情報を保持する構造体 //
     struct CircleInfo
     {
-        VECTOR2 center;  // 円の中心座標 //
-        float radius;    // 円の半径 //
+        VECTOR2 center; // 円の中心座標 //
+        float radius; // 円の半径 //
 
-        CircleInfo(const VECTOR2& pos_ = VECTOR2(0,0),const float& radius_ = 0.0f)
-            : center(pos_),radius(radius_)
-        {}
+        CircleInfo(const VECTOR2& pos_ = VECTOR2(0, 0), const float& radius_ = 0.0f)
+            : center(pos_), radius(radius_)
+        {
+        }
 
         // 3D座標からXZ平面の2D座標に変換して中心座標を設定
         // @param pos_ 3D座標 //
@@ -58,24 +79,24 @@ private:
         void SetRadius(const float& radius_) { radius = radius_; }
     };
 
-    CircleInfo m_circleInfo;  // プレイヤーの円情報 //
+    CircleInfo m_circleInfo; // プレイヤーの円情報 //
 
     // 扇形の情報を保持する構造体 //
     struct SectorInfo
     {
-        float radius;       // 扇形の半径（視界距離） //
-        float startAngle;   // 扇形の開始角度（ラジアン） //
-        float endAngle;     // 扇形の終了角度（ラジアン） //
+        float radius; // 扇形の半径（視界距離） //
+        float startAngle; // 扇形の開始角度（ラジアン） //
+        float endAngle; // 扇形の終了角度（ラジアン） //
 
         SectorInfo()
-            : radius(7.0f),startAngle(0),endAngle(0)  // デフォルト視界距離 7.0f //
-        {}
+            : radius(7.0f), startAngle(0), endAngle(0) // デフォルト視界距離 7.0f //
+        {
+        }
 
         // 扇形の半径を設定
         // @param radius_ 設定する半径 //
         void SetRadius(float radius_) { radius = radius_; }
     };
 
-    SectorInfo m_sectorInfo;  // 人間の扇形視界情報 //
-
+    SectorInfo m_sectorInfo; // 人間の扇形視界情報 //
 };

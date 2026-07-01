@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 
+/// <summary>各シーンが継承する共通インターフェース</summary>
 class SceneBase;
 
 /// <summary>
@@ -10,18 +11,15 @@ class SceneBase;
 /// SceneManagerが肥大化しないように、作成ロジックをここに分離している
 /// 各シーンは、文字列（名前）で指定して作成できるようにする
 /// </summary>
-class SceneFactory {
+class SceneFactory
+{
 public:
-	/// <summary>
-	/// 最初に実行するシーン（タイトル画面など）を作成する
-	/// </summary>
-	/// <returns>作成したシーンのインスタンス</returns>
-	static std::unique_ptr<SceneBase> CreateFirst();
+    /// First を作成する
+    /// @return 処理結果
+    static std::unique_ptr<SceneBase> CreateFirst();
 
-	/// <summary>
-	/// 名前を指定して特定のシーンを作成する
-	/// </summary>
-	/// <param name="name">シーンの名称</param>
-	/// <returns>作成したシーンのインスタンス</returns>
-	static std::unique_ptr<SceneBase> Create(const std::string& name);
+    /// 作成する
+    /// @param name 名前
+    /// @return 処理結果
+    static std::unique_ptr<SceneBase> Create(const std::string& name);
 };

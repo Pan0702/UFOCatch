@@ -3,35 +3,45 @@
 #include <tchar.h>
 #include "../Core/Graphics/XAudio.h"
 
-// TCHAR蟇ｾ蠢懊・string蝙・
 using tstring = std::basic_string<TCHAR>;
 
-namespace AudioManager {
+namespace AudioManager
+{
+    /// 初期化する
     void Init();
+    /// 初期状態に戻す
     void Reset();
 
-    // 髻ｳ螢ｰ繧偵Ο繝ｼ繝会ｼ亥錐蜑阪ｒ莉倥￠縺ｦ逋ｻ骭ｲ・・
-    // @param name 逋ｻ骭ｲ蜷搾ｼ亥・逕滓凾縺ｫ菴ｿ縺・錐蜑搾ｼ・
-    // @param filepath 繝輔ぃ繧､繝ｫ繝代せ
-    // @param sourceNum 蜷梧凾蜀咲函謨ｰ・亥柑譫憺浹縺ｮ驥阪・蜀咲函逕ｨ縲√ョ繝輔か繝ｫ繝・・・
+    // @param filepath ファイルパス
+    /// 読み込む
+    /// @param name 名前
+    /// @param filepath ファイルパス
+    /// @param sourceNum sourceNum に渡す値
+    /// @return 対象のポインタ
     CXAudioSource* Load(const tstring& name, const tstring& filepath, DWORD sourceNum = 1);
 
-    // 蜀咲函
+    /// 再生する
+    /// @param name 名前
+    /// @param loop ループ再生するか
     void Play(const tstring& name, bool loop = false);
 
     // 蛛懈ｭ｢
+    /// 停止する
+    /// @param name 名前
     void Stop(const tstring& name);
 
-    // 蜈ｨ縺ｦ蛛懈ｭ｢
+    // 全て停止
+    /// All を停止する
     void StopAll();
 
-    // 繝懊Μ繝･繝ｼ繝險ｭ螳夲ｼ・.0f縺梧ｨ呎ｺ厄ｼ・
+    /// Volume を設定する
+    /// @param name 名前
+    /// @param volume 音量
     void SetVolume(const tstring& name, float volume);
 }
 
 namespace AudioStorage
 {
+    /// Music を初期化する
     void InitMusic();
 }
-
-

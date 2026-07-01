@@ -58,7 +58,6 @@ void CHuman::Update()
 {
     CEnemyBase::Update();
 
-    // 蜑企勁繝輔Λ繧ｰ縺檎ｫ九▲縺ｦ縺・ｋ蝣ｴ蜷医・縲√％繧御ｻ･荳翫・蜃ｦ逅・ｒ陦後ｏ縺ｪ縺・
     if (m_pState != nullptr && m_pComponent == m_components[CBaseState::State::DESTROY].get())
     {
         return;
@@ -85,7 +84,6 @@ void CHuman::Update()
     ResolveOBBCollisions();
     UpdateBBox();
 
-    // 繧ｹ繝・・繧ｸ繧ｪ繝悶ず繧ｧ繧ｯ繝医→縺ｮ陦晉ｪ∝愛螳壹→謚ｼ縺玲綾縺暦ｼ域怙蠕後↓螳溯｡鯉ｼ・
     ResolveStageCollisions();
 }
 
@@ -107,8 +105,6 @@ void CHuman::AtkArea() const
 }
 
 
-//Human縺ｮ遽・峇繧鱈ine縺ｧ蜿ｯ隕門喧
-//遽・峇蜀・↑繧画ｰｴ濶ｲ縲∝､悶↑繧臥ｷ代↓縺ｪ繧・
 //Debug
 // void CHuman::DrawDirectionLine()
 // {

@@ -6,9 +6,13 @@
 #include "QuadTreeCell.h"
 
 template <typename T>
+/// <summary>エンジン基盤で使う Liner4 Tree の情報と処理をまとめる型</summary>
 class CLiner4Tree
 {
 public:
+    /// CLiner4Tree を初期化する
+    /// @param level level に渡す値
+    /// @param area_ area_ に渡す値
     CLiner4Tree(int level, const VECTOR4& area_)
         : m_maxLevel(level), m_area(area_)
     {
@@ -17,16 +21,21 @@ public:
     }
 
     // 要素を全削除
+    /// All Clear の処理を行う
     void AllClear() { for (auto& cell : m_cells) cell.Clear(); }
 
-    const VECTOR4& GetArea()     const { return m_area; }
-    int            GetMaxLevel() const { return m_maxLevel; }
+    /// Area を取得する
+    /// @return 4次元ベクトル
+    const VECTOR4& GetArea() const { return m_area; }
+    /// Max Level を取得する
+    /// @return 処理結果の数値
+    int GetMaxLevel() const { return m_maxLevel; }
 
-    /// オブジェクトの追加
-    /// @param obj オブジェクトのポインタ
-    /// @param pos XZ平面での場所
-    /// @param size オブジェクトの大きさ
-    /// @return オブジェクトを追加できたらtrue
+    /// Register を返す
+    /// @param obj 対象オブジェクト
+    /// @param pos 座標
+    /// @param size サイズ
+    /// @return 成功または条件を満たす場合 true
     bool Register(T* obj, const VECTOR2& pos, const VECTOR2& size)
     {
         // オブジェクトが属するセル番号を取得
@@ -40,11 +49,11 @@ public:
         return true;
     }
 
-    /// 周辺オブジェクトの取得
-    /// @param pObj 判定元のオブジェクトポインタ
-    /// @param pos XZ平面での場所
-    /// @param size オブジェクトの大きさ
-    /// @return 近くにいるオブジェクトを返す
+    /// Objects を取得する
+    /// @param pObj 対象オブジェクト
+    /// @param pos 座標
+    /// @param size サイズ
+    /// @return 取得した要素一覧
     std::vector<T*> GetObjects(T* pObj, const VECTOR2& pos, const VECTOR2& size)
     {
         std::vector<T*> collisionList;
@@ -70,6 +79,9 @@ public:
 
 private:
     // セルインデックスからレベルを逆算する
+    /// Level From Index を取得する
+    /// @param cellIndex インデックス
+    /// @return 処理結果
     uint16_t GetLevelFromIndex(uint16_t cellIndex)
     {
         uint16_t offset = 0;
@@ -89,6 +101,10 @@ private:
     }
 
     // 親セルのインデックスを取得する
+    /// Parent Cell Index を取得する
+    /// @param cellIndex インデックス
+    /// @param currentLevel currentLevel に渡す値
+    /// @return 処理結果
     uint16_t GetParentCellIndex(uint16_t cellIndex, int currentLevel)
     {
         if (currentLevel == 0) return 0; // ルートセルに親はない
@@ -109,6 +125,10 @@ private:
         return parentOffset + parentRelativeIndex;
     }
 
+    /// 2 DMorton Number を取得する
+    /// @param worldX worldX に渡す値
+    /// @param worldY worldY に渡す値
+    /// @return 処理結果
     uint16_t Get2DMortonNumber(float worldX, float worldY)
     {
         // ワールド座標を4分木空間の相対座標に変換
@@ -135,6 +155,10 @@ private:
         return BitSeparate(cellX) | (BitSeparate(cellY) << 1);
     }
 
+    /// Morton Number を取得する
+    /// @param pos 座標
+    /// @param size サイズ
+    /// @return 処理結果
     uint16_t GetMortonNumber(const VECTOR2& pos, const VECTOR2& size)
     {
         uint16_t leftTop = Get2DMortonNumber(pos.x, pos.y);
@@ -172,6 +196,9 @@ private:
 
     // ビット分離関数（16ビット値の各ビット間に0を挿入する）
     // モートン曲線（Z曲線）のインデックス計算に使用
+    /// Bit Separate を返す
+    /// @param n n に渡す値
+    /// @return 処理結果
     uint16_t BitSeparate(uint16_t n)
     {
         // 8ビット間隔でビットを広げる

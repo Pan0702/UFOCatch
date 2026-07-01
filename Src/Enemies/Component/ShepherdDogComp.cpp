@@ -196,7 +196,6 @@ void CCollecting::Enter()
 
 void CCollecting::RecomputePath()
 {
-    //回収に必要な群れ・対象羊・目標位置を再評価する//
     if (m_pOwner->GetFlock() == nullptr)
     {
         m_isFinish = true;
@@ -318,7 +317,6 @@ void CCollecting::Update()
         if (m_isFinish) return;
     }
 
-    //経路が空・最後まで到達していたら完了処理//
     if (m_path.empty() || m_pathIndex >= static_cast<int>(m_path.size()))
     {
         FinishAndHerdTarget();

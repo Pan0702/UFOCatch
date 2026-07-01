@@ -135,6 +135,7 @@ bool CStageObject::GetBounds2D(VECTOR2& outPos, VECTOR2& outSize) const
 ////////////////////
 bool CStageObject::HitOBB(CBBox* other, VECTOR3* vHit, VECTOR3* vNormal) const
 {
+    // 複数の状態や境界条件をまとめて判定する。
     if (!m_pOBB || !other || !m_useOBB)
     {
         return false;
@@ -165,6 +166,7 @@ bool CStageObject::HitOBB(CBBox* other, VECTOR3* vHit, VECTOR3* vNormal) const
 ////////////////////
 void CStageObject::ResolveEnemyCollision(CEnemyBase* pEnemy)
 {
+    // 複数の状態や境界条件をまとめて判定する。
     if (!m_pOBB || !pEnemy || !pEnemy->GetBBox()) return;
 
     VECTOR3 hitPos, hitNormal;

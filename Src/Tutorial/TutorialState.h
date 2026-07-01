@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+/// <summary>チュートリアルで使う Tutorial の情報と処理をまとめる型</summary>
 class CTutorial;
 
 // チュートリアルのステート基底クラス //
@@ -8,27 +9,41 @@ class CTutorialState
 public:
     // コンストラクタ
     // @param pT チュートリアルオブジェクトへのポインタ //
+    /// CTutorialState を初期化する
+    /// @param pT pT に渡す値
     CTutorialState(CTutorial* pT);
 
-    virtual void Enter(){}
-    virtual void Update(){}
-    virtual void Exit(){}
+    /// Enter の処理を行う
+    virtual void Enter()
+    {
+    }
+
+    /// 毎フレームの状態を更新する
+    virtual void Update()
+    {
+    }
+
+    /// Exit の処理を行う
+    virtual void Exit()
+    {
+    }
 
     // チュートリアルのステート種別 //
     enum class State
     {
-        None,       // 未設定 //
-        Move,       // 移動操作 //
-        Suction,    // 吸い込み操作 //
-        Expands,    // 拡大操作（複数捕獲） //
-        Discovery,  // 発見される体験 //
-        Play,       // 実践プレイ //
+        None, // 未設定 //
+        Move, // 移動操作 //
+        Suction, // 吸い込み操作 //
+        Expands, // 拡大操作（複数捕獲） //
+        Discovery, // 発見される体験 //
+        Play, // 実践プレイ //
     };
 
 protected:
-    CTutorial* m_pTutorial;  // チュートリアルオブジェクトへのポインタ //
+    CTutorial* m_pTutorial; // チュートリアルオブジェクトへのポインタ //
 
     // プレイヤーに捕獲された動物を削除する //
+    /// Caught Animals を削除する
     void RemoveCaughtAnimals();
 };
 
@@ -37,10 +52,18 @@ class CMoveState : public CTutorialState
 {
 public:
     // @param pT チュートリアルオブジェクトへのポインタ //
+    /// CMoveState を初期化する
+    /// @param pT pT に渡す値
     CMoveState(CTutorial* pT);
 
-    void Enter() override{}
+    /// Enter の処理を行う
+    void Enter() override
+    {
+    }
+
+    /// 毎フレームの状態を更新する
     void Update() override;
+    /// Exit の処理を行う
     void Exit() override;
 };
 
@@ -49,10 +72,18 @@ class CSuctionState : public CTutorialState
 {
 public:
     // @param pT チュートリアルオブジェクトへのポインタ //
+    /// CSuctionState を初期化する
+    /// @param pT pT に渡す値
     CSuctionState(CTutorial* pT);
 
-    void Enter() override{}
+    /// Enter の処理を行う
+    void Enter() override
+    {
+    }
+
+    /// 毎フレームの状態を更新する
     void Update() override;
+    /// Exit の処理を行う
     void Exit() override;
 };
 
@@ -61,10 +92,15 @@ class CExpands : public CTutorialState
 {
 public:
     // @param pT チュートリアルオブジェクトへのポインタ //
+    /// CExpands を初期化する
+    /// @param pT pT に渡す値
     CExpands(CTutorial* pT);
 
+    /// Enter の処理を行う
     void Enter() override;
+    /// 毎フレームの状態を更新する
     void Update() override;
+    /// Exit の処理を行う
     void Exit() override;
 };
 
@@ -73,10 +109,15 @@ class CDiscoveryState : public CTutorialState
 {
 public:
     // @param pT チュートリアルオブジェクトへのポインタ //
+    /// CDiscoveryState を初期化する
+    /// @param pT pT に渡す値
     CDiscoveryState(CTutorial* pT);
 
+    /// Enter の処理を行う
     void Enter() override;
+    /// 毎フレームの状態を更新する
     void Update() override;
+    /// Exit の処理を行う
     void Exit() override;
 };
 
@@ -85,9 +126,16 @@ class CPlayState : public CTutorialState
 {
 public:
     // @param pT チュートリアルオブジェクトへのポインタ //
+    /// CPlayState を初期化する
+    /// @param pT pT に渡す値
     CPlayState(CTutorial* pT);
 
+    /// Enter の処理を行う
     void Enter() override;
+    /// 毎フレームの状態を更新する
     void Update() override;
-    void Exit() override{}
+    /// Exit の処理を行う
+    void Exit() override
+    {
+    }
 };

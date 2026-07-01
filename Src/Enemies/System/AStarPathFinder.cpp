@@ -60,7 +60,7 @@ std::vector<VECTOR2> CAStarPathFinder::SearchRoute(VECTOR2 start, VECTOR2 goal)
     };
 
     int mainLoopCount = 0;
-    
+
 
     // メインループ：Openリストが空になるか、ゴールに到達するまで繰り返す//
     while (!open.empty())
@@ -89,14 +89,14 @@ std::vector<VECTOR2> CAStarPathFinder::SearchRoute(VECTOR2 start, VECTOR2 goal)
         const float dx = cur.pos.x - goal.x;
         const float dy = cur.pos.y - goal.y;
         const bool goalBlocked = HasObstacle(goal, pQuadTree);
-        const bool reachedGoal = (curKey == goalKey) || (goalBlocked && dx * dx + dy * dy <= m_cellSize * m_cellSize * 4.0f);
+        const bool reachedGoal = (curKey == goalKey) || (goalBlocked && dx * dx + dy * dy <= m_cellSize * m_cellSize *
+            4.0f);
         if (reachedGoal)
         {
             // cur.pos を実効ゴールとして経路を復元して返す//
             return ReconstructPath(cur.pos, start, startKey, cameFrom);
         }
 
-        // 8方向の隣接ノードをそれぞれ評価・更新する//
         for (auto& d : DIRS)
         {
             const VECTOR2 next = {cur.pos.x + d.x, cur.pos.y + d.y};
@@ -109,7 +109,6 @@ std::vector<VECTOR2> CAStarPathFinder::SearchRoute(VECTOR2 start, VECTOR2 goal)
             const float cost = (d.x != 0 && d.y != 0) ? m_cellSize * DIAGONAL_COST : m_cellSize;
             const float ng = gScore[curKey] + cost;
 
-            // より良いルートが見つかった場合のみgScore・cameFrom・Openを更新する//
             if (!gScore.contains(nextKey) || ng < gScore[nextKey])
             {
                 gScore[nextKey] = ng;
@@ -154,15 +153,17 @@ bool CAStarPathFinder::HasObstacle(const VECTOR2& pos, const CStageQuadTree* pQu
 
     // エージェントサイズとセルサイズを合わせた半径でAABBを作成する//
     // エージェントが通れるかどうかを正確に判定するため//
-    const VECTOR2 half = { (m_cellSize + m_agentSize.x) * 0.5f,
-                           (m_cellSize + m_agentSize.y) * 0.5f };
-    const VECTOR2 topLeft = { pos.x - half.x, pos.y - half.y };
+    const VECTOR2 half = {
+        (m_cellSize + m_agentSize.x) * 0.5f,
+        (m_cellSize + m_agentSize.y) * 0.5f
+    };
+    const VECTOR2 topLeft = {pos.x - half.x, pos.y - half.y};
 
-    return !pQuadTree->GetOverlappingObjects(topLeft, { half.x * 2.0f, half.y * 2.0f }).empty();
+    return !pQuadTree->GetOverlappingObjects(topLeft, {half.x * 2.0f, half.y * 2.0f}).empty();
 }
 
 std::vector<VECTOR2> CAStarPathFinder::ReconstructPath(
-    const VECTOR2& effectiveGoal,const VECTOR2& start,const Vec2Int& startKey,
+    const VECTOR2& effectiveGoal, const VECTOR2& start, const Vec2Int& startKey,
     const std::unordered_map<Vec2Int, VECTOR2, Vec2IntKeyHash>& cameFrom) const
 {
     std::vector<VECTOR2> path;

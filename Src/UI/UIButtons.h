@@ -7,55 +7,63 @@
 class CUIButtons
 {
 public:
+    /// CUIButtons を初期化する
     CUIButtons();
 
-    /// @brief ボタンを追加してキャンバスに登録する（別ファイルモード）
-    /// @param ui 追加先のUIBase
-    /// @param name ImageRegistryに登録済みのテクスチャ名
-    /// @param pos 配置位置
+    /// Button を追加する
+    /// @param ui ui に渡す値
+    /// @param name 名前
+    /// @param pos 座標
     void AddButton(CUIBase* ui, const std::string& name, const VECTOR2& pos);
 
-    /// @brief ボタンを追加してキャンバスに登録する（スプライトシートモード）
-    /// @param ui 追加先のUIBase
-    /// @param pImage スプライトシートのテクスチャ
-    /// @param pos 配置位置
-    /// @param normalSrcRect 通常時の切り抜き範囲 (srcX, srcY, srcW, srcH)
-    /// @param focusSrcRect  フォーカス時の切り抜き範囲 (srcX, srcY, srcW, srcH)
+    /// Button を追加する
+    /// @param ui ui に渡す値
+    /// @param pImage pImage に渡す値
+    /// @param pos 座標
+    /// @param normalSrcRect normalSrcRect に渡す値
+    /// @param focusSrcRect focusSrcRect に渡す値
     void AddButton(CUIBase* ui, CSpriteImage* pImage, const VECTOR2& pos,
                    const VECTOR4& normalSrcRect, const VECTOR4& focusSrcRect);
 
-    /// @brief ボタンを追加してキャンバスに登録する（背景なし・フォーカス時のみ表示）
-    /// @param ui 追加先のUIBase
-    /// @param pImage スプライトシートのテクスチャ
-    /// @param pos 配置位置
-    /// @param focusSrcRect フォーカス時の切り抜き範囲 (srcX, srcY, srcW, srcH)
+    /// Button を追加する
+    /// @param ui ui に渡す値
+    /// @param pImage pImage に渡す値
+    /// @param pos 座標
+    /// @param focusSrcRect focusSrcRect に渡す値
     void AddButton(CUIBase* ui, CSpriteImage* pImage, const VECTOR2& pos,
                    const VECTOR4& focusSrcRect);
 
-    /// @brief 全ボタンにフォーカス・アンフォーカスアニメーションを設定する
-    /// @param Foucus フォーカス時のアニメーション
-    /// @param unFocus アンフォーカス時のアニメーション
+    /// Anim を設定する
+    /// @param Foucus Foucus に渡す値
+    /// @param unFocus unFocus に渡す値
     void SetAnim(const std::shared_ptr<CUIAnimation>& Foucus, const std::shared_ptr<CUIAnimation>& unFocus) const;
 
-    /// @brief フォーカスをn個分移動する（範囲外はクランプ）
-    /// @param n 正で下/右方向、負で上/左方向
+    /// Focus を移動する
+    /// @param n n に渡す値
     void MoveFocus(int n);
 
-    /// @brief ボタン画像サイズを設定する
+    /// Image Size を設定する
+    /// @param size サイズ
     void SetImageSize(const VECTOR4& size);
 
-    /// @brief 指定インデックスのボタンにフォーカスを設定する
+    /// Focus を設定する
+    /// @param index インデックス
     void SetFocus(int index);
-    
-    /// @brief ボタンのレイヤーを設定する
+
+    /// Layer を設定する
+    /// @param layer layer に渡す値
     void SetLayer(int layer);
-    
+
+    /// Alpha を設定する
+    /// @param alpha 透明度
     void SetAlpha(float alpha);
 
-    /// @brief 現在フォーカス中のボタンのインデックスを取得する
+    /// Focus Index を取得する
+    /// @return 処理結果の数値
     int GetFocusIndex() const;
+
 private:
     std::vector<CUIButton*> m_buttons; // 管理中のボタン一覧（所有しない）
-    int m_focusIndex;                  // 現在フォーカス中のインデックス
-    VECTOR4 m_imageSize;               // ボタン画像サイズ (srcX, srcY, srcWidth, srcHeight)
+    int m_focusIndex; // 現在フォーカス中のインデックス
+    VECTOR4 m_imageSize; // ボタン画像サイズ (srcX, srcY, srcWidth, srcHeight)
 };

@@ -1,6 +1,5 @@
 ﻿// =========================================================================================
 //
-//  豕｢蠖｢繧ｪ繝ｼ繝・ぅ繧ｪ邂｡逅・
 //                                                  ver 3.3        2024.3.23
 // =========================================================================================
 
@@ -13,64 +12,108 @@
 #include <xaudio2.h>
 #include <tchar.h>
 
-#define AUDIO_LOOP         1          // 繝ｫ繝ｼ繝怜・逕溘ヵ繝ｩ繧ｰ
-#define AUDIO_SOURCE_MAX  10          // 蜷梧凾縺ｫ蜀咲函蜿ｯ閭ｽ縺ｪ繧ｪ繝ｼ繝・ぅ繧ｪ繧ｽ繝ｼ繧ｹ縺ｮ譛螟ｧ謨ｰ
+#define AUDIO_LOOP         1
+#define AUDIO_SOURCE_MAX  10
 
 // 
-//  XAudio 繝槭せ繧ｿ繝ｼ繧ｯ繝ｩ繧ｹ   
-//  繧｢繝励Μ縺ｫ荳縺､蠢・ｦ・
+//  XAudio マスタークラス   
 // 
 class CXAudio
 {
 private:
-    // 繝｡繝ｳ繝仙､画焚
-    HWND                    m_hWnd;
+    // メンバ変数
+    HWND m_hWnd;
     IXAudio2* m_pXAudio2;
     IXAudio2MasteringVoice* m_pMasteringVoice;
 
 public:
-    // 繝｡繧ｽ繝・ラ
-    HRESULT     InitAudio(HWND);
+    /// Audio を初期化する
+    /// @return 処理結果
+    HRESULT InitAudio(HWND);
+    /// CXAudio を初期化する
     CXAudio();
+    /// CXAudio の終了処理を行う
     ~CXAudio();
+    /// XAudio2 を返す
+    /// @return 対象のポインタ
     IXAudio2* XAudio2() { return m_pXAudio2; }
 };
 
 // 
-//  XAudio 繧ｽ繝ｼ繧ｹ繝懊う繧ｹ繧ｯ繝ｩ繧ｹ   
-//  荳縺､縺ｮ繧ｵ繧ｦ繝ｳ繝会ｼ磯浹濶ｲ・峨↓荳縺､蠢・ｦ・
+//  XAudio ソースボイスクラス   
 // 
 class CXAudioSource
 {
 private:
-    CXAudio* m_pXAudio;         // XAudio 繝槭せ繧ｿ繝ｼ繧ｯ繝ｩ繧ｹ縺ｮ繧｢繝峨Ξ繧ｹ   
-    bool                m_bWav;            // 繧ｽ繝ｼ繧ｹ縺係AV繝輔ぃ繧､繝ｫ縺句凄縺・true:XAudio(WAV) false:MCI(MP3繧МID) 
-    TCHAR               m_szAliasName[256]; // MCI蜀咲函逕ｨ縺ｮ繝・ヰ繧､繧ｹ蛻･蜷・
+    CXAudio* m_pXAudio; // XAudio マスタークラスのアドレス   
+    bool m_bWav;
+    TCHAR m_szAliasName[256];
 
-    DWORD                m_dwSourceIndex;               // 繧ｪ繝ｼ繝・ぅ繧ｪ繧ｽ繝ｼ繧ｹ繧､繝ｳ繝・ャ繧ｯ繧ｹ
-    DWORD                m_dwSourceNum;                 // 繧ｪ繝ｼ繝・ぅ繧ｪ繧ｽ繝ｼ繧ｹ縺ｮ蛟区焚   
-    IXAudio2SourceVoice* m_pSourceVoice[AUDIO_SOURCE_MAX]; // 繧ｪ繝ｼ繝・ぅ繧ｪ繧ｽ繝ｼ繧ｹ譛ｬ菴・
-    BYTE* m_pWavBuffer[AUDIO_SOURCE_MAX];   // 豕｢蠖｢繝・・繧ｿ・医ヵ繧ｩ繝ｼ繝槭ャ繝医ｒ蜷ｫ縺ｾ縺ｪ縺・ｴ皮ｲ九↑豕｢蠖｢繝・・繧ｿ・・
-    DWORD                m_dwWavSize[AUDIO_SOURCE_MAX];    // 豕｢蠖｢繝・・繧ｿ縺ｮ繧ｵ繧､繧ｺ
+    DWORD m_dwSourceIndex;
+    DWORD m_dwSourceNum;
+    IXAudio2SourceVoice* m_pSourceVoice[AUDIO_SOURCE_MAX];
+    BYTE* m_pWavBuffer[AUDIO_SOURCE_MAX];
+    DWORD m_dwWavSize[AUDIO_SOURCE_MAX];
+
 public:
-    HRESULT      Load(const TCHAR* szFileName, DWORD dwNum=1);
-    HRESULT      LoadAudio(const TCHAR* szFileName, DWORD dwNum);
-    HRESULT      LoadAudioSub(const TCHAR* szFileName, DWORD dwIndex);
-    HRESULT      LoadMci(const TCHAR* szFileName);
-    void         Play(int loop=0);
-    void         PlayAudio(int loop=0);
-    void         PlayMci(int loop=0);
-    void         Stop();
-    void         StopAudio();
-    void         StopMci();
-    void         Volume(float fVol);
-    void         VolumeAudio(float fVol);
-    void         VolumeMci(int nVol);
-    
-    CXAudioSource();
-    CXAudioSource(const TCHAR* szFileName, DWORD dwNum = 1);
-    CXAudioSource(CXAudio* pXAudio);
-    CXAudioSource(CXAudio* pXAudio, const TCHAR* szFileName, DWORD dwNum=1);
-    ~CXAudioSource();
+    /// 読み込む
+    /// @param szFileName 名前
+    /// @param dwNum dwNum に渡す値
+    /// @return 処理結果
+    HRESULT Load(const TCHAR* szFileName, DWORD dwNum = 1);
+    /// Audio を読み込む
+    /// @param szFileName 名前
+    /// @param dwNum dwNum に渡す値
+    /// @return 処理結果
+    HRESULT LoadAudio(const TCHAR* szFileName, DWORD dwNum);
+    /// Audio Sub を読み込む
+    /// @param szFileName 名前
+    /// @param dwIndex インデックス
+    /// @return 処理結果
+    HRESULT LoadAudioSub(const TCHAR* szFileName, DWORD dwIndex);
+    /// Mci を読み込む
+    /// @param szFileName 名前
+    /// @return 処理結果
+    HRESULT LoadMci(const TCHAR* szFileName);
+    /// 再生する
+    /// @param loop ループ再生するか
+    void Play(int loop = 0);
+    /// Audio を再生する
+    /// @param loop ループ再生するか
+    void PlayAudio(int loop = 0);
+    /// Mci を再生する
+    /// @param loop ループ再生するか
+    void PlayMci(int loop = 0);
+    /// 停止する
+    void Stop();
+    /// Audio を停止する
+    void StopAudio();
+    /// Mci を停止する
+    void StopMci();
+    /// Volume の処理を行う
+    /// @param fVol fVol に渡す値
+    void Volume(float fVol);
+    /// Volume Audio の処理を行う
+    /// @param fVol fVol に渡す値
+    void VolumeAudio(float fVol);
+    /// Volume Mci の処理を行う
+    /// @param nVol nVol に渡す値
+    void VolumeMci(int nVol);
 
+    /// CXAudioSource を初期化する
+    CXAudioSource();
+    /// CXAudioSource を初期化する
+    /// @param szFileName 名前
+    /// @param dwNum dwNum に渡す値
+    CXAudioSource(const TCHAR* szFileName, DWORD dwNum = 1);
+    /// CXAudioSource を初期化する
+    /// @param pXAudio pXAudio に渡す値
+    CXAudioSource(CXAudio* pXAudio);
+    /// CXAudioSource を初期化する
+    /// @param pXAudio pXAudio に渡す値
+    /// @param szFileName 名前
+    /// @param dwNum dwNum に渡す値
+    CXAudioSource(CXAudio* pXAudio, const TCHAR* szFileName, DWORD dwNum = 1);
+    /// CXAudioSource の終了処理を行う
+    ~CXAudioSource();
 };

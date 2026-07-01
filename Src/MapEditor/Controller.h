@@ -5,6 +5,7 @@
 #include "../Common/Object3D.h"
 #include "TRSObject/TRS.h"
 
+/// <summary>ステージエディタで使う Controller の情報と処理をまとめる型</summary>
 class Controller : public Object3D
 {
 private:
@@ -18,35 +19,44 @@ private:
     int m_copyObjectIndex = -1;
 
 private:
+    /// 毎フレームの状態を更新する
     void Update() override;
+    /// 描画する
     void Draw() override;
 
-    /// <summary>W/E/R/Qキーでアクティブなギズモモードを切り替える</summary>
+    /// TRSControl の処理を行う
     void TRSControl() const;
 
-    /// <summary>右クリック中のマウス移動・キー入力でカメラを操作する</summary>
+    /// Camera Control の処理を行う
     void CameraControl() const;
 
-    /// <summary>左クリック時にTRSギズモまたはステージオブジェクトへのレイ判定を行う</summary>
+    /// Left Click を処理する
     void HandleLeftClick();
 
-    /// <summary>Ctrl+Z/Ctrl+YでUndo/Redoを実行する</summary>
+    /// Undo Redo を処理する
     void HandleUndoRedo() const;
+    /// Random の処理を行う
     void Random();
 
 public:
+    /// Controller を初期化する
     Controller();
+    /// Controller の終了処理を行う
     ~Controller() = default;
 
+    /// Catch Flag を設定する
+    /// @param f f に渡す値
     void SetCatchFlag(bool f);
 
+    /// Collision Box を描画する
     void DrawCollisionBox();
-    /// <summary>"Setting"ウィンドウのRandom Placer部分を描画する（Begin/Endなし）</summary>
+    /// Setting Panel を描画する
     void DrawSettingPanel();
 
-    /// <summary>"Transform"ウィンドウの中身を描画する（Begin/Endなし）</summary>
+    /// Transform Panel を描画する
     void DrawTransformPanel();
 
-    /// <summary>オブジェクトが選択されていてTransformウィンドウを表示すべきか返す</summary>
+    /// Selected Object を保持しているか判定する
+    /// @return 成功または条件を満たす場合 true
     bool HasSelectedObject() const;
 };

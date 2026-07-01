@@ -2,14 +2,18 @@
 #include "../../Framework/SceneBase.h"
 #include "../../Utils/WipeAnimator.h"
 
-// 繧ｲ繝ｼ繝襍ｷ蜍墓凾縺ｮ繧ｿ繧､繝医Ν繧ｷ繝ｼ繝ｳ //
+// ゲーム起動時のタイトルシーン //
 class TitleScene : public SceneBase
 {
 public:
+    /// TitleScene を初期化する
     TitleScene();
+    /// TitleScene の終了処理を行う
     ~TitleScene();
 
 private:
+    /// 毎フレームの状態を更新する
     void Update() override;
+    /// 描画する
     void Draw() override;
 };

@@ -4,28 +4,49 @@
 #include "../../UI/UIRingGauge.h"
 #include "../../Utils/MyMath.h"
 
+/// <summary>シーンで使う UIText の情報と処理をまとめる型</summary>
 class CUIText;
 
+/// <summary>シーンで使う Play UI の情報と処理をまとめる型</summary>
 class CPlayUI : public CUIBase
 {
 public:
+    /// CPlayUI を初期化する
     CPlayUI();
+    /// 毎フレームの状態を更新する
     void Update() override;
+    /// Bar を取得する
+    /// @return 対象のポインタ
     CUIProgressBar* GetBar() const;
+    /// Gauge を取得する
+    /// @return 対象のポインタ
     CUIRingGauge* GetGauge() const;
+    /// Look Image を取得する
+    /// @return 対象のポインタ
     CUIImage* GetLookImage() const;
 
 private:
+    /// Gauge の処理を行う
     void Gauge();
+    /// Bar の処理を行う
     void Bar();
+    /// Image の処理を行う
     void Image();
+    /// Look Image の処理を行う
     void LookImage();
+    /// Digits の処理を行う
     void Digits();
+    /// Time Digits を毎フレームの状態を更新する
     void UpdateTimeDigits();
+    /// HPDigits を毎フレームの状態を更新する
     void UpdateHPDigits();
+    /// Lv Digits を毎フレームの状態を更新する
     void UpdateLvDigits();
+    /// Cut In を毎フレームの状態を更新する
     void UpdateCutIn();
+    /// Gauge を毎フレームの状態を更新する
     void UpdateGauge();
+    /// Bar を毎フレームの状態を更新する
     void UpdateBar();
 
     static constexpr int TIME_MAX_DIGITS = 4;
