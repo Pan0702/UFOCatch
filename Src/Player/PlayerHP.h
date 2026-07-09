@@ -42,7 +42,7 @@ private:
     int m_currentHp;
     int m_maxHp;
     bool m_found;
-    bool m_seemToFind;
+    bool m_seemToFind = false;
     float m_invincible;
     float m_findCount;
     float m_findMaxCount;

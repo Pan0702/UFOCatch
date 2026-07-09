@@ -803,23 +803,27 @@ void CSprite::DrawArc(CSpriteImage* pImage, float posX, float posY, DWORD srcX, 
 {
     m_pImage = pImage;
     SetSrc(srcX, srcY, srcWid, srcHei);
-    // SpriteVertex vertices[] = {
-    //     {VECTOR3(0, static_cast<float>(srcHei), 0), VECTOR2(0, 1)},
-    //     {VECTOR3(0, 0, 0), VECTOR2(0, 0)},
-    //     {VECTOR3(static_cast<float>(srcWid), static_cast<float>(srcHei), 0), VECTOR2(1, 1)},
-    //     {VECTOR3(static_cast<float>(srcWid), 0, 0), VECTOR2(1, 0)},
-    // };
-    //
-    // if (m_pVertexBufferSprite)
-    // {
-    //     D3D11_MAPPED_SUBRESOURCE mapResource;
-    //     if (SUCCEEDED(
-    //         m_pD3D->m_pDeviceContext->Map(m_pVertexBufferSprite, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapResource)))
-    //     {
-    //         memcpy_s(mapResource.pData, sizeof(vertices), vertices, sizeof(vertices));
-    //         m_pD3D->m_pDeviceContext->Unmap(m_pVertexBufferSprite, 0);
-    //     }
-    // }
+
+    // 円マスクシェーダは UV を 0〜1 前提に扱うため、直前の描画に依存せず
+    // ここで頂点 UV を 0〜1 に確定させる（これを省くと直前スプライトの UV が
+    // 残り、円マスク計算がずれて描画されない）
+    SpriteVertex vertices[] = {
+        {VECTOR3(0, static_cast<float>(srcHei), 0), VECTOR2(0, 1)},
+        {VECTOR3(0, 0, 0), VECTOR2(0, 0)},
+        {VECTOR3(static_cast<float>(srcWid), static_cast<float>(srcHei), 0), VECTOR2(1, 1)},
+        {VECTOR3(static_cast<float>(srcWid), 0, 0), VECTOR2(1, 0)},
+    };
+
+    if (m_pVertexBufferSprite)
+    {
+        D3D11_MAPPED_SUBRESOURCE mapResource;
+        if (SUCCEEDED(
+            m_pD3D->m_pDeviceContext->Map(m_pVertexBufferSprite, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapResource)))
+        {
+            memcpy_s(mapResource.pData, sizeof(vertices), vertices, sizeof(vertices));
+            m_pD3D->m_pDeviceContext->Unmap(m_pVertexBufferSprite, 0);
+        }
+    }
 
     SetShader();
 

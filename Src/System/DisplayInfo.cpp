@@ -85,10 +85,17 @@ void CDisplayInfo::Draw()
 void CDisplayInfo::GiwakuDraw()
 {
     CPlayerHP* pHp = ObjectManager::FindGameObject<CPlayerHP>();
-    // 割合を計算
-    float proportion = avoidZero(pHp->GetFindCount() / pHp->GetMaxFindCount());
-    // 疑惑ゲージを描画
-    m_pSprite->DrawCircle(m_giwakuImage, 1122, 469, 0, 0, 230, 230, 0.0f, proportion * XM_2PI);
+    // 割合を計算（0〜1）
+    float proportion = pHp->GetFindCount() / pHp->GetMaxFindCount();
+
+    // 疑惑ゲージを描画（DrawArc は円マスク用の b1 定数バッファを設定するため、
+    // 旧 DrawCircle と違いシェーダの円マスクが正しく機能する）
+    ArcDrawParams arc;
+    arc.startAngle = 0.0f; // 12時方向から開始
+    arc.ratio = proportion; // 塗り割合
+    arc.innerRadius = 0.5f; // リング状
+    arc.clockwise = true;
+    m_pSprite->DrawArc(m_giwakuImage, 1122, 469, 0, 0, 230, 230, arc, 1.0f);
 
     if (pHp->GetFoundFlag())
     {
