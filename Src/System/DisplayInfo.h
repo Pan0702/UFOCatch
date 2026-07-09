@@ -11,14 +11,14 @@ public:
     CDisplayInfo();
     /// CDisplayInfo の終了処理を行う
     ~CDisplayInfo();
-
-private:
     /// 開始する
     void Start() override;
     /// 毎フレームの状態を更新する
     void Update() override;
     /// 描画する
     void Draw() override;
+
+private:
     /// Giwaku Draw の処理を行う
     void GiwakuDraw();
     /// Exp Draw の処理を行う
