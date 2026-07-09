@@ -78,6 +78,11 @@ public:
     /// @param filename ファイル名
     void Export(const std::string& filename) const;
 
+    /// 読み込む
+    /// @param filename ファイル名
+    /// @return 読み込んだモデル数
+    int Import(const std::string& filename);
+
     /// Ray Hit Test を返す
     /// @param ray 判定に使用するレイ
     /// @param collOut 衝突情報の出力先
@@ -94,6 +99,9 @@ public:
     /// Model を削除する
     /// @param modelName モデル名
     void DeleteModel(const std::string& modelName);
+
+    /// 配置済みモデルをすべて削除する
+    void ClearModels();
 
     /// Selected Transform を取得する
     /// @return 対象のポインタ

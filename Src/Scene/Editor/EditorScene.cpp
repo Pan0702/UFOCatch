@@ -10,7 +10,8 @@
 
 CEditorScene::CEditorScene()
 {
-    Instantiate<StageData>();
+    StageData* stage_data = Instantiate<StageData>();
+    stage_data->Import("data/Stage/easy.json");
     Instantiate<Button>();
     Instantiate<TRS>();
     Instantiate<Controller>();

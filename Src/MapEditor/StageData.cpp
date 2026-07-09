@@ -1,6 +1,7 @@
 ﻿#include "StageData.h"
 
 #include "ExportData.h"
+#include "Import.h"
 
 namespace
 {
@@ -45,6 +46,25 @@ void StageData::AddModelWithTransform(const std::string& modelName, const Transf
 void StageData::Export(const std::string& filename) const
 {
     ExportData::AllModelsInfo(filename, m_stageData);
+}
+
+int StageData::Import(const std::string& filename)
+{
+    std::vector<Info> infos = Import::StageInfo(filename);
+    int import_count = 0;
+    for (const Info& info : infos)
+    {
+        if (info.modelName.empty() || info.modelPath.empty()) continue;
+
+        if (ResourceManager::GetModel(info.modelName.c_str()) == nullptr)
+        {
+            ResourceManager::LoadFbx(info.modelName.c_str(), info.modelPath.c_str());
+        }
+
+        AddModelWithTransform(info.modelName, info.transform, info.soc);
+        import_count++;
+    }
+    return import_count;
 }
 
 
@@ -102,6 +122,12 @@ void StageData::DeleteModel(const std::string& modelName)
             return;
         }
     }
+}
+
+void StageData::ClearModels()
+{
+    m_stageData.clear();
+    m_selectedModel = -1;
 }
 
 

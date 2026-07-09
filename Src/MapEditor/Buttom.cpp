@@ -1,8 +1,8 @@
 ﻿#include "Buttom.h"
 #include "Controller.h"
 #include "FileDialog.h"
-#include "Import.h"
 #include "StageData.h"
+#include <Windows.h>
 struct ImageButtonData;
 class CFbxMesh;
 
@@ -20,6 +20,7 @@ Button::Button()
 
     m_pModelCreator = new ModelCreator();
     m_pGridDraw = new GridDraw();
+    AddButtonsFromLoadedModels();
 }
 
 Button::~Button()
@@ -162,6 +163,24 @@ void Button::ReleaseModelPreviews()
     m_modelpreviews.clear();
 }
 
+void Button::AddButtonsFromLoadedModels()
+{
+    for (const std::string& model_name : ResourceManager::GetModelNames())
+    {
+        if (HasButton(model_name)) continue;
+        AddButton(model_name, ResourceManager::GetModel(model_name.c_str()));
+    }
+}
+
+bool Button::HasButton(const std::string& buttonId) const
+{
+    for (const ImageButtonData& button : m_imageButtons)
+    {
+        if (button.buttonID == buttonId) return true;
+    }
+    return false;
+}
+
 
 // ImageButtonDataの内容に応じてImGuiのボタンを1つ描画する
 void Button::CreateImageButton(const ImageButtonData& buttonData)
@@ -247,18 +266,24 @@ void Button::DrawSettingPanel()
         {
             auto* stage_data = ObjectManager::FindGameObject<StageData>();
 
-            std::vector<Info> vector = Import::StageInfo(path);
-            for (auto v : vector)
+            if (stage_data != nullptr)
             {
-                // モデルが未ロードの場合、自動的にロードしてボタンにも追加する
-                if (ResourceManager::GetModel(v.modelName.c_str()) == nullptr)
+                const int imported = stage_data->Import(path);
+                if (imported == 0)
                 {
-                    ResourceManager::LoadFbx(v.modelName.c_str(), v.modelPath.c_str());
-                    AddButton(v.modelName, ResourceManager::GetModel(v.modelName.c_str()));
+                    MessageBoxA(nullptr, "Stage json could not be imported.", "Import", MB_OK);
                 }
-                stage_data->AddModelWithTransform(v.modelName, v.transform, v.soc);
             }
+
+            AddButtonsFromLoadedModels();
         }
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Clear"))
+    {
+        auto* stage_data = ObjectManager::FindGameObject<StageData>();
+        if (stage_data != nullptr)
+            stage_data->ClearModels();
     }
 }
 

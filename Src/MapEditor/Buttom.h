@@ -109,4 +109,12 @@ private:
 
     /// Model Previews を解放する
     void ReleaseModelPreviews();
+
+    /// 読み込み済みモデルをボタンへ反映する
+    void AddButtonsFromLoadedModels();
+
+    /// Button が登録済みか返す
+    /// @param buttonId ボタンID
+    /// @return 登録済みならtrue
+    bool HasButton(const std::string& buttonId) const;
 };

@@ -5309,7 +5309,7 @@
                 "z": 7.5
             }
         },
-        "useHitGround": false,
-        "useOBB": true
+        "useHitGround": true,
+        "useOBB": false
     }
 ]
